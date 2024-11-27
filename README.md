@@ -35,7 +35,7 @@ cd docker
 
 ## Seed database
 ```
-./exec command syncpems
+./exec command syncrolespems
 ```
 
 ## Update hosts files
