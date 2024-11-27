@@ -30,6 +30,9 @@ services:
             DEBUG: ${DEBUG}
             SECRET_KEY: ${SECRET_KEY}
             TIME_ZONE: ${TIME_ZONE}
+            DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL}
+            ADMIN_TEANT_UID: ${ADMIN_TEANT_UID}
+            ADMIN_TEANT_TITLE: ${ADMIN_TEANT_TITLE}
 
             PROTOCOL: "https"
             DOMAIN: ${DOMAIN}

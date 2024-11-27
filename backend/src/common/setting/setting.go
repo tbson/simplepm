@@ -13,7 +13,13 @@ var DB_PORT string = frameworkutil.GetEnv("DB_PORT", "5432")
 var DB_USER string = frameworkutil.GetEnv("DB_USER", "")
 var DB_NAME string = frameworkutil.GetEnv("DB_NAME", "")
 var DB_PASSWORD string = frameworkutil.GetEnv("DB_PASSWORD", "")
+
+const DEFAULT_LANG = "en"
+
 var TIME_ZONE string = frameworkutil.GetEnv("TIME_ZONE", "")
+var DEFAULT_ADMIN_EMAIL string = frameworkutil.GetEnv("DEFAULT_ADMIN_EMAIL", "admin@local.dev")
+var ADMIN_TEANT_UID string = frameworkutil.GetEnv("ADMIN_TEANT_UID", "admin")
+var ADMIN_TEANT_TITLE string = frameworkutil.GetEnv("ADMIN_TEANT_TITLE", "admin")
 
 var S3_ACCOUNT_ID string = frameworkutil.GetEnv("S3_ACCOUNT_ID", "")
 var S3_ACCESS_KEY_ID string = frameworkutil.GetEnv("S3_ACCESS_KEY_ID", "")
@@ -46,6 +52,3 @@ var FE_REDIRECT_URI string = fmt.Sprintf(
 	BASE_URL,
 	"/login",
 )
-
-const DEFAULT_LANG = "en"
-const ADMIN_TEANT_UID = "default"
