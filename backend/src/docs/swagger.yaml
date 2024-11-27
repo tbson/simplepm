@@ -1,0 +1,101 @@
+basePath: /api/v1
+definitions:
+  restlistutil.ListRestfulResult-schema_Variable:
+    properties:
+      items:
+        description: Resulting items
+        items:
+          $ref: '#/definitions/schema.Variable'
+        type: array
+      page_size:
+        description: Number of items per page
+        type: integer
+      pages:
+        allOf:
+        - $ref: '#/definitions/restlistutil.Pages'
+        description: Pages
+      total:
+        description: Total records before applying pagination
+        type: integer
+      total_pages:
+        description: Total pages after pagination
+        type: integer
+    type: object
+  restlistutil.Pages:
+    properties:
+      next:
+        description: Next page
+        type: integer
+      prev:
+        description: Previous page
+        type: integer
+    type: object
+  schema.Variable:
+    properties:
+      created_at:
+        type: string
+      data_type:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      key:
+        type: string
+      updated_at:
+        type: string
+      value:
+        type: string
+    type: object
+host: simplepm.io.io
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: Simple PM API document.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Simple PM API
+  version: "1.0"
+paths:
+  /api/v1/config/variable/:
+    get:
+      consumes:
+      - application/json
+      description: Get list of variables with filtering, sorting and paging
+      parameters:
+      - description: Search string
+        in: query
+        name: q
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Order by id, key
+        in: query
+        name: order
+        type: integer
+      - description: Filter by data type
+        in: query
+        name: data_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/restlistutil.ListRestfulResult-schema_Variable'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get list of variables
+      tags:
+      - config
+swagger: "2.0"

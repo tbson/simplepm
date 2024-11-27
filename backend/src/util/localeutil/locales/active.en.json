@@ -1,0 +1,12 @@
+{
+  "BadJson": "Request body contains badly-formed JSON (at position {{.Offset}})",
+  "CannotReadRequestBody": "Can not read request body",
+  "EmptyRequestBody": "Request body must not be empty",
+  "FailToDecodeJSON": "Failed to decode JSON",
+  "FieldRequired": "This field is required",
+  "InvalidFieldValue": "Invalid value for field '{{.FieldName}}'. Expected type {{.Type}} but got {{.Value}}",
+  "InvalidJSONPayload": "Invalid JSON payload",
+  "InvalidValue": "Invalid value",
+  "MustBeOneOf": "Must be one of: {{.Values}}",
+  "NotRecognizedField": "This field is not recognized"
+}

@@ -1,0 +1,15 @@
+FROM golang:1.23.1-bookworm
+
+RUN apt-get update && apt-get upgrade -y
+
+RUN curl -sSf https://atlasgo.sh | sh
+
+RUN go install github.com/air-verse/air@latest
+RUN go install github.com/nicksnyder/go-i18n/v2/goi18n@latest
+
+RUN mkdir /code && mkdir /code/src
+WORKDIR /code/src
+
+ADD src/go.mod src/go.sum /code/src
+
+RUN go mod download && go mod tidy

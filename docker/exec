@@ -1,0 +1,160 @@
+#!/bin/bash
+
+
+NAME="simplepm"
+
+FIRST_ARG="$1"
+shift
+ARGS="$@"
+
+# Temporarily export variables in .env for use within the script
+set -a
+source .env
+set +a
+
+docker_down () {
+    COMPOSE_HTTP_TIMEOUT=512 docker compose down --volumes
+    docker-clean
+}
+
+docker_up () {
+    COMPOSE_HTTP_TIMEOUT=512 docker compose up -d
+}
+
+migrate() {
+    docker compose exec "$NAME"_backend atlas migrate apply --env gorm
+}
+
+setTestEnv() {
+    cp ../backend/src/atlas.hcl.default ../backend/src/atlas.hcl
+    sed -i '' 's/_ENV_/_TEST/g' ../backend/src/atlas.hcl
+}
+
+setNonTestEnv() {
+    cp ../backend/src/atlas.hcl.default ../backend/src/atlas.hcl
+    sed -i '' 's/_ENV_//g' ../backend/src/atlas.hcl
+}
+
+prepareAtlasDb() {
+    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS ${POSTGRES_DB}_atlas;"
+    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE ${POSTGRES_DB}_atlas;"
+}
+
+prepareTestAtlasDb() {
+    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS ${POSTGRES_DB}_atlas_test;"
+    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE ${POSTGRES_DB}_atlas_test;"
+}
+
+prepareTestDb() {
+    docker compose exec "$NAME"_db psql -U postgres -c "DROP DATABASE IF EXISTS ${POSTGRES_DB}_test;"
+    docker compose exec "$NAME"_db psql -U postgres -c "CREATE DATABASE ${POSTGRES_DB}_test;"
+}
+
+prepareTestingDbs() {
+    prepareTestAtlasDb
+    prepareTestDb
+}
+
+help () {
+    echo "build             :  build docker instance"
+    echo "up                :  up docker instance"
+    echo "down              :  down docker inscance"
+    echo "restart           :  down then up docker instance"
+    echo "bserver           :  run phoenix dev server"
+    echo "fserver           :  run frontendpack dev server"
+    echo "yarn              :  run yarn on frontend"
+    echo "command <args>    :   run spefic command on backend/src/command"
+    echo "backend <args>    :  execute random command on backend, ex: ./exec backend ls"
+}
+
+if [ "$FIRST_ARG" == "-h" ]; then
+    help
+    exit 0
+fi
+
+if [ "$FIRST_ARG" == "backend" ] || [ "$FIRST_ARG" == "db" ] || [ "$FIRST_ARG" == "frontend" ]; then
+    docker compose exec "$NAME"_"$FIRST_ARG" $ARGS
+elif [ "$FIRST_ARG" == "makemessages" ]; then
+    docker compose exec "$NAME"_backend goi18n extract -outdir util/localeutil/locales -format json
+    docker compose exec "$NAME"_backend bash -c 'goi18n merge -outdir util/localeutil/locales -format json util/localeutil/locales/active.*.json'
+    docker compose exec "$NAME"_backend bash -c 'python3 scripts/process-translation.py'
+elif [ "$FIRST_ARG" == "dumpmessages" ]; then
+    docker compose exec "$NAME"_backend bash -c 'echo {} > util/localeutil/locales/translate.en.json'
+    docker compose exec "$NAME"_backend bash -c 'goi18n merge -outdir util/localeutil/locales -format json util/localeutil/locales/active.*.json util/localeutil/locales/translate.*.json'
+    docker compose exec "$NAME"_backend bash -c 'echo {} > util/localeutil/locales/translate.vi.json'
+elif [ "$FIRST_ARG" == "goi18n" ]; then
+    docker compose exec "$NAME"_backend goi18n $ARGS
+elif [ "$FIRST_ARG" == "yarn" ]; then
+    docker compose exec "$NAME"_frontend yarn $ARGS
+elif [ "$FIRST_ARG" == "fserver" ]; then
+    docker compose exec "$NAME"_frontend yarn dev
+elif [ "$FIRST_ARG" == "fmakemessages" ]; then
+    docker compose exec "$NAME"_frontend node_modules/.bin/ttag update src/locale/vi.po src
+    docker compose exec "$NAME"_frontend node_modules/.bin/ttag update src/locale/en.po src
+elif [ "$FIRST_ARG" == "fdumpmessages" ]; then
+    docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/vi.po > ../frontend/src/locale/vi.po.json
+    docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/en.po > ../frontend/src/locale/en.po.json
+elif [ "$FIRST_ARG" == "fupgrade" ]; then
+    docker compose exec "$NAME"_frontend yarn upgrade-interactive --latest
+elif [ "$FIRST_ARG" == "go" ]; then
+    docker compose exec "$NAME"_backend go $ARGS
+elif [ "$FIRST_ARG" == "atlas" ]; then
+    docker compose exec "$NAME"_backend atlas $ARGS --env gorm
+elif [ "$FIRST_ARG" == "command" ]; then
+    docker compose exec "$NAME"_backend go run ./command/$ARGS
+elif [ "$FIRST_ARG" == "initmigrations" ]; then
+    prepareAtlasDb
+    setNonTestEnv
+    docker compose exec "$NAME"_backend atlas migrate hash --env gorm
+elif [ "$FIRST_ARG" == "makemigrations" ]; then
+    setNonTestEnv
+    docker compose exec "$NAME"_backend atlas migrate diff --env gorm
+elif [ "$FIRST_ARG" == "migrate" ]; then
+    setNonTestEnv
+    migrate
+elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
+    echo "[+] Delete current DB..."
+    setNonTestEnv
+    rm -rf volumes/db/dbdata
+    docker restart "$NAME"_db
+
+    echo "[+] Sleep 5 secs..."
+    sleep 5
+
+    echo "[+] Clean migration files..."
+    rm ../backend/src/dbversioning/migration/*.sql
+
+    echo "[+] Init migrations configuration..."
+    echo > ../backend/src/dbversioning/migration/atlas.sum
+    docker compose exec "$NAME"_backend atlas migrate hash --env gorm
+
+    echo "[+] Make migration files..."
+    docker compose exec "$NAME"_backend atlas migrate diff --env gorm
+
+    echo "[+] Migrate migration files..."
+    docker compose exec "$NAME"_backend atlas migrate apply --env gorm
+elif [ "$FIRST_ARG" == "bserver" ]; then
+    docker compose exec "$NAME"_backend air src/main.go --root src
+elif [ "$FIRST_ARG" == "bbuild" ]; then
+    docker compose exec "$NAME"_backend bash -c 'GOOS=linux GOARCH=amd64 go build -o main .'
+elif [ "$FIRST_ARG" == "btest" ]; then
+    prepareTestingDbs 
+    setTestEnv
+    migrate
+    docker compose exec "$NAME"_backend go test ./...
+elif [ "$FIRST_ARG" == "up" ]; then
+    docker_up
+elif [ "$FIRST_ARG" == "down" ]; then
+    docker_down
+elif [ "$FIRST_ARG" == "restart" ]; then
+    docker_down
+    docker_up
+elif [ "$FIRST_ARG" == "build" ]; then
+    docker compose build --no-cache
+elif [ "$FIRST_ARG" == "pg_dump" ]; then
+    docker compose exec "$NAME"_db pg_dump $ARGS
+else
+    echo "Invalid argument, please use following arguments:"
+    echo "-------------------------------------------------"
+    help
+fi

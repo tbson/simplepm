@@ -1,0 +1,42 @@
+{
+  "BadJson": {
+    "hash": "sha1-90240dae35af1ca7ac49998c59a4c33c9826d380",
+    "other": "Request body contains badly-formed JSON (at position {{.Offset}}) VN"
+  },
+  "CannotReadRequestBody": {
+    "hash": "sha1-dcc91bf0db344550b8dc94f5a3993bacf62623fd",
+    "other": "Can not read request body VN"
+  },
+  "EmptyRequestBody": {
+    "hash": "sha1-eae505b15a085a0c32c0b30beaf361118e38f93b",
+    "other": "Request body must not be empty VN"
+  },
+  "FailToDecodeJSON": {
+    "hash": "sha1-0d936f5d9ba9662ae29eae54a48cc40e6b343d87",
+    "other": "Failed to decode JSON VN"
+  },
+  "FieldRequired": {
+    "hash": "sha1-dedbaded6d5a4ed17eefa2e4ee3eee026b7d1d11",
+    "other": "This field is required VN"
+  },
+  "InvalidFieldValue": {
+    "hash": "sha1-7b1a67fdece2de2555eaf2b5cb40f9eed54b1917",
+    "other": "Invalid value for field '{{.FieldName}}'. Expected type {{.Type}} but got {{.Value}} VN"
+  },
+  "InvalidJSONPayload": {
+    "hash": "sha1-bc7c54c8ded25b45dd9247942d23a55570bc3642",
+    "other": "Invalid JSON payload VN"
+  },
+  "InvalidValue": {
+    "hash": "sha1-7e5ba8172e8e0f040beb647ab1be74ae0618bb56",
+    "other": "Invalid value VN"
+  },
+  "MustBeOneOf": {
+    "hash": "sha1-924a1e9e02729db2e53baee493dd24e4d1162064",
+    "other": "Must be one of: {{.Values}} VN"
+  },
+  "NotRecognizedField": {
+    "hash": "sha1-00faf4a09464aa1cf470038a5b2931bd84b20866",
+    "other": "This field is not recognized VN"
+  }
+}

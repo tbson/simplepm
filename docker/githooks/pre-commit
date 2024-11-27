@@ -1,0 +1,13 @@
+#!/bin/sh
+echo "Running go vet..."
+
+# Run go vet on all packages
+(cd backend/src && go vet ./...)
+
+# Check if go vet returned any errors
+if [ $? -ne 0 ]; then
+    echo "Commit aborted: go vet found issues in the code."
+    exit 1
+else
+    echo "Go vet completed successfully. No issues found."
+fi

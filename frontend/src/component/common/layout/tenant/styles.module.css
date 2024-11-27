@@ -1,0 +1,57 @@
+.wrapperContainer {
+    min-height: 100vh;
+}
+
+.wrapperContainer :global(.sider) {
+    max-height: 100vh;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.wrapperContainer :global(.sider::-webkit-scrollbar) {
+    display: none;
+}
+
+.wrapperContainer :global(.trigger) {
+    font-size: 18px;
+    line-height: 30px;
+    padding: 5px 5px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.wrapperContainer :global(.trigger:hover) {
+    color: #1890ff;
+}
+
+.wrapperContainer :global(.logo) {
+    display: flex;
+    align-items: center;
+    height: 34px;
+}
+
+.wrapperContainer :global(.logo) :global(.logo-text) {
+    margin: auto;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.wrapperContainer :global(.logo) :global(.logo-text) :global(a) {
+    color: white;
+}
+
+.wrapperContainer :global(.site-layout) :global(.site-layout-header) {
+    background: #eeeeee;
+    height: 34px;
+    line-height: 34px;
+}
+
+.wrapperContainer :global(.site-layout) :global(.site-layout-content) {
+    background: #fff;
+}
+
+.wrapperContainer :global(.layout-footer) {
+    height: 34px;
+    padding: 8px 8px;
+    text-align: center;
+}

@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <title>Authenticating...</title>
+        <script>
+            const auth = {{ .auth }};
+            localStorage.setItem('auth', auth);
+
+            const nextUrl = localStorage.getItem('nextUrl');
+            if (nextUrl) {
+                localStorage.removeItem('nextUrl');
+                window.location.href = nextUrl;
+            } else {
+                window.location.href = '/';
+            }
+        </script>
+    </head>
+
+    <body>
+        <p>Authenticating...</p>
+    </body>
+</html>

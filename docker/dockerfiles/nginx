@@ -1,0 +1,6 @@
+FROM nginx:1.27.1-alpine
+RUN apk add fcgi
+RUN mkdir /resource
+RUN mkdir /resource/ssl
+RUN mkdir /resource/public
+WORKDIR /resource

@@ -1,0 +1,179 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals = 1; plural = 0;\n"
+"mime-version: 1.0\n"
+"x-generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: src/components/auth/login/index.jsx:59
+msgid "Forgot password"
+msgstr "Quên mật khẩu"
+
+#: src/components/auth/login/form.jsx:20
+msgid "Username"
+msgstr "Tên đăng nhập"
+
+#: src/components/auth/login/form.jsx:25
+msgid "Password"
+msgstr "Mật khẩu"
+
+#: src/components/auth/login/form.jsx:55 src/components/auth/login/index.jsx:52
+msgid "Login"
+msgstr "Đăng nhập"
+
+#: src/components/common/layout/main/index.jsx:83
+msgid "Profile"
+msgstr "Hồ sơ"
+
+#: src/components/common/layout/main/index.jsx:91
+#: src/components/variable/config.js:14
+msgid "Config"
+msgstr "Cấu hình"
+
+#: src/components/common/layout/main/index.jsx:95
+msgid "Company"
+msgstr "Công ty"
+
+#: src/components/common/layout/main/index.jsx:100
+#: src/components/staff/config.js:15
+msgid "Staff"
+msgstr "Nhân viên"
+
+#: src/components/common/layout/main/index.jsx:108
+#: src/components/role/config.js:14
+msgid "Group"
+msgstr "Nhóm"
+
+#: src/components/staff/config.js:33
+#: src/components/staff/profile/summary.jsx:22
+msgid "Fullname"
+msgstr "Họ và tên"
+
+#: src/components/auth/reset_pwd/form.jsx:26 src/components/staff/config.js:36
+#: src/components/staff/profile/summary.jsx:10
+msgid "Email"
+msgstr "Email"
+
+#: src/components/staff/config.js:37
+#: src/components/staff/profile/summary.jsx:16
+#: src/components/staff/profile/update_profile/form.jsx:15
+msgid "Phone number"
+msgstr "Số điện thoại"
+
+#: src/components/staff/config.js:38
+msgid "Active"
+msgstr "Kích hoạt"
+
+#: src/components/staff/config.js:39
+msgid "Groups"
+msgstr "Nhóm"
+
+#: src/components/staff/profile/index.jsx:44
+#: src/components/staff/profile/update_profile/index.jsx:42
+#: src/components/staff/profile/update_profile/index.jsx:45
+msgid "Update profile"
+msgstr "Cập nhật hồ sơ"
+
+#: src/components/auth/change_pwd/index.jsx:39
+#: src/components/auth/change_pwd/index.jsx:42
+#: src/components/staff/profile/index.jsx:52
+msgid "Change password"
+msgstr "Đổi mật khẩu"
+
+#: src/components/auth/reset_pwd/index.jsx:51
+#: src/components/auth/reset_pwd/index.jsx:53
+msgid "Reset password"
+msgstr "Khôi phục mật khẩu"
+
+#: src/components/auth/change_pwd/index.jsx:41
+#: src/components/auth/reset_pwd/index.jsx:52
+#: src/components/role/dialog/index.jsx:65
+#: src/components/staff/dialog/index.jsx:64
+#: src/components/staff/profile/update_profile/index.jsx:44
+#: src/components/variable/dialog/index.jsx:64
+msgid "Cancel"
+msgstr "Thoát"
+
+#: src/components/auth/change_pwd/form.jsx:20
+msgid "Old password"
+msgstr "Mật khẩu cũ"
+
+#: src/components/auth/change_pwd/form.jsx:25
+msgid "New password"
+msgstr "Mật khẩu mới"
+
+#: src/components/auth/change_pwd/form.jsx:30
+msgid "Confirm new password"
+msgstr "Xác nhận mật khẩu mới"
+
+#: src/components/variable/config.js:23
+msgid "Config name"
+msgstr "Tên cấu hình"
+
+#: src/components/variable/config.js:24
+msgid "Config value"
+msgstr "Giá trị cấu hình"
+
+#: src/components/common/table/buttons.jsx:9 src/components/role/table.jsx:134
+#: src/components/staff/table.jsx:152 src/services/helpers/utils.js:117
+msgid "Add new"
+msgstr "Thêm mới"
+
+#: src/components/role/dialog/index.jsx:63
+#: src/components/staff/dialog/index.jsx:62
+#: src/components/variable/dialog/index.jsx:62
+msgid "Save"
+msgstr "Lưu"
+
+#: src/components/common/table/buttons.jsx:30 src/services/helpers/utils.js:117
+msgid "Update"
+msgstr "Cập nhật"
+
+#: src/components/role/config.js:18 src/components/staff/config.js:19
+#: src/components/variable/config.js:18
+#, javascript-format
+msgid "Do you want to remote this ${ name }?"
+msgstr "Bạn có muốn xóa ${ name } này?"
+
+#: src/components/role/config.js:19 src/components/staff/config.js:20
+#: src/components/variable/config.js:19
+msgid "Do you want to remote these ${ name }?"
+msgstr "Bạn có muốn xóa những ${ name } này?"
+
+#: src/components/common/table/buttons.jsx:23 src/components/role/table.jsx:125
+#: src/components/staff/table.jsx:143
+msgid "Remove selected"
+msgstr "Xóa chọn"
+
+#: src/components/staff/config.js:34
+msgid "Lastname"
+msgstr "Họ và tên đệm"
+
+#: src/components/staff/config.js:35
+msgid "Firstname"
+msgstr "Tên"
+
+#: src/components/role/config.js:29
+msgid "Group name"
+msgstr "Tên nhóm"
+
+#: src/components/role/config.js:30
+msgid "Permissions"
+msgstr "Quyền"
+
+#: src/components/common/table/search_input.jsx:25
+msgid "Search"
+msgstr "Tìm kiếm"
+
+#: src/components/common/table/buttons.jsx:45
+msgid "Remove"
+msgstr "Xóa"
