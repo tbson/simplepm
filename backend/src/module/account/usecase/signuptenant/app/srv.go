@@ -99,6 +99,9 @@ func (srv Service) SignupTenant(
 		lastName,
 		mobile,
 	)
+	if err != nil {
+		return err
+	}
 
 	// set password
 	err = srv.iamRepo.SetPassword(accessToken, sub, realm, password)
