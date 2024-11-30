@@ -3,6 +3,7 @@ package setting
 import (
 	"fmt"
 	"src/util/frameworkutil"
+	"src/util/numberutil"
 )
 
 var DEBUG bool = frameworkutil.GetEnv("DEBUG", "true") == "true"
@@ -46,7 +47,9 @@ var KEYCLOAK_POST_LOGOUT_URI string = fmt.Sprintf(
 	BASE_URL,
 	frameworkutil.GetEnv("KEYCLOAK_POST_LOGOUT_URI", ""),
 )
-
+var KEYCLOAK_CLOCK_SKEW int = numberutil.StrToInt(
+	frameworkutil.GetEnv("KEYCLOAK_CLOCK_SKEW", "2"), 2,
+)
 var FE_REDIRECT_URI string = fmt.Sprintf(
 	"%s%s",
 	BASE_URL,

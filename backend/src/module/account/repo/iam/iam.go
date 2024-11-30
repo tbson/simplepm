@@ -103,6 +103,7 @@ func (r Repo) ValidateCallback(
 
 	userInfo, err := r.ValidateToken(idToken, realm)
 	if err != nil {
+		r.Logout(clientId, clientSecret, realm, refreshToken)
 		return result, err
 	}
 
@@ -137,7 +138,7 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, er
 	}
 
 	// Parse the JWT token to extract headers and claims
-	clockSkew := 0 * time.Minute
+	clockSkew := time.Duration(setting.KEYCLOAK_CLOCK_SKEW) * time.Minute
 	token, err := jwt.Parse(
 		[]byte(tokenStr),
 		jwt.WithKeySet(keySet),
@@ -181,7 +182,7 @@ func (r Repo) GetSub(tokenStr string, realm string) (string, error) {
 	result := ""
 
 	// Parse the JWT token to extract headers and claims
-	clockSkew := 0 * time.Minute
+	clockSkew := time.Duration(setting.KEYCLOAK_CLOCK_SKEW) * time.Minute
 	token, err := jwt.Parse(
 		[]byte(tokenStr),
 		jwt.WithVerify(false),                        // Skip signature verification
