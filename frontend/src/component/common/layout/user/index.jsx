@@ -7,32 +7,16 @@ import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     UserOutlined,
-    LogoutOutlined,
     TagsOutlined,
     TeamOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
-import Util from 'service/helper/util';
-import StorageUtil from 'service/helper/storage_util';
 import PemUtil from 'service/helper/pem_util';
 import NavUtil from 'service/helper/nav_util';
-import LocaleSelect from 'component/common/locale_select.jsx';
+import UserMenu from './user_menu';
 import styles from './styles.module.css';
 
 const { Header, Footer, Sider, Content } = Layout;
-
-/**
- * processSelectedKeys.
- *
- * @param {string} pathname
- * @returns {string}
- */
-function processSelectedKeys(pathname) {
-    if (pathname.startsWith('/user')) {
-        return '/user';
-    }
-    return [pathname];
-}
 
 /**
  * UserLayout.
@@ -41,9 +25,6 @@ export default function UserLayout() {
     const navigate = useNavigate();
     const location = useLocation();
     const [menuItems, setMenuItems] = useState([]);
-    const [selectedKeys, setSelectedKeys] = useState(
-        processSelectedKeys(location.pathname)
-    );
 
     const [collapsed, setCollapsed] = useState(false);
     const toggle = () => {
@@ -54,7 +35,6 @@ export default function UserLayout() {
         setMenuItems(getMenuItems());
     }, []);
 
-    const logout = NavUtil.logout(navigate);
     const navigateTo = NavUtil.navigateTo(navigate);
 
     const getMenuItems = () => {
@@ -93,26 +73,18 @@ export default function UserLayout() {
                     {collapsed || (
                         <div className="logo">
                             <div className="logo-text">
-                                <NavLink
-                                    to="/"
-                                    onClick={() => {
-                                        setSelectedKeys(['/']);
-                                    }}
-                                >
-                                    {LOGO_TEXT}
-                                </NavLink>
+                                <NavLink to="/">{LOGO_TEXT}</NavLink>
                             </div>
                         </div>
                     )}
                     <Menu
                         className="sidebar-nav"
-                        selectedKeys={selectedKeys}
+                        selectedKeys={[location.pathname]}
                         theme="dark"
                         mode="inline"
                         items={menuItems}
                         onSelect={({ key }) => {
                             navigateTo(key);
-                            setSelectedKeys([key]);
                         }}
                     />
                 </div>
@@ -131,16 +103,7 @@ export default function UserLayout() {
                         </Col>
                         <Col span={12} style={{ paddingRight: 5 }}>
                             <Flex gap={5} justify="flex-end">
-                                <span>{StorageUtil.getUserInfo()?.first_name}</span>
-                                <LocaleSelect />
-                                <Button
-                                    icon={<LogoutOutlined />}
-                                    onClick={() => {
-                                        Util.toggleGlobalLoading();
-                                        logout();
-                                    }}
-                                    danger
-                                />
+                                <UserMenu />
                             </Flex>
                         </Col>
                     </Row>
