@@ -15,6 +15,7 @@ type TenantRepo interface {
 
 type UserRepo interface {
 	GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
+	Update(id uint, data ctype.Dict) (*schema.User, error)
 }
 
 type RoleRepo interface {

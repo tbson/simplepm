@@ -88,12 +88,17 @@ func (srv Service) InitData() error {
 		"Email":      email,
 		"FirstName":  "Admin",
 		"LastName":   "Admin",
-		"Admin":      true,
 		"Roles":      []schema.Role{*adminRole},
 	}
-	_, err = srv.userRepo.GetOrCreate(queryOptions, userData)
+	user, err := srv.userRepo.GetOrCreate(queryOptions, userData)
 	if err != nil {
 		return err
 	}
+
+	// Update admin attribute
+	userData = ctype.Dict{
+		"Admin": true,
+	}
+	_, err = srv.userRepo.Update(user.ID, userData)
 	return nil
 }
