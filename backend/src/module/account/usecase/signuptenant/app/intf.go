@@ -17,6 +17,7 @@ type TenantRepo interface {
 type RoleRepo interface {
 	Retrieve(queryOptions ctype.QueryOptions) (*schema.Role, error)
 	EnsureTenantRoles(ID uint, Uid string) error
+	EnsureRolesPems(pemMap ctype.PemMap, queryOptions ctype.QueryOptions) error
 }
 
 type UserRepo interface {

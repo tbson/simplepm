@@ -8,6 +8,7 @@ import (
 	custommw "src/middleware"
 	"src/route"
 	"src/util/dbutil"
+	"src/util/routeutil"
 
 	sentry "github.com/getsentry/sentry-go"
 	sentryecho "github.com/getsentry/sentry-go/echo"
@@ -79,7 +80,8 @@ func main() {
 	e.Use(custommw.LangMiddleware)
 
 	apiGroup := e.Group("/api/v1")
-	route.CollectRoutes(apiGroup)
+	_, pemMap := route.CollectRoutes(apiGroup)
+	routeutil.SetPemMap(&pemMap)
 	e.GET("/api/v1/swagger/*", echoSwagger.WrapHandler)
 	e.Logger.Fatal(e.Start("0.0.0.0:4000"))
 }

@@ -30,8 +30,18 @@ type HandleMap struct {
 	Rbac    RuteRbacHandlerFunc
 }
 
+var pemMap *ctype.PemMap
+
 func getFnPath(fn interface{}) string {
 	return runtime.FuncForPC(reflect.ValueOf(fn).Pointer()).Name()
+}
+
+func SetPemMap(pemMapParam *ctype.PemMap) {
+	pemMap = pemMapParam
+}
+
+func GetPemMap() ctype.PemMap {
+	return *pemMap
 }
 
 func GetHandlerInfo(ctrl echo.HandlerFunc) (string, string) {

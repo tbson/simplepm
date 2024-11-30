@@ -5,8 +5,6 @@ import (
 	"src/common/ctype"
 	"src/common/profiletype"
 	"src/module/account/repo/pem"
-	"src/module/account/repo/role"
-	"src/module/account/schema"
 
 	"gorm.io/gorm"
 )
@@ -68,39 +66,5 @@ func (r Repo) WritePems(pemMap ctype.PemMap) error {
 			panic(err)
 		}
 	}
-	return nil
-}
-
-func (r Repo) EnsureRolesPems(pemMap ctype.PemMap) error {
-	// get all roles
-	roleRepo := role.New(r.client)
-	pemRepo := pem.New(r.client)
-	roles, err := roleRepo.List(ctype.QueryOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, role := range roles {
-		newPems := []*schema.Pem{}
-		// clear all pems
-		r.client.Model(&role).Association("Pems").Clear()
-		for _, pemData := range pemMap {
-			filterOptions := ctype.QueryOptions{
-				Filters: ctype.Dict{
-					"module": pemData.Module,
-					"action": pemData.Action,
-				},
-			}
-			pem, err := pemRepo.Retrieve(filterOptions)
-			if err != nil {
-				return err
-			}
-			if slices.Contains(pemData.ProfileTypes, role.Title) {
-				newPems = append(newPems, pem)
-			}
-		}
-		r.client.Model(&role).Association("Pems").Append(newPems)
-	}
-
 	return nil
 }

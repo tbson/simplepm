@@ -142,6 +142,11 @@ elif [ "$FIRST_ARG" == "btest" ]; then
     setTestEnv
     migrate
     docker compose exec "$NAME"_backend go test ./...
+elif [ "$FIRST_ARG" == "setup" ]; then
+    setNonTestEnv
+    migrate
+    docker compose exec "$NAME"_backend go run ./command/syncrolespems
+    docker compose exec "$NAME"_backend go run ./command/initdata
 elif [ "$FIRST_ARG" == "up" ]; then
     docker_up
 elif [ "$FIRST_ARG" == "down" ]; then

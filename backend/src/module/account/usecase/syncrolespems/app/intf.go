@@ -7,11 +7,11 @@ import (
 
 type SynRolesPemsRepo interface {
 	WritePems(pemMap ctype.PemMap) error
-	EnsureRolesPems(pemMap ctype.PemMap) error
 }
 
 type RoleRepo interface {
 	EnsureTenantRoles(ID uint, Uid string) error
+	EnsureRolesPems(pemMap ctype.PemMap, queryOptions ctype.QueryOptions) error
 }
 
 type TenantRepo interface {

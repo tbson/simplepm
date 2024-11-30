@@ -31,6 +31,6 @@ func (srv Service) ensureAllTenantRoles() error {
 func (srv Service) SyncRolesPems(pemMap ctype.PemMap) error {
 	srv.repo.WritePems(pemMap)
 	srv.ensureAllTenantRoles()
-	srv.repo.EnsureRolesPems(pemMap)
+	srv.roleRepo.EnsureRolesPems(pemMap, ctype.QueryOptions{})
 	return nil
 }

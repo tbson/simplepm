@@ -6,7 +6,10 @@ import (
 	"src/module/account/repo/tenant"
 	"src/module/account/repo/user"
 	"src/module/account/usecase/initdata/app"
+	"src/route"
 	"src/util/dbutil"
+
+	"github.com/labstack/echo/v4"
 )
 
 func main() {
@@ -17,13 +20,17 @@ func main() {
 		panic(tx.Error.Error())
 	}
 
+	e := echo.New()
+	apiGroup := e.Group("/api/v1")
+	_, pemMap := route.CollectRoutes(apiGroup)
+
 	authClientRepo := authclient.New(tx)
 	tenantRepo := tenant.New(tx)
 	userRepo := user.New(tx)
 	roleRepo := role.New(tx)
 
 	srv := app.New(authClientRepo, tenantRepo, userRepo, roleRepo)
-	err := srv.InitData()
+	err := srv.InitData(pemMap)
 	if err != nil {
 		tx.Rollback()
 		panic(err)

@@ -1,12 +1,15 @@
 package role
 
 import (
+	"slices"
 	"src/common/ctype"
 	"src/common/profiletype"
 	"src/common/setting"
 	"src/module/account/schema"
 	"src/util/dictutil"
 	"src/util/errutil"
+
+	"src/module/account/repo/pem"
 
 	"gorm.io/gorm"
 )
@@ -161,6 +164,41 @@ func (r Repo) EnsureTenantRoles(ID uint, Uid string) error {
 			"Title":    roleTitle,
 		}
 		r.GetOrCreate(filterOptions, data)
+	}
+	return nil
+}
+
+func (r Repo) EnsureRolesPems(
+	pemMap ctype.PemMap,
+	queryOptions ctype.QueryOptions,
+) error {
+	// get all roles
+	pemRepo := pem.New(r.client)
+	roles, err := r.List(queryOptions)
+	if err != nil {
+		return err
+	}
+
+	for _, role := range roles {
+		newPems := []*schema.Pem{}
+		// clear all pems
+		r.client.Model(&role).Association("Pems").Clear()
+		for _, pemData := range pemMap {
+			filterOptions := ctype.QueryOptions{
+				Filters: ctype.Dict{
+					"module": pemData.Module,
+					"action": pemData.Action,
+				},
+			}
+			pem, err := pemRepo.Retrieve(filterOptions)
+			if err != nil {
+				return err
+			}
+			if slices.Contains(pemData.ProfileTypes, role.Title) {
+				newPems = append(newPems, pem)
+			}
+		}
+		r.client.Model(&role).Association("Pems").Append(newPems)
 	}
 	return nil
 }

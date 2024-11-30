@@ -5,6 +5,7 @@ import (
 	"src/common/ctype"
 	"src/util/dbutil"
 	"src/util/errutil"
+	"src/util/routeutil"
 	"src/util/ssoutil"
 	"src/util/vldtutil"
 
@@ -23,6 +24,8 @@ func SignupTenant(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+
+	pemMap := routeutil.GetPemMap()
 
 	// for tenant
 	uid := data["Uid"].(string)
@@ -52,6 +55,7 @@ func SignupTenant(c echo.Context) error {
 	srv := app.New(authClientRepo, tenantRepo, userRepo, roleRepo, iamRepo)
 
 	err = srv.SignupTenant(
+		pemMap,
 		uid,
 		title,
 		email,

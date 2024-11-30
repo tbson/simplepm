@@ -22,7 +22,7 @@ func New(
 	return Service{authClientRepo, tenantRepo, userRepo, roleRepo}
 }
 
-func (srv Service) InitData() error {
+func (srv Service) InitData(pemMap ctype.PemMap) error {
 	// Init auth client
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
@@ -59,6 +59,17 @@ func (srv Service) InitData() error {
 
 	// Sync roles for tenant
 	err = srv.roleRepo.EnsureTenantRoles(tenant.ID, tenant.Uid)
+	if err != nil {
+		return err
+	}
+
+	// Sync roles and permissions
+	queryOptions = ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"TenantID": tenant.ID,
+		},
+	}
+	err = srv.roleRepo.EnsureRolesPems(pemMap, queryOptions)
 	if err != nil {
 		return err
 	}

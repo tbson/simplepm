@@ -30,6 +30,7 @@ func New(
 }
 
 func (srv Service) SignupTenant(
+	pemMap ctype.PemMap,
 	uid string,
 	title string,
 	email string,
@@ -60,13 +61,24 @@ func (srv Service) SignupTenant(
 		"Title":        title,
 	}
 
-	tentant, err := srv.tenantRepo.Create(tenantData)
+	tenant, err := srv.tenantRepo.Create(tenantData)
 	if err != nil {
 		return err
 	}
 
 	// ensure tenant roles
-	err = srv.roleRepo.EnsureTenantRoles(tentant.ID, tentant.Uid)
+	err = srv.roleRepo.EnsureTenantRoles(tenant.ID, tenant.Uid)
+	if err != nil {
+		return err
+	}
+
+	// Sync roles and permissions
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"TenantID": tenant.ID,
+		},
+	}
+	err = srv.roleRepo.EnsureRolesPems(pemMap, queryOptions)
 	if err != nil {
 		return err
 	}
@@ -74,7 +86,7 @@ func (srv Service) SignupTenant(
 	// get MANAGER role
 	roleOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
-			"TenantID": tentant.ID,
+			"TenantID": tenant.ID,
 			"Title":    "MANAGER",
 		},
 	}
@@ -111,7 +123,7 @@ func (srv Service) SignupTenant(
 
 	// create user
 	userData := ctype.Dict{
-		"TenantID":  tentant.ID,
+		"TenantID":  tenant.ID,
 		"Email":     email,
 		"Mobile":    mobile,
 		"FirstName": firstName,
