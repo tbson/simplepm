@@ -6,7 +6,6 @@ import { Layout, Menu, Row, Col, Flex } from 'antd';
 import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
-    UserOutlined,
     TagsOutlined,
     TeamOutlined
 } from '@ant-design/icons';
@@ -26,7 +25,7 @@ export default function UserLayout() {
     const location = useLocation();
     const [menuItems, setMenuItems] = useState([]);
 
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const toggle = () => {
         setCollapsed(!collapsed);
     };
@@ -40,7 +39,6 @@ export default function UserLayout() {
     const getMenuItems = () => {
         const result = [];
 
-        result.push({ label: t`Profile`, key: '/', icon: <UserOutlined /> });
         PemUtil.canView('crudrole') &&
             result.push({
                 label: t`Role`,
@@ -61,13 +59,10 @@ export default function UserLayout() {
             <Sider
                 trigger={null}
                 breakpoint="lg"
-                collapsedWidth="34"
+                collapsedWidth="42"
                 theme="dark"
                 collapsible
                 collapsed={collapsed}
-                onBreakpoint={(broken) => {
-                    setCollapsed(broken);
-                }}
             >
                 <div className="sider">
                     {collapsed || (
@@ -78,7 +73,6 @@ export default function UserLayout() {
                         </div>
                     )}
                     <Menu
-                        className="sidebar-nav"
                         selectedKeys={[location.pathname]}
                         theme="dark"
                         mode="inline"
@@ -91,8 +85,8 @@ export default function UserLayout() {
             </Sider>
             <Layout className="site-layout">
                 <Header className="site-layout-header" style={{ padding: 0 }}>
-                    <Row>
-                        <Col span={12}>
+                    <div style={{ display: 'flex' }}>
+                        <div style={{ width: 34, paddingLeft: 2, backgroundColor: "white" }}>
                             {React.createElement(
                                 collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
                                 {
@@ -100,13 +94,21 @@ export default function UserLayout() {
                                     onClick: toggle
                                 }
                             )}
-                        </Col>
-                        <Col span={12} style={{ paddingRight: 5 }}>
-                            <Flex gap={5} justify="flex-end">
-                                <UserMenu />
-                            </Flex>
-                        </Col>
-                    </Row>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <Menu
+                                mode="horizontal"
+                                selectedKeys={[location.pathname]}
+                                items={menuItems}
+                                onSelect={({ key }) => {
+                                    navigateTo(key);
+                                }}
+                            />
+                        </div>
+                        <div style={{ width: 34, backgroundColor: "white" }} >
+                            <UserMenu />
+                        </div>
+                    </div>
                 </Header>
                 <Content className="site-layout-content">
                     <Outlet />
