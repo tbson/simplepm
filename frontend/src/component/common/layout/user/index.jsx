@@ -2,12 +2,13 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Outlet, NavLink } from 'react-router-dom';
 import { t } from 'ttag';
-import { Layout, Menu, Row, Col, Flex } from 'antd';
+import { Layout, Menu } from 'antd';
 import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
-    TagsOutlined,
-    TeamOutlined
+    UserOutlined,
+    TeamOutlined,
+    AppstoreOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
 import PemUtil from 'service/helper/pem_util';
@@ -43,13 +44,19 @@ export default function UserLayout() {
             result.push({
                 label: t`Role`,
                 key: `/account/role`,
-                icon: <TagsOutlined />
+                icon: <TeamOutlined />
             });
         PemUtil.canView('cruduser') &&
             result.push({
                 label: t`User`,
                 key: `/account/user`,
-                icon: <TeamOutlined />
+                icon: <UserOutlined />
+            });
+        PemUtil.canView('crudworkspace') &&
+            result.push({
+                label: t`Workspace`,
+                key: `/project/workspace`,
+                icon: <AppstoreOutlined />
             });
         return result;
     };

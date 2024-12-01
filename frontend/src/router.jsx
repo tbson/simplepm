@@ -71,17 +71,15 @@ const router = createBrowserRouter([
                             {
                                 path: 'role',
                                 lazy: async () => ({
-                                    Component: (
-                                        await import('component/account/role')
-                                    ).default
+                                    Component: (await import('component/account/role'))
+                                        .default
                                 })
                             },
                             {
                                 path: 'user',
                                 lazy: async () => ({
-                                    Component: (
-                                        await import('component/account/user')
-                                    ).default
+                                    Component: (await import('component/account/user'))
+                                        .default
                                 })
                             }
                         ]
@@ -131,16 +129,22 @@ const router = createBrowserRouter([
                             {
                                 path: 'account/role',
                                 lazy: async () => ({
-                                    Component: (
-                                        await import('component/account/role')
-                                    ).default
+                                    Component: (await import('component/account/role'))
+                                        .default
                                 })
                             },
                             {
                                 path: 'account/user',
                                 lazy: async () => ({
+                                    Component: (await import('component/account/user'))
+                                        .default
+                                })
+                            },
+                            {
+                                path: 'project/workspace',
+                                lazy: async () => ({
                                     Component: (
-                                        await import('component/account/user')
+                                        await import('component/project/workspace')
                                     ).default
                                 })
                             }

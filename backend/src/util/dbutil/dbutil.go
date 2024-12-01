@@ -10,6 +10,7 @@ import (
 
 	account "src/module/account/schema"
 	config "src/module/config/schema"
+	project "src/module/project/schema"
 )
 
 const DEFAULT_PAGE_SIZE = 10
@@ -25,6 +26,8 @@ func RegisterModels() []interface{} {
 		&account.User{},
 		&account.Role{},
 		&account.Pem{},
+		&project.Workspace{},
+		&project.WorkspaceUser{},
 	}
 }
 
