@@ -2,20 +2,12 @@ package app
 
 import (
 	"context"
+	"src/common/authtype"
 	"src/common/ctype"
 	"src/module/account/schema"
-	"src/util/ssoutil"
-	"time"
 )
 
 type PemModulesActionsMap map[string][]string
-
-type AuthUserResult struct {
-	ID       uint
-	Admin    bool
-	LockedAt *time.Time
-	Sub      *string
-}
 
 type AuthClientInfo struct {
 	TenantID     uint
@@ -38,7 +30,7 @@ type IamRepo interface {
 		clientId string,
 		clientSecret string,
 		code string,
-	) (ssoutil.TokensAndClaims, error)
+	) (authtype.SsoCallbackResult, error)
 	GetSub(tokenStr string, realm string) (string, error)
 	RefreshToken(
 		ctx context.Context,
@@ -46,12 +38,12 @@ type IamRepo interface {
 		refreshToken string,
 		clientId string,
 		clientSecret string,
-	) (ssoutil.TokensAndClaims, error)
+	) (authtype.SsoCallbackResult, error)
 	Logout(clientId string, clientSecret string, realm string, refreshToken string) error
 }
 
 type AuthRepo interface {
-	GetTenantUser(tenantID uint, email string) (AuthUserResult, error)
+	GetTenantUser(tenantID uint, email string) (authtype.AuthUserInfo, error)
 	GetAuthClientFromTenantUid(tenantUid string) (AuthClientInfo, error)
 	GetAuthClientFromSub(tenantUid string) (AuthClientInfo, error)
 	GetPemModulesActionsMap(userId uint) (PemModulesActionsMap, error)

@@ -3,15 +3,15 @@ package infra
 import (
 	"encoding/json"
 	"net/http"
+	"src/common/authtype"
 	"src/common/ctype"
 	"src/util/cookieutil"
 	"src/util/dbutil"
-	"src/util/ssoutil"
 
 	"github.com/labstack/echo/v4"
 )
 
-func CallbackPres(c echo.Context, r ssoutil.TokensAndClaims) error {
+func CallbackPres(c echo.Context, r authtype.AuthCallbackResult) error {
 	authRepo := New(dbutil.Db())
 
 	accessTokenCookie := cookieutil.NewAccessTokenCookie(r.AccessToken)
@@ -42,7 +42,7 @@ func CallbackPres(c echo.Context, r ssoutil.TokensAndClaims) error {
 	return c.Render(http.StatusOK, "post-login.html", data)
 }
 
-func RefreshTokenPres(c echo.Context, r ssoutil.TokensAndClaims) error {
+func RefreshTokenPres(c echo.Context, r authtype.SsoCallbackResult) error {
 	accessTokenCookie := cookieutil.NewAccessTokenCookie(r.AccessToken)
 	realmCookie := cookieutil.NewRealmCookie(r.Realm)
 	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(r.RefreshToken)

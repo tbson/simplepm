@@ -3,6 +3,7 @@ package iam
 import (
 	"context"
 	"fmt"
+	"src/common/authtype"
 	"src/common/ctype"
 	"src/common/setting"
 	"src/util/errutil"
@@ -70,8 +71,8 @@ func (r Repo) ValidateCallback(
 	clientId string,
 	clientSecret string,
 	code string,
-) (ssoutil.TokensAndClaims, error) {
-	var result ssoutil.TokensAndClaims
+) (authtype.SsoCallbackResult, error) {
+	var result authtype.SsoCallbackResult
 	localizer := localeutil.Get()
 
 	if code == "" {
@@ -116,7 +117,7 @@ func (r Repo) ValidateCallback(
 	}
 	userInfo.Sub = ssoUserInfo.Sub
 
-	result = ssoutil.TokensAndClaims{
+	result = authtype.SsoCallbackResult{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
 		Realm:        realm,
@@ -126,9 +127,9 @@ func (r Repo) ValidateCallback(
 }
 
 // TODO: Implement checking kid
-func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, error) {
+func (r Repo) ValidateToken(tokenStr string, realm string) (authtype.SsoUserInfo, error) {
 	localizer := localeutil.Get()
-	result := ssoutil.UserInfo{}
+	result := authtype.SsoUserInfo{}
 	jwksURL := getJwksUrl(realm)
 
 	// Fetch the JWKS (public keys)
@@ -167,7 +168,7 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (ssoutil.UserInfo, er
 	// If verification is successful, print the claims
 	claims := token.PrivateClaims()
 
-	result = ssoutil.UserInfo{
+	result = authtype.SsoUserInfo{
 		ExternalID: claims["preferred_username"].(string),
 		Email:      claims["email"].(string),
 		FirstName:  claims["given_name"].(string),
@@ -228,8 +229,8 @@ func (r Repo) RefreshToken(
 	refreshToken string,
 	clientId string,
 	clientSecret string,
-) (ssoutil.TokensAndClaims, error) {
-	var result ssoutil.TokensAndClaims
+) (authtype.SsoCallbackResult, error) {
+	var result authtype.SsoCallbackResult
 	localizer := localeutil.Get()
 	if refreshToken == "" {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -262,7 +263,7 @@ func (r Repo) RefreshToken(
 		return result, err
 	}
 
-	result = ssoutil.TokensAndClaims{
+	result = authtype.SsoCallbackResult{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
 		Realm:        realm,

@@ -2,6 +2,7 @@ package infra
 
 import (
 	"slices"
+	"src/common/authtype"
 	"src/common/ctype"
 	"src/module/account/repo/tenant"
 	"src/module/account/repo/user"
@@ -28,23 +29,36 @@ func New(client *gorm.DB) Repo {
 func (r Repo) GetTenantUser(
 	tenantID uint,
 	email string,
-) (app.AuthUserResult, error) {
+) (authtype.AuthUserInfo, error) {
 	repo := user.New(r.client)
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
 			"tenant_id": tenantID,
 			"email":     email,
 		},
+		Preloads: []string{"Tenant"},
 	}
 	user, err := repo.Retrieve(queryOptions)
 	if err != nil {
-		return app.AuthUserResult{}, err
+		return authtype.AuthUserInfo{}, err
 	}
-	result := app.AuthUserResult{
-		ID:       user.ID,
-		Admin:    user.Admin,
-		LockedAt: user.LockedAt,
-		Sub:      user.Sub,
+	profileType := "user"
+	if user.Admin {
+		profileType = "admin"
+	}
+	result := authtype.AuthUserInfo{
+		ID:          user.ID,
+		TenantID:    user.TenantID,
+		TenantUid:   user.Tenant.Uid,
+		Sub:         user.Sub,
+		Admin:       user.Admin,
+		ProfileType: profileType,
+		LockedAt:    user.LockedAt,
+		Email:       user.Email,
+		FistName:    user.FirstName,
+		LastName:    user.LastName,
+		Mobile:      user.Mobile,
+		Avatar:      user.Avatar,
 	}
 	return result, err
 }

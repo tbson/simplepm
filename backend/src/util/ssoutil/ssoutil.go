@@ -17,24 +17,6 @@ import (
 
 var client *gocloak.GoCloak
 
-type UserInfo struct {
-	ID          uint    `json:"id"`
-	ExternalID  string  `json:"external_id"`
-	Sub         *string `json:"sub"`
-	Email       string  `json:"email"`
-	FirstName   string  `json:"first_name"`
-	LastName    string  `json:"last_name"`
-	ProfileType string  `json:"profile_type"`
-	TenantUid   string  `json:"tenant_uid"`
-}
-
-type TokensAndClaims struct {
-	AccessToken  string   `json:"access_token"`
-	RefreshToken string   `json:"refresh_token"`
-	Realm        string   `json:"realm"`
-	UserInfo     UserInfo `json:"user_info"`
-}
-
 func Client() *gocloak.GoCloak {
 	if client != nil {
 		return client

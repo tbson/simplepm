@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"src/common/authtype"
 	"src/common/ctype"
 	"src/util/dictutil"
 	"src/util/errutil"
@@ -73,15 +74,16 @@ func (srv Service) HandleCallback(
 	ctx context.Context,
 	state string,
 	code string,
-) (ssoutil.TokensAndClaims, error) {
+) (authtype.AuthCallbackResult, error) {
+	blankResult := authtype.AuthCallbackResult{}
 	tenantUid, err := srv.parseTenantUidFromState(state)
 	if err != nil {
-		return ssoutil.TokensAndClaims{}, err
+		return blankResult, err
 	}
 
 	authClientInfo, err := srv.authRepo.GetAuthClientFromTenantUid(tenantUid)
 	if err != nil {
-		return ssoutil.TokensAndClaims{}, err
+		return blankResult, err
 	}
 	tenantID := authClientInfo.TenantID
 	realm := authClientInfo.Realm
@@ -93,24 +95,17 @@ func (srv Service) HandleCallback(
 	)
 
 	if err != nil {
-		return ssoutil.TokensAndClaims{}, err
+		return blankResult, err
 	}
 
 	userInfo := tokensAndClaims.UserInfo
 	user, err := srv.authRepo.GetTenantUser(tenantID, userInfo.Email)
 	if err != nil {
 		userData := dictutil.StructToDict(userInfo)
-		delete(userData, "ID")
-		delete(userData, "ProfileType")
-		delete(userData, "TenantUid")
 		userData["TenantID"] = tenantID
-		newUser, err := srv.userRepo.Create(userData)
-		user = AuthUserResult{
-			ID:    newUser.ID,
-			Admin: newUser.Admin,
-		}
+		_, err := srv.userRepo.Create(userData)
 		if err != nil {
-			return tokensAndClaims, err
+			return blankResult, err
 		}
 	} else {
 		localizer := localeutil.Get()
@@ -119,43 +114,38 @@ func (srv Service) HandleCallback(
 			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 				DefaultMessage: localeutil.LockedAccount,
 			})
-			return tokensAndClaims, errutil.New("", []string{msg})
+			return blankResult, errutil.New("", []string{msg})
 		}
 
 		userData := dictutil.StructToDict(userInfo)
-		delete(userData, "ID")
-		delete(userData, "ProfileType")
-		delete(userData, "TenantUid")
-		userData["TenantID"] = tenantID
 		_, err = srv.userRepo.Update(user.ID, userData)
 		if err != nil {
-			return tokensAndClaims, err
+			return blankResult, err
 		}
 	}
 
-	if user.Admin {
-		tokensAndClaims.UserInfo.ProfileType = "admin"
-	} else {
-		tokensAndClaims.UserInfo.ProfileType = "user"
+	result := authtype.AuthCallbackResult{
+		AccessToken:  tokensAndClaims.AccessToken,
+		RefreshToken: tokensAndClaims.RefreshToken,
+		Realm:        tokensAndClaims.Realm,
+		UserInfo:     user,
 	}
-	tokensAndClaims.UserInfo.TenantUid = tenantUid
-	tokensAndClaims.UserInfo.ID = user.ID
-	return tokensAndClaims, nil
+	return result, nil
 }
 
 func (srv Service) RefreshToken(
 	ctx context.Context,
 	realm string,
 	refreshToken string,
-) (ssoutil.TokensAndClaims, error) {
+) (authtype.SsoCallbackResult, error) {
 	sub, err := srv.iamRepo.GetSub(refreshToken, realm)
 	if err != nil {
-		return ssoutil.TokensAndClaims{}, err
+		return authtype.SsoCallbackResult{}, err
 	}
 
 	authClientInfo, err := srv.authRepo.GetAuthClientFromSub(sub)
 	if err != nil {
-		return ssoutil.TokensAndClaims{}, err
+		return authtype.SsoCallbackResult{}, err
 	}
 
 	clientId := authClientInfo.ClientID
@@ -165,7 +155,7 @@ func (srv Service) RefreshToken(
 		ctx, realm, refreshToken, clientId, clientSecret,
 	)
 	if err != nil {
-		return ssoutil.TokensAndClaims{}, err
+		return authtype.SsoCallbackResult{}, err
 	}
 
 	return tokensAndClaims, nil

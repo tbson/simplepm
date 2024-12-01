@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Outlet, NavLink } from 'react-router-dom';
 import { t } from 'ttag';
-import { Layout, Menu, Row, Col, Button, Flex } from 'antd';
+import { Layout, Menu, Row, Col, Flex } from 'antd';
 import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,

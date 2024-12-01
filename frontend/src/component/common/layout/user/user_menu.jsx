@@ -7,17 +7,11 @@ import Util from 'service/helper/util';
 import StorageUtil from 'service/helper/storage_util';
 import NavUtil from 'service/helper/nav_util';
 
-function MenuHeading() {
-    const userInfo = StorageUtil.getUserInfo();
-    if (!userInfo) {
-        return null;
-    }
-    const { email, first_name, last_name } = userInfo;
-    const fullName = `${first_name} ${last_name}`;
+function MenuHeading({ email, fullName, avatar }) {
     return (
         <div style={{ display: 'flex' }}>
             <div style={{ width: 40 }}>
-                <Avatar icon={<UserOutlined />} />
+                <Avatar src={avatar} icon={<UserOutlined />} />
             </div>
             <div style={{ flex: 1 }}>
                 <div>
@@ -35,6 +29,14 @@ export default function UserMenu() {
     const location = useLocation();
     const logout = NavUtil.logout(navigate);
     const navigateTo = NavUtil.navigateTo(navigate);
+
+    const userInfo = StorageUtil.getUserInfo();
+    if (!userInfo) {
+        return null;
+    }
+    const { email, avatar, first_name, last_name } = userInfo;
+    const fullName = `${first_name} ${last_name}`;
+
     const handleLogout = () => {
         Util.toggleGlobalLoading();
         logout();
@@ -49,15 +51,19 @@ export default function UserMenu() {
 
     return (
         <>
-            <Avatar icon={<UserOutlined />} onClick={handleShow} className="pointer" />
+            <Avatar
+                src={avatar}
+                icon={<UserOutlined />}
+                onClick={handleShow}
+                className="pointer"
+            />
             <Drawer
-                destroyOnClose={true}
                 closeIcon={null}
                 title={null}
                 onClose={handleClose}
                 open={open}
             >
-                <MenuHeading />
+                <MenuHeading email={email} fullName={fullName} avatar={avatar} />
                 <Divider />
                 <Menu
                     inlineIndent={6}
