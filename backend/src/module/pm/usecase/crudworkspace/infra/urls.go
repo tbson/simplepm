@@ -10,7 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-var module = "project"
+var module = "pm"
 var useCaseGroup = "workspace"
 var useCaseGroupName = "workspace"
 

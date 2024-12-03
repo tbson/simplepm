@@ -3,7 +3,7 @@ import RequestUtil from 'service/helper/request_util';
 
 const urlMap = {
     base: {
-        prefix: 'project/workspace',
+        prefix: 'pm/workspace',
         endpoints: {
             crud: '',
         }

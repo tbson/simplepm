@@ -55,7 +55,7 @@ export default function UserLayout() {
         PemUtil.canView('crudworkspace') &&
             result.push({
                 label: t`Workspace`,
-                key: `/project/workspace`,
+                key: `/pm/workspace`,
                 icon: <AppstoreOutlined />
             });
         return result;
