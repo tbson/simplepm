@@ -1,7 +1,7 @@
 package infra
 
 import (
-	"src/module/project/schema"
+	"src/module/pm/schema"
 )
 
 type ListOutput = schema.Workspace

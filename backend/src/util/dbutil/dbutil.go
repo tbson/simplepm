@@ -10,7 +10,7 @@ import (
 
 	account "src/module/account/schema"
 	config "src/module/config/schema"
-	project "src/module/project/schema"
+	project "src/module/pm/schema"
 )
 
 const DEFAULT_PAGE_SIZE = 10

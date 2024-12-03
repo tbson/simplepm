@@ -2,7 +2,7 @@ package workspace
 
 import (
 	"src/common/ctype"
-	"src/module/project/schema"
+	"src/module/pm/schema"
 	"src/util/dictutil"
 	"src/util/errutil"
 

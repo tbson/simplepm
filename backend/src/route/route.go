@@ -12,7 +12,7 @@ import (
 	signuptenant "src/module/account/usecase/signuptenant/infra"
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 	configoption "src/module/config/usecase/option/infra"
-	crudworkspace "src/module/project/usecase/crudworkspace/infra"
+	crudworkspace "src/module/pm/usecase/crudworkspace/infra"
 
 	"github.com/labstack/echo/v4"
 )

@@ -8,8 +8,8 @@ import (
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
-	"src/module/project/repo/workspace"
-	"src/module/project/schema"
+	"src/module/pm/repo/workspace"
+	"src/module/pm/schema"
 
 	"github.com/labstack/echo/v4"
 )
