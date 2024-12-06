@@ -12,6 +12,8 @@ import (
 	"src/module/pm/repo/project"
 	"src/module/pm/schema"
 
+	"src/module/pm/repo/workspace"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,8 +26,25 @@ var filterableFields = []string{}
 var orderableFields = []string{"id", "title", "order"}
 
 func Option(c echo.Context) error {
+	tenantId := c.Get("TenantID").(uint)
+	workspaceRepo := workspace.New(dbutil.Db())
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"tenant_id": tenantId},
+	}
+	workspaces, err := workspaceRepo.List(queryOptions)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	workspaceOptions := []ctype.SelectOption[uint]{}
+	for _, workspace := range workspaces {
+		workspaceOptions = append(workspaceOptions, ctype.SelectOption[uint]{
+			Value: workspace.ID,
+			Label: workspace.Title,
+		})
+	}
+
 	result := ctype.Dict{
-		"workspace": []ctype.Dict{},
+		"workspace": workspaceOptions,
 		"layout":    pm.ProjectLayoutOptions,
 	}
 	return c.JSON(http.StatusOK, result)
@@ -37,6 +56,7 @@ func List(c echo.Context) error {
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	options.Filters["tenant_id"] = tenantId
+	options.Preloads = []string{"Workspace"}
 	listResult, err := pager.Paging(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -80,7 +100,7 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusCreated, MutatePres(*result))
 
 }
 
@@ -105,7 +125,7 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, MutatePres(*result))
 }
 
 func Delete(c echo.Context) error {

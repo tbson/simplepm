@@ -2,6 +2,7 @@ import axios from 'axios';
 import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import StorageUtil from 'service/helper/storage_util';
+import DateUtil from 'service/helper/date_util';
 import { PROTOCOL, DOMAIN, API_PREFIX } from 'src/const';
 
 export default class RequestUtil {
@@ -216,5 +217,39 @@ export default class RequestUtil {
         link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
+    }
+
+    /**
+     * formatPayload.
+     *
+     * @param {Object} data
+     * @param {string[]} dateFields
+     * @returns {Object}
+     */
+    static formatPayloadDate(data, dateFields) {
+        const result = { ...data };
+        for (const key of dateFields) {
+            if (result[key]) {
+                result[key] = DateUtil.toIsoDate(result[key]);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * formatResponseDate.
+     *
+     * @param {Object} data
+     * @param {string[]} dateFields
+     * @returns {Object}
+     */
+    static formatResponseDate(data, dateFields) {
+        const result = { ...data };
+        for (const key of dateFields) {
+            if (result[key]) {
+                result[key] = DateUtil.strToDate(result[key]);
+            }
+        }
+        return result;
     }
 }

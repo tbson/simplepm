@@ -3,12 +3,16 @@ import { useRef, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { Form, Input, InputNumber } from 'antd';
 import Util from 'service/helper/util';
+import RequestUtil from 'service/helper/request_util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
+import DateInput from 'component/common/form/ant/input/date_input';
 import { projectOptionSt } from 'component/pm/project/state';
 import { urls, getLabels } from '../config';
 
 const { TextArea } = Input;
+
+const dateFields = ['start_date', 'target_date'];
 
 const formName = 'ProjectForm';
 const emptyRecord = {
@@ -45,7 +49,9 @@ export default function ProjectForm({ data, onChange }) {
 
     const labels = getLabels();
 
-    const initialValues = Util.isEmpty(data) ? emptyRecord : data;
+    const initialValues = Util.isEmpty(data)
+        ? emptyRecord
+        : RequestUtil.formatResponseDate(data, dateFields);
     const { id } = initialValues;
 
     const endPoint = id ? `${urls.crud}${id}` : urls.crud;
@@ -64,11 +70,11 @@ export default function ProjectForm({ data, onChange }) {
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 18 }}
             initialValues={{ ...initialValues }}
-            onFinish={(payload) =>
+            onFinish={(payload) => {
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
-                    .catch(FormUtil.setFormErrors(form))
-            }
+                    .catch(FormUtil.setFormErrors(form));
+            }}
         >
             <Form.Item
                 name="title"
@@ -82,11 +88,11 @@ export default function ProjectForm({ data, onChange }) {
                 <TextArea />
             </Form.Item>
 
-            <Form.Item
-                name="workspace_id"
-                label={labels.workspace_id}
-            >
-                <SelectInput block options={projectOption.workspace} />
+            <Form.Item name="workspace_id" label={labels.workspace_id}>
+                <SelectInput
+                    block
+                    options={FormUtil.addOptional(projectOption.workspace)}
+                />
             </Form.Item>
 
             <Form.Item
@@ -95,6 +101,14 @@ export default function ProjectForm({ data, onChange }) {
                 rules={[FormUtil.ruleRequired()]}
             >
                 <SelectInput block options={projectOption.layout} />
+            </Form.Item>
+
+            <Form.Item name="start_date" label={labels.start_date}>
+                <DateInput />
+            </Form.Item>
+
+            <Form.Item name="target_date" label={labels.target_date}>
+                <DateInput />
             </Form.Item>
 
             <Form.Item name="order" label={labels.order}>

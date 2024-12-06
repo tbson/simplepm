@@ -142,9 +142,9 @@ export default function ProjectTable() {
 
     const columns = [
         {
-            key: 'workspace_id',
+            key: 'workspace_label',
             title: labels.workspace_id,
-            dataIndex: 'workspace_id',
+            dataIndex: 'workspace_label',
             width: 120,
             filterMultiple: false,
             filters: projectFilter.workspace,

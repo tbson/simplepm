@@ -10,7 +10,7 @@ class TableUitl {
         return options.map((option) => ({
             key: `${option.value}`,
             title: option.label,
-            description: option.description,
+            description: option.description
         }));
     }
 }

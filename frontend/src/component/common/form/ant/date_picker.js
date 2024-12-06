@@ -1,7 +1,5 @@
-import dateFnsGenerateConfig from "rc-picker/lib/generate/dateFns";
-import generatePicker from "antd/es/date-picker/generatePicker";
-import "antd/es/date-picker/style/index.css";
+import { DatePicker } from 'antd';
+import dateFnsGenerateConfig from 'rc-picker/lib/generate/dateFns';
 
-const DatePicker = generatePicker(dateFnsGenerateConfig);
-
-export default DatePicker;
+const MyDatePicker = DatePicker.generatePicker(dateFnsGenerateConfig);
+export default MyDatePicker;

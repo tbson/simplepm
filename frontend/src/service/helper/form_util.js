@@ -108,4 +108,8 @@ export default class FormUtil {
             message: `Trường "${fieldName}" có giá trị lớn nhất là: ${max}`
         };
     }
+
+    static addOptional(options, value = null, label = '--Select--') {
+        return [{ value, label }, ...options];
+    }
 }
