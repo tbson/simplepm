@@ -142,6 +142,8 @@ elif [ "$FIRST_ARG" == "btest" ]; then
     setTestEnv
     migrate
     docker compose exec "$NAME"_backend go test ./...
+elif [ "$FIRST_ARG" == "bupgrade" ]; then
+    docker compose exec "$NAME"_backend bash -c 'go get -u && go mod tidy'
 elif [ "$FIRST_ARG" == "setup" ]; then
     setNonTestEnv
     migrate
