@@ -147,6 +147,14 @@ const router = createBrowserRouter([
                                         await import('component/pm/workspace')
                                     ).default
                                 })
+                            },
+                            {
+                                path: 'pm/project',
+                                lazy: async () => ({
+                                    Component: (
+                                        await import('component/pm/project')
+                                    ).default
+                                })
                             }
                         ]
                     }
