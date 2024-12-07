@@ -230,7 +230,7 @@ export default class RequestUtil {
         const result = { ...data };
         for (const key of dateFields) {
             if (result[key]) {
-                result[key] = DateUtil.toIsoDate(result[key]);
+                result[key] = DateUtil.toIsoDateTime(result[key]);
             }
         }
         return result;

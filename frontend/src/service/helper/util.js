@@ -1,9 +1,6 @@
 import axios from 'axios';
 import { t } from 'ttag';
 
-export const DATE_REABLE_FORMAT = 'DD/MM/YYYY';
-export const DATE_ISO_FORMAT = 'YYYY-MM-DD';
-
 export default class Util {
     /**
      * responseIntercept.
@@ -23,7 +20,7 @@ export default class Util {
      * @returns {string}
      */
     static getValueFromEvent(e) {
-        const target = e.target;
+        const { target } = e;
         return target.value || '';
     }
 
@@ -34,7 +31,7 @@ export default class Util {
      * @returns {boolean}
      */
     static getCheckedFromEvent(e) {
-        const target = e.target;
+        const { target } = e;
         return !!target.checked || false;
     }
 
@@ -155,7 +152,9 @@ export default class Util {
      * @returns {string}
      */
     static dateFormat(strDate) {
-        if (!strDate) return strDate;
+        if (!strDate) {
+            return strDate;
+        }
         if (strDate.includes('T')) {
             strDate = strDate.split('T')[0];
         }
@@ -173,8 +172,12 @@ export default class Util {
      * @returns {string}
      */
     static isoToReadableDatetimeStr(strDate) {
-        if (!strDate) return strDate;
-        if (!strDate.includes('T')) return strDate;
+        if (!strDate) {
+            return strDate;
+        }
+        if (!strDate.includes('T')) {
+            return strDate;
+        }
         const dateArr = strDate.split('T');
         let datePart = dateArr[0];
         let timePart = dateArr[1];

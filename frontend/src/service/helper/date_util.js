@@ -1,4 +1,8 @@
-import { format } from "date-fns";
+import { format } from 'date-fns';
+
+export const DATE_REABLE_FORMAT = 'dd/MM/yyyy';
+export const DATE_ISO_FORMAT = 'yyyy-MM-dd';
+export const DATETIME_ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
 export default class DateUtil {
     /**
@@ -8,7 +12,7 @@ export default class DateUtil {
      * @returns {string}
      */
     static toReadableDate(date) {
-        return format(date, "dd/MM/yyyy");
+        return format(date, DATE_REABLE_FORMAT);
     }
 
     /**
@@ -19,7 +23,7 @@ export default class DateUtil {
      */
     static toIsoDate(date) {
         try {
-            return format(date, "yyyy-MM-dd");
+            return format(date, DATE_ISO_FORMAT);
         } catch (e) {
             return null;
         }
@@ -32,7 +36,11 @@ export default class DateUtil {
      * @returns {string}
      */
     static toIsoDateTime(date) {
-        return format(date, "yyyy-MM-dd HH:mm:ss");
+        try {
+            return format(date, DATETIME_ISO_FORMAT);
+        } catch (e) {
+            return null;
+        }
     }
 
     /**

@@ -23,7 +23,6 @@ export default function ImgInput({ value, onChange }) {
         const file = event.target.files[0];
         if (file) {
             const blobUrl = URL.createObjectURL(file);
-            console.log(blobUrl);
             setSrc(blobUrl); // Set the Blob URL as src for preview
             onChange(file); // Pass the file to onChange
             event.target.value = null; // Reset the file input for re-selection

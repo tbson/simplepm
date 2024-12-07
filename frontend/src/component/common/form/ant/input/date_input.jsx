@@ -1,6 +1,6 @@
-import * as React from "react";
-import DatePicker from "component/common/form/ant/date_picker";
-import { DATE_REABLE_FORMAT } from "service/helper/util";
+import * as React from 'react';
+import DatePicker from 'component/common/form/ant/date_picker';
+import { DATE_REABLE_FORMAT } from 'service/helper/date_util';
 
 /**
  * DateInput.
@@ -12,12 +12,22 @@ import { DATE_REABLE_FORMAT } from "service/helper/util";
  * @returns {ReactElement}
  */
 export default function DateInput({ value, onChange }) {
+    const handleChange = (date) => {
+        const now = new Date();
+        date.setHours(
+            now.getHours(),
+            now.getMinutes(),
+            now.getSeconds(),
+            now.getMilliseconds()
+        );
+        onChange(date);
+    };
     return (
         <DatePicker
             value={value}
-            onChange={onChange}
+            onChange={handleChange}
             format={DATE_REABLE_FORMAT}
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
         />
     );
 }

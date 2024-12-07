@@ -7,6 +7,7 @@ import RequestUtil from 'service/helper/request_util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
 import DateInput from 'component/common/form/ant/input/date_input';
+import ImgInput from 'component/common/form/ant/input/img_input';
 import { projectOptionSt } from 'component/pm/project/state';
 import { urls, getLabels } from '../config';
 
@@ -70,7 +71,8 @@ export default function ProjectForm({ data, onChange }) {
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 18 }}
             initialValues={{ ...initialValues }}
-            onFinish={(payload) => {
+            onFinish={(data) => {
+                const payload = RequestUtil.formatPayloadDate(data, dateFields);
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
                     .catch(FormUtil.setFormErrors(form));
@@ -86,6 +88,10 @@ export default function ProjectForm({ data, onChange }) {
 
             <Form.Item name="description" label={labels.description}>
                 <TextArea />
+            </Form.Item>
+
+            <Form.Item name="avatar" label={labels.avatar}>
+                <ImgInput />
             </Form.Item>
 
             <Form.Item name="workspace_id" label={labels.workspace_id}>

@@ -14,9 +14,9 @@ services:
             - ./volumes/db/dbdata:/var/lib/postgresql/data/:delegated
         healthcheck:
             test: ['CMD-SHELL', 'pg_isready']
-            interval: 10s
-            timeout: 5s
-            retries: 18
+            interval: 3s
+            timeout: 3s
+            retries: 10
 
     simplepm_backend:
         container_name: simplepm_backend
