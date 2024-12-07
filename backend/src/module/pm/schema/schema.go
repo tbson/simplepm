@@ -134,6 +134,8 @@ type TaskFieldOption struct {
 	TaskFieldID uint      `gorm:"not null" json:"task_field_id"`
 	TaskField   TaskField `gorm:"foreignKey:TaskFieldID;constraint:OnDelete:CASCADE;" json:"task_field"`
 	Title       string    `gorm:"type:text;not null" json:"title"`
+	Description string    `gorm:"type:text;default:''" json:"description"`
+	Color       string    `gorm:"type:text;default:''" json:"color"`
 	Order       int       `gorm:"not null;default:0" json:"order"`
 }
 
