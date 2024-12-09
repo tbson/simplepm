@@ -6,14 +6,13 @@ import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
-import DateInput from 'component/common/form/ant/input/date_input';
 import ImgInput from 'component/common/form/ant/input/img_input';
 import { projectOptionSt } from 'component/pm/project/state';
 import { urls, getLabels } from '../config';
 
 const { TextArea } = Input;
 
-const dateFields = ['start_date', 'target_date'];
+const dateFields = [];
 
 const formName = 'ProjectForm';
 const emptyRecord = {
@@ -23,9 +22,8 @@ const emptyRecord = {
     description: '',
     avatar: '',
     layout: 'TABLE',
+    status: 'ACTIVE',
     order: 0,
-    start_date: '',
-    target_date: '',
     finished_at: ''
 };
 
@@ -109,12 +107,12 @@ export default function ProjectForm({ data, onChange }) {
                 <SelectInput block options={projectOption.layout} />
             </Form.Item>
 
-            <Form.Item name="start_date" label={labels.start_date}>
-                <DateInput />
-            </Form.Item>
-
-            <Form.Item name="target_date" label={labels.target_date}>
-                <DateInput />
+            <Form.Item
+                name="status"
+                label={labels.status}
+                rules={[FormUtil.ruleRequired()]}
+            >
+                <SelectInput block options={projectOption.status} />
             </Form.Item>
 
             <Form.Item name="order" label={labels.order}>

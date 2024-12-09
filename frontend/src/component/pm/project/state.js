@@ -4,13 +4,15 @@ import TableUtil from 'service/helper/table_util';
 export const projectOptionSt = atom({
     loaded: false,
     workspace: [],
-    layout: []
+    layout: [],
+    status: []
 });
 
 export const projectFilterSt = atom((get) => {
-    const { workspace, layout } = get(projectOptionSt);
+    const { workspace, layout, status } = get(projectOptionSt);
     return {
         workspace: TableUtil.optionToFilter(workspace),
-        layout: TableUtil.optionToFilter(layout)
+        layout: TableUtil.optionToFilter(layout),
+        status: TableUtil.optionToFilter(status)
     };
 });

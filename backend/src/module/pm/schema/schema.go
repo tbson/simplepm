@@ -63,9 +63,8 @@ type Project struct {
 	Description string        `gorm:"ntype:text;ot null;default:''" json:"description"`
 	Avatar      string        `gorm:"type:text;not null;default:''" json:"avatar"`
 	Layout      string        `gorm:"type:text;not null;default:'TABLE';check:layout IN ('TABLE', 'KANBAN', 'ROADMAP')" json:"layout"`
+	Status      string        `gorm:"type:text;not null;default:'ACTIVE';check:status IN ('ACTIVE', 'ARCHIEVE')" json:"status"`
 	Order       int           `gorm:"not null;default:0" json:"order"`
-	StartDate   *time.Time    `json:"start_date"`
-	TargetDate  *time.Time    `json:"target_date"`
 	FinishedAt  *time.Time    `json:"finished_at"`
 	CreatedAt   time.Time     `json:"created_at"`
 	UpdatedAt   time.Time     `json:"updated_at"`
@@ -79,9 +78,8 @@ func NewProject(data ctype.Dict) *Project {
 		Description: dictutil.GetValue[string](data, "Description"),
 		Avatar:      dictutil.GetValue[string](data, "Avatar"),
 		Layout:      dictutil.GetValue[string](data, "Layout"),
+		Status:      dictutil.GetValue[string](data, "Status"),
 		Order:       dictutil.GetValue[int](data, "Order"),
-		StartDate:   dictutil.GetValue[*time.Time](data, "StartDate"),
-		TargetDate:  dictutil.GetValue[*time.Time](data, "TargetDate"),
 		FinishedAt:  dictutil.GetValue[*time.Time](data, "FinishedAt"),
 	}
 }

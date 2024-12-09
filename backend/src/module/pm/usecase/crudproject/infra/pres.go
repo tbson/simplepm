@@ -12,10 +12,9 @@ type ListOutput struct {
 	Title          string `json:"title"`
 	Description    string `json:"description"`
 	Layout         string `json:"layout"`
+	Status         string `json:"status"`
 	WorkspaceID    *uint  `json:"workspace_id"`
 	WorkspaceLabel string `json:"workspace_label"`
-	StartDate      string `json:"start_date"`
-	TargetDate     string `json:"target_date"`
 	Order          int    `json:"order"`
 }
 
@@ -26,23 +25,15 @@ func listPresItem(item schema.Project) ListOutput {
 	if item.Workspace != nil {
 		workspaceLabel = item.Workspace.Title
 	}
-	startDate := ""
-	if item.StartDate != nil {
-		startDate = item.StartDate.Format("2006-01-02")
-	}
-	targetDate := ""
-	if item.TargetDate != nil {
-		targetDate = item.TargetDate.Format("2006-01-02")
-	}
+
 	return ListOutput{
 		ID:             item.ID,
 		Title:          item.Title,
 		Description:    item.Description,
 		Layout:         item.Layout,
+		Status:         item.Status,
 		WorkspaceID:    item.WorkspaceID,
 		WorkspaceLabel: workspaceLabel,
-		StartDate:      startDate,
-		TargetDate:     targetDate,
 		Order:          item.Order,
 	}
 }

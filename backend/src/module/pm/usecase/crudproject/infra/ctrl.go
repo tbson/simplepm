@@ -22,7 +22,7 @@ type Schema = schema.Project
 var NewRepo = project.New
 var folder = "project/avatar"
 var searchableFields = []string{"title", "description"}
-var filterableFields = []string{}
+var filterableFields = []string{"workspace_id", "layout", "status"}
 var orderableFields = []string{"id", "title", "order"}
 
 func Option(c echo.Context) error {
@@ -46,6 +46,7 @@ func Option(c echo.Context) error {
 	result := ctype.Dict{
 		"workspace": workspaceOptions,
 		"layout":    pm.ProjectLayoutOptions,
+		"status":    pm.ProjectStatusOptions,
 	}
 	return c.JSON(http.StatusOK, result)
 }

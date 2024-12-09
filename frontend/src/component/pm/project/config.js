@@ -28,8 +28,7 @@ export const getLabels = () => ({
     avatar: t`Avatar`,
     layout: t`Layout`,
     order: t`Order`,
-    start_date: t`Start date`,
-    target_date: t`Target date`,
+    status: t`Status`,
     finished_at: t`Finished at`,
     created_at: t`Created at`,
     updated_at: t`Updated at`

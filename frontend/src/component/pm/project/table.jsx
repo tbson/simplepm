@@ -160,24 +160,24 @@ export default function ProjectTable() {
             onFilter: (value, record) => record.layout === value
         },
         {
+            key: 'status',
+            title: labels.status,
+            dataIndex: 'status',
+            width: 120,
+            filterMultiple: false,
+            filters: projectFilter.workspace,
+            onFilter: (value, record) => record.status === value
+        },
+        {
             key: 'title',
             title: labels.title,
             dataIndex: 'title'
         },
         {
-            key: 'start_date',
-            title: labels.start_date,
-            dataIndex: 'start_date'
-        },
-        {
-            key: 'target_date',
-            title: labels.target_date,
-            dataIndex: 'target_date'
-        },
-        {
             key: 'order',
             title: labels.order,
             dataIndex: 'order',
+            width: 120,
             sorter: (a, b) => {
                 return a.order - b.order;
             }
