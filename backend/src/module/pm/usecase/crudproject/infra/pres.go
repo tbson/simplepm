@@ -9,6 +9,7 @@ import (
 
 type ListOutput struct {
 	ID             uint   `json:"id"`
+	Avatar         string `json:"avatar"`
 	Title          string `json:"title"`
 	Description    string `json:"description"`
 	Layout         string `json:"layout"`
@@ -28,6 +29,7 @@ func listPresItem(item schema.Project) ListOutput {
 
 	return ListOutput{
 		ID:             item.ID,
+		Avatar:         item.Avatar,
 		Title:          item.Title,
 		Description:    item.Description,
 		Layout:         item.Layout,

@@ -11,6 +11,7 @@ import {
     RemoveBtn
 } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
+import Img from 'component/common/display/img';
 import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
@@ -142,6 +143,18 @@ export default function ProjectTable() {
 
     const columns = [
         {
+            key: 'avatar',
+            title: labels.avatar,
+            dataIndex: 'avatar',
+            render: (value) => <Img src={value} width={30} height={30} />,
+            width: 80
+        },
+        {
+            key: 'title',
+            title: labels.title,
+            dataIndex: 'title'
+        },
+        {
             key: 'workspace_label',
             title: labels.workspace_id,
             dataIndex: 'workspace_label',
@@ -156,7 +169,7 @@ export default function ProjectTable() {
             dataIndex: 'layout',
             width: 120,
             filterMultiple: false,
-            filters: projectFilter.workspace,
+            filters: projectFilter.layout,
             onFilter: (value, record) => record.layout === value
         },
         {
@@ -165,22 +178,8 @@ export default function ProjectTable() {
             dataIndex: 'status',
             width: 120,
             filterMultiple: false,
-            filters: projectFilter.workspace,
+            filters: projectFilter.status,
             onFilter: (value, record) => record.status === value
-        },
-        {
-            key: 'title',
-            title: labels.title,
-            dataIndex: 'title'
-        },
-        {
-            key: 'order',
-            title: labels.order,
-            dataIndex: 'order',
-            width: 120,
-            sorter: (a, b) => {
-                return a.order - b.order;
-            }
         },
         {
             key: 'action',

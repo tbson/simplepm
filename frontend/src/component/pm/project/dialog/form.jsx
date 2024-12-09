@@ -114,10 +114,6 @@ export default function ProjectForm({ data, onChange }) {
             >
                 <SelectInput block options={projectOption.status} />
             </Form.Item>
-
-            <Form.Item name="order" label={labels.order}>
-                <InputNumber />
-            </Form.Item>
         </Form>
     );
 }
