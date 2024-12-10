@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { t } from 'ttag';
 import { useAtomValue } from 'jotai';
-import { Row, Col, Table } from 'antd';
+import { Row, Col, Table, Flex } from 'antd';
+import { ProfileOutlined } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import {
     AddNewBtn,
     RemoveSelectedBtn,
     EditBtn,
-    RemoveBtn
+    RemoveBtn,
+    IconButton
 } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Img from 'component/common/display/img';
@@ -16,6 +19,7 @@ import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
 import Dialog from './dialog';
+import TaskField from './task_field';
 import { projectFilterSt } from 'component/pm/project/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
@@ -187,14 +191,21 @@ export default function ProjectTable() {
             fixed: 'right',
             width: 90,
             render: (_text, record) => (
-                <div className="flex-space">
+                <Flex wrap gap={5} justify="flex-end">
                     <PemCheck pem_group={PEM_GROUP} pem="update">
                         <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
                         <RemoveBtn onClick={() => onDelete(record.id)} />
                     </PemCheck>
-                </div>
+                    <PemCheck pem_group={PEM_GROUP} pem="update">
+                        <IconButton
+                            icon={<ProfileOutlined />}
+                            tootip={t`Toggle field page`}
+                            onClick={() => TaskField.toggle(true, record.id)}
+                        />
+                    </PemCheck>
+                </Flex>
             )
         }
     ];
@@ -236,6 +247,7 @@ export default function ProjectTable() {
             />
             <Pagination next={pages.next} prev={pages.prev} onChange={handlePaging} />
             <Dialog onChange={onChange} />
+            <TaskField />
         </div>
     );
 }

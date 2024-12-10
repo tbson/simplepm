@@ -13,6 +13,7 @@ import (
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 	configoption "src/module/config/usecase/option/infra"
 	crudproject "src/module/pm/usecase/crudproject/infra"
+	crudtaskfield "src/module/pm/usecase/crudtaskfield/infra"
 	crudworkspace "src/module/pm/usecase/crudworkspace/infra"
 
 	"github.com/labstack/echo/v4"
@@ -28,6 +29,7 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = cruduser.RegisterUrls(e, pemMap)
 	e, pemMap = crudworkspace.RegisterUrls(e, pemMap)
 	e, pemMap = crudproject.RegisterUrls(e, pemMap)
+	e, pemMap = crudtaskfield.RegisterUrls(e, pemMap)
 	e, pemMap = auth.RegisterUrls(e, pemMap)
 	e, pemMap = profile.RegisterUrls(e, pemMap)
 	e, pemMap = lockuser.RegisterUrls(e, pemMap)

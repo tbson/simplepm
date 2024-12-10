@@ -8,60 +8,29 @@ import (
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
-	"src/module/pm"
-	"src/module/pm/repo/project"
+	"src/module/pm/repo/taskfield"
 	"src/module/pm/schema"
-
-	"src/module/pm/repo/workspace"
 
 	"github.com/labstack/echo/v4"
 )
 
-type Schema = schema.Project
+type Schema = schema.TaskField
 
-var NewRepo = project.New
-var folder = "project/avatar"
+var NewRepo = taskfield.New
+var folder = "taskField/avatar"
 var searchableFields = []string{"title", "description"}
-var filterableFields = []string{"workspace_id", "layout", "status"}
+var filterableFields = []string{}
 var orderableFields = []string{"id", "title", "order"}
 
-func Option(c echo.Context) error {
-	tenantId := c.Get("TenantID").(uint)
-	workspaceRepo := workspace.New(dbutil.Db())
-	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"tenant_id": tenantId},
-	}
-	workspaces, err := workspaceRepo.List(queryOptions)
-	if err != nil {
+func List(c echo.Context) error {
+	if err := vldtutil.CheckRequiredFilter(c, "project_id"); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	workspaceOptions := []ctype.SelectOption[uint]{}
-	for _, workspace := range workspaces {
-		workspaceOptions = append(workspaceOptions, ctype.SelectOption[uint]{
-			Value: workspace.ID,
-			Label: workspace.Title,
-		})
-	}
 
-	result := ctype.Dict{
-		"workspace": workspaceOptions,
-		"layout":    pm.ProjectLayoutOptions,
-		"status":    pm.ProjectStatusOptions,
-		"task_field": ctype.Dict{
-			"type": pm.TaskFieldTypeOptions,
-		},
-	}
-	return c.JSON(http.StatusOK, result)
-}
-
-func List(c echo.Context) error {
-	tenantId := c.Get("TenantID").(uint)
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
-	options.Filters["tenant_id"] = tenantId
-	options.Preloads = []string{"Workspace"}
-	listResult, err := pager.Paging(options, searchableFields)
+	listResult, err := pager.List(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -87,14 +56,8 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	tenantId := c.Get("TenantID").(uint)
 	cruder := NewRepo(dbutil.Db())
-	data, err := vldtutil.ValidatePayload(c, InputData{TenantID: tenantId})
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
+	data, err := vldtutil.ValidatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -104,20 +67,14 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	return c.JSON(http.StatusCreated, MutatePres(*result))
+	return c.JSON(http.StatusCreated, result)
 
 }
 
 func Update(c echo.Context) error {
-	tenantId := c.Get("TenantID").(uint)
 	cruder := NewRepo(dbutil.Db())
 
-	data, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
+	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -129,7 +86,7 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	return c.JSON(http.StatusOK, MutatePres(*result))
+	return c.JSON(http.StatusOK, result)
 }
 
 func Delete(c echo.Context) error {

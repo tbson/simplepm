@@ -5,7 +5,11 @@ export const projectOptionSt = atom({
     loaded: false,
     workspace: [],
     layout: [],
-    status: []
+    status: [],
+    project_id: 0,
+    task_field: {
+        type: [],
+    }
 });
 
 export const projectFilterSt = atom((get) => {

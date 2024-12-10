@@ -10,6 +10,22 @@ import {
     PlusOutlined
 } from '@ant-design/icons';
 
+export function IconButton({ icon, tootip, onClick, type="default", disabled=false }) {
+    return (
+        <Tooltip title={tootip}>
+            <Button
+                type={type}
+                disabled={disabled}
+                htmlType="button"
+                icon={icon}
+                size="small"
+                title="hello"
+                onClick={onClick}
+            />
+        </Tooltip>
+    );
+}
+
 export function AddNewBtn({ onClick }) {
     return (
         <Button type="primary" icon={<PlusOutlined />} onClick={onClick}>

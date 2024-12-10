@@ -85,3 +85,52 @@ func (r Repo[S, P]) Paging(
 		TotalPages: totalPages,
 	}, nil
 }
+
+func (r Repo[S, P]) List(
+	options restlistutil.ListOptions,
+	searchableFields []string,
+) ([]P, error) {
+	db := r.client
+	preloads := options.Preloads
+	if len(preloads) > 0 {
+		for _, preload := range preloads {
+			db = db.Preload(preload)
+		}
+	}
+	emptyResult := []P{}
+	query := db.Model(new(*S))
+
+	// Apply preloads
+	if len(preloads) > 0 {
+		for _, preload := range preloads {
+			query = query.Preload(preload)
+		}
+	}
+
+	// Apply search logic
+	query = restlistutil.ApplySearch(query, options.Search, searchableFields)
+
+	// Apply filters
+	query = restlistutil.ApplyFilters(query, options.Filters)
+
+	// Apply order
+	query = restlistutil.ApplyOrder(query, options.Order)
+
+	// Count total records before pagination
+	total, err := restlistutil.GetTotalRecords(query)
+	if err != nil {
+		return emptyResult, err
+	}
+
+	// Apply paging
+	pagingREsult := restlistutil.ApplyPaging(query, options.Page, total)
+	query = pagingREsult.Query
+
+	// Fetch the results
+	schemaItems := []S{}
+	result := query.Find(&schemaItems)
+	if result.Error != nil {
+		return emptyResult, result.Error
+	}
+	return r.pres(schemaItems), nil
+}

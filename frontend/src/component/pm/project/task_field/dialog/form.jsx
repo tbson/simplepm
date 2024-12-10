@@ -3,28 +3,19 @@ import { useRef, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { Form, Input } from 'antd';
 import Util from 'service/helper/util';
-import RequestUtil from 'service/helper/request_util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
-import ImgInput from 'component/common/form/ant/input/img_input';
 import { projectOptionSt } from 'component/pm/project/state';
 import { urls, getLabels } from '../config';
 
 const { TextArea } = Input;
 
-const dateFields = [];
-
-const formName = 'ProjectForm';
+const formName = 'TaskFieldForm';
 const emptyRecord = {
     id: 0,
-    workspace_id: null,
     title: '',
     description: '',
-    avatar: '',
-    layout: 'TABLE',
-    status: 'ACTIVE',
-    order: 0,
-    finished_at: ''
+    type: 'STRING'
 };
 
 /**
@@ -35,22 +26,20 @@ const emptyRecord = {
  */
 
 /**
- * ProjectForm.
+ * TaskFieldForm.
  *
  * @param {Object} props
  * @param {Object} props.data
  * @param {FormCallback} props.onChange
  */
-export default function ProjectForm({ data, onChange }) {
+export default function TaskFieldForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
     const projectOption = useAtomValue(projectOptionSt);
 
     const labels = getLabels();
 
-    const initialValues = Util.isEmpty(data)
-        ? emptyRecord
-        : RequestUtil.formatResponseDate(data, dateFields);
+    const initialValues = Util.isEmpty(data) ? emptyRecord : data;
     const { id } = initialValues;
 
     const endPoint = id ? `${urls.crud}${id}` : urls.crud;
@@ -70,7 +59,8 @@ export default function ProjectForm({ data, onChange }) {
             wrapperCol={{ span: 18 }}
             initialValues={{ ...initialValues }}
             onFinish={(data) => {
-                const payload = RequestUtil.formatPayloadDate(data, dateFields);
+                const projectId = projectOption.project_id;
+                const payload = { ...data, project_id: projectId };
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
                     .catch(FormUtil.setFormErrors(form));
@@ -88,35 +78,16 @@ export default function ProjectForm({ data, onChange }) {
                 <TextArea />
             </Form.Item>
 
-            <Form.Item name="avatar" label={labels.avatar}>
-                <ImgInput />
-            </Form.Item>
-
-            <Form.Item name="workspace_id" label={labels.workspace_id}>
-                <SelectInput
-                    block
-                    options={FormUtil.addOptional(projectOption.workspace)}
-                />
-            </Form.Item>
-
             <Form.Item
-                name="layout"
-                label={labels.layout}
+                name="type"
+                label={labels.type}
                 rules={[FormUtil.ruleRequired()]}
             >
-                <SelectInput block options={projectOption.layout} />
-            </Form.Item>
-
-            <Form.Item
-                name="status"
-                label={labels.status}
-                rules={[FormUtil.ruleRequired()]}
-            >
-                <SelectInput block options={projectOption.status} />
+                <SelectInput block options={projectOption.task_field.type} />
             </Form.Item>
         </Form>
     );
 }
 
-ProjectForm.displayName = formName;
-ProjectForm.formName = formName;
+TaskFieldForm.displayName = formName;
+TaskFieldForm.formName = formName;
