@@ -5,6 +5,7 @@ import { Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
+import { projectIdSt } from '../state';
 import { projectOptionSt } from 'component/pm/project/state';
 import { urls, getLabels } from '../config';
 
@@ -35,8 +36,8 @@ const emptyRecord = {
 export default function TaskFieldForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
+    const projectId = useAtomValue(projectIdSt);
     const projectOption = useAtomValue(projectOptionSt);
-
     const labels = getLabels();
 
     const initialValues = Util.isEmpty(data) ? emptyRecord : data;
@@ -59,7 +60,6 @@ export default function TaskFieldForm({ data, onChange }) {
             wrapperCol={{ span: 18 }}
             initialValues={{ ...initialValues }}
             onFinish={(data) => {
-                const projectId = projectOption.project_id;
                 const payload = { ...data, project_id: projectId };
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))

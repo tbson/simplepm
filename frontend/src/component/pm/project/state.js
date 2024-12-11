@@ -6,7 +6,6 @@ export const projectOptionSt = atom({
     workspace: [],
     layout: [],
     status: [],
-    project_id: 0,
     task_field: {
         type: [],
     }

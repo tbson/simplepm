@@ -1,19 +1,25 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Table } from 'antd';
 import RequestUtil from 'service/helper/request_util';
 import Util from 'service/helper/util';
+import useDraggableList from 'component/common/hook/use_draggable_list';
 import Dialog from './dialog';
 import { urls, getLabels } from './config';
 
 export default function TaskfieldTable({ projectId }) {
     const [init, setInit] = useState(false);
-    const [list, setList] = useState([]);
-    const labels = getLabels();
+    const [list, setList, DraggableListProvider, DraggableItem] = useDraggableList(
+        [],
+        (newItems) => handleSortEnd(newItems)
+    );
 
     useEffect(() => {
         getList();
     }, [projectId]);
+
+    const handleSortEnd = (newItems) => {
+        console.log(newItems);
+    };
 
     const getList = () => {
         setInit(true);
@@ -26,19 +32,6 @@ export default function TaskfieldTable({ projectId }) {
                 setInit(false);
             });
     };
-    const columns = [
-        {
-            key: 'title',
-            title: labels.title,
-            dataIndex: 'title',
-            render: (text, record) => (
-                <div className="pointer" onClick={() => Dialog.toggle(true, record.id)}>
-                    <div>{text}</div>
-                    <div><em>{record.type}</em></div>
-                </div>
-            )
-        }
-    ];
 
     const onChange = (data, id) => {
         if (!id) {
@@ -51,18 +44,35 @@ export default function TaskfieldTable({ projectId }) {
         }
     };
 
-    const onDelete = (id) => { 
+    const onDelete = (id) => {
         setList([...list.filter((item) => item.id !== id)]);
-    }
+    };
 
     return (
         <>
-            <Table
-                loading={init}
-                columns={columns}
-                dataSource={list}
-                pagination={false}
-            />
+            <DraggableListProvider>
+                {list.map((record) => (
+                    <DraggableItem key={record.id} id={record.id}>
+                        <div
+                            className="pointer"
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => Dialog.toggle(true, record.id)}
+                        >
+                            <strong>{record.title}</strong>
+                            <em
+                                style={{
+                                    color: '#888',
+                                    display: 'block',
+                                    fontSize: '14px'
+                                }}
+                            >
+                                {record.type}
+                            </em>
+                        </div>
+                    </DraggableItem>
+                ))}
+            </DraggableListProvider>
+
             <Dialog onChange={onChange} onDelete={onDelete} />
         </>
     );

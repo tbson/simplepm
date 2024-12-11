@@ -8,18 +8,18 @@ import { urls, getMessages } from './config';
 import Table from './table';
 
 export default function Project() {
-    const [option, setOption] = useAtom(projectOptionSt);
+    const [projectOption, setProjectOption] = useAtom(projectOptionSt);
     useEffect(() => {
-        if (!option.loaded) getOption();
+        if (!projectOption.loaded) getOption();
     }, []);
 
     function getOption() {
         RequestUtil.apiCall(urls.option)
             .then((resp) => {
-                setOption({ ...resp.data, loaded: true });
+                setProjectOption({ ...resp.data, loaded: true });
             })
             .catch(() => {
-                setOption((prev) => ({ ...prev, loaded: true }));
+                setProjectOption((prev) => ({ ...prev, loaded: true }));
             });
     }
 

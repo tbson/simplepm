@@ -1,15 +1,14 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { t } from 'ttag';
-import { useAtom } from 'jotai';
+import { useSetAtom } from 'jotai';
 import Util from 'service/helper/util';
-import { Drawer, Divider } from 'antd';
+import { Drawer } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { IconButton } from 'component/common/table/buttons';
-import { projectOptionSt } from 'component/pm/project/state';
+import { projectIdSt } from './state';
 import TaskFieldTable from './table';
 import TaskFieldDialog from './dialog';
-import { TOGGLE_TASK_FIELD_EVENT } from './config';
+import { getMessages, TOGGLE_TASK_FIELD_EVENT } from './config';
 
 export class Service {
     static get toggleEvent() {
@@ -44,9 +43,10 @@ function MenuHeading({ title, triggerAdd }) {
 }
 
 export default function TaskField() {
-    const [projectOption, setProjectOption] = useAtom(projectOptionSt);
+    const setProjectId = useSetAtom(projectIdSt);
     const [id, setId] = useState(0);
     const [open, setOpen] = useState(false);
+    const messages = getMessages();
     useEffect(() => {
         Util.event.listen(Service.toggleEvent, handleToggle);
         return () => {
@@ -60,7 +60,7 @@ export default function TaskField() {
             setOpen(false);
             return;
         }
-        setProjectOption({ ...projectOption, project_id: id });
+        setProjectId(id);
         setId(id);
         setOpen(true);
     };
@@ -73,12 +73,12 @@ export default function TaskField() {
             onClose={() => setOpen(false)}
         >
             <MenuHeading
-                title={t`Task fields`}
+                title={messages.heading}
                 triggerAdd={() => {
                     TaskFieldDialog.toggle(true);
                 }}
             />
-            <Divider />
+            <br />
             <TaskFieldTable projectId={id} />
         </Drawer>
     );
