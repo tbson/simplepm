@@ -28,7 +28,7 @@ function MenuHeading({ title, triggerAdd }) {
                     <strong style={{ lineHeight: '24px' }}>{title}</strong>
                 </div>
             </div>
-            <div style={{ width: 40 }}>
+            <div>
                 <IconButton
                     icon={<PlusOutlined />}
                     type="primary"
@@ -71,6 +71,7 @@ export default function TaskField() {
             title={null}
             closeIcon={null}
             onClose={() => setOpen(false)}
+            bodyStyle={{ padding: 10 }}
         >
             <MenuHeading
                 title={messages.heading}
