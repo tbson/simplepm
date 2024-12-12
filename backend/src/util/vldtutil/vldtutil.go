@@ -22,8 +22,9 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
-func ValidatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
-	result := ctype.Dict{}
+func ValidatePayload[T any](c echo.Context, target T) (T, error) {
+	// result := ctype.Dict{}
+	result := target
 	localizer := localeutil.Get()
 	// bind the payload to the target struct
 	if err := c.Bind(&target); err != nil {
@@ -76,7 +77,8 @@ func ValidatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
 		return result, &error
 	}
 
-	return dictutil.StructToDict(target), nil
+	// return dictutil.StructToDict(target), nil
+	return target, nil
 }
 
 func ValidateUpdatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {

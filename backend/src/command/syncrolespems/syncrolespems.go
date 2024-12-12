@@ -3,6 +3,7 @@ package main
 import (
 	"src/route"
 	"src/util/dbutil"
+	"src/util/localeutil"
 
 	"src/module/account/repo/role"
 	"src/module/account/repo/tenant"
@@ -14,6 +15,7 @@ import (
 
 func main() {
 	dbutil.InitDb()
+	localeutil.Init("en")
 
 	e := echo.New()
 	apiGroup := e.Group("/api/v1")

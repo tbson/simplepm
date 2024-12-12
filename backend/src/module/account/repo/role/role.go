@@ -8,9 +8,11 @@ import (
 	"src/module/account/schema"
 	"src/util/dictutil"
 	"src/util/errutil"
+	"src/util/localeutil"
 
 	"src/module/account/repo/pem"
 
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"gorm.io/gorm"
 )
 
@@ -56,6 +58,7 @@ func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 
 func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	db := r.client
+	localizer := localeutil.Get()
 	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
 	preloads := queryOptions.Preloads
 	if len(preloads) > 0 {
@@ -65,7 +68,23 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	}
 
 	var item Schema
-	result := db.Where(map[string]interface{}(filters)).First(&item)
+	var count int64
+	query := db.Where(map[string]interface{}(filters))
+	query.Model(&Schema{}).Count(&count)
+	if count == 0 {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.NoRecordFound,
+		})
+		return &item, errutil.New("", []string{msg})
+	}
+	if count > 1 {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.MultipleRecordsFound,
+		})
+		return &item, errutil.New("", []string{msg})
+	}
+
+	result := query.First(&item)
 	err := result.Error
 	if err != nil {
 		return &item, errutil.NewGormError(err)

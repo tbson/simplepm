@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { Skeleton } from 'antd';
 import RequestUtil from 'service/helper/request_util';
 import Util from 'service/helper/util';
 import useDraggableList from 'component/common/hook/use_draggable_list';
@@ -19,6 +20,18 @@ export default function TaskfieldTable({ projectId }) {
 
     const handleSortEnd = (newItems) => {
         console.log(newItems);
+        const items = newItems.map((id, index) => {
+            return { id, order: index + 1 };
+        });
+        const payload = { items, project_id: projectId };
+
+        RequestUtil.apiCall(urls.reorder, payload, 'put')
+            .then(() => {
+                console.log('reorder success');
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     const getList = () => {
@@ -50,6 +63,7 @@ export default function TaskfieldTable({ projectId }) {
 
     return (
         <>
+            <Skeleton loading={init} active />
             <DraggableListProvider>
                 {list.map((record) => (
                     <DraggableItem key={record.id} id={record.id}>

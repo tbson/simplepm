@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/dictutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
@@ -30,6 +31,8 @@ func List(c echo.Context) error {
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
+	options.Order = restlistutil.QueryOrder{Field: "order", Direction: "ASC"}
+
 	listResult, err := pager.List(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -57,11 +60,12 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
-	data, err := vldtutil.ValidatePayload(c, InputData{})
+	structData, err := vldtutil.ValidatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	data := dictutil.StructToDict(structData)
 	result, err := cruder.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -80,7 +84,10 @@ func Update(c echo.Context) error {
 	}
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	result, err := cruder.Update(id, data)
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"ID": id},
+	}
+	result, err := cruder.Update(queryOptions, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

@@ -5,7 +5,8 @@ const urlMap = {
     base: {
         prefix: 'pm/task-field',
         endpoints: {
-            crud: ''
+            crud: '',
+            reorder: 'reorder',
         }
     }
 };

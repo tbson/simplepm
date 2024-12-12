@@ -134,7 +134,7 @@ func ApplyOrder(query *gorm.DB, order QueryOrder) *gorm.DB {
 	orderDirection := order.Direction
 
 	// Apply the ORDER BY clause
-	return query.Order(fmt.Sprintf("%s %s", orderField, orderDirection))
+	return query.Order(fmt.Sprintf("\"%s\" %s", orderField, orderDirection))
 }
 
 func ApplyPaging(query *gorm.DB, page int, total int64) ApplyPagingResult {

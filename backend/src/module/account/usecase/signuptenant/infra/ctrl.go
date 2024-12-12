@@ -28,15 +28,15 @@ func SignupTenant(c echo.Context) error {
 	pemMap := routeutil.GetPemMap()
 
 	// for tenant
-	uid := data["Uid"].(string)
-	title := data["Title"].(string)
+	uid := data.Uid
+	title := data.Title
 
 	// for user
-	email := data["Email"].(string)
-	mobile := data["Mobile"].(*string)
-	firstName := data["FirstName"].(string)
-	lastName := data["LastName"].(string)
-	password := data["Password"].(string)
+	email := data.Email
+	mobile := data.Mobile
+	firstName := data.FirstName
+	lastName := data.LastName
+	password := data.Password
 	admin := true
 
 	db := dbutil.Db()

@@ -5,7 +5,9 @@ import (
 	"src/module/pm/schema"
 	"src/util/dictutil"
 	"src/util/errutil"
+	"src/util/localeutil"
 
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"gorm.io/gorm"
 )
 
@@ -51,6 +53,7 @@ func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 
 func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	db := r.client
+	localizer := localeutil.Get()
 	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
 	preloads := queryOptions.Preloads
 	if len(preloads) > 0 {
@@ -60,7 +63,23 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	}
 
 	var item Schema
-	result := db.Where(map[string]interface{}(filters)).First(&item)
+	var count int64
+	query := db.Where(map[string]interface{}(filters))
+	query.Model(&Schema{}).Count(&count)
+	if count == 0 {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.NoRecordFound,
+		})
+		return &item, errutil.New("", []string{msg})
+	}
+	if count > 1 {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.MultipleRecordsFound,
+		})
+		return &item, errutil.New("", []string{msg})
+	}
+
+	result := query.First(&item)
 	err := result.Error
 	if err != nil {
 		return &item, errutil.NewGormError(err)
@@ -86,10 +105,7 @@ func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Sc
 	return existItem, nil
 }
 
-func (r Repo) Update(id uint, data ctype.Dict) (*Schema, error) {
-	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"id": id},
-	}
+func (r Repo) Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
 	item, err := r.Retrieve(queryOptions)
 	if err != nil {
 		return nil, err
@@ -110,12 +126,13 @@ func (r Repo) UpdateOrCreate(
 	if err != nil {
 		return r.Create(data)
 	}
-	return r.Update(existItem.ID, data)
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": existItem.ID}}
+	return r.Update(updateOptions, data)
 }
 
 func (r Repo) Delete(id uint) ([]uint, error) {
 	ids := []uint{id}
-	_, err := r.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"id": id}})
+	_, err := r.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"ID": id}})
 	if err != nil {
 		return ids, err
 	}

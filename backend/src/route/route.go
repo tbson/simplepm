@@ -15,6 +15,7 @@ import (
 	crudproject "src/module/pm/usecase/crudproject/infra"
 	crudtaskfield "src/module/pm/usecase/crudtaskfield/infra"
 	crudworkspace "src/module/pm/usecase/crudworkspace/infra"
+	reordertaskfield "src/module/pm/usecase/reordertaskfield/infra"
 
 	"github.com/labstack/echo/v4"
 )
@@ -34,5 +35,6 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = profile.RegisterUrls(e, pemMap)
 	e, pemMap = lockuser.RegisterUrls(e, pemMap)
 	e, pemMap = signuptenant.RegisterUrls(e, pemMap)
+	e, pemMap = reordertaskfield.RegisterUrls(e, pemMap)
 	return e, pemMap
 }

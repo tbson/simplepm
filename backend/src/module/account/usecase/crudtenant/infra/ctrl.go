@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/dictutil"
 	"src/util/errutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
@@ -93,11 +94,12 @@ func Create(c echo.Context) error {
 
 	srv := app.New(cruder, roleRepo)
 
-	data, err := vldtutil.ValidatePayload(c, InputData{})
+	structData, err := vldtutil.ValidatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	data := dictutil.StructToDict(structData)
 	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

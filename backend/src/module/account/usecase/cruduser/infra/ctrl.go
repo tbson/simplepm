@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/dictutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
@@ -84,10 +85,12 @@ func Retrieve(c echo.Context) error {
 func Create(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	cruder := NewRepo(dbutil.Db())
-	data, err := vldtutil.ValidatePayload(c, InputData{TenantID: tenantId})
+	structData, err := vldtutil.ValidatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+	data := dictutil.StructToDict(structData)
+
 	result, err := cruder.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

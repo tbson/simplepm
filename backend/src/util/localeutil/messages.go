@@ -197,4 +197,14 @@ var (
 		ID:    "CannotSendVerifyEmail",
 		Other: "cannot send verify email",
 	}
+
+	NoRecordFound = &i18n.Message{
+		ID:    "NoRecordFound",
+		Other: "no record found",
+	}
+
+	MultipleRecordsFound = &i18n.Message{
+		ID:    "MultipleRecordsFound",
+		Other: "multiple records found",
+	}
 )
