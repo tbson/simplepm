@@ -58,7 +58,7 @@ export default function useDraggableList(initialItems, onSortEnd) {
                         style={{
                             background: '#fafafa',
                             padding: '10px',
-                            borderRadius: '8px'
+                            borderRadius: '3px'
                         }}
                     >
                         {children}
@@ -76,7 +76,7 @@ export default function useDraggableList(initialItems, onSortEnd) {
             transition,
             background: isDragging ? '#f0f0f0' : '#fff',
             border: '1px solid #ddd',
-            borderRadius: '6px',
+            borderRadius: '3px',
             marginBottom: '8px'
         };
 
@@ -91,7 +91,7 @@ export default function useDraggableList(initialItems, onSortEnd) {
                         {...listeners}
                         style={{
                             cursor: 'grab',
-                            padding: '0 12px',
+                            padding: '0 8px',
                             display: 'flex',
                             alignItems: 'center',
                             borderRight: '1px solid #ddd',
@@ -99,7 +99,7 @@ export default function useDraggableList(initialItems, onSortEnd) {
                     >
                         <MenuOutlined />
                     </div>
-                    <div style={{ flex: 1, padding: '8px 12px' }}>{children}</div>
+                    <div style={{ flex: 1, padding: '3px 8px' }}>{children}</div>
                 </List.Item>
             </div>
         );
