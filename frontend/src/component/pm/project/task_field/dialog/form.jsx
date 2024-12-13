@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
-import { Form, Input, Button } from 'antd';
+import { Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
@@ -17,7 +17,8 @@ const emptyRecord = {
     id: 0,
     title: '',
     description: '',
-    type: 'STRING'
+    type: 'STRING',
+    options: []
 };
 
 /**
@@ -86,10 +87,9 @@ export default function TaskFieldForm({ data, onChange }) {
                 <SelectInput block options={projectOption.task_field.type} />
             </Form.Item>
 
-            <TaskFieldOptionTable initList={[]} />
-
-            <br/>
-            <br/>
+            <Form.Item name="options" label={labels.options}>
+                <TaskFieldOptionTable />
+            </Form.Item>
         </Form>
     );
 }

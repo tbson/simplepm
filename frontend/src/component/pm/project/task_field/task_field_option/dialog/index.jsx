@@ -22,7 +22,7 @@ export class Service {
  * @param {Object} props
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
-export default function TaskFieldOptionDialog({ onChange }) {
+export default function TaskFieldOptionDialog({ onChange, onDelete }) {
     const [data, setData] = useState({});
     const [open, setOpen] = useState(false);
     const messages = getMessages();
@@ -56,7 +56,10 @@ export default function TaskFieldOptionDialog({ onChange }) {
                         {data.id ? (
                             <Button
                                 danger
-                                onClick={() => handleDelete(data.id)}
+                                onClick={() => {
+                                    onDelete(data.id);
+                                    Service.toggle(false);
+                                }}
                             >{t`Delete`}</Button>
                         ) : null}
                     </div>

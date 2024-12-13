@@ -1,14 +1,19 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import useDraggableList from 'component/common/hook/use_draggable_list';
-import Dialog from './dialog';
+import TaskFieldOptionDialog from './dialog';
 
-export default function TaskFieldOptionTable({ initList }) {
+export default function TaskFieldOptionTable({ value, onChange }) {
     const [list, setList, DraggableListProvider, DraggableItem] = useDraggableList(
-        initList,
+        value,
         (newItems) => handleSortEnd(newItems)
     );
+
+    useEffect(() => {
+        onChange(list);
+    }, [list]);
 
     const handleSortEnd = (newItems) => {
         setList(newItems);
@@ -16,6 +21,7 @@ export default function TaskFieldOptionTable({ initList }) {
 
     const handleChange = (data, id) => {
         if (id) {
+            data.id = id;
             setList(list.map((record) => (record.id === id ? data : record)));
         } else {
             const tmpId = crypto.randomUUID();
@@ -24,39 +30,53 @@ export default function TaskFieldOptionTable({ initList }) {
         }
     };
 
+    const handleDelete = (id) => {
+        const newList = list.map((item) => {
+            if (item.id === id) {
+                item.deleted = true;
+            }
+            return item;
+        });
+        setList(newList);
+    };
+
     return (
         <div>
             <Button
                 type="dashed"
-                onClick={() => Dialog.toggle(true)}
+                onClick={() => TaskFieldOptionDialog.toggle(true)}
                 block
                 icon={<PlusOutlined />}
             >
                 Add option
             </Button>
             <DraggableListProvider>
-                {list.map((record) => (
-                    <DraggableItem key={record.id} id={record.id}>
-                        <div
-                            className="pointer"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => Dialog.toggle(true, record)}
-                        >
-                            <strong>{record.title}</strong>
-                            <em
-                                style={{
-                                    color: '#888',
-                                    display: 'block',
-                                    fontSize: '14px'
+                {list
+                    .filter((i) => !i.deleted)
+                    .map((record) => (
+                        <DraggableItem key={record.id} id={record.id}>
+                            <div
+                                className="pointer"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                    TaskFieldOptionDialog.toggle(true, record);
                                 }}
                             >
-                                {record.type}
-                            </em>
-                        </div>
-                    </DraggableItem>
-                ))}
+                                <strong>{record.title}</strong>
+                                <em
+                                    style={{
+                                        color: '#888',
+                                        display: 'block',
+                                        fontSize: '14px'
+                                    }}
+                                >
+                                    {record.type}
+                                </em>
+                            </div>
+                        </DraggableItem>
+                    ))}
             </DraggableListProvider>
-            <Dialog onChange={handleChange} />
+            <TaskFieldOptionDialog onChange={handleChange} onDelete={handleDelete} />
         </div>
     );
 }
