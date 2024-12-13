@@ -49,7 +49,8 @@ func Option(c echo.Context) error {
 		"layout":    pm.ProjectLayoutOptions,
 		"status":    pm.ProjectStatusOptions,
 		"task_field": ctype.Dict{
-			"type": pm.TaskFieldTypeOptions,
+			"type":  pm.TaskFieldTypeOptions,
+			"color": pm.TaskFieldColorOptions,
 		},
 	}
 	return c.JSON(http.StatusOK, result)

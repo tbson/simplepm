@@ -33,7 +33,7 @@ export default function useDraggableList(initialItems, onSortEnd) {
             const newItems = arrayMove(prevItems, oldIndex, newIndex);
 
             if (onSortEnd) {
-                onSortEnd(newItems.map((i) => i.id));
+                onSortEnd(newItems);
             }
 
             return newItems;

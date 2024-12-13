@@ -7,12 +7,11 @@ import { PlusOutlined } from '@ant-design/icons';
 import { IconButton } from 'component/common/table/buttons';
 import { projectIdSt } from './state';
 import TaskFieldTable from './table';
-import TaskFieldDialog from './dialog';
-import { getMessages, TOGGLE_TASK_FIELD_EVENT } from './config';
+import { getMessages, TOGGLE_EVENT } from './config';
 
 export class Service {
     static get toggleEvent() {
-        return TOGGLE_TASK_FIELD_EVENT;
+        return TOGGLE_EVENT;
     }
 
     static toggle(open = true, id = 0) {
@@ -70,13 +69,16 @@ export default function TaskField() {
             open={open}
             title={null}
             closeIcon={null}
-            onClose={() => setOpen(false)}
+            onClose={() => {
+                setOpen(false);
+                TaskFieldTable.toggle(false);
+            }}
             bodyStyle={{ padding: 10 }}
         >
             <MenuHeading
                 title={messages.heading}
                 triggerAdd={() => {
-                    TaskFieldDialog.toggle(true);
+                    TaskFieldTable.toggle(true);
                 }}
             />
             <br />

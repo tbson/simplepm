@@ -8,6 +8,7 @@ export const projectOptionSt = atom({
     status: [],
     task_field: {
         type: [],
+        color: []
     }
 });
 

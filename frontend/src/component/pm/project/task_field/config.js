@@ -11,7 +11,7 @@ const urlMap = {
     }
 };
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
-export const TOGGLE_TASK_FIELD_EVENT = 'TOGGLE_TASK_FIELD';
+export const TOGGLE_EVENT = 'TOGGLE_TASK_FIELD';
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_TASK_FIELD_DIALOG';
 export const PEM_GROUP = 'crudtaskfield';
 const headingTxt = t`Task Field`;

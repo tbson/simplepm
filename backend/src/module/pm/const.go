@@ -15,6 +15,15 @@ const TASK_FIELD_TYPE_DATE = "DATE"
 const TASK_FIELD_TYPE_SELECT = "SELECT"
 const TASK_FIELD_TYPE_MULTIPLE_SELECT = "MULTIPLE_SELECT"
 
+const TASK_FIELD_OPTION_COLOR_GRAY = "GRAY"
+const TASK_FIELD_OPTION_COLOR_BLUE = "BLUE"
+const TASK_FIELD_OPTION_COLOR_GREEN = "GREEN"
+const TASK_FIELD_OPTION_COLOR_YELLOW = "YELLOW"
+const TASK_FIELD_OPTION_COLOR_RED = "RED"
+const TASK_FIELD_OPTION_COLOR_ORANGE = "ORANGE"
+const TASK_FIELD_OPTION_COLOR_INDIGO = "INDIGO"
+const TASK_FIELD_OPTION_COLOR_VIOLET = "VIOLET"
+
 type option = ctype.SelectOption[string]
 
 var ProjectLayoutOptions = []option{
@@ -34,4 +43,15 @@ var TaskFieldTypeOptions = []option{
 	{Value: TASK_FIELD_TYPE_DATE, Label: "Date"},
 	{Value: TASK_FIELD_TYPE_SELECT, Label: "Select"},
 	{Value: TASK_FIELD_TYPE_MULTIPLE_SELECT, Label: "Multiple Select"},
+}
+
+var TaskFieldColorOptions = []option{
+	{Value: TASK_FIELD_OPTION_COLOR_GRAY, Label: "Gray"},
+	{Value: TASK_FIELD_OPTION_COLOR_BLUE, Label: "Blue"},
+	{Value: TASK_FIELD_OPTION_COLOR_GREEN, Label: "Green"},
+	{Value: TASK_FIELD_OPTION_COLOR_YELLOW, Label: "Yellow"},
+	{Value: TASK_FIELD_OPTION_COLOR_RED, Label: "Red"},
+	{Value: TASK_FIELD_OPTION_COLOR_ORANGE, Label: "Orange"},
+	{Value: TASK_FIELD_OPTION_COLOR_INDIGO, Label: "Indigo"},
+	{Value: TASK_FIELD_OPTION_COLOR_VIOLET, Label: "Violet"},
 }
