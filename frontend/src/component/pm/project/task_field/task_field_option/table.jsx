@@ -22,10 +22,12 @@ export default function TaskFieldOptionTable({ value, onChange }) {
     const handleChange = (data, id) => {
         if (id) {
             data.id = id;
+            data.fe_status = 'updated';
             setList(list.map((record) => (record.id === id ? data : record)));
         } else {
             const tmpId = crypto.randomUUID();
             data.id = tmpId;
+            data.fe_status = 'created';
             setList([{ ...data }, ...list]);
         }
     };
@@ -33,7 +35,7 @@ export default function TaskFieldOptionTable({ value, onChange }) {
     const handleDelete = (id) => {
         const newList = list.map((item) => {
             if (item.id === id) {
-                item.deleted = true;
+                item.fe_status = 'deleted';
             }
             return item;
         });
@@ -52,7 +54,7 @@ export default function TaskFieldOptionTable({ value, onChange }) {
             </Button>
             <DraggableListProvider>
                 {list
-                    .filter((i) => !i.deleted)
+                    .filter((i) => i.fe_status !== 'deleted')
                     .map((record) => (
                         <DraggableItem key={record.id} id={record.id}>
                             <div
