@@ -67,7 +67,7 @@ func TestValidateUpdatePayload(t *testing.T) {
 	c := createTestContext(http.MethodPost, "/validate-update", `{"name": "Alice"}`)
 	var target MockPayload
 
-	result, err := ValidateUpdatePayload(c, target)
+	_, result, err := ValidateUpdatePayload(c, target)
 	assert.NoError(t, err, "ValidateUpdatePayload should not return an error for valid partial data")
 	assert.NotNil(t, result, "Expected non-nil result for valid input")
 }

@@ -107,7 +107,7 @@ func Update(c echo.Context) error {
 
 	srv := app.New(userRepo, crudUserRepo)
 
-	data, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
+	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

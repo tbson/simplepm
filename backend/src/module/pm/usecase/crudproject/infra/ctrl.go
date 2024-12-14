@@ -115,7 +115,7 @@ func Update(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	cruder := NewRepo(dbutil.Db())
 
-	data, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
+	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

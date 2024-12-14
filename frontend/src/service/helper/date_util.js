@@ -52,4 +52,8 @@ export default class DateUtil {
     static strToDate(dateStr) {
         return new Date(dateStr);
     }
+
+    static currentTimestamp() {
+        return new Date().getTime();
+    }
 }

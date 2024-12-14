@@ -27,5 +27,5 @@ export const getLabels = () => ({
     description: t`Description`,
     type: t`Type`,
     order: t`Order`,
-    options: t`Options`,
+    task_field_options: t`Options`,
 });

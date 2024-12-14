@@ -11,7 +11,7 @@ import (
 )
 
 func LockUser(c echo.Context) error {
-	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

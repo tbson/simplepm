@@ -37,7 +37,7 @@ func UpdateProfile(c echo.Context) error {
 
 	srv := app.New(userRepo, iamRepo)
 
-	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -62,7 +62,7 @@ func ChangePassword(c echo.Context) error {
 
 	srv := app.New(userRepo, iamRepo)
 
-	data, err := vldtutil.ValidateUpdatePayload(c, InputPassword{})
+	_, data, err := vldtutil.ValidateUpdatePayload(c, InputPassword{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

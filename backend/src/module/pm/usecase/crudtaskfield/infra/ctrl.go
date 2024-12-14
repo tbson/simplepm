@@ -4,15 +4,17 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
-	"src/util/dictutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
 	"src/module/pm/repo/taskfield"
+	"src/module/pm/repo/taskfieldoption"
 	"src/module/pm/schema"
 
 	"github.com/labstack/echo/v4"
+
+	"src/module/pm/usecase/crudtaskfield/app"
 )
 
 type Schema = schema.TaskField
@@ -46,7 +48,8 @@ func Retrieve(c echo.Context) error {
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"id": id},
+		Filters:  ctype.Dict{"id": id},
+		Preloads: []string{"TaskFieldOptions"},
 	}
 
 	result, err := cruder.Retrieve(queryOptions)
@@ -59,14 +62,16 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
-	structData, err := vldtutil.ValidatePayload(c, InputData{})
+	taskFieldRepo := taskfield.New(dbutil.Db())
+	taskFieldOptionRepo := taskfieldoption.New(dbutil.Db())
+	srv := app.New(taskFieldRepo, taskFieldOptionRepo)
+
+	structData, err := vldtutil.ValidatePayload(c, app.InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	data := dictutil.StructToDict(structData)
-	result, err := cruder.Create(data)
+	result, err := srv.Create(structData)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -76,18 +81,22 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	taskFieldRepo := taskfield.New(dbutil.Db())
+	taskFieldOptionRepo := taskfieldoption.New(dbutil.Db())
+	srv := app.New(taskFieldRepo, taskFieldOptionRepo)
 
-	data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	structData, data, err := vldtutil.ValidateUpdatePayload(c, app.InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+
+	options := structData.TaskFieldOptions
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"ID": id},
 	}
-	result, err := cruder.Update(queryOptions, data)
+	result, err := srv.Update(queryOptions, data, options)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

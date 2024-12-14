@@ -81,37 +81,38 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 	return target, nil
 }
 
-func ValidateUpdatePayload[T any](c echo.Context, target T) (ctype.Dict, error) {
+func ValidateUpdatePayload[T any](c echo.Context, target T) (T, ctype.Dict, error) {
+	structResult := target
 	result := ctype.Dict{}
 	localizer := localeutil.Get()
 
-	keys, err := getKeys(c)
+	fields, err := getFields(c)
 	if err != nil {
-		return result, err
+		return structResult, result, err
 	}
 
 	if err := c.Bind(&target); err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.CannotReadRequestBody,
 		})
-		return result, errutil.New("", []string{msg})
+		return structResult, result, errutil.New("", []string{msg})
 	}
 
 	data := dictutil.StructToDict(target)
 
-	// remove the keys that are not present in the payload, check json tags
+	// remove the fields that are not present in the payload, check json tags
 	for k := range data {
 		structField, _ := reflect.TypeOf(target).FieldByName(k)
 		jsonTag := structField.Tag.Get("json")
 		if jsonTag != "" {
 			fieldName := strings.Split(jsonTag, ",")[0]
-			if !slices.Contains(keys, fieldName) {
+			if !slices.Contains(fields, fieldName) {
 				delete(data, k)
 			}
 		}
 	}
 
-	return data, nil
+	return target, data, nil
 }
 
 func ValidateId(id string) uint {
@@ -181,14 +182,14 @@ func UploadAndUPdatePayload(
 	return result, nil
 }
 
-func getKeys(c echo.Context) ([]string, error) {
+func getFields(c echo.Context) ([]string, error) {
 	if c.Request().Header.Get("Content-Type") == "application/json" {
-		return getJsonKeys(c)
+		return getJsonFields(c)
 	}
-	return getFormParamsKeys(c)
+	return getFormFields(c)
 }
 
-func getJsonKeys(c echo.Context) ([]string, error) {
+func getJsonFields(c echo.Context) ([]string, error) {
 	result := []string{}
 	localizer := localeutil.Get()
 	bodyBytes, err := io.ReadAll(c.Request().Body)
@@ -221,7 +222,7 @@ func getJsonKeys(c echo.Context) ([]string, error) {
 	return keyList, nil
 }
 
-func getFormParamsKeys(c echo.Context) ([]string, error) {
+func getFormFields(c echo.Context) ([]string, error) {
 	result := []string{}
 	localizer := localeutil.Get()
 	var keyList []string

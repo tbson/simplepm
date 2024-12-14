@@ -18,7 +18,7 @@ const emptyRecord = {
     title: '',
     description: '',
     type: 'STRING',
-    options: []
+    task_field_options: []
 };
 
 /**
@@ -40,6 +40,9 @@ export default function TaskFieldForm({ data, onChange }) {
     const [form] = Form.useForm();
     const projectId = useAtomValue(projectIdSt);
     const projectOption = useAtomValue(projectOptionSt);
+
+    const type = Form.useWatch('type', { form, preserve: true });
+
     const labels = getLabels();
 
     const initialValues = Util.isEmpty(data) ? emptyRecord : data;
@@ -84,12 +87,17 @@ export default function TaskFieldForm({ data, onChange }) {
                 label={labels.type}
                 rules={[FormUtil.ruleRequired()]}
             >
-                <SelectInput block options={projectOption.task_field.type} />
+                <SelectInput
+                    block
+                    disabled={!!id}
+                    options={projectOption.task_field.type}
+                />
             </Form.Item>
-
-            <Form.Item name="options" label={labels.options}>
-                <TaskFieldOptionTable />
-            </Form.Item>
+            {['SELECT', 'MULTIPLE_SELECT'].includes(type) ? (
+                <Form.Item name="task_field_options" label={labels.task_field_options}>
+                    <TaskFieldOptionTable />
+                </Form.Item>
+            ) : null}
         </Form>
     );
 }

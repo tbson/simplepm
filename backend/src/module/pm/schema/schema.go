@@ -108,13 +108,14 @@ func NewProjectUser(data ctype.Dict) *ProjectUser {
 }
 
 type TaskField struct {
-	ID          uint    `gorm:"primaryKey" json:"id"`
-	ProjectID   uint    `gorm:"not null" json:"project_id"`
-	Project     Project `gorm:"foreignKey:ProjectID;constraint:OnDelete:CASCADE;" json:"project"`
-	Title       string  `gorm:"type:text;not null" json:"title"`
-	Type        string  `gorm:"type:text;not null" json:"type"`
-	Description string  `gorm:"type:text;not null;default:''" json:"description"`
-	Order       int     `gorm:"not null;default:0" json:"order"`
+	ID               uint              `gorm:"primaryKey" json:"id"`
+	ProjectID        uint              `gorm:"not null" json:"project_id"`
+	Project          Project           `gorm:"foreignKey:ProjectID;constraint:OnDelete:CASCADE;" json:"project"`
+	TaskFieldOptions []TaskFieldOption `json:"task_field_options"`
+	Title            string            `gorm:"type:text;not null" json:"title"`
+	Type             string            `gorm:"type:text;not null" json:"type"`
+	Description      string            `gorm:"type:text;not null;default:''" json:"description"`
+	Order            int               `gorm:"not null;default:0" json:"order"`
 }
 
 func NewTaskField(data ctype.Dict) *TaskField {
