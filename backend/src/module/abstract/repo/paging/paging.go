@@ -22,13 +22,6 @@ func (r Repo[S, P]) Paging(
 	options restlistutil.ListOptions,
 	searchableFields []string,
 ) (restlistutil.ListRestfulResult[P], error) {
-	db := r.client
-	preloads := options.Preloads
-	if len(preloads) > 0 {
-		for _, preload := range preloads {
-			db = db.Preload(preload)
-		}
-	}
 	pageSize := restlistutil.DEFAULT_PAGE_SIZE
 	var items []P
 	emptyResult := restlistutil.ListRestfulResult[P]{
@@ -41,9 +34,12 @@ func (r Repo[S, P]) Paging(
 			Prev: 0,
 		},
 	}
+
+	db := r.client
 	query := db.Model(new(*S))
 
 	// Apply preloads
+	preloads := options.Preloads
 	if len(preloads) > 0 {
 		for _, preload := range preloads {
 			query = query.Preload(preload)
@@ -90,17 +86,13 @@ func (r Repo[S, P]) List(
 	options restlistutil.ListOptions,
 	searchableFields []string,
 ) ([]P, error) {
-	db := r.client
-	preloads := options.Preloads
-	if len(preloads) > 0 {
-		for _, preload := range preloads {
-			db = db.Preload(preload)
-		}
-	}
 	emptyResult := []P{}
+
+	db := r.client
 	query := db.Model(new(*S))
 
 	// Apply preloads
+	preloads := options.Preloads
 	if len(preloads) > 0 {
 		for _, preload := range preloads {
 			query = query.Preload(preload)
