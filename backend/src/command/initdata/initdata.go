@@ -8,11 +8,13 @@ import (
 	"src/module/account/usecase/initdata/app"
 	"src/route"
 	"src/util/dbutil"
+	"src/util/localeutil"
 
 	"github.com/labstack/echo/v4"
 )
 
 func main() {
+	localeutil.Init("en")
 	dbutil.InitDb()
 	db := dbutil.Db()
 	tx := db.Begin()
