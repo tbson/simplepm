@@ -133,9 +133,13 @@ func (r Repo) ValidateToken(tokenStr string, realm string) (authtype.SsoUserInfo
 	jwksURL := getJwksUrl(realm)
 
 	// Fetch the JWKS (public keys)
-	keySet, err := ssoutil.GetKeySet(jwksURL)
+	keySet, err := ssoutil.GetKeySet(jwksURL, false)
 	if err != nil {
-		return result, err
+		// Retry
+		keySet, err = ssoutil.GetKeySet(jwksURL, true)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	// Parse the JWT token to extract headers and claims

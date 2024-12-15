@@ -62,28 +62,32 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 		}
 	}
 
+	var items []Schema
 	var item Schema
-	var count int64
 	query := db.Where(map[string]interface{}(filters))
-	query.Model(&Schema{}).Count(&count)
-	if count == 0 {
+
+	result := query.Find(&items)
+	err := result.Error
+	if err != nil {
+		return &item, errutil.NewGormError(err)
+	}
+
+	if len(items) == 0 {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.NoRecordFound,
 		})
 		return &item, errutil.New("", []string{msg})
 	}
-	if count > 1 {
+
+	if len(items) > 1 {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.MultipleRecordsFound,
 		})
 		return &item, errutil.New("", []string{msg})
 	}
 
-	result := query.First(&item)
-	err := result.Error
-	if err != nil {
-		return &item, errutil.NewGormError(err)
-	}
+	item = items[0]
+
 	return &item, err
 }
 

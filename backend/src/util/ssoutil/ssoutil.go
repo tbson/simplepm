@@ -15,7 +15,10 @@ import (
 	"github.com/lestrrat-go/jwx/v2/jwk"
 )
 
+type KeySetMap map[string]jwk.Set
+
 var client *gocloak.GoCloak
+var keySetMap KeySetMap = make(map[string]jwk.Set)
 
 func Client() *gocloak.GoCloak {
 	if client != nil {
@@ -25,7 +28,12 @@ func Client() *gocloak.GoCloak {
 	return client
 }
 
-func GetKeySet(jwksURL string) (jwk.Set, error) {
+func GetKeySet(jwksURL string, force bool) (jwk.Set, error) {
+	if !force {
+		if keySet, ok := keySetMap[jwksURL]; ok {
+			return keySet, nil
+		}
+	}
 	localizer := localeutil.Get()
 	ctx := context.Background()
 	keySet, err := jwk.Fetch(ctx, jwksURL)
@@ -35,6 +43,7 @@ func GetKeySet(jwksURL string) (jwk.Set, error) {
 		})
 		return nil, errutil.New("", []string{msg})
 	}
+	keySetMap[jwksURL] = keySet
 	return keySet, nil
 }
 
