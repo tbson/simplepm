@@ -7,7 +7,8 @@ const PROJECT_LAYOUT_KANBAN = "KANBAN"
 const PROJECT_LAYOUT_ROADMAP = "ROADMAP"
 
 const PROJECT_STATUS_ACTIVE = "ACTIVE"
-const PROJECT_STATUS_ARCHIVE = "ARCHIVE"
+const PROJECT_STATUS_FINISHED = "FINISHED"
+const PROJECT_STATUS_ARCHIVED = "ARCHIVED"
 
 const TASK_FIELD_TYPE_TEXT = "TEXT"
 const TASK_FIELD_TYPE_NUMBER = "NUMBER"
@@ -34,7 +35,8 @@ var ProjectLayoutOptions = []option{
 
 var ProjectStatusOptions = []option{
 	{Value: PROJECT_STATUS_ACTIVE, Label: "Active"},
-	{Value: PROJECT_STATUS_ARCHIVE, Label: "Archive"},
+	{Value: PROJECT_STATUS_FINISHED, Label: "Finished"},
+	{Value: PROJECT_STATUS_ARCHIVED, Label: "Archived"},
 }
 
 var TaskFieldTypeOptions = []option{

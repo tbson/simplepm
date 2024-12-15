@@ -32,6 +32,9 @@ func RegisterModels() []interface{} {
 		&pm.ProjectUser{},
 		&pm.TaskField{},
 		&pm.TaskFieldOption{},
+		&pm.Feature{},
+		&pm.Task{},
+		&pm.TaskFieldValue{},
 	}
 }
 
