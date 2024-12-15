@@ -5,6 +5,35 @@ import StorageUtil from 'service/helper/storage_util';
 import DateUtil from 'service/helper/date_util';
 import { PROTOCOL, DOMAIN, API_PREFIX } from 'src/const';
 
+export class RefreshTokenUtil {
+    constructor() {
+        this.refreshPromise = null;
+        this.checkPromise = null;
+    }
+
+    refresh() {
+        if (this.refreshPromise) {
+            return this.refreshPromise;
+        }
+        const url = 'account/auth/sso/refresh-token';
+        this.refreshPromise = RequestUtil.request(url).finally(() => {
+            this.refreshPromise = null;
+        });
+        return this.refreshPromise;
+    }
+
+    check() {
+        if (this.checkPromise) {
+            return this.checkPromise;
+        }
+        const url = 'account/auth/sso/refresh-token-check';
+        this.checkPromise = RequestUtil.request(url).finally(() => {
+            this.checkPromise = null;
+        });
+        return this.checkPromise;
+    }
+}
+
 export default class RequestUtil {
     /**
      * Prepare JSON payload for HTTP request
@@ -107,10 +136,8 @@ export default class RequestUtil {
             return await RequestUtil.request(url, params, method, blobResponseType);
         } catch (err) {
             if (err.response.status === 401) {
-                const refreshUrl = 'account/auth/sso/refresh-token';
-                const checkUrl = 'account/auth/sso/refresh-token-check';
                 try {
-                    const refreshTokenResponse = await RequestUtil.request(refreshUrl);
+                    const refreshTokenResponse = await window.refreshTokenUtil.refresh();
                     const { token } = refreshTokenResponse.data;
                     StorageUtil.setToken(token);
 
@@ -127,7 +154,7 @@ export default class RequestUtil {
                     }
                 } catch (err) {
                     console.log(err);
-                    RequestUtil.request(checkUrl).catch(() => {
+                    window.refreshTokenUtil.check().catch(() => {
                         // Logout
                         NavUtil.cleanAndMoveToLoginPage();
                         return Promise.reject(emptyError);

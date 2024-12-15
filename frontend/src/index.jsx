@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
-import { Provider } from 'jotai'
+import { Provider } from 'jotai';
+import { RefreshTokenUtil } from 'service/helper/request_util';
 import 'service/styles/main.css';
 import router from './router';
+
+window.refreshTokenUtil = new RefreshTokenUtil();
 
 createRoot(document.getElementById('root')).render(
     <Provider>
