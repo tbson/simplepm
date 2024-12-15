@@ -117,7 +117,7 @@ type TaskField struct {
 	TaskFieldOptions []TaskFieldOption `gorm:"constraint:OnDelete:CASCADE;" json:"task_field_options"`
 	TaskFieldValues  []TaskFieldValue  `gorm:"constraint:OnDelete:CASCADE;" json:"task_field_values"`
 	Title            string            `gorm:"type:text;not null" json:"title"`
-	Type             string            `gorm:"type:text;not null" json:"type"`
+	Type             string            `gorm:"type:text;not null;default:'TEXT';check:type IN ('TEXT', 'NUMBER', 'DATE', 'SELECT', 'MULTIPLE_SELECT')" json:"type"`
 	Description      string            `gorm:"type:text;not null;default:''" json:"description"`
 	Order            int               `gorm:"not null;default:0" json:"order"`
 }

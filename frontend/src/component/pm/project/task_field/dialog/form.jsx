@@ -17,7 +17,7 @@ const emptyRecord = {
     id: 0,
     title: '',
     description: '',
-    type: 'STRING',
+    type: 'TEXT',
     task_field_options: []
 };
 
