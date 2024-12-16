@@ -49,7 +49,7 @@ CREATE TABLE "public"."workspaces" (
   "created_at" timestamptz NULL,
   "updated_at" timestamptz NULL,
   PRIMARY KEY ("id"),
-  CONSTRAINT "fk_workspaces_tenant" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+  CONSTRAINT "fk_workspaces_tenant" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 -- Create "projects" table
 CREATE TABLE "public"."projects" (
@@ -66,10 +66,25 @@ CREATE TABLE "public"."projects" (
   "created_at" timestamptz NULL,
   "updated_at" timestamptz NULL,
   PRIMARY KEY ("id"),
-  CONSTRAINT "fk_projects_tenant" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
-  CONSTRAINT "fk_projects_workspace" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT "fk_projects_tenant" FOREIGN KEY ("tenant_id") REFERENCES "public"."tenants" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT "fk_workspaces_projects" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
   CONSTRAINT "chk_projects_layout" CHECK (layout = ANY (ARRAY['TABLE'::text, 'KANBAN'::text, 'ROADMAP'::text])),
-  CONSTRAINT "chk_projects_status" CHECK (status = ANY (ARRAY['ACTIVE'::text, 'ARCHIEVE'::text]))
+  CONSTRAINT "chk_projects_status" CHECK (status = ANY (ARRAY['ACTIVE'::text, 'FINISHED'::text, 'ARCHIEVED'::text]))
+);
+-- Create "features" table
+CREATE TABLE "public"."features" (
+  "id" bigserial NOT NULL,
+  "project_id" bigint NOT NULL,
+  "title" text NOT NULL,
+  "description" text NOT NULL DEFAULT '',
+  "status" text NOT NULL DEFAULT 'ACTIVE',
+  "default" boolean NOT NULL DEFAULT false,
+  "order" bigint NOT NULL DEFAULT 0,
+  "created_at" timestamptz NULL,
+  "updated_at" timestamptz NULL,
+  PRIMARY KEY ("id"),
+  CONSTRAINT "fk_projects_features" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT "chk_features_status" CHECK (status = ANY (ARRAY['ACTIVE'::text, 'FINISHED'::text, 'ARCHIEVED'::text]))
 );
 -- Create "users" table
 CREATE TABLE "public"."users" (
@@ -106,9 +121,9 @@ CREATE TABLE "public"."projects_users" (
   "creator_id" bigint NULL,
   "created_at" timestamptz NULL,
   PRIMARY KEY ("id"),
-  CONSTRAINT "fk_projects_users_creator" FOREIGN KEY ("creator_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE SET NULL,
-  CONSTRAINT "fk_projects_users_project" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
-  CONSTRAINT "fk_projects_users_user" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+  CONSTRAINT "fk_projects_users_creator" FOREIGN KEY ("creator_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT "fk_projects_users_project" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT "fk_projects_users_user" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 -- Create index "idx_project_user" to table: "projects_users"
 CREATE UNIQUE INDEX "idx_project_user" ON "public"."projects_users" ("project_id", "user_id");
@@ -148,11 +163,12 @@ CREATE TABLE "public"."task_fields" (
   "id" bigserial NOT NULL,
   "project_id" bigint NOT NULL,
   "title" text NOT NULL,
-  "type" text NOT NULL,
+  "type" text NOT NULL DEFAULT 'TEXT',
   "description" text NOT NULL DEFAULT '',
   "order" bigint NOT NULL DEFAULT 0,
   PRIMARY KEY ("id"),
-  CONSTRAINT "fk_task_fields_project" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+  CONSTRAINT "fk_projects_task_fields" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT "chk_task_fields_type" CHECK (type = ANY (ARRAY['TEXT'::text, 'NUMBER'::text, 'DATE'::text, 'SELECT'::text, 'MULTIPLE_SELECT'::text]))
 );
 -- Create "task_field_options" table
 CREATE TABLE "public"."task_field_options" (
@@ -163,7 +179,39 @@ CREATE TABLE "public"."task_field_options" (
   "color" text NULL DEFAULT '',
   "order" bigint NOT NULL DEFAULT 0,
   PRIMARY KEY ("id"),
-  CONSTRAINT "fk_task_fields_task_field_options" FOREIGN KEY ("task_field_id") REFERENCES "public"."task_fields" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
+  CONSTRAINT "fk_task_fields_task_field_options" FOREIGN KEY ("task_field_id") REFERENCES "public"."task_fields" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+);
+-- Create "tasks" table
+CREATE TABLE "public"."tasks" (
+  "id" bigserial NOT NULL,
+  "project_id" bigint NOT NULL,
+  "feature_id" bigint NOT NULL,
+  "user_id" bigint NULL,
+  "title" text NOT NULL,
+  "description" text NULL DEFAULT '',
+  "order" bigint NOT NULL DEFAULT 0,
+  "created_at" timestamptz NULL,
+  "updated_at" timestamptz NULL,
+  PRIMARY KEY ("id"),
+  CONSTRAINT "fk_features_tasks" FOREIGN KEY ("feature_id") REFERENCES "public"."features" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT "fk_projects_tasks" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT "fk_tasks_user" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+-- Create "task_field_values" table
+CREATE TABLE "public"."task_field_values" (
+  "id" bigserial NOT NULL,
+  "task_id" bigint NOT NULL,
+  "task_field_id" bigint NOT NULL,
+  "task_field_option_id" bigint NULL,
+  "number_value" bigint NULL,
+  "date_value" timestamptz NULL,
+  "value" text NOT NULL,
+  "created_at" timestamptz NULL,
+  "updated_at" timestamptz NULL,
+  PRIMARY KEY ("id"),
+  CONSTRAINT "fk_task_field_options_task_field_values" FOREIGN KEY ("task_field_option_id") REFERENCES "public"."task_field_options" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT "fk_task_fields_task_field_values" FOREIGN KEY ("task_field_id") REFERENCES "public"."task_fields" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+  CONSTRAINT "fk_tasks_task_field_values" FOREIGN KEY ("task_id") REFERENCES "public"."tasks" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
 );
 -- Create "users_roles" table
 CREATE TABLE "public"."users_roles" (
@@ -181,9 +229,9 @@ CREATE TABLE "public"."workspaces_users" (
   "creator_id" bigint NULL,
   "created_at" timestamptz NULL,
   PRIMARY KEY ("id"),
-  CONSTRAINT "fk_workspaces_users_creator" FOREIGN KEY ("creator_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE SET NULL,
-  CONSTRAINT "fk_workspaces_users_user" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
-  CONSTRAINT "fk_workspaces_users_workspace" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+  CONSTRAINT "fk_workspaces_users_creator" FOREIGN KEY ("creator_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT "fk_workspaces_users_user" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION,
+  CONSTRAINT "fk_workspaces_users_workspace" FOREIGN KEY ("workspace_id") REFERENCES "public"."workspaces" ("id") ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 -- Create index "idx_workspace_user" to table: "workspaces_users"
 CREATE UNIQUE INDEX "idx_workspace_user" ON "public"."workspaces_users" ("workspace_id", "user_id");
