@@ -159,6 +159,7 @@ type Feature struct {
 	Title       string        `gorm:"type:text;not null" json:"title"`
 	Description string        `gorm:"ntype:text;ot null;default:''" json:"description"`
 	Status      string        `gorm:"type:text;not null;default:'ACTIVE';check:status IN ('ACTIVE', 'FINISHED', 'ARCHIEVED')" json:"status"`
+	Default     bool          `gorm:"not null;default:false" json:"default"`
 	Order       int           `gorm:"not null;default:0" json:"order"`
 	CreatedAt   time.Time     `json:"created_at"`
 	UpdatedAt   time.Time     `json:"updated_at"`
@@ -170,6 +171,7 @@ func NewFeature(data ctype.Dict) *Feature {
 		Title:       dictutil.GetValue[string](data, "Title"),
 		Description: dictutil.GetValue[string](data, "Description"),
 		Status:      dictutil.GetValue[string](data, "Status"),
+		Default:     dictutil.GetValue[bool](data, "Default"),
 		Order:       dictutil.GetValue[int](data, "Order"),
 	}
 }
