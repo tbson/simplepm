@@ -2,23 +2,23 @@ package schema
 
 import (
 	"src/common/ctype"
-	"src/module/account/schema"
+	account "src/module/account/schema"
 	"src/util/dictutil"
 	"time"
 )
 
 type Workspace struct {
-	ID          uint          `gorm:"primaryKey" json:"id"`
-	TenantID    uint          `gorm:"not null" json:"tenant_id"`
-	Tenant      schema.Tenant `gorm:"foreignKey:TenantID" json:"tenant"`
-	Projects    []Project     `gorm:"constraint:OnDelete:CASCADE;" json:"projects"`
-	Title       string        `gorm:"type:text;not null" json:"title"`
-	Description string        `gorm:"type:text;not null;default:''" json:"description"`
-	Avatar      string        `gorm:"type:text;not null;default:''" json:"avatar"`
-	Order       int           `gorm:"not null;default:0" json:"order"`
-	Users       []schema.User `gorm:"many2many:workspaces_users;" json:"users"`
-	CreatedAt   time.Time     `json:"created_at"`
-	UpdatedAt   time.Time     `json:"updated_at"`
+	ID          uint           `gorm:"primaryKey" json:"id"`
+	TenantID    uint           `gorm:"not null" json:"tenant_id"`
+	Tenant      account.Tenant `gorm:"foreignKey:TenantID" json:"tenant"`
+	Projects    []Project      `gorm:"constraint:OnDelete:CASCADE;" json:"projects"`
+	Title       string         `gorm:"type:text;not null" json:"title"`
+	Description string         `gorm:"type:text;not null;default:''" json:"description"`
+	Avatar      string         `gorm:"type:text;not null;default:''" json:"avatar"`
+	Order       int            `gorm:"not null;default:0" json:"order"`
+	Users       []account.User `gorm:"many2many:workspaces_users;" json:"users"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
 }
 
 func NewWorkspace(data ctype.Dict) *Workspace {
@@ -32,14 +32,14 @@ func NewWorkspace(data ctype.Dict) *Workspace {
 }
 
 type WorkspaceUser struct {
-	ID          uint         `gorm:"primaryKey" json:"id"`
-	WorkspaceID uint         `gorm:"not null;uniqueIndex:idx_workspace_user" json:"workspace_id"`
-	Workspace   Workspace    `gorm:"foreignKey:WorkspaceID" json:"workspace"`
-	UserID      uint         `gorm:"not null;uniqueIndex:idx_workspace_user" json:"user_id"`
-	User        schema.User  `gorm:"foreignKey:UserID" json:"user"`
-	CreatorID   *uint        `gorm:"default:null" json:"creator_id"`
-	Creator     *schema.User `gorm:"foreignKey:CreatorID" json:"creator"`
-	CreatedAt   time.Time    `json:"created_at"`
+	ID          uint          `gorm:"primaryKey" json:"id"`
+	WorkspaceID uint          `gorm:"not null;uniqueIndex:idx_workspace_user" json:"workspace_id"`
+	Workspace   Workspace     `gorm:"foreignKey:WorkspaceID" json:"workspace"`
+	UserID      uint          `gorm:"not null;uniqueIndex:idx_workspace_user" json:"user_id"`
+	User        account.User  `gorm:"foreignKey:UserID" json:"user"`
+	CreatorID   *uint         `gorm:"default:null" json:"creator_id"`
+	Creator     *account.User `gorm:"foreignKey:CreatorID" json:"creator"`
+	CreatedAt   time.Time     `json:"created_at"`
 }
 
 func (WorkspaceUser) TableName() string {
@@ -55,22 +55,23 @@ func NewWorkspaceUser(data ctype.Dict) *WorkspaceUser {
 }
 
 type Project struct {
-	ID          uint          `gorm:"primaryKey" json:"id"`
-	TenantID    uint          `gorm:"not null" json:"tenant_id"`
-	Tenant      schema.Tenant `gorm:"foreignKey:TenantID" json:"tenant"`
-	WorkspaceID *uint         `gorm:"default:null" json:"workspace_id"`
-	Workspace   *Workspace    `gorm:"foreignKey:WorkspaceID" json:"workspace"`
-	Tasks       []Task        `gorm:"constraint:OnDelete:CASCADE;" json:"tasks"`
-	TaskFields  []TaskField   `gorm:"constraint:OnDelete:CASCADE;" json:"task_fields"`
-	Title       string        `gorm:"type:text;not null" json:"title"`
-	Description string        `gorm:"ntype:text;ot null;default:''" json:"description"`
-	Avatar      string        `gorm:"type:text;not null;default:''" json:"avatar"`
-	Layout      string        `gorm:"type:text;not null;default:'TABLE';check:layout IN ('TABLE', 'KANBAN', 'ROADMAP')" json:"layout"`
-	Status      string        `gorm:"type:text;not null;default:'ACTIVE';check:status IN ('ACTIVE', 'FINISHED', 'ARCHIEVED')" json:"status"`
-	Order       int           `gorm:"not null;default:0" json:"order"`
-	FinishedAt  *time.Time    `json:"finished_at"`
-	CreatedAt   time.Time     `json:"created_at"`
-	UpdatedAt   time.Time     `json:"updated_at"`
+	ID          uint           `gorm:"primaryKey" json:"id"`
+	TenantID    uint           `gorm:"not null" json:"tenant_id"`
+	Tenant      account.Tenant `gorm:"foreignKey:TenantID" json:"tenant"`
+	WorkspaceID *uint          `gorm:"default:null" json:"workspace_id"`
+	Workspace   *Workspace     `gorm:"foreignKey:WorkspaceID" json:"workspace"`
+	Tasks       []Task         `gorm:"constraint:OnDelete:CASCADE;" json:"tasks"`
+	TaskFields  []TaskField    `gorm:"constraint:OnDelete:CASCADE;" json:"task_fields"`
+	Features    []Feature      `gorm:"constraint:OnDelete:CASCADE;" json:"features"`
+	Title       string         `gorm:"type:text;not null" json:"title"`
+	Description string         `gorm:"ntype:text;ot null;default:''" json:"description"`
+	Avatar      string         `gorm:"type:text;not null;default:''" json:"avatar"`
+	Layout      string         `gorm:"type:text;not null;default:'TABLE';check:layout IN ('TABLE', 'KANBAN', 'ROADMAP')" json:"layout"`
+	Status      string         `gorm:"type:text;not null;default:'ACTIVE';check:status IN ('ACTIVE', 'FINISHED', 'ARCHIEVED')" json:"status"`
+	Order       int            `gorm:"not null;default:0" json:"order"`
+	FinishedAt  *time.Time     `json:"finished_at"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
 }
 
 func NewProject(data ctype.Dict) *Project {
@@ -88,14 +89,14 @@ func NewProject(data ctype.Dict) *Project {
 }
 
 type ProjectUser struct {
-	ID        uint         `gorm:"primaryKey" json:"id"`
-	ProjectID uint         `gorm:"not null;uniqueIndex:idx_project_user" json:"project_id"`
-	Project   Project      `gorm:"foreignKey:ProjectID" json:"project"`
-	UserID    uint         `gorm:"not null;uniqueIndex:idx_project_user" json:"user_id"`
-	User      schema.User  `gorm:"foreignKey:UserID" json:"user"`
-	CreatorID *uint        `gorm:"default:null" json:"creator_id"`
-	Creator   *schema.User `gorm:"foreignKey:CreatorID" json:"creator"`
-	CreatedAt time.Time    `json:"created_at"`
+	ID        uint          `gorm:"primaryKey" json:"id"`
+	ProjectID uint          `gorm:"not null;uniqueIndex:idx_project_user" json:"project_id"`
+	Project   Project       `gorm:"foreignKey:ProjectID" json:"project"`
+	UserID    uint          `gorm:"not null;uniqueIndex:idx_project_user" json:"user_id"`
+	User      account.User  `gorm:"foreignKey:UserID" json:"user"`
+	CreatorID *uint         `gorm:"default:null" json:"creator_id"`
+	Creator   *account.User `gorm:"foreignKey:CreatorID" json:"creator"`
+	CreatedAt time.Time     `json:"created_at"`
 }
 
 func (ProjectUser) TableName() string {
@@ -152,17 +153,17 @@ func NewTaskFieldOption(data ctype.Dict) *TaskFieldOption {
 }
 
 type Feature struct {
-	ID          uint          `gorm:"primaryKey" json:"id"`
-	ProjectID   uint          `gorm:"not null" json:"project_id"`
-	Project     schema.Tenant `gorm:"foreignKey:ProjectID" json:"project"`
-	Tasks       []Task        `gorm:"constraint:OnDelete:CASCADE;" json:"tasks"`
-	Title       string        `gorm:"type:text;not null" json:"title"`
-	Description string        `gorm:"ntype:text;ot null;default:''" json:"description"`
-	Status      string        `gorm:"type:text;not null;default:'ACTIVE';check:status IN ('ACTIVE', 'FINISHED', 'ARCHIEVED')" json:"status"`
-	Default     bool          `gorm:"not null;default:false" json:"default"`
-	Order       int           `gorm:"not null;default:0" json:"order"`
-	CreatedAt   time.Time     `json:"created_at"`
-	UpdatedAt   time.Time     `json:"updated_at"`
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	ProjectID   uint      `gorm:"not null" json:"project_id"`
+	Project     Project   `gorm:"foreignKey:ProjectID" json:"project"`
+	Tasks       []Task    `gorm:"constraint:OnDelete:CASCADE;" json:"tasks"`
+	Title       string    `gorm:"type:text;not null" json:"title"`
+	Description string    `gorm:"ntype:text;not null;default:''" json:"description"`
+	Status      string    `gorm:"type:text;not null;default:'ACTIVE';check:status IN ('ACTIVE', 'FINISHED', 'ARCHIEVED')" json:"status"`
+	Default     bool      `gorm:"not null;default:false" json:"default"`
+	Order       int       `gorm:"not null;default:0" json:"order"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 func NewFeature(data ctype.Dict) *Feature {
@@ -179,11 +180,11 @@ func NewFeature(data ctype.Dict) *Feature {
 type Task struct {
 	ID              uint             `gorm:"primaryKey" json:"id"`
 	ProjectID       uint             `gorm:"not null" json:"project_id"`
-	Project         schema.Tenant    `gorm:"foreignKey:ProjectID" json:"project"`
+	Project         Project          `gorm:"foreignKey:ProjectID" json:"project"`
 	FeatureID       uint             `gorm:"not null" json:"feature_id"`
-	Feature         schema.Tenant    `gorm:"foreignKey:FeatureID" json:"feature"`
+	Feature         Feature          `gorm:"foreignKey:FeatureID" json:"feature"`
 	UserID          *uint            `gorm:"default:null" json:"user_id"`
-	User            *schema.User     `gorm:"foreignKey:UserID" json:"user"`
+	User            *account.User    `gorm:"foreignKey:UserID" json:"user"`
 	TaskFieldValues []TaskFieldValue `gorm:"constraint:OnDelete:CASCADE;" json:"task_field_values"`
 	Title           string           `gorm:"type:text;not null" json:"title"`
 	Description     string           `gorm:"ntype:text;ot null;default:''" json:"description"`

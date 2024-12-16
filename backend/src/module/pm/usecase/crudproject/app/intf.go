@@ -1,1 +1,16 @@
 package app
+
+import (
+	"src/common/ctype"
+	"src/module/pm/schema"
+)
+
+type ProjectRepo interface {
+	Create(data ctype.Dict) (*schema.Project, error)
+	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.Project, error)
+}
+
+type FeatureRepo interface {
+	Create(data ctype.Dict) (*schema.Feature, error)
+	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.Feature, error)
+}
