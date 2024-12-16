@@ -93,10 +93,10 @@ func Update(c echo.Context) error {
 	options := structData.TaskFieldOptions
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	queryOptions := ctype.QueryOptions{
+	updateOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"ID": id},
 	}
-	result, err := srv.Update(queryOptions, data, options)
+	result, err := srv.Update(updateOptions, data, options)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

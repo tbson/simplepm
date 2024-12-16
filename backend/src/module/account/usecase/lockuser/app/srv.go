@@ -24,8 +24,9 @@ func (srv Service) LockUser(id uint, locked bool, lockedReason string) (schema.U
 		data["LockedAt"] = dateutil.Now()
 		data["LockedReason"] = lockedReason
 	}
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
 
-	result, err := srv.crudUserRepo.Update(id, data)
+	result, err := srv.crudUserRepo.Update(updateOptions, data)
 	if err != nil {
 		return schema.User{}, err
 	}

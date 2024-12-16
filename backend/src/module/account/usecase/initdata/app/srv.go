@@ -110,6 +110,7 @@ func (srv Service) InitData(pemMap ctype.PemMap) error {
 	userData = ctype.Dict{
 		"Admin": true,
 	}
-	_, err = srv.userRepo.Update(user.ID, userData)
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": user.ID}}
+	_, err = srv.userRepo.Update(updateOptions, userData)
 	return nil
 }

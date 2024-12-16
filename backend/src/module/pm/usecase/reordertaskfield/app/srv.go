@@ -17,7 +17,7 @@ func (srv Service) Reorder(data InputData) ([]OrderInfoItem, error) {
 	orderInfo := data.Items
 	projectID := data.ProjectID
 	for _, info := range orderInfo {
-		queryOptions := ctype.QueryOptions{
+		updateOptions := ctype.QueryOptions{
 			Filters: ctype.Dict{
 				"ID":        info.ID,
 				"ProjectID": projectID,
@@ -26,7 +26,7 @@ func (srv Service) Reorder(data InputData) ([]OrderInfoItem, error) {
 		data := ctype.Dict{
 			"order": info.Order,
 		}
-		_, err := srv.taskFieldRepo.Update(queryOptions, data)
+		_, err := srv.taskFieldRepo.Update(updateOptions, data)
 		if err != nil {
 			return defaultResult, err
 		}

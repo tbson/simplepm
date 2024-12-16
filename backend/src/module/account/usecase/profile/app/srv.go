@@ -39,7 +39,8 @@ func (srv Service) UpdateProfile(userID uint, data ctype.Dict) (*schema.User, er
 		return nil, err
 	}
 
-	userResult, err := srv.userRepo.Update(userID, data)
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": userID}}
+	userResult, err := srv.userRepo.Update(updateOptions, data)
 	if err != nil {
 		return nil, err
 	}

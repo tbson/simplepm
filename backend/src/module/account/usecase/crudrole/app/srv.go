@@ -31,7 +31,7 @@ func (srv Service) Create(data ctype.Dict) (schema.Role, error) {
 	return *result, nil
 }
 
-func (srv Service) Update(id uint, data ctype.Dict) (schema.Role, error) {
+func (srv Service) Update(updateOptions ctype.QueryOptions, data ctype.Dict) (schema.Role, error) {
 	emptyResult := schema.Role{}
 	pemIds := data["PemIDs"].([]uint)
 	delete(data, "PemIDs")
@@ -41,7 +41,7 @@ func (srv Service) Update(id uint, data ctype.Dict) (schema.Role, error) {
 	}
 	data["Pems"] = pems
 
-	result, err := srv.roleRepo.Update(id, data)
+	result, err := srv.roleRepo.Update(updateOptions, data)
 	if err != nil {
 		return emptyResult, err
 	}

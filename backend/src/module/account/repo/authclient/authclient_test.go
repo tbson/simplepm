@@ -110,7 +110,8 @@ func TestUpdate(t *testing.T) {
 	item, _ := repo.Retrieve(
 		ctype.QueryOptions{Filters: ctype.Dict{"ID": getID(index)}},
 	)
-	result, err := repo.Update(item.ID, data)
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": item.ID}}
+	result, err := repo.Update(updateOptions, data)
 	if err != nil {
 		t.Errorf("Error: %v", err)
 	}

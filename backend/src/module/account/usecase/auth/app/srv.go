@@ -118,7 +118,8 @@ func (srv Service) HandleCallback(
 		}
 
 		userData := dictutil.StructToDict(userInfo)
-		_, err = srv.userRepo.Update(user.ID, userData)
+		updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": user.ID}}
+		_, err = srv.userRepo.Update(updateOptions, userData)
 		if err != nil {
 			return blankResult, err
 		}

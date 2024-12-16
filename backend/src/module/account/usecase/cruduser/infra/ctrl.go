@@ -112,7 +112,8 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	id := vldtutil.ValidateId(c.Param("id"))
-	result, err := srv.Update(id, data)
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
+	result, err := srv.Update(updateOptions, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

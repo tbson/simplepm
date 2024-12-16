@@ -126,10 +126,10 @@ func Update(c echo.Context) error {
 	}
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	queryOptions := ctype.QueryOptions{
+	updateOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"ID": id},
 	}
-	result, err := cruder.Update(queryOptions, data)
+	result, err := cruder.Update(updateOptions, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

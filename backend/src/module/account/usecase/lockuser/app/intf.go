@@ -6,5 +6,5 @@ import (
 )
 
 type CrudUserRepo interface {
-	Update(id uint, data ctype.Dict) (*schema.User, error)
+	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
 }

@@ -7,7 +7,7 @@ import (
 
 type RoleRepo interface {
 	Create(data ctype.Dict) (*schema.Role, error)
-	Update(id uint, data ctype.Dict) (*schema.Role, error)
+	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.Role, error)
 }
 
 type CrudRoleRepo interface {

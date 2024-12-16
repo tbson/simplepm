@@ -110,10 +110,7 @@ func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Sc
 	return existItem, nil
 }
 
-func (r Repo) Update(id uint, data ctype.Dict) (*Schema, error) {
-	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"id": id},
-	}
+func (r Repo) Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
 	item, err := r.Retrieve(queryOptions)
 	if err != nil {
 		return nil, err
@@ -137,7 +134,8 @@ func (r Repo) UpdateOrCreate(
 	if err != nil {
 		return r.Create(data)
 	}
-	return r.Update(existItem.ID, data)
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": existItem.ID}}
+	return r.Update(updateOptions, data)
 }
 
 func (r Repo) Delete(id uint) ([]uint, error) {
