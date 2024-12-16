@@ -73,7 +73,7 @@ export default function TaskField() {
                 setOpen(false);
                 TaskFieldTable.toggle(false);
             }}
-            bodyStyle={{ padding: 10 }}
+            styles={{ body: { padding: 10 } }}
         >
             <MenuHeading
                 title={messages.heading}
