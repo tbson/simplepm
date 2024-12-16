@@ -22,7 +22,7 @@ type Schema = schema.TaskField
 var NewRepo = taskfield.New
 var folder = "taskField/avatar"
 var searchableFields = []string{"title", "description"}
-var filterableFields = []string{}
+var filterableFields = []string{"project_id"}
 var orderableFields = []string{"id", "title", "order"}
 
 func List(c echo.Context) error {
