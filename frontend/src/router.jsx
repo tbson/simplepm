@@ -143,17 +143,22 @@ const router = createBrowserRouter([
                             {
                                 path: 'pm/workspace',
                                 lazy: async () => ({
-                                    Component: (
-                                        await import('component/pm/workspace')
-                                    ).default
+                                    Component: (await import('component/pm/workspace'))
+                                        .default
                                 })
                             },
                             {
                                 path: 'pm/project',
                                 lazy: async () => ({
-                                    Component: (
-                                        await import('component/pm/project')
-                                    ).default
+                                    Component: (await import('component/pm/project'))
+                                        .default
+                                })
+                            },
+                            {
+                                path: 'pm/task/:project_id',
+                                lazy: async () => ({
+                                    Component: (await import('component/pm/task'))
+                                        .default
                                 })
                             }
                         ]

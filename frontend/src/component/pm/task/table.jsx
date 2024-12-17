@@ -1,33 +1,24 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { t } from 'ttag';
-import { useAtomValue } from 'jotai';
-import { Row, Col, Table, Flex } from 'antd';
-import { ProfileOutlined, CarryOutOutlined } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
+import { Row, Col, Table } from 'antd';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import {
     AddNewBtn,
     RemoveSelectedBtn,
     EditBtn,
-    RemoveBtn,
-    IconButton
+    RemoveBtn
 } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
-import Img from 'component/common/display/img';
 import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
-import NavUtil from 'service/helper/nav_util';
 import Dialog from './dialog';
-import TaskField from './task_field';
-import { projectFilterSt } from 'component/pm/project/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
-export default function ProjectTable() {
-    const navigate = useNavigate();
-    const projectFilter = useAtomValue(projectFilterSt);
+export default function TaskTable() {
+    const { project_id } = useParams();
     const [searchParam, setSearchParam] = useState({});
     const [filterParam, setFilterParam] = useState({});
     const [sortParam, setSortParam] = useState({});
@@ -36,7 +27,6 @@ export default function ProjectTable() {
     const [list, setList] = useState([]);
     const [ids, setIds] = useState([]);
     const [pages, setPages] = useState(defaultPages);
-    const navigateTo = NavUtil.navigateTo(navigate);
     const labels = getLabels();
     const messages = getMessages();
 
@@ -52,7 +42,7 @@ export default function ProjectTable() {
             ...sortParam,
             ...pageParam
         };
-        RequestUtil.apiCall(urls.crud, queryParam)
+        RequestUtil.apiCall(urls.crud, {...queryParam, project_id})
             .then((resp) => {
                 setPages(resp.data.pages);
                 setList(Util.appendKeys(resp.data.items));
@@ -151,43 +141,15 @@ export default function ProjectTable() {
 
     const columns = [
         {
-            key: 'avatar',
-            title: labels.avatar,
-            dataIndex: 'avatar',
-            render: (value) => <Img src={value} width={30} height={30} />,
-            width: 80
-        },
-        {
             key: 'title',
             title: labels.title,
             dataIndex: 'title'
         },
         {
-            key: 'workspace_label',
-            title: labels.workspace_id,
-            dataIndex: 'workspace_label',
+            key: 'feature_id',
+            title: labels.feature,
+            dataIndex: 'feature_id',
             width: 120,
-            filterMultiple: false,
-            filters: projectFilter.workspace,
-            onFilter: (value, record) => record.workspace_id === value
-        },
-        {
-            key: 'layout',
-            title: labels.layout,
-            dataIndex: 'layout',
-            width: 120,
-            filterMultiple: false,
-            filters: projectFilter.layout,
-            onFilter: (value, record) => record.layout === value
-        },
-        {
-            key: 'status',
-            title: labels.status,
-            dataIndex: 'status',
-            width: 120,
-            filterMultiple: false,
-            filters: projectFilter.status,
-            onFilter: (value, record) => record.status === value
         },
         {
             key: 'action',
@@ -195,28 +157,14 @@ export default function ProjectTable() {
             fixed: 'right',
             width: 90,
             render: (_text, record) => (
-                <Flex wrap gap={5} justify="flex-end">
+                <div className="flex-space">
                     <PemCheck pem_group={PEM_GROUP} pem="update">
                         <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
                         <RemoveBtn onClick={() => onDelete(record.id)} />
                     </PemCheck>
-                    <PemCheck pem_group={PEM_GROUP} pem="update">
-                        <IconButton
-                            icon={<CarryOutOutlined />}
-                            tootip={t`Task page`}
-                            onClick={() => navigateTo(`/pm/task/${record.id}`)}
-                        />
-                    </PemCheck>
-                    <PemCheck pem_group={PEM_GROUP} pem="update">
-                        <IconButton
-                            icon={<ProfileOutlined />}
-                            tootip={t`Toggle field page`}
-                            onClick={() => TaskField.toggle(true, record.id)}
-                        />
-                    </PemCheck>
-                </Flex>
+                </div>
             )
         }
     ];
@@ -258,9 +206,8 @@ export default function ProjectTable() {
             />
             <Pagination next={pages.next} prev={pages.prev} onChange={handlePaging} />
             <Dialog onChange={onChange} />
-            <TaskField />
         </div>
     );
 }
 
-ProjectTable.displayName = 'ProjectTable';
+TaskTable.displayName = 'TaskTable';

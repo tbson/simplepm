@@ -13,6 +13,7 @@ import (
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 	configoption "src/module/config/usecase/option/infra"
 	crudproject "src/module/pm/usecase/crudproject/infra"
+	crudtask "src/module/pm/usecase/crudtask/infra"
 	crudtaskfield "src/module/pm/usecase/crudtaskfield/infra"
 	crudworkspace "src/module/pm/usecase/crudworkspace/infra"
 	reordertaskfield "src/module/pm/usecase/reordertaskfield/infra"
@@ -36,5 +37,6 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = lockuser.RegisterUrls(e, pemMap)
 	e, pemMap = signuptenant.RegisterUrls(e, pemMap)
 	e, pemMap = reordertaskfield.RegisterUrls(e, pemMap)
+	e, pemMap = crudtask.RegisterUrls(e, pemMap)
 	return e, pemMap
 }
