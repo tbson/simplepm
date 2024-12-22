@@ -19,7 +19,7 @@ func GetProfile(c echo.Context) error {
 	userRepo := user.New(client)
 	user, err := userRepo.Retrieve(ctype.QueryOptions{
 		Filters:  ctype.Dict{"id": userID},
-		Preloads: []string{"Tenant.AuthClient"},
+		Preloads: []string{"Tenant.AuthClient", "GitUsers"},
 	})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
