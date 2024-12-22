@@ -12,6 +12,8 @@ import (
 	signuptenant "src/module/account/usecase/signuptenant/infra"
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 	configoption "src/module/config/usecase/option/infra"
+	github "src/module/git/usecase/github/infra"
+	gitlab "src/module/git/usecase/gitlab/infra"
 	crudproject "src/module/pm/usecase/crudproject/infra"
 	crudtask "src/module/pm/usecase/crudtask/infra"
 	crudtaskfield "src/module/pm/usecase/crudtaskfield/infra"
@@ -38,5 +40,7 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = signuptenant.RegisterUrls(e, pemMap)
 	e, pemMap = reordertaskfield.RegisterUrls(e, pemMap)
 	e, pemMap = crudtask.RegisterUrls(e, pemMap)
+	e, pemMap = github.RegisterUrls(e, pemMap)
+	e, pemMap = gitlab.RegisterUrls(e, pemMap)
 	return e, pemMap
 }

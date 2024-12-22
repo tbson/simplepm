@@ -23,6 +23,7 @@ func RegisterModels() []interface{} {
 		&config.Variable{},
 		&account.Tenant{},
 		&account.AuthClient{},
+		&account.GitUser{},
 		&account.User{},
 		&account.Role{},
 		&account.Pem{},
@@ -35,6 +36,7 @@ func RegisterModels() []interface{} {
 		&pm.Feature{},
 		&pm.Task{},
 		&pm.TaskFieldValue{},
+		&pm.GitBranch{},
 	}
 }
 

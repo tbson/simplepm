@@ -69,6 +69,8 @@ type Project struct {
 	Avatar      string         `gorm:"type:text;not null;default:''" json:"avatar"`
 	Layout      string         `gorm:"type:text;not null;default:'TABLE';check:layout IN ('TABLE', 'KANBAN', 'ROADMAP')" json:"layout"`
 	Status      string         `gorm:"type:text;not null;default:'ACTIVE';check:status IN ('ACTIVE', 'FINISHED', 'ARCHIEVED')" json:"status"`
+	GitRepo     string         `gorm:"type:text;not null;default:''" json:"git_repo"`
+	GitHost     string         `gorm:"type:text;not null;default:'';check:git_host IN ('', 'GITHUB', 'GITLAB')" json:"git_host"`
 	Order       int            `gorm:"not null;default:0" json:"order"`
 	FinishedAt  *time.Time     `json:"finished_at"`
 	CreatedAt   time.Time      `json:"created_at"`
@@ -84,6 +86,8 @@ func NewProject(data ctype.Dict) *Project {
 		Avatar:      dictutil.GetValue[string](data, "Avatar"),
 		Layout:      dictutil.GetValue[string](data, "Layout"),
 		Status:      dictutil.GetValue[string](data, "Status"),
+		GitRepo:     dictutil.GetValue[string](data, "GitRepo"),
+		GitHost:     dictutil.GetValue[string](data, "GitHost"),
 		Order:       dictutil.GetValue[int](data, "Order"),
 		FinishedAt:  dictutil.GetValue[*time.Time](data, "FinishedAt"),
 	}
@@ -210,6 +214,7 @@ type Task struct {
 	Feature         Feature          `gorm:"foreignKey:FeatureID" json:"feature"`
 	TaskFieldValues []TaskFieldValue `gorm:"constraint:OnDelete:CASCADE;" json:"task_field_values"`
 	Users           []account.User   `gorm:"many2many:tasks_users;" json:"users"`
+	GitBranches     []GitBranch      `gorm:"constraint:OnDelete:CASCADE;" json:"git_branches"`
 	Title           string           `gorm:"type:text;not null" json:"title"`
 	Description     string           `gorm:"ntype:text;ot null;default:''" json:"description"`
 	Order           int              `gorm:"not null;default:0" json:"order"`
@@ -224,6 +229,24 @@ func NewTask(data ctype.Dict) *Task {
 		Title:       dictutil.GetValue[string](data, "Title"),
 		Description: dictutil.GetValue[string](data, "Description"),
 		Order:       dictutil.GetValue[int](data, "Order"),
+	}
+}
+
+type GitBranch struct {
+	ID     uint   `gorm:"primaryKey" json:"id"`
+	TaskID uint   `gorm:"not null" json:"task_id"`
+	Task   Task   `gorm:"foreignKey:TaskID" json:"task"`
+	Title  string `gorm:"type:text;not null" json:"title"`
+}
+
+func (GitBranch) TableName() string {
+	return "git_branches"
+}
+
+func NewGitBranch(data ctype.Dict) *GitBranch {
+	return &GitBranch{
+		TaskID: dictutil.GetValue[uint](data, "TaskID"),
+		Title:  dictutil.GetValue[string](data, "Title"),
 	}
 }
 

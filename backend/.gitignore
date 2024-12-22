@@ -26,3 +26,6 @@ go.work
 /src/tmp/
 atlas.hcl
 main
+# ignore all files in  /src/config/ but *.md files
+/src/config/*
+!/src/config/*.md

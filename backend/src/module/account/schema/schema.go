@@ -63,6 +63,7 @@ type User struct {
 	TenantTmpID  *uint          `json:"tenant_tmp_id"`
 	Sub          *string        `gorm:"type:text;default:null;unique" json:"sub"`
 	Roles        []Role         `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"roles"`
+	GitUsers     []GitUser      `gorm:"constraint:OnDelete:CASCADE;" json:"git_users"`
 	ExternalID   string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_external" json:"uid"`
 	Email        string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email" json:"email"`
 	Mobile       *string        `gorm:"type:text" json:"mobile"`
@@ -95,6 +96,24 @@ func NewUser(data ctype.Dict) *User {
 		AvatarStr:   dictutil.GetValue[string](data, "AvatarStr"),
 		ExtraInfo:   datatypes.JSON(extraInfoJSON),
 		Roles:       dictutil.GetValue[[]Role](data, "Roles"),
+	}
+}
+
+type GitUser struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	UserID    uint      `gorm:"not null" json:"user_id"`
+	User      User      `gorm:"foreignKey:UserID" json:"user"`
+	Username  string    `gorm:"type:text;not null" json:"username"`
+	GitHost   string    `gorm:"type:text;not null;default:'GITHUB';check:git_host IN ('GITHUB', 'GITLAB')" json:"git_host"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func NewGitUser(data ctype.Dict) *GitUser {
+	return &GitUser{
+		UserID:   dictutil.GetValue[uint](data, "UserID"),
+		Username: dictutil.GetValue[string](data, "Username"),
+		GitHost:  dictutil.GetValue[string](data, "GitHost"),
 	}
 }
 

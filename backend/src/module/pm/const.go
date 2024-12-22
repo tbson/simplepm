@@ -10,6 +10,9 @@ const PROJECT_STATUS_ACTIVE = "ACTIVE"
 const PROJECT_STATUS_FINISHED = "FINISHED"
 const PROJECT_STATUS_ARCHIVED = "ARCHIVED"
 
+const PROJECT_REPO_TYPE_GITHUB = "GITHUB"
+const PROJECT_REPO_TYPE_GITLAB = "GITLAB"
+
 const TASK_FIELD_TYPE_TEXT = "TEXT"
 const TASK_FIELD_TYPE_NUMBER = "NUMBER"
 const TASK_FIELD_TYPE_DATE = "DATE"
@@ -37,6 +40,11 @@ var ProjectStatusOptions = []option{
 	{Value: PROJECT_STATUS_ACTIVE, Label: "Active"},
 	{Value: PROJECT_STATUS_FINISHED, Label: "Finished"},
 	{Value: PROJECT_STATUS_ARCHIVED, Label: "Archived"},
+}
+
+var ProjectRepoTypeOptions = []option{
+	{Value: PROJECT_REPO_TYPE_GITHUB, Label: "GitHub"},
+	{Value: PROJECT_REPO_TYPE_GITLAB, Label: "GitLab"},
 }
 
 var TaskFieldTypeOptions = []option{
