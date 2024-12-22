@@ -9,7 +9,8 @@ import {
     UserOutlined,
     TeamOutlined,
     AppstoreOutlined,
-    ProjectOutlined
+    ProjectOutlined,
+    MessageOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
 import PemUtil from 'service/helper/pem_util';
@@ -64,6 +65,12 @@ export default function UserLayout() {
                 label: t`Project`,
                 key: `/pm/project`,
                 icon: <ProjectOutlined />
+            });
+        PemUtil.canView('crudproject') &&
+            result.push({
+                label: t`Message`,
+                key: `/event/message`,
+                icon: <MessageOutlined />
             });
         return result;
     };
