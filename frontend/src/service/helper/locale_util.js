@@ -1,8 +1,8 @@
 import { addLocale } from "ttag";
 import StorageUtil from "service/helper/storage_util";
 
-const DEFAULT_LOCALE = "en";
-const SUPPORTED_LOCALES = ["vi", "en"];
+export const DEFAULT_LOCALE = "en";
+export const SUPPORTED_LOCALES = ["vi", "en"];
 
 export default class LocaleUtil {
     static async fetchLocales() {

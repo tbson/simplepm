@@ -1,19 +1,31 @@
 import { createBrowserRouter } from 'react-router-dom';
 import StorageUtil from 'service/helper/storage_util';
-import NotMatch from 'component/common/route/not_match';
-import AuthError from 'component/common/result/auth_error';
-import VerifyEmail from 'component/common/result/verify_email';
 import PrivateRoute from 'component/common/route/private_route.jsx';
-import BlankLayout from 'component/common/layout/blank';
-import AdminLayout from 'component/common/layout/admin';
-import UserLayout from 'component/common/layout/user';
-import TenantLayout from 'component/common/layout/tenant';
+
+const App = (await import('src/app')).default;
+const BlankLayout = (await import('component/common/layout/blank')).default;
+const AdminLayout = (await import('component/common/layout/admin')).default;
+const UserLayout = (await import('component/common/layout/user')).default;
+const TenantLayout = (await import('component/common/layout/tenant')).default;
+
+const NotMatch = (await import('component/common/route/not_match')).default;
+const AuthError = (await import('component/common/result/auth_error')).default;
+const VerifyEmail = (await import('component/common/result/verify_email')).default;
+const Login = (await import('component/auth/login')).default;
+const Signup = (await import('component/auth/signup')).default;
+const TenantDetail = (await import('component/account/tenant/detail')).default;
+const Role = (await import('component/account/role')).default;
+const User = (await import('component/account/user')).default;
+const Profile = (await import('component/account/profile')).default;
+const Variable = (await import('component/config/variable')).default;
+const AuthClient = (await import('component/account/auth_client')).default;
+const Tenant = (await import('component/account/tenant')).default;
+const Workspace = (await import('component/pm/workspace')).default;
+const Project = (await import('component/pm/project')).default;
+const Task = (await import('component/pm/task')).default;
 
 const userInfor = StorageUtil.getUserInfo();
-
 const MainLayout = userInfor?.profile_type === 'admin' ? AdminLayout : UserLayout;
-
-import App from 'src/app';
 
 const router = createBrowserRouter([
     {
@@ -22,11 +34,11 @@ const router = createBrowserRouter([
         children: [
             {
                 path: 'auth-error',
-                element: <AuthError />
+                lazy: async () => ({ Component: AuthError })
             },
             {
                 path: 'verify-email',
-                element: <VerifyEmail />
+                lazy: async () => ({ Component: VerifyEmail })
             },
             {
                 path: 'login',
@@ -34,9 +46,7 @@ const router = createBrowserRouter([
                 children: [
                     {
                         path: '',
-                        lazy: async () => ({
-                            Component: (await import('component/auth/login')).default
-                        })
+                        lazy: async () => ({ Component: Login })
                     }
                 ]
             },
@@ -46,9 +56,7 @@ const router = createBrowserRouter([
                 children: [
                     {
                         path: '',
-                        lazy: async () => ({
-                            Component: (await import('component/auth/signup')).default
-                        })
+                        lazy: async () => ({ Component: Signup })
                     }
                 ]
             },
@@ -62,25 +70,15 @@ const router = createBrowserRouter([
                         children: [
                             {
                                 path: '',
-                                lazy: async () => ({
-                                    Component: (
-                                        await import('component/account/tenant/detail')
-                                    ).default
-                                })
+                                lazy: async () => ({ Component: TenantDetail })
                             },
                             {
                                 path: 'role',
-                                lazy: async () => ({
-                                    Component: (await import('component/account/role'))
-                                        .default
-                                })
+                                lazy: async () => ({ Component: Role })
                             },
                             {
                                 path: 'user',
-                                lazy: async () => ({
-                                    Component: (await import('component/account/user'))
-                                        .default
-                                })
+                                lazy: async () => ({ Component: User })
                             }
                         ]
                     }
@@ -96,70 +94,39 @@ const router = createBrowserRouter([
                         children: [
                             {
                                 path: '',
-                                lazy: async () => ({
-                                    Component: (
-                                        await import('component/account/profile')
-                                    ).default
-                                })
+                                lazy: async () => ({ Component: Profile })
                             },
                             {
                                 path: 'config/variable',
-                                lazy: async () => ({
-                                    Component: (
-                                        await import('component/config/variable')
-                                    ).default
-                                })
+                                lazy: async () => ({ Component: Variable })
                             },
                             {
                                 path: 'account/auth-client',
-                                lazy: async () => ({
-                                    Component: (
-                                        await import('component/account/auth_client')
-                                    ).default
-                                })
+                                lazy: async () => ({ Component: AuthClient })
                             },
                             {
                                 path: 'account/tenant',
-                                lazy: async () => ({
-                                    Component: (
-                                        await import('component/account/tenant')
-                                    ).default
-                                })
+                                lazy: async () => ({ Component: Tenant })
                             },
                             {
                                 path: 'account/role',
-                                lazy: async () => ({
-                                    Component: (await import('component/account/role'))
-                                        .default
-                                })
+                                lazy: async () => ({ Component: Role })
                             },
                             {
                                 path: 'account/user',
-                                lazy: async () => ({
-                                    Component: (await import('component/account/user'))
-                                        .default
-                                })
+                                lazy: async () => ({ Component: User })
                             },
                             {
                                 path: 'pm/workspace',
-                                lazy: async () => ({
-                                    Component: (await import('component/pm/workspace'))
-                                        .default
-                                })
+                                lazy: async () => ({ Component: Workspace })
                             },
                             {
                                 path: 'pm/project',
-                                lazy: async () => ({
-                                    Component: (await import('component/pm/project'))
-                                        .default
-                                })
+                                lazy: async () => ({ Component: Project })
                             },
                             {
                                 path: 'pm/task/:project_id',
-                                lazy: async () => ({
-                                    Component: (await import('component/pm/task'))
-                                        .default
-                                })
+                                lazy: async () => ({ Component: Task })
                             }
                         ]
                     }
@@ -167,7 +134,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '*',
-                element: <NotMatch />
+                lazy: async () => ({ Component: NotMatch })
             }
         ]
     }
