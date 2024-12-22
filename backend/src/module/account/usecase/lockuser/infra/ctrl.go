@@ -11,10 +11,12 @@ import (
 )
 
 func LockUser(c echo.Context) error {
-	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+
+	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
 
 	userRepo := user.New(dbutil.Db())

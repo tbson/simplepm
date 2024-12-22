@@ -124,11 +124,12 @@ func Create(c echo.Context) error {
 func Update(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
 
-	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

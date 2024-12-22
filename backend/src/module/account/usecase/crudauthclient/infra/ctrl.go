@@ -72,10 +72,12 @@ func Create(c echo.Context) error {
 func Update(c echo.Context) error {
 	cruder := NewRepo(dbutil.Db())
 
-	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+
+	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
 	result, err := cruder.Update(updateOptions, data)

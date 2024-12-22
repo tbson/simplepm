@@ -104,10 +104,12 @@ func Update(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
 	cruder := NewRepo(dbutil.Db())
 
-	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{ProjectID: projectID})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{ProjectID: projectID})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+
+	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
 	result, err := cruder.Update(updateOptions, data)

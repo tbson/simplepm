@@ -81,21 +81,55 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 	return target, nil
 }
 
-func ValidateUpdatePayload[T any](c echo.Context, target T) (T, ctype.Dict, error) {
+func ValidateUpdatePayload[T any](c echo.Context, target T) (T, []string, error) {
+	defaultFields := []string{}
 	structResult := target
-	result := ctype.Dict{}
 	localizer := localeutil.Get()
 
 	fields, err := getFields(c)
 	if err != nil {
-		return structResult, result, err
+		return structResult, defaultFields, err
 	}
 
 	if err := c.Bind(&target); err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.CannotReadRequestBody,
 		})
-		return structResult, result, errutil.New("", []string{msg})
+		return structResult, defaultFields, errutil.New("", []string{msg})
+	}
+
+	return target, fields, nil
+}
+
+func GetDictByFields[T any](target T, fields []string, fieldModifier []string) ctype.Dict {
+	// fieldModifer can be included fields or excluded fields, the excluded fields are the fields that prefix with "-"
+	// if the fieldModifier item is prefixed with "-", the field will be excluded
+	// if the fieldModifier item not prefixed with "-", the field will be included if it is not present in the fields variable
+	// if the fieldModifier is empty, fields variable will be used
+
+	newFields := []string{}
+
+	includeFields := []string{}
+	excludeFields := []string{}
+
+	for _, field := range fieldModifier {
+		if strings.HasPrefix(field, "-") {
+			excludeFields = append(excludeFields, strings.TrimPrefix(field, "-"))
+		} else {
+			includeFields = append(includeFields, field)
+		}
+	}
+
+	for _, field := range fields {
+		if !slices.Contains(excludeFields, field) {
+			newFields = append(newFields, field)
+		}
+	}
+
+	for _, field := range includeFields {
+		if !slices.Contains(newFields, field) {
+			newFields = append(newFields, field)
+		}
 	}
 
 	data := dictutil.StructToDict(target)
@@ -106,13 +140,13 @@ func ValidateUpdatePayload[T any](c echo.Context, target T) (T, ctype.Dict, erro
 		jsonTag := structField.Tag.Get("json")
 		if jsonTag != "" {
 			fieldName := strings.Split(jsonTag, ",")[0]
-			if !slices.Contains(fields, fieldName) {
+			if !slices.Contains(newFields, fieldName) {
 				delete(data, k)
 			}
 		}
 	}
 
-	return target, data, nil
+	return data
 }
 
 func ValidateId(id string) uint {

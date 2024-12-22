@@ -115,10 +115,11 @@ func Update(c echo.Context) error {
 	srv := app.New(roleRepo, crudRoleRepo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
 	result, err := srv.Update(updateOptions, data)
 

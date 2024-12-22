@@ -37,10 +37,12 @@ func UpdateProfile(c echo.Context) error {
 
 	srv := app.New(userRepo, iamRepo)
 
-	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+
+	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -62,11 +64,12 @@ func ChangePassword(c echo.Context) error {
 
 	srv := app.New(userRepo, iamRepo)
 
-	_, data, err := vldtutil.ValidateUpdatePayload(c, InputPassword{})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputPassword{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	result, err := srv.ChangePassword(userID, data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

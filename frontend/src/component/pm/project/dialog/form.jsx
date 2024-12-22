@@ -24,7 +24,8 @@ const emptyRecord = {
     layout: 'TABLE',
     status: 'ACTIVE',
     order: 0,
-    finished_at: ''
+    finished_at: '',
+    git_repo: '',
 };
 
 /**
@@ -90,6 +91,10 @@ export default function ProjectForm({ data, onChange }) {
 
             <Form.Item name="avatar" label={labels.avatar}>
                 <ImgInput />
+            </Form.Item>
+
+            <Form.Item name="git_repo" label={labels.git_repo}>
+                <Input />
             </Form.Item>
 
             <Form.Item name="workspace_id" label={labels.workspace_id}>

@@ -30,6 +30,7 @@ export const getLabels = () => ({
     order: t`Order`,
     status: t`Status`,
     finished_at: t`Finished at`,
+    git_repo: t`Git repo`,
     created_at: t`Created at`,
     updated_at: t`Updated at`
 });

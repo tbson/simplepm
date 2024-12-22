@@ -81,11 +81,12 @@ func Update(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	cruder := NewRepo(dbutil.Db())
 
-	_, data, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

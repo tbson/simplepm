@@ -62,7 +62,7 @@ func main() {
 		templates: template.Must(template.ParseGlob("/code/public/views/*.html")),
 	}
 	e.Renderer = t
-	e.Pre(middleware.RemoveTrailingSlash())
+	// e.Pre(middleware.RemoveTrailingSlash())
 	if !setting.DEBUG {
 		e.Use(middleware.Recover())
 		e.Use(middleware.Logger())

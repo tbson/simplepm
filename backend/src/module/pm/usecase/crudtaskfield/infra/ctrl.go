@@ -85,11 +85,12 @@ func Update(c echo.Context) error {
 	taskFieldOptionRepo := taskfieldoption.New(dbutil.Db())
 	srv := app.New(taskFieldRepo, taskFieldOptionRepo)
 
-	structData, data, err := vldtutil.ValidateUpdatePayload(c, app.InputData{})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, app.InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	options := structData.TaskFieldOptions
 
 	id := vldtutil.ValidateId(c.Param("id"))
