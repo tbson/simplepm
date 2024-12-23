@@ -9,7 +9,7 @@ export default function Message() {
     const [connectionStatus, setConnectionStatus] = useState('Disconnected');
 
     useEffect(() => {
-        const centrifuge = new Centrifuge('ws://localhost:8000/connection/websocket', {
+        const centrifuge = new Centrifuge('wss://socketstag.simplepm.io/connection/websocket', {
             token: './exec centrifugo gentoken -u 123722'
         });
 
