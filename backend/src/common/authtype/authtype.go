@@ -20,6 +20,7 @@ type AuthUserInfo struct {
 type AuthCallbackResult struct {
 	AccessToken  string       `json:"access_token"`
 	RefreshToken string       `json:"refresh_token"`
+	IDToken      string       `json:"id_token"`
 	Realm        string       `json:"realm"`
 	UserInfo     AuthUserInfo `json:"user_info"`
 }
@@ -35,6 +36,7 @@ type SsoUserInfo struct {
 type SsoCallbackResult struct {
 	AccessToken  string      `json:"access_token"`
 	RefreshToken string      `json:"refresh_token"`
+	IDToken      string      `json:"id_token"`
 	Realm        string      `json:"realm"`
 	UserInfo     SsoUserInfo `json:"user_info"`
 }

@@ -49,11 +49,12 @@ func GetAuthUrl(c echo.Context) error {
 }
 
 func GetLogoutUrl(c echo.Context) error {
+	idToken := cookieutil.GetValue(c, "id_token")
 	tenantUid := c.Param("tenantUid")
 
 	srv := getService()
 
-	url, err := srv.GetLogoutUrl(tenantUid)
+	url, err := srv.GetLogoutUrl(tenantUid, idToken)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

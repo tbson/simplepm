@@ -24,12 +24,16 @@ func NewAccessTokenCookie(value string) *http.Cookie {
 	return newCookie("access_token", value, "/api/v1/")
 }
 
-func NewRealmCookie(value string) *http.Cookie {
-	return newCookie("realm", value, "/api/v1/")
-}
-
 func NewRefreshTokenCookie(value string) *http.Cookie {
 	return newCookie("refresh_token", value, "/api/v1/account/auth/sso/refresh-token")
+}
+
+func NewIDTokenCookie(value string) *http.Cookie {
+	return newCookie("id_token", value, "/api/v1/account/auth/sso/logout/")
+}
+
+func NewRealmCookie(value string) *http.Cookie {
+	return newCookie("realm", value, "/api/v1/")
 }
 
 func GetValue(c echo.Context, name string) string {

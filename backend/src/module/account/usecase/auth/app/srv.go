@@ -56,7 +56,7 @@ func (srv Service) GetAuthUrl(tenantUid string) (string, error) {
 	return url, nil
 }
 
-func (srv Service) GetLogoutUrl(tenantUid string) (string, error) {
+func (srv Service) GetLogoutUrl(tenantUid string, idToken string) (string, error) {
 	authClientInfo, err := srv.authRepo.GetAuthClientFromTenantUid(tenantUid)
 	if err != nil {
 		return "", err
@@ -65,7 +65,7 @@ func (srv Service) GetLogoutUrl(tenantUid string) (string, error) {
 	realm := authClientInfo.Realm
 	clientId := authClientInfo.ClientID
 
-	url := srv.iamRepo.GetLogoutUrl(realm, clientId)
+	url := srv.iamRepo.GetLogoutUrl(realm, clientId, idToken)
 
 	return url, nil
 }
@@ -128,6 +128,7 @@ func (srv Service) HandleCallback(
 	result := authtype.AuthCallbackResult{
 		AccessToken:  tokensAndClaims.AccessToken,
 		RefreshToken: tokensAndClaims.RefreshToken,
+		IDToken:      tokensAndClaims.IDToken,
 		Realm:        tokensAndClaims.Realm,
 		UserInfo:     user,
 	}

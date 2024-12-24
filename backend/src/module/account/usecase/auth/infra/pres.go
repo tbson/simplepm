@@ -14,12 +14,14 @@ import (
 func CallbackPres(c echo.Context, r authtype.AuthCallbackResult) error {
 	authRepo := New(dbutil.Db())
 
-	accessTokenCookie := cookieutil.NewAccessTokenCookie(r.AccessToken)
 	realmCookie := cookieutil.NewRealmCookie(r.Realm)
+	accessTokenCookie := cookieutil.NewAccessTokenCookie(r.AccessToken)
 	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(r.RefreshToken)
-	c.SetCookie(accessTokenCookie)
+	idTokenCookie := cookieutil.NewIDTokenCookie(r.IDToken)
 	c.SetCookie(realmCookie)
+	c.SetCookie(accessTokenCookie)
 	c.SetCookie(refreshTokenCookie)
+	c.SetCookie(idTokenCookie)
 
 	userInfo := r.UserInfo
 
@@ -43,12 +45,14 @@ func CallbackPres(c echo.Context, r authtype.AuthCallbackResult) error {
 }
 
 func RefreshTokenPres(c echo.Context, r authtype.SsoCallbackResult) error {
-	accessTokenCookie := cookieutil.NewAccessTokenCookie(r.AccessToken)
 	realmCookie := cookieutil.NewRealmCookie(r.Realm)
+	accessTokenCookie := cookieutil.NewAccessTokenCookie(r.AccessToken)
 	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(r.RefreshToken)
-	c.SetCookie(accessTokenCookie)
+	idTokenCookie := cookieutil.NewIDTokenCookie(r.IDToken)
 	c.SetCookie(realmCookie)
+	c.SetCookie(accessTokenCookie)
 	c.SetCookie(refreshTokenCookie)
+	c.SetCookie(idTokenCookie)
 
 	return c.JSON(http.StatusOK, ctype.Dict{})
 }

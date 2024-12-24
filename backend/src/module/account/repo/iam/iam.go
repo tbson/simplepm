@@ -54,6 +54,7 @@ func (r Repo) GetAuthUrl(
 func (r Repo) GetLogoutUrl(
 	realm string,
 	clientId string,
+	idToken string,
 ) string {
 	keycloakAuthURL := fmt.Sprintf(
 		"%s/realms/%s/protocol/openid-connect/logout?client_id=%s&post_logout_redirect_uri=%s",
@@ -62,6 +63,11 @@ func (r Repo) GetLogoutUrl(
 		clientId,
 		setting.KEYCLOAK_POST_LOGOUT_URI,
 	)
+
+	if idToken != "" {
+		keycloakAuthURL = fmt.Sprintf("%s&id_token_hint=%s", keycloakAuthURL, idToken)
+	}
+
 	return keycloakAuthURL
 }
 
@@ -120,6 +126,7 @@ func (r Repo) ValidateCallback(
 	result = authtype.SsoCallbackResult{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
+		IDToken:      idToken,
 		Realm:        realm,
 		UserInfo:     userInfo,
 	}
@@ -270,6 +277,7 @@ func (r Repo) RefreshToken(
 	result = authtype.SsoCallbackResult{
 		AccessToken:  accesToken,
 		RefreshToken: refreshToken,
+		IDToken:      idToken,
 		Realm:        realm,
 		UserInfo:     userInfo,
 	}

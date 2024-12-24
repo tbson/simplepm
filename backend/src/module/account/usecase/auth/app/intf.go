@@ -23,7 +23,7 @@ type UserRepo interface {
 
 type IamRepo interface {
 	GetAuthUrl(realm string, clientId string, state ctype.Dict) string
-	GetLogoutUrl(realm string, clientId string) string
+	GetLogoutUrl(realm string, clientId string, idToken string) string
 	ValidateCallback(
 		ctx context.Context,
 		realm string,
