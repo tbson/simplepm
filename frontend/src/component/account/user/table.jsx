@@ -166,7 +166,7 @@ export default function UserTable() {
             key: 'role_labels',
             title: labels.roles,
             dataIndex: 'role_labels',
-            render: (text) => text.join(', ')
+            render: (text) => text && text.join(', ')
         },
         {
             key: 'admin',
