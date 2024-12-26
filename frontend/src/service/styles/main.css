@@ -4,6 +4,10 @@ body {
     padding: 0;
 }
 
+.no-display {
+    display: none;
+}
+
 #loading-screen {
     display: none;
 }

@@ -12,7 +12,7 @@ Util.responseIntercept();
 const themeConfig = {
     components: { Menu: { itemHeight: 34 } },
     token: {
-        fontFamily: 'Montserrat',
+        fontFamily: 'Calibri, Arial, sans-serif',
         colorPrimary: '#255891',
         colorLink: '#255891',
         borderRadius: 3,
