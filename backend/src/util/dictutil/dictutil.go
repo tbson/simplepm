@@ -24,7 +24,7 @@ func StructToDict(obj interface{}) ctype.Dict {
 func DictCamelToSnake(data ctype.Dict) ctype.Dict {
 	result := make(ctype.Dict)
 	for k, v := range data {
-		result[stringutil.ToSnakeCase(k)] = v
+		result[stringutil.ToSnakeCaseEnd(k)] = v
 	}
 	return result
 }

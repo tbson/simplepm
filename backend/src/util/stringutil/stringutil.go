@@ -17,6 +17,14 @@ func ToSnakeCase(s string) string {
 	return strings.ToLower(snake)
 }
 
+func ToSnakeCaseEnd(s string) string {
+	split := strings.Split(s, ".")
+	if len(split) == 1 {
+		return ToSnakeCase(s)
+	}
+	return strings.Join([]string{split[0], ToSnakeCase(split[1])}, ".")
+}
+
 func ToCamelCase(s string) string {
 	// Split the input string into words separated by underscores
 	words := strings.Split(s, "_")

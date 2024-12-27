@@ -38,6 +38,13 @@ func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 		}
 	}
 
+	joins := queryOptions.Joins
+	if len(joins) > 0 {
+		for _, join := range joins {
+			db = db.InnerJoins(join)
+		}
+	}
+
 	var items []Schema
 
 	if len(filters) > 0 {

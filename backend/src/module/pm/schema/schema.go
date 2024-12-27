@@ -151,6 +151,10 @@ type TaskFieldOption struct {
 	Order           int              `gorm:"not null;default:0" json:"order"`
 }
 
+func (TaskFieldOption) TableName() string {
+	return "task_field_options"
+}
+
 func NewTaskFieldOption(data ctype.Dict) *TaskFieldOption {
 	return &TaskFieldOption{
 		TaskFieldID: dictutil.GetValue[uint](data, "TaskFieldID"),

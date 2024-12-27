@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"fmt"
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
@@ -12,6 +13,7 @@ import (
 	"src/module/abstract/repo/paging"
 	"src/module/pm/repo/feature"
 	"src/module/pm/repo/task"
+	"src/module/pm/repo/taskfieldoption"
 	"src/module/pm/schema"
 
 	"github.com/labstack/echo/v4"
@@ -28,13 +30,16 @@ var orderableFields = []string{"id", "title", "order"}
 func Option(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
 	featureRepo := feature.New(dbutil.Db())
-	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"project_id": projectID},
+	taskfieldoptionRepo := taskfieldoption.New(dbutil.Db())
+
+	featureQueryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"ProjectID": projectID},
 	}
-	features, err := featureRepo.List(queryOptions)
+	features, err := featureRepo.List(featureQueryOptions)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+
 	featureOptions := []ctype.SelectOption[uint]{}
 	for _, feature := range features {
 		featureOptions = append(featureOptions, ctype.SelectOption[uint]{
@@ -43,14 +48,35 @@ func Option(c echo.Context) error {
 		})
 	}
 
+	statusQueryOption := ctype.QueryOptions{
+		Joins: []string{"TaskField"},
+		Filters: ctype.Dict{
+			"TaskField.ProjectID": projectID,
+			"TaskField.IsStatus":  true,
+		},
+		Order: fmt.Sprintf("%s.order ASC", schema.TaskFieldOption{}.TableName()),
+	}
+	status, err := taskfieldoptionRepo.List(statusQueryOption)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	statusOptions := []ctype.SelectOption[uint]{}
+	for _, s := range status {
+		statusOptions = append(statusOptions, ctype.SelectOption[uint]{
+			Value: s.ID,
+			Label: s.Title,
+		})
+	}
+
 	result := ctype.Dict{
 		"feature": featureOptions,
+		"status":  statusOptions,
 	}
 	return c.JSON(http.StatusOK, result)
 }
 
 func List(c echo.Context) error {
-	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
+	projectID := numberutil.StrToUint(c.QueryParam("ProjectID"), 0)
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
@@ -82,7 +108,7 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
+	projectID := numberutil.StrToUint(c.QueryParam("ProjectID"), 0)
 	cruder := NewRepo(dbutil.Db())
 
 	structData, err := vldtutil.ValidatePayload(c, InputData{ProjectID: projectID})
@@ -101,7 +127,7 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
+	projectID := numberutil.StrToUint(c.QueryParam("ProjectID"), 0)
 	cruder := NewRepo(dbutil.Db())
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{ProjectID: projectID})
