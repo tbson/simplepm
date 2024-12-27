@@ -55,7 +55,7 @@ export default function ProjectTable() {
         RequestUtil.apiCall(urls.crud, queryParam)
             .then((resp) => {
                 setPages(resp.data.pages);
-                setList(Util.appendKeys(resp.data.items));
+                setList(Util.appendKeys(resp.data.items || []));
             })
             .finally(() => {
                 setInit(false);
@@ -162,6 +162,7 @@ export default function ProjectTable() {
             title: labels.title,
             dataIndex: 'title'
         },
+        /*
         {
             key: 'workspace_label',
             title: labels.workspace_id,
@@ -171,6 +172,7 @@ export default function ProjectTable() {
             filters: projectFilter.workspace,
             onFilter: (value, record) => record.workspace_id === value
         },
+        */
         {
             key: 'layout',
             title: labels.layout,

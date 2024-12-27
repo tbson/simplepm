@@ -41,7 +41,7 @@ func listPresItem(item schema.Project) ListOutput {
 }
 
 func ListPres(items []schema.Project) []ListOutput {
-	var result []ListOutput
+	result := make([]ListOutput, 0)
 	for _, item := range items {
 		result = append(result, listPresItem(item))
 	}

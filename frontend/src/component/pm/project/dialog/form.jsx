@@ -25,7 +25,7 @@ const emptyRecord = {
     status: 'ACTIVE',
     order: 0,
     finished_at: '',
-    git_repo: '',
+    git_repo: ''
 };
 
 /**
@@ -72,6 +72,10 @@ export default function ProjectForm({ data, onChange }) {
             initialValues={{ ...initialValues }}
             onFinish={(data) => {
                 const payload = RequestUtil.formatPayloadDate(data, dateFields);
+                if (!id) {
+                    payload.layout = 'KANBAN';
+                    payload.status = 'ACTIVE';
+                }
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
                     .catch(FormUtil.setFormErrors(form));
@@ -89,14 +93,15 @@ export default function ProjectForm({ data, onChange }) {
                 <TextArea />
             </Form.Item>
 
-            <Form.Item name="avatar" label={labels.avatar}>
-                <ImgInput />
-            </Form.Item>
-
             <Form.Item name="git_repo" label={labels.git_repo}>
                 <Input />
             </Form.Item>
 
+            <Form.Item name="avatar" label={labels.avatar}>
+                <ImgInput />
+            </Form.Item>
+
+            {/*
             <Form.Item name="workspace_id" label={labels.workspace_id}>
                 <SelectInput
                     block
@@ -111,14 +116,16 @@ export default function ProjectForm({ data, onChange }) {
             >
                 <SelectInput block options={projectOption.layout} />
             </Form.Item>
-
-            <Form.Item
-                name="status"
-                label={labels.status}
-                rules={[FormUtil.ruleRequired()]}
-            >
-                <SelectInput block options={projectOption.status} />
-            </Form.Item>
+            */}
+            {id ? (
+                <Form.Item
+                    name="status"
+                    label={labels.status}
+                    rules={[FormUtil.ruleRequired()]}
+                >
+                    <SelectInput block options={projectOption.status} />
+                </Form.Item>
+            ) : null}
         </Form>
     );
 }

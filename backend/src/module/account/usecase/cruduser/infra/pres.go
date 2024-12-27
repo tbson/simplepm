@@ -31,7 +31,7 @@ type DetailOutput struct {
 }
 
 func ListPres(items []schema.User) []ListOutput {
-	var result []ListOutput
+	result := make([]ListOutput, 0)
 	for _, item := range items {
 		var roleLabels []string
 		for _, role := range item.Roles {

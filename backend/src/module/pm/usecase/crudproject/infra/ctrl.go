@@ -14,6 +14,8 @@ import (
 	"src/module/pm"
 	"src/module/pm/repo/feature"
 	"src/module/pm/repo/project"
+	"src/module/pm/repo/taskfield"
+	"src/module/pm/repo/taskfieldoption"
 	"src/module/pm/schema"
 
 	"src/module/pm/repo/workspace"
@@ -105,8 +107,10 @@ func Create(c echo.Context) error {
 
 	projectRepo := project.New(tx)
 	featureRepo := feature.New(tx)
+	taskFieldRepo := taskfield.New(tx)
+	taskFieldOptionRepo := taskfieldoption.New(tx)
 
-	srv := app.New(projectRepo, featureRepo)
+	srv := app.New(projectRepo, featureRepo, taskFieldRepo, taskFieldOptionRepo)
 
 	structData, err := vldtutil.ValidatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
@@ -147,8 +151,10 @@ func Update(c echo.Context) error {
 
 	projectRepo := project.New(tx)
 	featureRepo := feature.New(tx)
+	taskFieldRepo := taskfield.New(tx)
+	taskFieldOptionRepo := taskfieldoption.New(tx)
 
-	srv := app.New(projectRepo, featureRepo)
+	srv := app.New(projectRepo, featureRepo, taskFieldRepo, taskFieldOptionRepo)
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {

@@ -125,6 +125,7 @@ type TaskField struct {
 	Title            string            `gorm:"type:text;not null" json:"title"`
 	Type             string            `gorm:"type:text;not null;default:'TEXT';check:type IN ('TEXT', 'NUMBER', 'DATE', 'SELECT', 'MULTIPLE_SELECT')" json:"type"`
 	Description      string            `gorm:"type:text;not null;default:''" json:"description"`
+	IsStatus         bool              `gorm:"not null;default:false" json:"is_status"`
 	Order            int               `gorm:"not null;default:0" json:"order"`
 }
 
@@ -134,6 +135,7 @@ func NewTaskField(data ctype.Dict) *TaskField {
 		Title:       dictutil.GetValue[string](data, "Title"),
 		Type:        dictutil.GetValue[string](data, "Type"),
 		Description: dictutil.GetValue[string](data, "Description"),
+		IsStatus:    dictutil.GetValue[bool](data, "IsStatus"),
 		Order:       dictutil.GetValue[int](data, "Order"),
 	}
 }
@@ -153,6 +155,8 @@ func NewTaskFieldOption(data ctype.Dict) *TaskFieldOption {
 	return &TaskFieldOption{
 		TaskFieldID: dictutil.GetValue[uint](data, "TaskFieldID"),
 		Title:       dictutil.GetValue[string](data, "Title"),
+		Description: dictutil.GetValue[string](data, "Description"),
+		Color:       dictutil.GetValue[string](data, "Color"),
 		Order:       dictutil.GetValue[int](data, "Order"),
 	}
 }

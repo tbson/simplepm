@@ -14,3 +14,11 @@ type FeatureRepo interface {
 	Create(data ctype.Dict) (*schema.Feature, error)
 	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.Feature, error)
 }
+
+type TaskFieldRepo interface {
+	Create(data ctype.Dict) (*schema.TaskField, error)
+}
+
+type TaskFieldOptionRepo interface {
+	Create(data ctype.Dict) (*schema.TaskFieldOption, error)
+}
