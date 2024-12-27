@@ -19,7 +19,6 @@ export function IconButton({ icon, tootip, onClick, type="default", disabled=fal
                 htmlType="button"
                 icon={icon}
                 size="small"
-                title="hello"
                 onClick={onClick}
             />
         </Tooltip>
@@ -56,7 +55,6 @@ export function EditBtn({ onClick }) {
                 htmlType="button"
                 icon={<EditOutlined />}
                 size="small"
-                title="hello"
                 onClick={onClick}
             />
         </Tooltip>
