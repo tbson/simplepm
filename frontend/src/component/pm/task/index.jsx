@@ -6,10 +6,12 @@ import PageHeading from 'component/common/page_heading';
 import RequestUtil from 'service/helper/request_util';
 import { taskOptionSt } from './state';
 import { urls, getMessages } from './config';
-import Table from './table';
+import TaskTable from './table';
+import FeatureTable from 'component/pm/feature/table';
 
 export default function Task() {
     const { project_id } = useParams();
+    const projectID = parseInt(project_id);
     const [taskOption, setTaskOption] = useAtom(taskOptionSt);
     useEffect(() => {
         if (!taskOption.loaded) getOption();
@@ -31,7 +33,8 @@ export default function Task() {
             <PageHeading>
                 <>{messages.heading}</>
             </PageHeading>
-            <Table />
+            <FeatureTable project_id={projectID} />
+            <TaskTable project_id={projectID} />
         </>
     );
 }

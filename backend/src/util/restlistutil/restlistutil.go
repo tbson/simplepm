@@ -5,6 +5,7 @@ import (
 	"src/common/ctype"
 	"strings"
 
+	"src/util/dictutil"
 	"src/util/numberutil"
 
 	"github.com/labstack/echo/v4"
@@ -121,8 +122,8 @@ func ApplySearch(query *gorm.DB, search string, allowFields []string) *gorm.DB {
 }
 
 func ApplyFilters(query *gorm.DB, filters ctype.Dict) *gorm.DB {
-	// Iterate over the filters and apply only the allowed fields
-	for key, value := range filters {
+	formatedFilters := dictutil.DictCamelToSnake(filters)
+	for key, value := range formatedFilters {
 		query = query.Where(fmt.Sprintf("%s = ?", key), value)
 	}
 

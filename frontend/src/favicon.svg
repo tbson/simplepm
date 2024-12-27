@@ -1,41 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   width="55mm"
-   height="54.999996mm"
-   viewBox="0 0 55 54.999996"
-   version="1.1"
-   id="svg1"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs1" />
-  <g
-     id="layer1"
-     transform="translate(-47.389296,-47.415965)">
-    <path
-       id="path28"
-       style="display:inline;fill:#33578d;fill-opacity:1;stroke:#000000;stroke-width:0.1;stroke-dasharray:none;stroke-opacity:1"
-       d="M 92.978304,50.995854 75.000073,68.999923 56.998071,51.014457 50.9788,57.001172 68.971501,75.014543 50.979317,92.998975 56.999105,99.005843 75.001107,81.010559 92.965385,99.005843 98.973287,92.998458 80.987305,75.01971 98.995508,57.002722 Z M 74.992322,69.14565 a 5.8668909,5.8668909 0 0 1 5.867342,5.866826 5.8668909,5.8668909 0 0 1 -5.867342,5.866825 5.8668909,5.8668909 0 0 1 -5.866826,-5.866825 5.8668909,5.8668909 0 0 1 5.866826,-5.866826 z" />
-    <circle
-       style="fill:#33578d;fill-opacity:1;stroke:none;stroke-width:0.15076;stroke-dasharray:none;stroke-opacity:1"
-       id="path22-4-0-0"
-       cx="74.990982"
-       cy="53.945892"
-       r="5.8668909" />
-    <circle
-       style="fill:#33578d;fill-opacity:1;stroke:none;stroke-width:0.15076;stroke-dasharray:none;stroke-opacity:1"
-       id="path22-4-0-05"
-       cx="74.999794"
-       cy="96.06089"
-       r="5.8668909" />
-    <rect
-       style="fill:none;fill-opacity:1;stroke:none;stroke-width:0.155452;stroke-dasharray:none;stroke-opacity:1"
-       id="rect29"
-       width="55"
-       height="55"
-       x="47.389294"
-       y="47.415966" />
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 141.8 141.8">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #011c40;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer_1">
+    <rect class="cls-1" x="-54.35" y="54.35" width="141.8" height="33.1" transform="translate(87.45 54.35) rotate(90)"/>
+    <path class="cls-1" d="M56.19,0h-16.98v66.73h16.98c18.43,0,33.37-14.94,33.37-33.36S74.62,0,56.19,0Z"/>
+    <rect class="cls-1" x="39.21" y="72.85" width="30.12" height="68.95"/>
+    <rect class="cls-1" x="111.68" y="72.85" width="30.12" height="68.95"/>
+    <rect class="cls-1" x="75.45" y="72.85" width="30.12" height="46.71"/>
   </g>
 </svg>

@@ -14,10 +14,12 @@ import (
 	configoption "src/module/config/usecase/option/infra"
 	github "src/module/git/usecase/github/infra"
 	gitlab "src/module/git/usecase/gitlab/infra"
+	crudfeature "src/module/pm/usecase/crudfeature/infra"
 	crudproject "src/module/pm/usecase/crudproject/infra"
 	crudtask "src/module/pm/usecase/crudtask/infra"
 	crudtaskfield "src/module/pm/usecase/crudtaskfield/infra"
 	crudworkspace "src/module/pm/usecase/crudworkspace/infra"
+	reorderfeature "src/module/pm/usecase/reorderfeature/infra"
 	reordertaskfield "src/module/pm/usecase/reordertaskfield/infra"
 
 	"github.com/labstack/echo/v4"
@@ -40,6 +42,8 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = signuptenant.RegisterUrls(e, pemMap)
 	e, pemMap = reordertaskfield.RegisterUrls(e, pemMap)
 	e, pemMap = crudtask.RegisterUrls(e, pemMap)
+	e, pemMap = crudfeature.RegisterUrls(e, pemMap)
+	e, pemMap = reorderfeature.RegisterUrls(e, pemMap)
 	e, pemMap = github.RegisterUrls(e, pemMap)
 	e, pemMap = gitlab.RegisterUrls(e, pemMap)
 	return e, pemMap

@@ -1,7 +1,6 @@
 package infra
 
 import (
-	"fmt"
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
@@ -12,76 +11,25 @@ import (
 
 	"src/module/abstract/repo/paging"
 	"src/module/pm/repo/feature"
-	"src/module/pm/repo/task"
-	"src/module/pm/repo/taskfieldoption"
 	"src/module/pm/schema"
 
 	"github.com/labstack/echo/v4"
 )
 
-type Schema = schema.Task
+type Schema = schema.Feature
 
-var NewRepo = task.New
-var folder = "task/avatar"
+var NewRepo = feature.New
 var searchableFields = []string{"title", "description"}
-var filterableFields = []string{"feature_id"}
+var filterableFields = []string{}
 var orderableFields = []string{"id", "title", "order"}
-
-func Option(c echo.Context) error {
-	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
-	featureRepo := feature.New(dbutil.Db())
-	taskfieldoptionRepo := taskfieldoption.New(dbutil.Db())
-
-	featureQueryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"ProjectID": projectID},
-	}
-	features, err := featureRepo.List(featureQueryOptions)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	featureOptions := []ctype.SelectOption[uint]{}
-	for _, feature := range features {
-		featureOptions = append(featureOptions, ctype.SelectOption[uint]{
-			Value: feature.ID,
-			Label: feature.Title,
-		})
-	}
-
-	statusQueryOption := ctype.QueryOptions{
-		Joins: []string{"TaskField"},
-		Filters: ctype.Dict{
-			"TaskField.ProjectID": projectID,
-			"TaskField.IsStatus":  true,
-		},
-		Order: fmt.Sprintf("%s.order ASC", schema.TaskFieldOption{}.TableName()),
-	}
-	status, err := taskfieldoptionRepo.List(statusQueryOption)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-	statusOptions := []ctype.SelectOption[uint]{}
-	for _, s := range status {
-		statusOptions = append(statusOptions, ctype.SelectOption[uint]{
-			Value: s.ID,
-			Label: s.Title,
-		})
-	}
-
-	result := ctype.Dict{
-		"feature": featureOptions,
-		"status":  statusOptions,
-	}
-	return c.JSON(http.StatusOK, result)
-}
 
 func List(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
+	options.Order = restlistutil.QueryOrder{Field: "order", Direction: "ASC"}
 	options.Filters["project_id"] = projectID
-	options.Preloads = []string{"Feature"}
 	listResult, err := pager.List(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

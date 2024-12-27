@@ -10,10 +10,10 @@ import {
     SortableContext,
     useSortable,
     verticalListSortingStrategy,
+    horizontalListSortingStrategy,
     arrayMove
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { List } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 
 export default function useDraggableList(initialItems, onSortEnd) {
@@ -40,7 +40,8 @@ export default function useDraggableList(initialItems, onSortEnd) {
         });
     };
 
-    function DraggableListProvider({ children }) {
+    function DraggableListProvider({ children, layout = 'vertical' }) {
+        const isVertical = layout === 'vertical';
         return (
             <DndContext
                 sensors={sensors}
@@ -49,20 +50,24 @@ export default function useDraggableList(initialItems, onSortEnd) {
             >
                 <SortableContext
                     items={items.map((i) => i.id)}
-                    strategy={verticalListSortingStrategy}
+                    strategy={
+                        isVertical
+                            ? verticalListSortingStrategy
+                            : horizontalListSortingStrategy
+                    }
                 >
-                    {/* We can wrap children in an AntD List for styling */}
-                    <List
-                        dataSource={[]}
-                        renderItem={() => null}
+                    <div
                         style={{
+                            display: isVertical ? 'block' : 'flex',
+                            flexWrap: isVertical ? 'nowrap' : 'wrap',
+                            gap: '10px',
                             background: '#fafafa',
                             padding: '10px',
                             borderRadius: '3px'
                         }}
                     >
                         {children}
-                    </List>
+                    </div>
                 </SortableContext>
             </DndContext>
         );
@@ -77,30 +82,17 @@ export default function useDraggableList(initialItems, onSortEnd) {
             background: isDragging ? '#f0f0f0' : '#fff',
             border: '1px solid #ddd',
             borderRadius: '3px',
-            marginBottom: '8px'
+            padding: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            cursor: 'grab',
+            margin: '10px'
         };
 
         return (
-            <div ref={setNodeRef} style={style}>
-                <List.Item
-                    style={{ display: 'flex', alignItems: 'center', padding: 0 }}
-                >
-                    {/* Drag Handle on the left */}
-                    <div
-                        {...attributes}
-                        {...listeners}
-                        style={{
-                            cursor: 'grab',
-                            padding: '0 8px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            borderRight: '1px solid #ddd',
-                        }}
-                    >
-                        <MenuOutlined />
-                    </div>
-                    <div style={{ flex: 1, padding: '3px 8px' }}>{children}</div>
-                </List.Item>
+            <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+                <MenuOutlined style={{ marginRight: '8px' }} />
+                <div>{children}</div>
             </div>
         );
     }
