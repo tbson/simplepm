@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { t } from 'ttag';
 import { useAtomValue } from 'jotai';
 import { Row, Col, Table, Flex } from 'antd';
-import { ProfileOutlined, CarryOutOutlined } from '@ant-design/icons';
+import { ProfileOutlined } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import {
@@ -19,14 +19,12 @@ import Img from 'component/common/display/img';
 import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
-import NavUtil from 'service/helper/nav_util';
 import Dialog from './dialog';
 import TaskField from './task_field';
 import { projectFilterSt } from 'component/pm/project/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function ProjectTable() {
-    const navigate = useNavigate();
     const projectFilter = useAtomValue(projectFilterSt);
     const [searchParam, setSearchParam] = useState({});
     const [filterParam, setFilterParam] = useState({});
@@ -36,7 +34,6 @@ export default function ProjectTable() {
     const [list, setList] = useState([]);
     const [ids, setIds] = useState([]);
     const [pages, setPages] = useState(defaultPages);
-    const navigateTo = NavUtil.navigateTo(navigate);
     const labels = getLabels();
     const messages = getMessages();
 
@@ -160,7 +157,8 @@ export default function ProjectTable() {
         {
             key: 'title',
             title: labels.title,
-            dataIndex: 'title'
+            dataIndex: 'title',
+            render: (value, record) => <Link to={`/pm/task/${record.id}`}>{value}</Link>
         },
         /*
         {
@@ -203,13 +201,6 @@ export default function ProjectTable() {
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
                         <RemoveBtn onClick={() => onDelete(record.id)} />
-                    </PemCheck>
-                    <PemCheck pem_group={PEM_GROUP} pem="update">
-                        <IconButton
-                            icon={<CarryOutOutlined />}
-                            tootip={t`Task page`}
-                            onClick={() => navigateTo(`/pm/task/${record.id}`)}
-                        />
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="update">
                         <IconButton
