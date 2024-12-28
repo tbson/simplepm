@@ -48,7 +48,7 @@ func (srv Service) Create(data ctype.Dict) (*schema.Project, error) {
 
 	taskFieldData := ctype.Dict{
 		"ProjectID":   project.ID,
-		"Title":       "Status",
+		"Title":       "status",
 		"Description": "Task status",
 		"Type":        pm.TASK_FIELD_TYPE_SELECT,
 		"IsStatus":    true,

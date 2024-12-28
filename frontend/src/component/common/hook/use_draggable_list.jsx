@@ -40,7 +40,7 @@ export default function useDraggableList(initialItems, onSortEnd) {
         });
     };
 
-    function DraggableListProvider({ children, layout = 'vertical' }) {
+    function DraggableListProvider({ children, layout = 'vertical', fixedComponent }) {
         const isVertical = layout === 'vertical';
         return (
             <DndContext
@@ -60,12 +60,24 @@ export default function useDraggableList(initialItems, onSortEnd) {
                         style={{
                             display: isVertical ? 'block' : 'flex',
                             flexWrap: isVertical ? 'nowrap' : 'wrap',
-                            gap: '10px',
+                            // gap: '10px',
                             background: '#fafafa',
-                            padding: '10px',
+                            // padding: '10px',
                             borderRadius: '3px'
                         }}
                     >
+                        {fixedComponent && (
+                            <div
+                                style={{
+                                    margin: '10px',
+                                    // padding: '10px',
+                                    display: 'flex',
+                                    alignItems: 'center'
+                                }}
+                            >
+                                {fixedComponent}
+                            </div>
+                        )}
                         {children}
                     </div>
                 </SortableContext>
@@ -82,7 +94,7 @@ export default function useDraggableList(initialItems, onSortEnd) {
             background: isDragging ? '#f0f0f0' : '#fff',
             border: '1px solid #ddd',
             borderRadius: '3px',
-            padding: '8px',
+            padding: '10px',
             display: 'flex',
             alignItems: 'center',
             cursor: 'grab',
@@ -91,7 +103,7 @@ export default function useDraggableList(initialItems, onSortEnd) {
 
         return (
             <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-                <MenuOutlined style={{ marginRight: '8px' }} />
+                <MenuOutlined style={{ marginRight: '10px' }} />
                 <div>{children}</div>
             </div>
         );

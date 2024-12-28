@@ -6,7 +6,7 @@ import PageHeading from 'component/common/page_heading';
 import RequestUtil from 'service/helper/request_util';
 import { taskOptionSt } from './state';
 import { urls, getMessages } from './config';
-import TaskTable from './table';
+import TaskKanban from './kanban';
 import FeatureTable from 'component/pm/feature/table';
 
 export default function Task() {
@@ -14,10 +14,12 @@ export default function Task() {
     const projectID = parseInt(project_id);
     const [taskOption, setTaskOption] = useAtom(taskOptionSt);
     useEffect(() => {
-        if (!taskOption.loaded) getOption();
+        if (!taskOption.loaded) {
+            getOption();
+        }
     }, []);
 
-    function getOption() {
+    const getOption = () => {
         RequestUtil.apiCall(urls.option, { project_id })
             .then((resp) => {
                 setTaskOption({ ...resp.data, loaded: true });
@@ -25,7 +27,7 @@ export default function Task() {
             .catch(() => {
                 setTaskOption((prev) => ({ ...prev, loaded: true }));
             });
-    }
+    };
 
     const messages = getMessages();
     return (
@@ -34,7 +36,8 @@ export default function Task() {
                 <>{messages.heading}</>
             </PageHeading>
             <FeatureTable project_id={projectID} />
-            <TaskTable project_id={projectID} />
+            <br />
+            <TaskKanban project_id={projectID} />
         </>
     );
 }

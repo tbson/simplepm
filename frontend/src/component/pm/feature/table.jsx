@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Badge } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import useDraggableList from 'component/common/hook/use_draggable_list';
@@ -57,13 +58,17 @@ export default function FeatureTable({ project_id }) {
 
     return (
         <div>
-            <div>
-                <Button onClick={() => Dialog.toggle()}>Add</Button>
-            </div>
-            <DraggableListProvider layout="horizontal">
+            <DraggableListProvider
+                layout="horizontal"
+                fixedComponent={
+                    <Button onClick={() => Dialog.toggle()} icon={<PlusOutlined />}>
+                        Feature
+                    </Button>
+                }
+            >
                 {list.map((record) => (
                     <DraggableItem key={record.id} id={record.id}>
-                        <Badge count={5} offset={[10, -10]}>
+                        <Badge count={0} offset={[10, -10]}>
                             <div
                                 className="pointer"
                                 style={{ cursor: 'pointer' }}
