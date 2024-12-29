@@ -31,7 +31,7 @@ const DraggableCard = ({ id, name }) => {
 
 const DroppableColumn = ({ status, items, moveItem, onButtonClick }) => {
     const { setNodeRef } = useDroppable({
-        id: status
+        id: status.value
     });
 
     return (
@@ -50,9 +50,16 @@ const DroppableColumn = ({ status, items, moveItem, onButtonClick }) => {
                 boxSizing: 'border-box'
             }}
         >
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '10px' }}>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    marginBottom: '10px'
+                }}
+            >
                 <h3 style={{ textAlign: 'center', marginBottom: '5px' }}>
-                    {status.toUpperCase()}
+                    {status.label.toUpperCase()}
                 </h3>
                 <button
                     onClick={() => onButtonClick(status)}
@@ -74,7 +81,7 @@ const DroppableColumn = ({ status, items, moveItem, onButtonClick }) => {
                 strategy={verticalListSortingStrategy}
             >
                 {items.map((item) =>
-                    item.status === status ? (
+                    item.status.value === status.value ? (
                         <DraggableCard key={item.id} id={item.id} name={item.name} />
                     ) : null
                 )}
@@ -83,7 +90,7 @@ const DroppableColumn = ({ status, items, moveItem, onButtonClick }) => {
     );
 };
 
-const Kanban = ({ statusList, data }) => {
+const Kanban = ({ statusOption, data, onAdd }) => {
     const [items, setItems] = useState(data);
 
     const moveItem = (activeId, overId, newStatus) => {
@@ -120,31 +127,22 @@ const Kanban = ({ statusList, data }) => {
         }
     };
 
-    const handleButtonClick = (status) => {
-        const newItem = {
-            id: `${items.length + 1}`,
-            name: `New Task ${items.length + 1}`,
-            status
-        };
-        setItems((prevItems) => [...prevItems, newItem]);
-    };
-
     return (
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <div
                 style={{
                     display: 'flex',
                     overflowX: 'auto', // Enable horizontal scrolling
-                    padding: '10px',
+                    padding: '10px'
                 }}
             >
-                {statusList.map((status) => (
+                {statusOption.map((status) => (
                     <DroppableColumn
-                        key={status}
+                        key={status.value}
                         status={status}
                         items={items}
                         moveItem={moveItem}
-                        onButtonClick={handleButtonClick}
+                        onButtonClick={onAdd}
                     />
                 ))}
             </div>

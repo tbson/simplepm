@@ -21,6 +21,10 @@ export default function TaskKanban({ project_id }) {
     const [list, setList] = useState([]);
     const labels = getLabels();
     const messages = getMessages();
+    const statusMap = taskOption.status.reduce((acc, item) => {
+        acc[item.value] = item.label;
+        return acc;
+    }, {});
 
     useEffect(() => {
         getList();
@@ -100,41 +104,21 @@ export default function TaskKanban({ project_id }) {
             .finally(() => Util.toggleGlobalLoading(false));
     };
 
-    const columns = [
-        {
-            key: 'title',
-            title: labels.title,
-            dataIndex: 'title'
-        },
-        {
-            key: 'feature_id',
-            title: labels.feature,
-            dataIndex: 'feature_id',
-            width: 120
-        },
-        {
-            key: 'action',
-            title: '',
-            fixed: 'right',
-            width: 90,
-            render: (_text, record) => (
-                <div className="flex-space">
-                    <PemCheck pem_group={PEM_GROUP} pem="update">
-                        <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
-                    </PemCheck>
-                    <PemCheck pem_group={PEM_GROUP} pem="delete">
-                        <RemoveBtn onClick={() => onDelete(record.id)} />
-                    </PemCheck>
-                </div>
-            )
-        }
-    ];
+    const handleAdd = (status) => {
+        console.log(status);
+        Dialog.toggle();
+    };
+
     if (!taskOption.loaded) {
         return null;
     }
     return (
         <div>
-            <Kanban statusList={taskOption.status.map((i) => i.label)} data={list} />
+            <Kanban
+                statusOption={taskOption.status}
+                data={list}
+                onAdd={handleAdd}
+            />
             <Dialog onChange={onChange} />
         </div>
     );

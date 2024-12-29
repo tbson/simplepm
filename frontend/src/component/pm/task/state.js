@@ -3,5 +3,6 @@ import { atom } from 'jotai';
 export const taskOptionSt = atom({
     loaded: false,
     feature: [],
-    status: []
+    status: [],
+    task_field: [],
 });

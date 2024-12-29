@@ -13,6 +13,7 @@ import (
 	"src/module/abstract/repo/paging"
 	"src/module/pm/repo/feature"
 	"src/module/pm/repo/task"
+	"src/module/pm/repo/taskfield"
 	"src/module/pm/repo/taskfieldoption"
 	"src/module/pm/schema"
 
@@ -30,6 +31,7 @@ var orderableFields = []string{"id", "title", "order"}
 func Option(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
 	featureRepo := feature.New(dbutil.Db())
+	taskfieldRepo := taskfield.New(dbutil.Db())
 	taskfieldoptionRepo := taskfieldoption.New(dbutil.Db())
 
 	featureQueryOptions := ctype.QueryOptions{
@@ -68,9 +70,38 @@ func Option(c echo.Context) error {
 		})
 	}
 
+	taskFieldQueryOption := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"ProjectID": projectID,
+		},
+		Preloads: []string{"TaskFieldOptions"},
+	}
+	taskFields, err := taskfieldRepo.List(taskFieldQueryOption)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	taskFieldOptions := []ctype.SelectOption[uint]{}
+	for _, taskField := range taskFields {
+		options := []ctype.SimpleSelectOption[uint]{}
+		for _, option := range taskField.TaskFieldOptions {
+			options = append(options, ctype.SimpleSelectOption[uint]{
+				Value: option.ID,
+				Label: option.Title,
+			})
+		}
+		taskFieldOptions = append(taskFieldOptions, ctype.SelectOption[uint]{
+			Value:       taskField.ID,
+			Label:       taskField.Title,
+			Description: taskField.Description,
+			Group:       taskField.Type,
+			Options:     options,
+		})
+	}
+
 	result := ctype.Dict{
-		"feature": featureOptions,
-		"status":  statusOptions,
+		"feature":    featureOptions,
+		"status":     statusOptions,
+		"task_field": taskFieldOptions,
 	}
 	return c.JSON(http.StatusOK, result)
 }

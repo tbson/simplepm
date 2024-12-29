@@ -18,9 +18,15 @@ type QueryOptions struct {
 	Order    string
 }
 
+type SimpleSelectOption[T any] struct {
+	Value T      `json:"value"`
+	Label string `json:"label"`
+}
+
 type SelectOption[T any] struct {
-	Value       T      `json:"value"`
-	Label       string `json:"label"`
-	Description string `json:"description"`
-	Group       string `json:"group"`
+	Value       T                       `json:"value"`
+	Label       string                  `json:"label"`
+	Description string                  `json:"description"`
+	Group       string                  `json:"group"`
+	Options     []SimpleSelectOption[T] `json:"options"`
 }

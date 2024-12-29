@@ -2,10 +2,12 @@ import * as React from 'react';
 import { useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
-import { Form, Input } from 'antd';
+import { Form, Input, InputNumber } from 'antd';
 import Util from 'service/helper/util';
+import DateUtil from 'service/helper/date_util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
+import DateInput from 'component/common/form/ant/input/date_input';
 import { taskOptionSt } from 'component/pm/task/state';
 import { urls, getLabels } from '../config';
 
@@ -38,10 +40,18 @@ export default function TaskForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
     const taskOption = useAtomValue(taskOptionSt);
+    const taskField = taskOption.task_field;
+    const fieldTypeMap = taskField.reduce((acc, field) => {
+        acc[field.value] = field.group;
+        return acc;
+    }, {});
 
     const labels = getLabels();
 
     const initialValues = Util.isEmpty(data) ? emptyRecord : data;
+    if (taskOption.feature.length > 0) {
+        initialValues.feature_id = taskOption.feature[0].value;
+    }
     const { id } = initialValues;
 
     const endPoint = id ? `${urls.crud}${id}` : urls.crud;
@@ -51,24 +61,67 @@ export default function TaskForm({ data, onChange }) {
         inputRef.current.focus({ cursor: 'end' });
     }, []);
 
+    const renderDynamicField = (field) => {
+        if (field.group === 'SELECT') {
+            return <SelectInput block options={field.options} />;
+        }
+        if (field.group === 'MULTIPLE_SELECT') {
+            return <SelectInput block mode="multiple" options={field.options} />;
+        }
+        if (field.group === 'DATE') {
+            return <DateInput />;
+        }
+        if (field.group === 'NUMBER') {
+            return <InputNumber className="full-width" />;
+        }
+        return <TextArea />;
+    };
+
+    const processFieldValue = (value, type) => {
+        if (type === 'DATE') {
+            return DateUtil.toIsoDate(value);
+        }
+        if (type === 'MULTIPLE_SELECT') {
+            value.join(',');
+        }
+        return `${value}`;
+    };
+
+    const processPayload = (payload) => {
+        const data = { fields: [] };
+        Object.entries(payload).forEach(([key, value]) => {
+            if (key.startsWith('EXT_')) {
+                const fieldIdStr = key.replace('EXT_', '');
+                const fieldId = parseInt(fieldIdStr);
+                const type = fieldTypeMap[fieldId];
+                const field = {
+                    field: fieldId,
+                    value: processFieldValue(value, type)
+                };
+                data.fields.push(field);
+            } else {
+                data[key] = value;
+            }
+        });
+        return data;
+    };
+
     return (
         <Form
             form={form}
             name={formName}
-            colon={false}
-            labelWrap
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
+            layout="vertical"
             initialValues={{ ...initialValues }}
-            onFinish={(payload) =>
+            onFinish={(payload) => {
+                const data = processPayload(payload);
                 FormUtil.submit(
                     endPoint,
-                    { ...payload, project_id: parseInt(project_id) },
+                    { data, project_id: parseInt(project_id) },
                     method
                 )
                     .then((data) => onChange(data, id))
-                    .catch(FormUtil.setFormErrors(form))
-            }
+                    .catch(FormUtil.setFormErrors(form));
+            }}
         >
             <Form.Item
                 name="title"
@@ -78,10 +131,6 @@ export default function TaskForm({ data, onChange }) {
                 <Input ref={inputRef} />
             </Form.Item>
 
-            <Form.Item name="description" label={labels.description}>
-                <TextArea />
-            </Form.Item>
-
             <Form.Item
                 name="feature_id"
                 label={labels.feature}
@@ -89,6 +138,25 @@ export default function TaskForm({ data, onChange }) {
             >
                 <SelectInput block options={taskOption.feature} />
             </Form.Item>
+
+            <Form.Item name="description" label={labels.description}>
+                <TextArea />
+            </Form.Item>
+
+            {taskField.map((field) => {
+                return (
+                    <Form.Item
+                        key={field.value}
+                        name={`EXT_${field.value}`}
+                        label={field.label}
+                        rules={
+                            field.label === 'status' ? [FormUtil.ruleRequired()] : []
+                        }
+                    >
+                        {renderDynamicField(field)}
+                    </Form.Item>
+                );
+            })}
         </Form>
     );
 }
