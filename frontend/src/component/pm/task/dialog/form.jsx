@@ -88,17 +88,17 @@ export default function TaskForm({ data, onChange }) {
     };
 
     const processPayload = (payload) => {
-        const data = { fields: [] };
+        const data = { task_fields: [] };
         Object.entries(payload).forEach(([key, value]) => {
             if (key.startsWith('EXT_')) {
                 const fieldIdStr = key.replace('EXT_', '');
                 const fieldId = parseInt(fieldIdStr);
                 const type = fieldTypeMap[fieldId];
                 const field = {
-                    field: fieldId,
+                    task_field_id: fieldId,
                     value: processFieldValue(value, type)
                 };
-                data.fields.push(field);
+                data.task_fields.push(field);
             } else {
                 data[key] = value;
             }
@@ -114,9 +114,10 @@ export default function TaskForm({ data, onChange }) {
             initialValues={{ ...initialValues }}
             onFinish={(payload) => {
                 const data = processPayload(payload);
+                console.log(data);
                 FormUtil.submit(
                     endPoint,
-                    { data, project_id: parseInt(project_id) },
+                    { ...data, project_id: parseInt(project_id) },
                     method
                 )
                     .then((data) => onChange(data, id))

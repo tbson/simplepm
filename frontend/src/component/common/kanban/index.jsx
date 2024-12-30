@@ -126,7 +126,6 @@ const Kanban = ({ statusOption, data, onAdd }) => {
             }
         }
     };
-
     return (
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <div

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
-	"src/util/dictutil"
+	"src/util/errutil"
 	"src/util/numberutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
@@ -15,7 +15,9 @@ import (
 	"src/module/pm/repo/task"
 	"src/module/pm/repo/taskfield"
 	"src/module/pm/repo/taskfieldoption"
+	"src/module/pm/repo/taskfieldvalue"
 	"src/module/pm/schema"
+	"src/module/pm/usecase/crudtask/app"
 
 	"github.com/labstack/echo/v4"
 )
@@ -140,17 +142,35 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
-	cruder := NewRepo(dbutil.Db())
 
-	structData, err := vldtutil.ValidatePayload(c, InputData{ProjectID: projectID})
+	db := dbutil.Db()
+	tx := db.Begin()
+	if tx.Error != nil {
+		msg := errutil.New("", []string{tx.Error.Error()})
+		return c.JSON(http.StatusBadRequest, msg)
+	}
+
+	taskRepo := task.New(tx)
+	taskFieldRepo := taskfield.New(tx)
+	taskFieldOptionRepo := taskfieldoption.New(tx)
+	taskFieldValueRepo := taskfieldvalue.New(tx)
+
+	srv := app.New(taskRepo, taskFieldRepo, taskFieldOptionRepo, taskFieldValueRepo)
+
+	structData, err := vldtutil.ValidatePayload(c, app.InputData{ProjectID: projectID})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	data := dictutil.StructToDict(structData)
 
-	result, err := cruder.Create(data)
+	result, err := srv.Create(structData)
 	if err != nil {
+		tx.Rollback()
 		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		msg := errutil.New("", []string{err.Error()})
+		return c.JSON(http.StatusBadRequest, msg)
 	}
 
 	return c.JSON(http.StatusCreated, result)
@@ -159,9 +179,24 @@ func Create(c echo.Context) error {
 
 func Update(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
-	cruder := NewRepo(dbutil.Db())
 
-	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{ProjectID: projectID})
+	db := dbutil.Db()
+	tx := db.Begin()
+	if tx.Error != nil {
+		msg := errutil.New("", []string{tx.Error.Error()})
+		return c.JSON(http.StatusBadRequest, msg)
+	}
+
+	taskRepo := task.New(tx)
+	taskFieldRepo := taskfield.New(tx)
+	taskFieldOptionRepo := taskfieldoption.New(tx)
+	taskFieldValueRepo := taskfieldvalue.New(tx)
+
+	srv := app.New(taskRepo, taskFieldRepo, taskFieldOptionRepo, taskFieldValueRepo)
+
+	structData, fields, err := vldtutil.ValidateUpdatePayload(
+		c, app.InputData{ProjectID: projectID},
+	)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -169,10 +204,16 @@ func Update(c echo.Context) error {
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
-	result, err := cruder.Update(updateOptions, data)
+	result, err := srv.Update(updateOptions, structData, data)
 
 	if err != nil {
+		tx.Rollback()
 		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		msg := errutil.New("", []string{err.Error()})
+		return c.JSON(http.StatusBadRequest, msg)
 	}
 
 	return c.JSON(http.StatusOK, result)

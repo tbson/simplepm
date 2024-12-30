@@ -112,6 +112,7 @@ export default function TaskKanban({ project_id }) {
     if (!taskOption.loaded) {
         return null;
     }
+
     return (
         <div>
             <Kanban
