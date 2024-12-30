@@ -134,7 +134,7 @@ elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
     echo "[+] Migrate migration files..."
     docker compose exec "$NAME"_backend atlas migrate apply --env gorm
 elif [ "$FIRST_ARG" == "bserver" ]; then
-    docker compose exec "$NAME"_backend air src/main.go --root src
+    docker compose exec "$NAME"_backend gow run .
 elif [ "$FIRST_ARG" == "bbuild" ]; then
     docker compose exec "$NAME"_backend bash -c 'GOOS=linux GOARCH=amd64 go build -o main .'
 elif [ "$FIRST_ARG" == "btest" ]; then

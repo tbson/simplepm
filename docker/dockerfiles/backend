@@ -4,7 +4,7 @@ RUN apt-get update && apt-get upgrade -y
 
 RUN curl -sSf https://atlasgo.sh | sh
 
-RUN go install github.com/air-verse/air@latest
+RUN go install github.com/mitranim/gow@latest
 RUN go install github.com/nicksnyder/go-i18n/v2/goi18n@latest
 
 RUN mkdir /code && mkdir /code/src
