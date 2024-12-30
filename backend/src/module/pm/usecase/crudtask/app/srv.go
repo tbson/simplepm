@@ -58,6 +58,7 @@ func (srv Service) createTaskFieldValueNumber(
 		"TaskID":      taskID,
 		"TaskFieldID": taskField.ID,
 		"NumberValue": &numberValue,
+		"Value":       value,
 	}
 	_, err := srv.taskFieldValueRepo.Create(data)
 	if err != nil {
@@ -80,6 +81,7 @@ func (srv Service) createTaskFieldValueDate(
 		"TaskID":      taskID,
 		"TaskFieldID": taskField.ID,
 		"DateValue":   &dateValue,
+		"Value":       value,
 	}
 	_, err = srv.taskFieldValueRepo.Create(data)
 	if err != nil {
@@ -98,6 +100,7 @@ func (srv Service) createTaskFieldValueSelect(
 		"TaskID":            taskID,
 		"TaskFieldID":       taskField.ID,
 		"TaskFieldOptionID": &taskFieldOptionID,
+		"Value":             value,
 	}
 	_, err := srv.taskFieldValueRepo.Create(data)
 	if err != nil {

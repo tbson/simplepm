@@ -81,8 +81,8 @@ const DroppableColumn = ({ status, items, moveItem, onButtonClick }) => {
                 strategy={verticalListSortingStrategy}
             >
                 {items.map((item) =>
-                    item.status === status.value ? (
-                        <DraggableCard key={item.id} id={item.id} name={item.name} />
+                    item.status.id === status.value ? (
+                        <DraggableCard key={item.id} id={item.id} name={item.title} />
                     ) : null
                 )}
             </SortableContext>
