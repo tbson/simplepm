@@ -108,15 +108,15 @@ services:
         depends_on:
             - simplepm_backend
 
-    simplepm_socket:
-        container_name: simplepm_socket
-        image: centrifugo/centrifugo:v5.4
-        volumes:
-            - ./volumes/centrifugo/config.json:/centrifugo/config.json
-        command: centrifugo -c config.json
-        ports:
-            - 8000:8000
-        ulimits:
-            nofile:
-                soft: 65535
-                hard: 65535
+    # simplepm_socket:
+    #    container_name: simplepm_socket
+    #    image: centrifugo/centrifugo:v5.4
+    #    volumes:
+    #        - ./volumes/centrifugo/config.json:/centrifugo/config.json
+    #    command: centrifugo -c config.json
+    #    ports:
+    #        - 8000:8000
+    #    ulimits:
+    #        nofile:
+    #            soft: 65535
+    #            hard: 65535

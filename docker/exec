@@ -162,8 +162,8 @@ elif [ "$FIRST_ARG" == "pg_dump" ]; then
     docker compose exec "$NAME"_db pg_dump $ARGS
 elif [ "$FIRST_ARG" == "tunneling" ]; then
     ngrok http https://simplepm.test --domain=sparrow-knowing-imp.ngrok-free.app
-elif [ "$FIRST_ARG" == "centrifugo" ]; then
-    docker compose exec "$NAME"_socket centrifugo $ARGS
+# elif [ "$FIRST_ARG" == "centrifugo" ]; then
+#    docker compose exec "$NAME"_socket centrifugo $ARGS
 else
     echo "Invalid argument, please use following arguments:"
     echo "-------------------------------------------------"

@@ -1,152 +1,363 @@
-import React, { useState } from 'react';
-import { DndContext, closestCenter, useDroppable, useDraggable } from '@dnd-kit/core';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import {
+    closestCenter,
+    pointerWithin,
+    rectIntersection,
+    getFirstCollision,
+    useSensors,
+    useSensor,
+    DndContext,
+    DragOverlay,
+    MouseSensor,
+    TouchSensor,
+    KeyboardSensor,
+    MeasuringStrategy
+} from '@dnd-kit/core';
 import {
     arrayMove,
-    SortableContext,
-    verticalListSortingStrategy
+    horizontalListSortingStrategy,
+    SortableContext
 } from '@dnd-kit/sortable';
+import update from 'immutability-helper';
+import { SectionItem, FieldItem } from './TasksItem';
+import ClientOnlyPortal from './ClientOnlyPortal';
 
-const DraggableCard = ({ id, name }) => {
-    const { attributes, listeners, setNodeRef, transform, transition } = useDraggable({
-        id
-    });
+export default function Tasks({ tasks, statusList, onChange }) {
+    const [data, setData] = useState(null);
+    const [items, setItems] = useState({});
+    const [containers, setContainers] = useState([]);
+    const [activeId, setActiveId] = useState(null);
+    const lastOverId = useRef(null);
+    const recentlyMovedToNewContainer = useRef(false);
+    const isSortingContainer = activeId ? containers.includes(activeId) : false;
 
-    const style = {
-        transform: `translate(${transform?.x || 0}px, ${transform?.y || 0}px)`,
-        transition,
-        padding: '10px',
-        margin: '5px 0',
-        backgroundColor: 'white',
-        border: '1px solid #ddd',
-        borderRadius: '4px',
-        cursor: 'grab'
-    };
+    useEffect(() => {
+        if (tasks) {
+            setData(tasks);
+            let cols = {};
+            statusList.sort((a, b) => a.order - b.order);
+            statusList.forEach((c) => {
+                cols['column-' + c.id] = [];
+            });
+            tasks.forEach((d) => {
+                if (!('column-' + d.status in cols)) {
+                    cols['column-' + d.status] = [];
+                }
+                cols['column-' + d.status].push('task-' + d.id);
+            });
+            setItems(cols);
+            setContainers(Object.keys(cols));
+        }
+    }, [tasks, statusList]);
 
-    return (
-        <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
-            {name}
-        </div>
+    const moveBetweenContainers = useCallback(
+        (activeContainer, overContainer, active, over, overId) => {
+            const activeItems = items[activeContainer];
+            const overItems = items[overContainer];
+            const overIndex = overItems.indexOf(overId);
+            const activeIndex = activeItems.indexOf(active.id);
+
+            let newIndex;
+
+            if (overId in items) {
+                newIndex = overItems.length + 1;
+            } else {
+                const isBelowOverItem =
+                    over &&
+                    active.rect?.current?.translated &&
+                    active.rect?.current?.translated.top >=
+                        over.rect?.top + over.rect?.height;
+
+                const modifier = isBelowOverItem ? 1 : 0;
+
+                newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+            }
+            recentlyMovedToNewContainer.current = true;
+
+            setItems(
+                update(items, {
+                    [activeContainer]: {
+                        $splice: [[activeIndex, 1]]
+                    },
+                    [overContainer]: {
+                        $splice: [[newIndex, 0, active.id]]
+                        //$splice: [[newIndex, 0, items[activeContainer][activeIndex]],
+                    }
+                })
+            );
+        },
+        [items]
     );
-};
 
-const DroppableColumn = ({ status, items, moveItem, onButtonClick }) => {
-    const { setNodeRef } = useDroppable({
-        id: status.value
-    });
-
-    return (
-        <div
-            ref={setNodeRef}
-            style={{
-                width: '300px',
-                padding: '10px',
-                marginRight: '10px', // Small gap between columns
-                backgroundColor: '#f4f4f4',
-                borderRadius: '4px',
-                minHeight: '50px', // Minimum height for empty columns
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                boxSizing: 'border-box'
-            }}
-        >
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    marginBottom: '10px'
-                }}
-            >
-                <h3 style={{ textAlign: 'center', marginBottom: '5px' }}>
-                    {status.label.toUpperCase()}
-                </h3>
-                <button
-                    onClick={() => onButtonClick(status)}
-                    style={{
-                        padding: '5px 10px',
-                        fontSize: '14px',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer'
-                    }}
-                >
-                    Add Item
-                </button>
-            </div>
-            <SortableContext
-                items={items.map((item) => item.id)}
-                strategy={verticalListSortingStrategy}
-            >
-                {items.map((item) =>
-                    item.status.id === status.value ? (
-                        <DraggableCard key={item.id} id={item.id} name={item.title} />
-                    ) : null
-                )}
-            </SortableContext>
-        </div>
-    );
-};
-
-const Kanban = ({ statusOption, data, onAdd }) => {
-    const [items, setItems] = useState(data);
-
-    const moveItem = (activeId, overId, newStatus) => {
-        setItems((prevItems) => {
-            const activeItem = prevItems.find((item) => item.id === activeId);
-            const filteredItems = prevItems.filter((item) => item.id !== activeId);
-
-            if (newStatus) {
-                activeItem.status = newStatus;
+    /**
+     * Custom collision detection strategy optimized for multiple containers
+     *
+     * - First, find any droppable containers intersecting with the pointer.
+     * - If there are none, find intersecting containers with the active draggable.
+     * - If there are no intersecting containers, return the last matched intersection
+     *
+     */
+    const collisionDetectionStrategy = useCallback(
+        (args) => {
+            if (activeId && activeId in items) {
+                return closestCenter({
+                    ...args,
+                    droppableContainers: args.droppableContainers.filter(
+                        (container) => container.id in items
+                    )
+                });
             }
 
-            const targetIndex = filteredItems.findIndex((item) => item.id === overId);
-            const newItems =
-                targetIndex >= 0
-                    ? arrayMove(filteredItems, targetIndex, 0)
-                    : filteredItems;
+            // Start by finding any intersecting droppable
+            const pointerIntersections = pointerWithin(args);
+            const intersections =
+                pointerIntersections.length > 0
+                    ? // If there are droppables intersecting with the pointer, return those
+                      pointerIntersections
+                    : rectIntersection(args);
+            let overId = getFirstCollision(intersections, 'id');
 
-            return [activeItem, ...newItems];
-        });
+            if (overId !== null) {
+                if (overId in items) {
+                    const containerItems = items[overId];
+
+                    // If a container is matched and it contains items (statusList 'A', 'B', 'C')
+                    if (containerItems.length > 0) {
+                        // Return the closest droppable within that container
+                        overId = closestCenter({
+                            ...args,
+                            droppableContainers: args.droppableContainers.filter(
+                                (container) =>
+                                    container.id !== overId &&
+                                    containerItems.includes(container.id)
+                            )
+                        })[0]?.id;
+                    }
+                }
+
+                lastOverId.current = overId;
+
+                return [{ id: overId }];
+            }
+
+            // When a draggable item moves to a new container, the layout may shift
+            // and the `overId` may become `null`. We manually set the cached `lastOverId`
+            // to the id of the draggable item that was moved to the new container, otherwise
+            // the previous `overId` will be returned which can cause items to incorrectly shift positions
+            if (recentlyMovedToNewContainer.current) {
+                lastOverId.current = activeId;
+            }
+
+            // If no droppable is matched, return the last match
+            return lastOverId.current ? [{ id: lastOverId.current }] : [];
+        },
+        [activeId, items]
+    );
+
+    const [clonedItems, setClonedItems] = useState(null);
+    const sensors = useSensors(
+        useSensor(MouseSensor, {
+            activationConstraint: {
+                //distance: 5,
+                delay: 100,
+                tolerance: 5
+            }
+        }),
+        useSensor(TouchSensor, {
+            activationConstraint: {
+                distance: 5,
+                delay: 100,
+                tolerance: 5
+            }
+        }),
+        useSensor(KeyboardSensor, {
+            KeyboardSensor: {
+                distance: 5,
+                delay: 100,
+                tolerance: 5
+            }
+        })
+    );
+
+    const findContainer = (id) => {
+        if (id in items) return id;
+        return containers.find((key) => items[key].includes(id));
     };
 
-    const handleDragEnd = (event) => {
-        const { active, over } = event;
+    function handleDragStart({ active }) {
+        setActiveId(active.id);
+        setClonedItems(items);
+    }
 
-        if (active.id !== over?.id) {
-            const activeItem = items.find((item) => item.id === active.id);
-            const overItem = items.find((item) => item.id === over?.id);
+    function handleDragOver({ active, over }) {
+        const overId = over?.id;
 
-            if (overItem?.status && activeItem?.status !== overItem.status) {
-                moveItem(active.id, over.id, overItem.status);
-            } else {
-                moveItem(active.id, over.id);
+        if (!overId || active.id in items) return;
+
+        const overContainer = findContainer(overId);
+        const activeContainer = findContainer(active.id);
+
+        if (!overContainer || !activeContainer) return;
+
+        if (activeContainer !== overContainer) {
+            moveBetweenContainers(activeContainer, overContainer, active, over, overId);
+        }
+    }
+
+    function handleDragEnd({ active, over }) {
+        if (!over) {
+            setActiveId(null);
+            return;
+        }
+
+        if (active.id in items && over?.id) {
+            setContainers((containers) => {
+                const activeIndex = containers.indexOf(active.id);
+                const overIndex = containers.indexOf(over.id);
+
+                return arrayMove(containers, activeIndex, overIndex);
+            });
+        }
+
+        const activeContainer = findContainer(active.id);
+
+        if (!activeContainer) {
+            setActiveId(null);
+            return;
+        }
+
+        const overContainer = findContainer(over.id);
+
+        if (overContainer) {
+            const activeIndex = items[activeContainer].indexOf(active.id);
+            const overIndex = items[overContainer].indexOf(over.id);
+
+            if (activeIndex !== overIndex) {
+                setItems((items) => ({
+                    ...items,
+                    [overContainer]: arrayMove(
+                        items[overContainer],
+                        activeIndex,
+                        overIndex
+                    )
+                }));
             }
         }
-    };
-    return (
-        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <div
-                style={{
-                    display: 'flex',
-                    overflowX: 'auto', // Enable horizontal scrolling
-                    padding: '10px'
-                }}
-            >
-                {statusOption.map((status) => (
-                    <DroppableColumn
-                        key={status.value}
-                        status={status}
-                        items={items}
-                        moveItem={moveItem}
-                        onButtonClick={onAdd}
-                    />
-                ))}
-            </div>
-        </DndContext>
-    );
-};
 
-export default Kanban;
+        setActiveId(null);
+        setTimeout(() => {
+            // Wait for state to update
+            const callbackData = getCallbackData(over, active);
+            onChange(callbackData);
+        }, 100);
+    }
+
+    function getSortableData(item) {
+        return item.data.current.sortable;
+    }
+
+    function getCallbackData(over, active) {
+        const sortableData = getSortableData(active);
+        if (active.id.startsWith('column-') && over.id.startsWith('column-')) {
+            return {
+                type: 'REORDER_STATUS',
+                status: 0,
+                ids: sortableData.items.map((id) => parseInt(id.replace('column-', '')))
+            };
+        }
+
+        return {
+            type: 'REORDER_TASK',
+            status: parseInt(sortableData.containerId.replace('column-', '')),
+            ids: sortableData.items.map((id) => parseInt(id.replace('task-', '')))
+        };
+    }
+
+    const handleDragCancel = () => {
+        if (clonedItems) {
+            // Reset items to their original state in case items have been
+            // Dragged across containers
+            setItems(clonedItems);
+        }
+
+        setActiveId(null);
+        setClonedItems(null);
+    };
+
+    useEffect(() => {
+        requestAnimationFrame(() => {
+            recentlyMovedToNewContainer.current = false;
+        });
+    }, [items]);
+
+    return (
+        <div className="kanban">
+            <DndContext
+                sensors={sensors}
+                collisionDetection={collisionDetectionStrategy}
+                measuring={{
+                    droppable: {
+                        strategy: MeasuringStrategy.WhileDragging
+                    }
+                }}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDragEnd={handleDragEnd}
+                onDragCancel={handleDragCancel}
+            >
+                <div className="kanban-container">
+                    <SortableContext
+                        items={containers}
+                        strategy={horizontalListSortingStrategy}
+                    >
+                        {containers.map((containerId) => {
+                            return (
+                                <SectionItem
+                                    id={containerId}
+                                    key={containerId}
+                                    items={items[containerId]}
+                                    title={
+                                        statusList.filter(
+                                            (c) => 'column-' + c.id === containerId
+                                        )[0].title
+                                    }
+                                    data={data}
+                                    isSortingContainer={isSortingContainer}
+                                />
+                            );
+                        })}
+                    </SortableContext>
+                </div>
+                <ClientOnlyPortal selector=".kanban">
+                    <DragOverlay>
+                        {activeId ? (
+                            containers.includes(activeId) ? (
+                                <SectionItem
+                                    id={activeId}
+                                    items={items[activeId]}
+                                    title={
+                                        statusList.filter(
+                                            (c) => 'column-' + c.id === activeId
+                                        )[0].title
+                                    }
+                                    data={data}
+                                    dragOverlay
+                                />
+                            ) : (
+                                <FieldItem
+                                    id={activeId}
+                                    item={
+                                        data.filter(
+                                            (d) => 'task-' + d.id === activeId
+                                        )[0]
+                                    }
+                                    dragOverlay
+                                />
+                            )
+                        ) : null}
+                    </DragOverlay>
+                </ClientOnlyPortal>
+            </DndContext>
+        </div>
+    );
+}

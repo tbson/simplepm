@@ -2415,10 +2415,10 @@ babel-plugin-polyfill-regenerator@^0.3.0:
   dependencies:
     "@babel/helper-define-polyfill-provider" "^0.3.1"
 
-babel-plugin-react-compiler@^19.0.0-beta-b2e8e9c-20241220:
-  version "19.0.0-beta-b2e8e9c-20241220"
-  resolved "https://registry.yarnpkg.com/babel-plugin-react-compiler/-/babel-plugin-react-compiler-19.0.0-beta-b2e8e9c-20241220.tgz#088691bc21d1917c53ad43bf069f818d423e641b"
-  integrity sha512-aigv5VrOTLUOCeq/t1fuZvvs9Ze1GUfxnleWfiGoZcR0Lo34w3JcGgNiJBoxqlWfFiVnZhzaja9Aa1p6PWAtPg==
+babel-plugin-react-compiler@^19.0.0-beta-55955c9-20241229:
+  version "19.0.0-beta-55955c9-20241229"
+  resolved "https://registry.yarnpkg.com/babel-plugin-react-compiler/-/babel-plugin-react-compiler-19.0.0-beta-55955c9-20241229.tgz#a1df76c3e3217aca88833a01dfac4bbcc7c43309"
+  integrity sha512-APpa9fRiG5UN5kxnB/vznaSBKbXwAWZs6QshN3MLntzWa4cUhOxzUSd7Ohmr5sLQaM0ZHjjOg07pw1ZoR7+Oog==
   dependencies:
     "@babel/types" "^7.19.0"
 
@@ -2985,10 +2985,10 @@ escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
 
-eslint-plugin-react-compiler@^19.0.0-beta-b2e8e9c-20241220:
-  version "19.0.0-beta-b2e8e9c-20241220"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react-compiler/-/eslint-plugin-react-compiler-19.0.0-beta-b2e8e9c-20241220.tgz#d039223c7ff07636cffd6809833fb6859b51d4d8"
-  integrity sha512-STVaOQyivSBv0un6/ujYOPntKcCaD0qXIG8siBEs9QcWmQ7q3J3ozuAE86SlSc7ElIZgPoL9HoSN3EONS47nqQ==
+eslint-plugin-react-compiler@^19.0.0-beta-55955c9-20241229:
+  version "19.0.0-beta-55955c9-20241229"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-compiler/-/eslint-plugin-react-compiler-19.0.0-beta-55955c9-20241229.tgz#ccc03235eed9fbbf589e27b8a4e12e3ca71b0871"
+  integrity sha512-KsE6bQrNvtPDbMb9EolZ2C+Z2/uv2Y5cAUgN+pzbriXjKlf1FkbgiyE153m2mIT6gEZq2OrtFvX7uJj5IrNQlg==
   dependencies:
     "@babel/core" "^7.24.4"
     "@babel/parser" "^7.24.4"
@@ -3266,6 +3266,11 @@ image-size@~0.5.0:
   version "0.5.5"
   resolved "https://registry.yarnpkg.com/image-size/-/image-size-0.5.5.tgz#09dfd4ab9d20e29eb1c3e80b8990378df9e3cb9c"
   integrity sha1-Cd/Uq50g4p6xw+gLiZA3jfnjy5w=
+
+immutability-helper@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/immutability-helper/-/immutability-helper-3.1.1.tgz#2b86b2286ed3b1241c9e23b7b21e0444f52f77b7"
+  integrity sha512-Q0QaXjPjwIju/28TsugCHNEASwoCcJSyJV3uO1sOIQGI0jKgm9f41Lvz0DZj3n46cNCyAZTsEYoY4C2bVRUzyQ==
 
 import-fresh@^3.1.0:
   version "3.3.0"
@@ -4953,10 +4958,10 @@ tsscmp@1.0.6:
   resolved "https://registry.yarnpkg.com/tsscmp/-/tsscmp-1.0.6.tgz#85b99583ac3589ec4bfef825b5000aa911d605eb"
   integrity sha512-LxhtAkPDTkVCMQjt2h6eBVY28KCjikZqZfMcC15YBeNjkgUpdCfBu5HoiOTDu86v6smE8yOjyEktJ8hlbANHQA==
 
-ttag-cli@^1.10.14:
-  version "1.10.14"
-  resolved "https://registry.yarnpkg.com/ttag-cli/-/ttag-cli-1.10.14.tgz#c25e6f56f17bd22c5d1ca3ea08ba3f7d99be356d"
-  integrity sha512-J7WgxtHuH2ko5xj0/qBsiWXDe5xjniikT2yaMeJhfv+I7Vd5YKzIPjMOGDL58Dp6eZI7Db+4Tfzga5bUHLSeUQ==
+ttag-cli@^1.10.18:
+  version "1.10.18"
+  resolved "https://registry.yarnpkg.com/ttag-cli/-/ttag-cli-1.10.18.tgz#fdfccae550d96ea47924c6e846c0d5d3f59539c7"
+  integrity sha512-VSS59YPUP5jGTHVzqOQC1Hxt/02y8hc/O0lsBnLoPSACcyGg7e/wDT7DEFvoSEfgQ8JCov4ZjcGVXTPxC8d2Hg==
   dependencies:
     "@babel/core" "^7.12.3"
     "@babel/generator" "^7.12.5"

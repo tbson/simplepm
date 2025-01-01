@@ -13,6 +13,7 @@ import { taskOptionSt } from 'component/pm/task/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function TaskKanban({ project_id }) {
+    const [statusList, setStatusList] = useState([]);
     const taskOption = useAtomValue(taskOptionSt);
     const [filterParam, setFilterParam] = useState({});
     const [sortParam, setSortParam] = useState({});
@@ -27,8 +28,10 @@ export default function TaskKanban({ project_id }) {
     }, {});
 
     useEffect(() => {
-        getList();
-    }, [filterParam, sortParam, pageParam]);
+        if (taskOption.loaded) {
+            getList();
+        }
+    }, [taskOption.loaded, filterParam, sortParam, pageParam]);
 
     const getList = () => {
         setInit(true);
@@ -39,7 +42,22 @@ export default function TaskKanban({ project_id }) {
         };
         RequestUtil.apiCall(urls.crud, { ...queryParam, project_id })
             .then((resp) => {
-                setList(Util.appendKeys(resp.data));
+                const list = resp.data.map((item) => {
+                    return {
+                        id: item.id,
+                        title: item.title,
+                        status: item.status.id,
+                    };
+                });
+                setList(list);
+                const statusList = taskOption.status.map((status, index) => {
+                    return {
+                        id: status.value,
+                        title: status.label,
+                        order: index + 1
+                    };
+                });
+                setStatusList(statusList);
             })
             .finally(() => {
                 setInit(false);
@@ -105,21 +123,16 @@ export default function TaskKanban({ project_id }) {
     };
 
     const handleAdd = (status) => {
-        console.log(status);
         Dialog.toggle();
     };
 
-    if (!taskOption.loaded) {
-        return null;
+    const handleChange = (result) => {
+        console.log(result);
     }
-
+    
     return (
         <div>
-            <Kanban
-                statusOption={taskOption.status}
-                data={list}
-                onAdd={handleAdd}
-            />
+            <Kanban tasks={list} statusList={statusList} onChange={handleChange} />
             <Dialog onChange={onChange} />
         </div>
     );
