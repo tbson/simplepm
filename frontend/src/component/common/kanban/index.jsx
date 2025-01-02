@@ -267,9 +267,14 @@ export default function Tasks({ tasks, statusList, onChange }) {
         }
 
         return {
-            type: 'REORDER_TASK',
-            status: parseInt(sortableData.containerId.replace('column-', '')),
-            ids: sortableData.items.map((id) => parseInt(id.replace('task-', '')))
+            project_id: 0,
+            items: sortableData.items.map((id, index) => {
+                return {
+                    id: parseInt(id.replace('task-', '')),
+                    status: parseInt(sortableData.containerId.replace('column-', '')),
+                    order: index + 1
+                };
+            })
         };
     }
 

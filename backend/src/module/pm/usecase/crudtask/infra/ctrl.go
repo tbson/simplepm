@@ -119,6 +119,7 @@ func List(c echo.Context) error {
 		"TaskFieldValues.TaskField",
 		"TaskFieldValues.TaskFieldOption",
 	}
+	options.Order = restlistutil.QueryOrder{Field: "order", Direction: "ASC"}
 	listResult, err := pager.List(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

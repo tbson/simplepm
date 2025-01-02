@@ -46,7 +46,7 @@ export default function TaskKanban({ project_id }) {
                     return {
                         id: item.id,
                         title: item.title,
-                        status: item.status.id,
+                        status: item.status.id
                     };
                 });
                 setList(list);
@@ -127,9 +127,17 @@ export default function TaskKanban({ project_id }) {
     };
 
     const handleChange = (result) => {
+        result.project_id = project_id;
         console.log(result);
-    }
-    
+        RequestUtil.apiCall(urls.reorder, result, 'put')
+            .then((resp) => {
+                console.log(resp);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
     return (
         <div>
             <Kanban tasks={list} statusList={statusList} onChange={handleChange} />

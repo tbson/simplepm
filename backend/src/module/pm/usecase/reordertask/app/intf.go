@@ -1,0 +1,26 @@
+package app
+
+import (
+	"src/common/ctype"
+	"src/module/pm/schema"
+)
+
+type OrderInfoItem struct {
+	ID     uint `json:"id"`
+	Status uint `json:"status"`
+	Order  int  `json:"order"`
+}
+
+type InputData struct {
+	ProjectID uint            `json:"project_id" validate:"required"`
+	Items     []OrderInfoItem `json:"items" validate:"required"`
+}
+
+type TaskRepo interface {
+	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.Task, error)
+}
+
+type TaskFieldValueRepo interface {
+	Retrieve(queryOptions ctype.QueryOptions) (*schema.TaskFieldValue, error)
+	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskFieldValue, error)
+}

@@ -62,6 +62,13 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 		}
 	}
 
+	joins := queryOptions.Joins
+	if len(joins) > 0 {
+		for _, join := range joins {
+			db = db.Joins(join)
+		}
+	}
+
 	var item Schema
 	var count int64
 	query := db.Where(map[string]interface{}(filters))
