@@ -124,8 +124,13 @@ export default function TaskKanban({ project_id }) {
 
     const handleAdd = (status) => {
         console.log(status);
-        // Dialog.toggle();
+        Dialog.toggle();
     };
+
+    const handleView = (id) => {
+        console.log(id);
+        Dialog.toggle(true, id);
+    }
 
     const handleChange = (result) => {
         result.project_id = project_id;
@@ -146,6 +151,7 @@ export default function TaskKanban({ project_id }) {
                 statusList={statusList}
                 onChange={handleChange}
                 onAdd={handleAdd}
+                onView={handleView}
             />
             <Dialog onChange={onChange} />
         </div>

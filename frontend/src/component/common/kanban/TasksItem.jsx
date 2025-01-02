@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     useSortable,
     SortableContext,
@@ -10,7 +10,7 @@ import { PlusOutlined } from '@ant-design/icons';
 
 // Column
 export const SectionItem = (props) => {
-    const { id, items, title, data, isSortingContainer, dragOverlay, onAdd } = props;
+    const { id, items, title, data, isSortingContainer, dragOverlay, onAdd, onView } = props;
     const {
         //active,
         attributes,
@@ -93,6 +93,7 @@ export const SectionItem = (props) => {
                                 key={item}
                                 item={data.filter((d) => 'task-' + d.id === item)[0]}
                                 disabled={isSortingContainer}
+                                onView={onView}
                             />
                         );
                     })}
@@ -114,8 +115,8 @@ export const SectionItem = (props) => {
 };
 
 // Task
-export const FieldItem = (props) => {
-    const { id, item, dragOverlay } = props;
+export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
+    const [isItemDragging, setIsItemDragging] = useState(false);
     const {
         setNodeRef,
         //setActivatorNodeRef,
@@ -129,11 +130,24 @@ export const FieldItem = (props) => {
         attributes
     } = useSortable({
         id: id,
-        disabled: props.disabled,
+        disabled,
         data: {
             type: 'FIELD'
         }
     });
+
+    const handleMouseDown = () => {
+        setIsItemDragging(false);
+    };
+
+    const handleMouseMove = () => {
+        setIsItemDragging(true);
+    };
+
+    const handleMouseUp = (id) => {
+        if (isItemDragging) return;
+        onView(id);
+    };
 
     const style = {
         transform: CSS.Translate.toString(transform),
@@ -155,14 +169,21 @@ export const FieldItem = (props) => {
     };
     return (
         <div
-            ref={props.disabled ? null : setNodeRef}
+            ref={disabled ? null : setNodeRef}
             className="card"
             style={style}
             {...attributes}
             {...listeners}
         >
             <div>
-                <Row justify="space-between">
+                <Row
+                    justify="space-between"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={() => {
+                        handleMouseUp(item.id);
+                    }}
+                >
                     <Col span={20}>{item.title}</Col>
                 </Row>
             </div>
