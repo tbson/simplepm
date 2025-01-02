@@ -10,7 +10,7 @@ import { PlusOutlined } from '@ant-design/icons';
 
 // Column
 export const SectionItem = (props) => {
-    const { id, items, title, data, isSortingContainer, dragOverlay } = props;
+    const { id, items, title, data, isSortingContainer, dragOverlay, onAdd } = props;
     const {
         //active,
         attributes,
@@ -104,6 +104,7 @@ export const SectionItem = (props) => {
                     icon={<PlusOutlined />}
                     size="small"
                     style={{ width: '100%', textAlign: 'left' }}
+                    onClick={() => onAdd(parseInt(id.split('-')[1]))}
                 >
                     Add task
                 </Button>

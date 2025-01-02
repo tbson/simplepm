@@ -22,7 +22,7 @@ import update from 'immutability-helper';
 import { SectionItem, FieldItem } from './TasksItem';
 import ClientOnlyPortal from './ClientOnlyPortal';
 
-export default function Tasks({ tasks, statusList, onChange }) {
+export default function Tasks({ tasks, statusList, onChange, onAdd }) {
     const [data, setData] = useState(null);
     const [items, setItems] = useState({});
     const [containers, setContainers] = useState([]);
@@ -328,6 +328,7 @@ export default function Tasks({ tasks, statusList, onChange }) {
                                     }
                                     data={data}
                                     isSortingContainer={isSortingContainer}
+                                    onAdd={onAdd}
                                 />
                             );
                         })}
@@ -347,6 +348,7 @@ export default function Tasks({ tasks, statusList, onChange }) {
                                     }
                                     data={data}
                                     dragOverlay
+                                    onAdd={onAdd}
                                 />
                             ) : (
                                 <FieldItem
