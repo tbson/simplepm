@@ -82,7 +82,7 @@ func Option(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	taskFieldOptions := []ctype.SelectOption[uint]{}
+	taskFieldOptions := []TaskFieldOption{}
 	for _, taskField := range taskFields {
 		options := []ctype.SimpleSelectOption[uint]{}
 		for _, option := range taskField.TaskFieldOptions {
@@ -91,11 +91,12 @@ func Option(c echo.Context) error {
 				Label: option.Title,
 			})
 		}
-		taskFieldOptions = append(taskFieldOptions, ctype.SelectOption[uint]{
+		taskFieldOptions = append(taskFieldOptions, TaskFieldOption{
 			Value:       taskField.ID,
 			Label:       taskField.Title,
 			Description: taskField.Description,
-			Group:       taskField.Type,
+			Type:        taskField.Type,
+			IsStatus:    taskField.IsStatus,
 			Options:     options,
 		})
 	}
@@ -134,6 +135,11 @@ func Retrieve(c echo.Context) error {
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"id": id},
+		Preloads: []string{
+			"Feature",
+			"TaskFieldValues.TaskField",
+			"TaskFieldValues.TaskFieldOption",
+		},
 	}
 
 	result, err := cruder.Retrieve(queryOptions)

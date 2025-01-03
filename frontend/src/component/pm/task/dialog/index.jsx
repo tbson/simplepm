@@ -12,10 +12,18 @@ export class Service {
         return TOGGLE_DIALOG_EVENT;
     }
 
-    static toggle(open = true, id = 0) {
-        Util.event.dispatch(Service.toggleEvent, { open, id });
+    static toggle(open = true, id = 0, status = 0) {
+        Util.event.dispatch(Service.toggleEvent, { open, id, status });
     }
 }
+
+const emptyData = {
+    id: 0,
+    title: '',
+    description: '',
+    feature_id: null,
+    task_fields: [],
+};
 
 /**
  * TaskDialog.
@@ -24,12 +32,12 @@ export class Service {
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
 export default function TaskDialog({ onChange }) {
-    const [data, setData] = useState({});
+    const [data, setData] = useState(emptyData);
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
     const messages = getMessages();
 
-    const handleToggle = ({ detail: { open, id } }) => {
+    const handleToggle = ({ detail: { open, id, status } }) => {
         if (!open) {
             return setOpen(false);
         }
@@ -43,7 +51,8 @@ export default function TaskDialog({ onChange }) {
                 })
                 .finally(() => Util.toggleGlobalLoading(false));
         } else {
-            setData({});
+            const data = { ...emptyData, status };
+            setData(data);
             setOpen(true);
         }
     };

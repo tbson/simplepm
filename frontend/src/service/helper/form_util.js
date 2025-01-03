@@ -1,6 +1,7 @@
 import { notification } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
+import DateUtil from 'service/helper/date_util';
 
 export default class FormUtil {
     /**
@@ -111,5 +112,18 @@ export default class FormUtil {
 
     static addOptional(options, value = null, label = '--Select--') {
         return [{ value, label }, ...options];
+    }
+
+    static parseFieldValue(value, type) {
+        if (type === 'DATE') {
+            return DateUtil.strToDate(value);
+        }
+        if (type === 'MULTIPLE_SELECT') {
+            return value.split(',').map((v) => parseInt(v));
+        }
+        if (['NUMBER', 'SELECT'].includes(type)) {
+            return parseInt(value);
+        }
+        return value;
     }
 }

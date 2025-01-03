@@ -14,12 +14,6 @@ import { urls, getLabels } from '../config';
 const { TextArea } = Input;
 
 const formName = 'TaskForm';
-const emptyRecord = {
-    id: 0,
-    title: '',
-    description: '',
-    feature_id: null
-};
 
 /**
  * @callback FormCallback
@@ -42,16 +36,29 @@ export default function TaskForm({ data, onChange }) {
     const taskOption = useAtomValue(taskOptionSt);
     const taskField = taskOption.task_field;
     const fieldTypeMap = taskField.reduce((acc, field) => {
-        acc[field.value] = field.group;
+        acc[field.value] = field.type;
         return acc;
     }, {});
+    const statusField = taskField.find((field) => field.is_status);
 
     const labels = getLabels();
 
-    const initialValues = Util.isEmpty(data) ? emptyRecord : data;
+    const initialValues = { ...data };
+    if (initialValues) {
+        initialValues[`EXT_${statusField.value}`] = initialValues.status;
+        delete initialValues.status;
+    }
     if (taskOption.feature.length > 0) {
         initialValues.feature_id = taskOption.feature[0].value;
     }
+    for (const field of data?.task_fields || []) {
+        const key = `EXT_${field.task_field_id}`;
+        initialValues[key] = FormUtil.parseFieldValue(
+            field.value,
+            field.type
+        );
+    }
+
     const { id } = initialValues;
 
     const endPoint = id ? `${urls.crud}${id}` : urls.crud;
@@ -62,16 +69,16 @@ export default function TaskForm({ data, onChange }) {
     }, []);
 
     const renderDynamicField = (field) => {
-        if (field.group === 'SELECT') {
+        if (field.type === 'SELECT') {
             return <SelectInput block options={field.options} />;
         }
-        if (field.group === 'MULTIPLE_SELECT') {
+        if (field.type === 'MULTIPLE_SELECT') {
             return <SelectInput block mode="multiple" options={field.options} />;
         }
-        if (field.group === 'DATE') {
+        if (field.type === 'DATE') {
             return <DateInput />;
         }
-        if (field.group === 'NUMBER') {
+        if (field.type === 'NUMBER') {
             return <InputNumber className="full-width" />;
         }
         return <TextArea />;
@@ -114,7 +121,6 @@ export default function TaskForm({ data, onChange }) {
             initialValues={{ ...initialValues }}
             onFinish={(payload) => {
                 const data = processPayload(payload);
-                console.log(data);
                 FormUtil.submit(
                     endPoint,
                     { ...data, project_id: parseInt(project_id) },
@@ -150,9 +156,7 @@ export default function TaskForm({ data, onChange }) {
                         key={field.value}
                         name={`EXT_${field.value}`}
                         label={field.label}
-                        rules={
-                            field.label === 'status' ? [FormUtil.ruleRequired()] : []
-                        }
+                        rules={field.is_status ? [FormUtil.ruleRequired()] : []}
                     >
                         {renderDynamicField(field)}
                     </Form.Item>

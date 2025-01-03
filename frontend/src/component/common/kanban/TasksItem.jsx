@@ -10,7 +10,8 @@ import { PlusOutlined } from '@ant-design/icons';
 
 // Column
 export const SectionItem = (props) => {
-    const { id, items, title, data, isSortingContainer, dragOverlay, onAdd, onView } = props;
+    const { id, items, title, data, isSortingContainer, dragOverlay, onAdd, onView } =
+        props;
     const {
         //active,
         attributes,
@@ -175,15 +176,14 @@ export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
             {...attributes}
             {...listeners}
         >
-            <div>
-                <Row
-                    justify="space-between"
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={() => {
-                        handleMouseUp(item.id);
-                    }}
-                >
+            <div
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={() => {
+                    handleMouseUp(item.id);
+                }}
+            >
+                <Row justify="space-between">
                     <Col span={20}>{item.title}</Col>
                 </Row>
             </div>

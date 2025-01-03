@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"src/common/ctype"
 	"src/module/pm"
 	"src/module/pm/schema"
 	"strings"
@@ -17,6 +18,7 @@ type Feature struct {
 
 type TaskField struct {
 	TaskFieldID uint   `json:"task_field_id"`
+	Type        string `json:"type"`
 	Value       string `json:"value"`
 }
 
@@ -33,6 +35,15 @@ type ListOutput struct {
 	Status      Status      `json:"status"`
 	Feature     Feature     `json:"feature"`
 	TaskFields  []TaskField `json:"task_fields"`
+}
+
+type TaskFieldOption struct {
+	Value       uint                             `json:"value"`
+	Label       string                           `json:"label"`
+	Description string                           `json:"description"`
+	Type        string                           `json:"type"`
+	IsStatus    bool                             `json:"is_status"`
+	Options     []ctype.SimpleSelectOption[uint] `json:"options"`
 }
 
 type DetailOutput = schema.Task
@@ -69,6 +80,7 @@ func presItem(item schema.Task) ListOutput {
 		} else {
 			taskFields = append(taskFields, TaskField{
 				TaskFieldID: taskField.ID,
+				Type:        taskField.Type,
 				Value:       taskFieldValue.Value,
 			})
 		}
@@ -82,6 +94,7 @@ func presItem(item schema.Task) ListOutput {
 	for taskFieldID, values := range multipleSelectFieldMap {
 		taskFields = append(taskFields, TaskField{
 			TaskFieldID: taskFieldID,
+			Type:        pm.TASK_FIELD_TYPE_MULTIPLE_SELECT,
 			Value:       strings.Join(values, ","),
 		})
 	}

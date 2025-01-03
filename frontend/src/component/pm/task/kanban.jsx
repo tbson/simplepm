@@ -123,18 +123,15 @@ export default function TaskKanban({ project_id }) {
     };
 
     const handleAdd = (status) => {
-        console.log(status);
-        Dialog.toggle();
+        Dialog.toggle(true, 0, status);
     };
 
     const handleView = (id) => {
-        console.log(id);
         Dialog.toggle(true, id);
     }
 
     const handleChange = (result) => {
         result.project_id = project_id;
-        console.log(result);
         RequestUtil.apiCall(urls.reorder, result, 'put')
             .then((resp) => {
                 console.log(resp);
