@@ -207,4 +207,9 @@ var (
 		ID:    "MultipleRecordsFound",
 		Other: "multiple records found",
 	}
+
+	CanNotParseDateStr = &i18n.Message{
+		ID:    "CanNotParseDateStr",
+		Other: "can not parse date string",
+	}
 )

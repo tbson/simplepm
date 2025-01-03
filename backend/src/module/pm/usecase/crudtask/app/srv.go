@@ -73,15 +73,13 @@ func (srv Service) createTaskFieldValueDate(
 	value string,
 ) error {
 	dateValue, err := dateutil.StrToDate(value)
-	if err != nil {
-		return err
-	}
-
 	data := ctype.Dict{
 		"TaskID":      taskID,
 		"TaskFieldID": taskField.ID,
-		"DateValue":   &dateValue,
-		"Value":       value,
+	}
+	if err == nil {
+		data["DateValue"] = &dateValue
+		data["Value"] = value
 	}
 	_, err = srv.taskFieldValueRepo.Create(data)
 	if err != nil {
@@ -97,10 +95,12 @@ func (srv Service) createTaskFieldValueSelect(
 ) error {
 	taskFieldOptionID := numberutil.StrToUint(value, 0)
 	data := ctype.Dict{
-		"TaskID":            taskID,
-		"TaskFieldID":       taskField.ID,
-		"TaskFieldOptionID": &taskFieldOptionID,
-		"Value":             value,
+		"TaskID":      taskID,
+		"TaskFieldID": taskField.ID,
+		"Value":       value,
+	}
+	if taskFieldOptionID != 0 {
+		data["TaskFieldOptionID"] = &taskFieldOptionID
 	}
 	_, err := srv.taskFieldValueRepo.Create(data)
 	if err != nil {

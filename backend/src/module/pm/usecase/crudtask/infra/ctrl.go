@@ -184,7 +184,7 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
-	return c.JSON(http.StatusCreated, result)
+	return c.JSON(http.StatusCreated, MutatePres(*result))
 
 }
 
@@ -227,7 +227,7 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, MutatePres(*result))
 }
 
 func Delete(c echo.Context) error {
@@ -235,19 +235,6 @@ func Delete(c echo.Context) error {
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, err := cruder.Delete(id)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	return c.JSON(http.StatusOK, ids)
-}
-
-func DeleteList(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
-
-	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
-	ids, err := cruder.DeleteList(ids)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

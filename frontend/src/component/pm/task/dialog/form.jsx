@@ -53,10 +53,7 @@ export default function TaskForm({ data, onChange }) {
     }
     for (const field of data?.task_fields || []) {
         const key = `EXT_${field.task_field_id}`;
-        initialValues[key] = FormUtil.parseFieldValue(
-            field.value,
-            field.type
-        );
+        initialValues[key] = FormUtil.parseFieldValue(field.value, field.type);
     }
 
     const { id } = initialValues;
@@ -85,11 +82,12 @@ export default function TaskForm({ data, onChange }) {
     };
 
     const processFieldValue = (value, type) => {
+        if (!value) return '';
         if (type === 'DATE') {
             return DateUtil.toIsoDate(value);
         }
         if (type === 'MULTIPLE_SELECT') {
-            value.join(',');
+            return value.join(',');
         }
         return `${value}`;
     };

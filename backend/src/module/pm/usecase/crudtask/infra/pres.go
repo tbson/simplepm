@@ -3,7 +3,9 @@ package infra
 import (
 	"src/common/ctype"
 	"src/module/pm"
+	"src/module/pm/repo/task"
 	"src/module/pm/schema"
+	"src/util/dbutil"
 	"strings"
 )
 
@@ -113,4 +115,20 @@ func ListPres(items []schema.Task) []ListOutput {
 
 func DetailPres(item schema.Task) ListOutput {
 	return presItem(item)
+}
+
+func MutatePres(item schema.Task) ListOutput {
+	taskRepo := task.New(dbutil.Db())
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"id": item.ID,
+		},
+		Preloads: []string{
+			"Feature",
+			"TaskFieldValues.TaskField",
+			"TaskFieldValues.TaskFieldOption",
+		},
+	}
+	task, _ := taskRepo.Retrieve(queryOptions)
+	return presItem(*task)
 }

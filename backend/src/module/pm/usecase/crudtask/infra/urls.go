@@ -46,10 +46,5 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER, profiletype.USER},
 		fmt.Sprintf("Delete %s", useCaseGroupName),
 	)
-	rr.Rbac(
-		"DELETE", "/", DeleteList,
-		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER, profiletype.USER},
-		fmt.Sprintf("Delete list %s", useCaseGroupName),
-	)
 	return e, pemMap
 }
