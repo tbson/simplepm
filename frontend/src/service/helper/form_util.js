@@ -116,12 +116,21 @@ export default class FormUtil {
 
     static parseFieldValue(value, type) {
         if (type === 'DATE') {
+            if (!value) {
+                return null;
+            }
             return DateUtil.strToDate(value);
         }
         if (type === 'MULTIPLE_SELECT') {
-            return value.split(',').map((v) => parseInt(v));
+            const result = value.split(',').map((v) => parseInt(v));
+            if (result.length === 1 && !result[0]) {
+                return [];
+            }
         }
         if (['NUMBER', 'SELECT'].includes(type)) {
+            if (!value) {
+                return null;
+            }
             return parseInt(value);
         }
         return value;

@@ -55,7 +55,7 @@ export default function TaskForm({ data, onChange }) {
         const key = `EXT_${field.task_field_id}`;
         initialValues[key] = FormUtil.parseFieldValue(field.value, field.type);
     }
-
+    console.log(initialValues);
     const { id } = initialValues;
 
     const endPoint = id ? `${urls.crud}${id}` : urls.crud;

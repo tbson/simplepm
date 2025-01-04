@@ -31,28 +31,40 @@ func New(
 	}
 }
 
-func (srv Service) createTaskFieldValueText(
+func (srv Service) upsertTaskFieldValueText(
 	taskID uint,
 	taskField schema.TaskField,
 	value string,
 ) error {
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"TaskID":      taskID,
+			"TaskFieldID": taskField.ID,
+		},
+	}
 	data := ctype.Dict{
 		"TaskID":      taskID,
 		"TaskFieldID": taskField.ID,
 		"Value":       value,
 	}
-	_, err := srv.taskFieldValueRepo.Create(data)
+	_, err := srv.taskFieldValueRepo.UpdateOrCreate(queryOptions, data)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (srv Service) createTaskFieldValueNumber(
+func (srv Service) upsertTaskFieldValueNumber(
 	taskID uint,
 	taskField schema.TaskField,
 	value string,
 ) error {
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"TaskID":      taskID,
+			"TaskFieldID": taskField.ID,
+		},
+	}
 	numberValue := numberutil.StrToInt(value, 0)
 	data := ctype.Dict{
 		"TaskID":      taskID,
@@ -60,18 +72,24 @@ func (srv Service) createTaskFieldValueNumber(
 		"NumberValue": &numberValue,
 		"Value":       value,
 	}
-	_, err := srv.taskFieldValueRepo.Create(data)
+	_, err := srv.taskFieldValueRepo.UpdateOrCreate(queryOptions, data)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (srv Service) createTaskFieldValueDate(
+func (srv Service) upsertTaskFieldValueDate(
 	taskID uint,
 	taskField schema.TaskField,
 	value string,
 ) error {
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"TaskID":      taskID,
+			"TaskFieldID": taskField.ID,
+		},
+	}
 	dateValue, err := dateutil.StrToDate(value)
 	data := ctype.Dict{
 		"TaskID":      taskID,
@@ -81,18 +99,24 @@ func (srv Service) createTaskFieldValueDate(
 		data["DateValue"] = &dateValue
 		data["Value"] = value
 	}
-	_, err = srv.taskFieldValueRepo.Create(data)
+	_, err = srv.taskFieldValueRepo.UpdateOrCreate(queryOptions, data)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (srv Service) createTaskFieldValueSelect(
+func (srv Service) upsertTaskFieldValueSelect(
 	taskID uint,
 	taskField schema.TaskField,
 	value string,
 ) error {
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"TaskID":      taskID,
+			"TaskFieldID": taskField.ID,
+		},
+	}
 	taskFieldOptionID := numberutil.StrToUint(value, 0)
 	data := ctype.Dict{
 		"TaskID":      taskID,
@@ -102,21 +126,21 @@ func (srv Service) createTaskFieldValueSelect(
 	if taskFieldOptionID != 0 {
 		data["TaskFieldOptionID"] = &taskFieldOptionID
 	}
-	_, err := srv.taskFieldValueRepo.Create(data)
+	_, err := srv.taskFieldValueRepo.UpdateOrCreate(queryOptions, data)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (srv Service) createTaskFieldValueMultipleSelect(
+func (srv Service) upsertTaskFieldValueMultipleSelect(
 	taskID uint,
 	taskField schema.TaskField,
 	value string,
 ) error {
 	values := strings.Split(value, ",")
 	for _, value := range values {
-		err := srv.createTaskFieldValueSelect(taskID, taskField, value)
+		err := srv.upsertTaskFieldValueSelect(taskID, taskField, value)
 		if err != nil {
 			return err
 		}
@@ -124,7 +148,7 @@ func (srv Service) createTaskFieldValueMultipleSelect(
 	return nil
 }
 
-func (srv Service) createTaskFieldValues(
+func (srv Service) upsertTaskFieldValues(
 	taskID uint,
 	taskFields []TaskFieldData,
 ) error {
@@ -139,27 +163,27 @@ func (srv Service) createTaskFieldValues(
 		}
 
 		if taskField.Type == pm.TASK_FIELD_TYPE_TEXT {
-			err = srv.createTaskFieldValueText(taskID, *taskField, taskFieldData.Value)
+			err = srv.upsertTaskFieldValueText(taskID, *taskField, taskFieldData.Value)
 			if err != nil {
 				return err
 			}
 		} else if taskField.Type == pm.TASK_FIELD_TYPE_NUMBER {
-			err = srv.createTaskFieldValueNumber(taskID, *taskField, taskFieldData.Value)
+			err = srv.upsertTaskFieldValueNumber(taskID, *taskField, taskFieldData.Value)
 			if err != nil {
 				return err
 			}
 		} else if taskField.Type == pm.TASK_FIELD_TYPE_DATE {
-			err = srv.createTaskFieldValueDate(taskID, *taskField, taskFieldData.Value)
+			err = srv.upsertTaskFieldValueDate(taskID, *taskField, taskFieldData.Value)
 			if err != nil {
 				return err
 			}
 		} else if taskField.Type == pm.TASK_FIELD_TYPE_SELECT {
-			err = srv.createTaskFieldValueSelect(taskID, *taskField, taskFieldData.Value)
+			err = srv.upsertTaskFieldValueSelect(taskID, *taskField, taskFieldData.Value)
 			if err != nil {
 				return err
 			}
 		} else if taskField.Type == pm.TASK_FIELD_TYPE_MULTIPLE_SELECT {
-			err = srv.createTaskFieldValueMultipleSelect(taskID, *taskField, taskFieldData.Value)
+			err = srv.upsertTaskFieldValueMultipleSelect(taskID, *taskField, taskFieldData.Value)
 			if err != nil {
 				return err
 			}
@@ -176,7 +200,7 @@ func (srv Service) Create(structData InputData) (*schema.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = srv.createTaskFieldValues(task.ID, TaskFields)
+	err = srv.upsertTaskFieldValues(task.ID, TaskFields)
 	if err != nil {
 		return nil, err
 	}
@@ -189,9 +213,16 @@ func (srv Service) Update(
 	structData InputData,
 	data ctype.Dict,
 ) (*schema.Task, error) {
+	TaskFields := structData.TaskFields
+	delete(data, "TaskFields")
 	task, err := srv.taskRepo.Update(updateOptions, data)
 	if err != nil {
 		return nil, err
 	}
+	err = srv.upsertTaskFieldValues(task.ID, TaskFields)
+	if err != nil {
+		return nil, err
+	}
+
 	return task, nil
 }
