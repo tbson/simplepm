@@ -31,6 +31,23 @@ func New(
 	}
 }
 
+func (srv Service) GetNextTaskOrder(ProjectID uint) int {
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"ProjectID": ProjectID,
+		},
+		Order: "\"order\" DESC",
+	}
+	tasks, err := srv.taskRepo.List(queryOptions)
+	if err != nil {
+		return 0
+	}
+	if len(tasks) == 0 {
+		return 1
+	}
+	return tasks[0].Order + 1
+}
+
 func (srv Service) upsertTaskFieldValueText(
 	taskID uint,
 	taskField schema.TaskField,
@@ -195,6 +212,7 @@ func (srv Service) upsertTaskFieldValues(
 func (srv Service) Create(structData InputData) (*schema.Task, error) {
 	TaskFields := structData.TaskFields
 	data := dictutil.StructToDict(structData)
+	data["Order"] = srv.GetNextTaskOrder(structData.ProjectID)
 	delete(data, "TaskFields")
 	task, err := srv.taskRepo.Create(data)
 	if err != nil {

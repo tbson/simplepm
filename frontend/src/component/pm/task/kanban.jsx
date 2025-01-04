@@ -46,7 +46,8 @@ export default function TaskKanban({ project_id }) {
                     return {
                         id: item.id,
                         title: item.title,
-                        status: item.status.id
+                        status: item.status.id,
+                        order: item.order,
                     };
                 });
                 setList(list);
@@ -93,16 +94,12 @@ export default function TaskKanban({ project_id }) {
         });
     };
 
-    const handleTableChange = (_pagination, filters, sorter) => {
-        setPageParam({});
-        handleFiltering(filters);
-        handleSorting(sorter);
-    };
-
     const handleChange = (data, id) => {
         data.status = data.status.id;
         if (!id) {
-            setList([{ ...Util.appendKey(data) }, ...list]);
+            const newList = [{ ...Util.appendKey(data) }, ...list];
+            newList.sort((a, b) => a.order - b.order);
+            setList(newList);
         } else {
             const index = list.findIndex((item) => item.id === id);
             data.key = data.id;

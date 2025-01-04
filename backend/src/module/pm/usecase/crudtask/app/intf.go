@@ -20,6 +20,7 @@ type InputData struct {
 }
 
 type TaskRepo interface {
+	List(queryOptions ctype.QueryOptions) ([]schema.Task, error)
 	Create(data ctype.Dict) (*schema.Task, error)
 	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.Task, error)
 }
