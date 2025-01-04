@@ -8,7 +8,7 @@ import useDraggableList from 'component/common/hook/use_draggable_list';
 import Dialog from './dialog';
 import { urls } from './config';
 
-export default function FeatureTable({ project_id }) {
+export default function FeatureTable({ projectId }) {
     const [init, setInit] = useState(false);
     const [list, setList, DraggableListProvider, DraggableItem] = useDraggableList(
         [],
@@ -17,11 +17,11 @@ export default function FeatureTable({ project_id }) {
 
     useEffect(() => {
         getList();
-    }, [project_id]);
+    }, [projectId]);
 
     const getList = () => {
         setInit(true);
-        RequestUtil.apiCall(urls.crud, { project_id })
+        RequestUtil.apiCall(urls.crud, { project_id: projectId })
             .then((resp) => {
                 setList(Util.appendKeys(resp.data));
             })
@@ -45,7 +45,7 @@ export default function FeatureTable({ project_id }) {
         const items = newItems.map((item, index) => {
             return { id: item.id, order: index + 1 };
         });
-        const payload = { items, project_id };
+        const payload = { items, project_id: projectId };
 
         RequestUtil.apiCall(urls.reorder, payload, 'put')
             .then(() => {
@@ -61,7 +61,12 @@ export default function FeatureTable({ project_id }) {
             <DraggableListProvider
                 layout="horizontal"
                 fixedComponent={
-                    <Button onClick={() => Dialog.toggle()} icon={<PlusOutlined />}>
+                    <Button
+                        className="card"
+                        onClick={() => Dialog.toggle()}
+                        icon={<PlusOutlined />}
+                        size="large"
+                    >
                         Feature
                     </Button>
                 }
@@ -74,7 +79,7 @@ export default function FeatureTable({ project_id }) {
                                 style={{ cursor: 'pointer' }}
                                 onClick={() => Dialog.toggle(true, record.id)}
                             >
-                                <strong>{record.title}</strong>
+                                {record.title}
                             </div>
                         </Badge>
                     </DraggableItem>

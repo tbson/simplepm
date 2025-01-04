@@ -94,15 +94,21 @@ export default function useDraggableList(initialItems, onSortEnd) {
             background: isDragging ? '#f0f0f0' : '#fff',
             border: '1px solid #ddd',
             borderRadius: '3px',
-            padding: '10px',
             display: 'flex',
             alignItems: 'center',
             cursor: 'grab',
-            margin: '10px'
+            margin: '10px',
+            height: '40px'
         };
 
         return (
-            <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+            <div
+                className="card"
+                ref={setNodeRef}
+                style={style}
+                {...attributes}
+                {...listeners}
+            >
                 <MenuOutlined style={{ marginRight: '10px' }} />
                 <div>{children}</div>
             </div>

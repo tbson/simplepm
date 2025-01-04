@@ -12,7 +12,7 @@ import Dialog from './dialog';
 import { taskOptionSt } from 'component/pm/task/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
-export default function TaskKanban({ project_id }) {
+export default function TaskKanban({ projectId }) {
     const [statusList, setStatusList] = useState([]);
     const taskOption = useAtomValue(taskOptionSt);
     const [filterParam, setFilterParam] = useState({});
@@ -40,7 +40,7 @@ export default function TaskKanban({ project_id }) {
             ...sortParam,
             ...pageParam
         };
-        RequestUtil.apiCall(urls.crud, { ...queryParam, project_id })
+        RequestUtil.apiCall(urls.crud, { ...queryParam, project_id: projectId })
             .then((resp) => {
                 const list = resp.data.map((item) => {
                     return {
@@ -132,7 +132,7 @@ export default function TaskKanban({ project_id }) {
     };
 
     const handleReorder = (type, data) => {
-        data.project_id = project_id;
+        data.project_id = projectId;
         const endpoint = type === REORDER_TASK ? urls.reorder : urls.reorderStatus;
         return RequestUtil.apiCall(endpoint, data, 'put')
             .then((resp) => {

@@ -11,7 +11,7 @@ import FeatureTable from 'component/pm/feature/table';
 
 export default function Task() {
     const { project_id } = useParams();
-    const projectID = parseInt(project_id);
+    const projectId = parseInt(project_id);
     const [taskOption, setTaskOption] = useAtom(taskOptionSt);
     useEffect(() => {
         if (!taskOption.loaded) {
@@ -35,9 +35,9 @@ export default function Task() {
             <PageHeading>
                 <>{messages.heading}</>
             </PageHeading>
-            <FeatureTable project_id={projectID} />
+            <FeatureTable projectId={projectId} />
             <br />
-            <TaskKanban project_id={projectID} />
+            <TaskKanban projectId={projectId} />
         </>
     );
 }
