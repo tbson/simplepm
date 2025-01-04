@@ -99,7 +99,7 @@ export default function TaskKanban({ project_id }) {
         handleSorting(sorter);
     };
 
-    const onChange = (data, id) => {
+    const handleChange = (data, id) => {
         if (!id) {
             setList([{ ...Util.appendKey(data) }, ...list]);
         } else {
@@ -110,7 +110,7 @@ export default function TaskKanban({ project_id }) {
         }
     };
 
-    const onDelete = (id) => {
+    const handleDelete = (id) => {
         const r = window.confirm(messages.deleteOne);
         if (!r) return;
 
@@ -119,7 +119,10 @@ export default function TaskKanban({ project_id }) {
             .then(() => {
                 setList([...list.filter((item) => item.id !== id)]);
             })
-            .finally(() => Util.toggleGlobalLoading(false));
+            .finally(() => {
+                Dialog.toggle(false);
+                Util.toggleGlobalLoading(false);
+            });
     };
 
     const handleAdd = (status) => {
@@ -128,9 +131,9 @@ export default function TaskKanban({ project_id }) {
 
     const handleView = (id) => {
         Dialog.toggle(true, id);
-    }
+    };
 
-    const handleChange = (result) => {
+    const handleReorder = (result) => {
         result.project_id = project_id;
         RequestUtil.apiCall(urls.reorder, result, 'put')
             .then((resp) => {
@@ -146,11 +149,11 @@ export default function TaskKanban({ project_id }) {
             <Kanban
                 tasks={list}
                 statusList={statusList}
-                onChange={handleChange}
+                onChange={handleReorder}
                 onAdd={handleAdd}
                 onView={handleView}
             />
-            <Dialog onChange={onChange} />
+            <Dialog onChange={handleChange} onDelete={handleDelete} />
         </div>
     );
 }

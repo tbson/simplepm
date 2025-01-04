@@ -197,14 +197,16 @@ func Update(c echo.Context) error {
 		msg := errutil.New("", []string{tx.Error.Error()})
 		return c.JSON(http.StatusBadRequest, msg)
 	}
-
+	fmt.Println("case 1")
 	taskRepo := task.New(tx)
 	taskFieldRepo := taskfield.New(tx)
 	taskFieldOptionRepo := taskfieldoption.New(tx)
 	taskFieldValueRepo := taskfieldvalue.New(tx)
 
+	fmt.Println("case 2")
 	srv := app.New(taskRepo, taskFieldRepo, taskFieldOptionRepo, taskFieldValueRepo)
 
+	fmt.Println("case 3")
 	structData, fields, err := vldtutil.ValidateUpdatePayload(
 		c, app.InputData{ProjectID: projectID},
 	)
@@ -212,21 +214,25 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	fmt.Println("case 4")
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
 	result, err := srv.Update(updateOptions, structData, data)
 
+	fmt.Println("case 5")
 	if err != nil {
 		tx.Rollback()
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
+	fmt.Println("case 6")
 	if err := tx.Commit().Error; err != nil {
 		msg := errutil.New("", []string{err.Error()})
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
+	fmt.Println("case 7")
 	return c.JSON(http.StatusOK, MutatePres(*result))
 }
 
