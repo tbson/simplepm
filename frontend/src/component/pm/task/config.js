@@ -7,7 +7,8 @@ const urlMap = {
         endpoints: {
             crud: '',
             option: 'option',
-            reorder: 'reorder'
+            reorder: 'reorder',
+            reorderStatus: 'reorder-status'
         }
     }
 };

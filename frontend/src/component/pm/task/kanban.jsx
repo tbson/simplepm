@@ -4,7 +4,7 @@ import { useAtomValue } from 'jotai';
 import { Table } from 'antd';
 import { EditBtn, RemoveBtn } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
-import Kanban from 'component/common/kanban';
+import Kanban, { REORDER_TASK } from 'component/common/kanban';
 import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
@@ -47,7 +47,7 @@ export default function TaskKanban({ project_id }) {
                         id: item.id,
                         title: item.title,
                         status: item.status.id,
-                        order: item.order,
+                        order: item.order
                     };
                 });
                 setList(list);
@@ -131,9 +131,10 @@ export default function TaskKanban({ project_id }) {
         Dialog.toggle(true, id);
     };
 
-    const handleReorder = (result) => {
-        result.project_id = project_id;
-        RequestUtil.apiCall(urls.reorder, result, 'put')
+    const handleReorder = (type, data) => {
+        data.project_id = project_id;
+        const endpoint = type === REORDER_TASK ? urls.reorder : urls.reorderStatus;
+        return RequestUtil.apiCall(endpoint, data, 'put')
             .then((resp) => {
                 console.log(resp);
             })
@@ -147,7 +148,7 @@ export default function TaskKanban({ project_id }) {
             <Kanban
                 tasks={list}
                 statusList={statusList}
-                onChange={handleReorder}
+                onReorder={handleReorder}
                 onAdd={handleAdd}
                 onView={handleView}
             />

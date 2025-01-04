@@ -23,6 +23,10 @@ func New(client *gorm.DB) Repo {
 	return Repo{client: client}
 }
 
+func (r Repo) GetTableName() string {
+	return schema.TaskFieldOption{}.TableName()
+}
+
 func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	db := r.client
 	if queryOptions.Order == "" {
@@ -66,6 +70,13 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	if len(preloads) > 0 {
 		for _, preload := range preloads {
 			db = db.Preload(preload)
+		}
+	}
+
+	joins := queryOptions.Joins
+	if len(joins) > 0 {
+		for _, join := range joins {
+			db = db.InnerJoins(join)
 		}
 	}
 

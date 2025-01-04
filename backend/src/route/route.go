@@ -20,6 +20,7 @@ import (
 	crudtaskfield "src/module/pm/usecase/crudtaskfield/infra"
 	crudworkspace "src/module/pm/usecase/crudworkspace/infra"
 	reorderfeature "src/module/pm/usecase/reorderfeature/infra"
+	reorderstatus "src/module/pm/usecase/reorderstatus/infra"
 	reordertask "src/module/pm/usecase/reordertask/infra"
 	reordertaskfield "src/module/pm/usecase/reordertaskfield/infra"
 
@@ -46,6 +47,7 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = crudfeature.RegisterUrls(e, pemMap)
 	e, pemMap = reorderfeature.RegisterUrls(e, pemMap)
 	e, pemMap = reordertask.RegisterUrls(e, pemMap)
+	e, pemMap = reorderstatus.RegisterUrls(e, pemMap)
 	e, pemMap = github.RegisterUrls(e, pemMap)
 	e, pemMap = gitlab.RegisterUrls(e, pemMap)
 	return e, pemMap

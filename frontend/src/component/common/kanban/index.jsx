@@ -22,7 +22,10 @@ import update from 'immutability-helper';
 import { SectionItem, FieldItem } from './TasksItem';
 import ClientOnlyPortal from './ClientOnlyPortal';
 
-export default function Tasks({ tasks, statusList, onChange, onAdd, onView }) {
+export const REORDER_STATUS = 'REORDER_STATUS';
+export const REORDER_TASK = 'REORDER_TASK';
+
+export default function Tasks({ tasks, statusList, onReorder, onAdd, onView }) {
     const [data, setData] = useState(null);
     const [items, setItems] = useState({});
     const [containers, setContainers] = useState([]);
@@ -247,8 +250,8 @@ export default function Tasks({ tasks, statusList, onChange, onAdd, onView }) {
         setActiveId(null);
         setTimeout(() => {
             // Wait for state to update
-            const callbackData = getCallbackData(over, active);
-            onChange(callbackData);
+            const [type, data] = getCallbackData(over, active);
+            onReorder(type, data);
         }, 100);
     }
 
@@ -259,23 +262,30 @@ export default function Tasks({ tasks, statusList, onChange, onAdd, onView }) {
     function getCallbackData(over, active) {
         const sortableData = getSortableData(active);
         if (active.id.startsWith('column-') && over.id.startsWith('column-')) {
-            return {
-                type: 'REORDER_STATUS',
-                status: 0,
-                ids: sortableData.items.map((id) => parseInt(id.replace('column-', '')))
-            };
+            return [
+                REORDER_STATUS,
+                {
+                    ids: sortableData.items.map((id) =>
+                        parseInt(id.replace('column-', ''))
+                    )
+                }
+            ];
         }
 
-        return {
-            project_id: 0,
-            items: sortableData.items.map((id, index) => {
-                return {
-                    id: parseInt(id.replace('task-', '')),
-                    status: parseInt(sortableData.containerId.replace('column-', '')),
-                    order: index + 1
-                };
-            })
-        };
+        return [
+            REORDER_TASK,
+            {
+                items: sortableData.items.map((id, index) => {
+                    return {
+                        id: parseInt(id.replace('task-', '')),
+                        status: parseInt(
+                            sortableData.containerId.replace('column-', '')
+                        ),
+                        order: index + 1
+                    };
+                })
+            }
+        ];
     }
 
     const handleDragCancel = () => {
