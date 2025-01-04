@@ -100,6 +100,7 @@ export default function TaskKanban({ project_id }) {
     };
 
     const handleChange = (data, id) => {
+        data.status = data.status.id;
         if (!id) {
             setList([{ ...Util.appendKey(data) }, ...list]);
         } else {
