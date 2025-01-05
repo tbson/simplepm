@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { t } from 'ttag';
-import { Modal } from 'antd';
+import { Modal, Button } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import Form from './form';
@@ -23,7 +23,7 @@ export class Service {
  * @param {Object} props
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
-export default function FeatureDialog({ onChange }) {
+export default function FeatureDialog({ onChange, onDelete }) {
     const [data, setData] = useState({});
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
@@ -66,6 +66,30 @@ export default function FeatureDialog({ onChange }) {
             onCancel={() => Service.toggle(false)}
             cancelText={t`Cancel`}
             title={Util.getDialogTitle(id, messages)}
+            footer={(_, {}) => (
+                <div style={{ display: 'flex' }}>
+                    <div style={{ width: 40 }}>
+                        <Button onClick={() => Service.toggle(false)}>Cancel</Button>
+                    </div>
+                    <div style={{ flex: 1 }} className="right">
+                        {id ? (
+                            <Button
+                                danger
+                                onClick={() => onDelete(id)}
+                            >{t`Delete`}</Button>
+                        ) : null}
+                        &nbsp; &nbsp;
+                        <Button
+                            type="primary"
+                            form={Form.formName}
+                            key="submit"
+                            htmlType="submit"
+                        >
+                            {id ? 'Update' : 'Create'}
+                        </Button>
+                    </div>
+                </div>
+            )}
         >
             <Form
                 data={data}

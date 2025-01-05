@@ -212,4 +212,9 @@ var (
 		ID:    "CanNotParseDateStr",
 		Other: "can not parse date string",
 	}
+
+	FeatureInUse = &i18n.Message{
+		ID:    "FeatureInUse",
+		Other: "feature is in use",
+	}
 )

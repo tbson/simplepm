@@ -1,4 +1,3 @@
-import { notification } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import DateUtil from 'service/helper/date_util';
@@ -11,17 +10,17 @@ export default class FormUtil {
      * @param {Object} errorDict - {str: str[]}
      */
 
-    static setFormErrors(form = null) {
+    static setFormErrors(form = null, noti = null) {
         return ({ errors }) => {
             const errorDict = {};
             for (const error of errors) {
                 errorDict[error.field] = error.messages;
             }
-            if ('detail' in errorDict) {
-                notification.error({
+            if ('detail' in errorDict && noti) {
+                noti.error({
                     message: 'Error',
                     description: errorDict.detail,
-                    duration: 8
+                    duration: 5
                 });
                 delete errorDict.detail;
             }

@@ -11,9 +11,12 @@ import (
 
 	"src/module/abstract/repo/paging"
 	"src/module/pm/repo/feature"
+	"src/module/pm/repo/task"
 	"src/module/pm/schema"
 
 	"github.com/labstack/echo/v4"
+
+	"src/module/pm/usecase/crudfeature/app"
 )
 
 type Schema = schema.Feature
@@ -96,23 +99,13 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	featureRepo := NewRepo(dbutil.Db())
+	taskRepo := task.New(dbutil.Db())
+
+	srv := app.New(featureRepo, taskRepo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	ids, err := cruder.Delete(id)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	return c.JSON(http.StatusOK, ids)
-}
-
-func DeleteList(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
-
-	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
-	ids, err := cruder.DeleteList(ids)
+	ids, err := srv.Delete(id)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

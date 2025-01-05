@@ -1,22 +1,25 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useSetAtom } from 'jotai';
-import { Button, Badge } from 'antd';
+import { Button, Badge, notification } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
+import FormUtil from 'service/helper/form_util';
 import useDraggableList from 'component/common/hook/use_draggable_list';
 import { featureColorSt } from './state';
 import Dialog from './dialog';
-import { urls } from './config';
+import { urls, getMessages } from './config';
 
 export default function FeatureTable({ projectId }) {
+    const [noti, contextHolder] = notification.useNotification();
     const setFeatureColor = useSetAtom(featureColorSt);
     const [init, setInit] = useState(false);
     const [list, setList, DraggableListProvider, DraggableItem] = useDraggableList(
         [],
         (newItems) => handleSortEnd(newItems)
     );
+    const messages = getMessages();
 
     useEffect(() => {
         getList();
@@ -48,6 +51,23 @@ export default function FeatureTable({ projectId }) {
         }
     };
 
+    const handleDelete = (id) => {
+        const r = window.confirm(messages.deleteOne);
+        if (!r) return;
+
+        Util.toggleGlobalLoading(true);
+        RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
+            .then(() => {
+                setList([...list.filter((item) => item.id !== id)]);
+                Dialog.toggle(false);
+            }).catch((err) => {
+                FormUtil.setFormErrors(null, noti)(err.response.data);
+            })
+            .finally(() => {
+                Util.toggleGlobalLoading(false);
+            });
+    };
+
     const handleSortEnd = (newItems) => {
         const items = newItems.map((item, index) => {
             return { id: item.id, order: index + 1 };
@@ -65,6 +85,7 @@ export default function FeatureTable({ projectId }) {
 
     return (
         <div>
+            {contextHolder}
             <DraggableListProvider
                 layout="horizontal"
                 fixedComponent={
@@ -91,7 +112,7 @@ export default function FeatureTable({ projectId }) {
                     </DraggableItem>
                 ))}
             </DraggableListProvider>
-            <Dialog onChange={handleChange} />
+            <Dialog onChange={handleChange} onDelete={handleDelete} />
         </div>
     );
 }
