@@ -66,6 +66,12 @@ export default function UserLayout() {
                 key: `/pm/project`,
                 icon: <ProjectOutlined />
             });
+        PemUtil.canView('crudproject') &&
+            result.push({
+                label: t`Message`,
+                key: `/event/message`,
+                icon: <ProjectOutlined />
+            });
         return result;
     };
 

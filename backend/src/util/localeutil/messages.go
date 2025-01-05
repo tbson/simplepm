@@ -217,4 +217,12 @@ var (
 		ID:    "FeatureInUse",
 		Other: "feature is in use",
 	}
+	FailedToCreateToken = &i18n.Message{
+		ID:    "FailedToCreateToken",
+		Other: "failed to create token",
+	}
+	FailedToSignToken = &i18n.Message{
+		ID:    "FailedToSignToken",
+		Other: "failed to sign token",
+	}
 )

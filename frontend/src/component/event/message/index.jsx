@@ -1,16 +1,55 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { App } from 'antd';
 import { Centrifuge } from 'centrifuge';
+import RequestUtil from 'service/helper/request_util';
 import PageHeading from 'component/common/page_heading';
-import { getMessages } from './config';
+import {
+    CENTRIFUGO_SUBSCRIPTION_TOKEN_ENDPOINT,
+    CENTRIFUGO_SOCKET_ENDPOINT
+} from 'src/const';
+import { urls, getMessages } from './config';
+
+async function getToken(ctx) {
+    const res = await fetch(CENTRIFUGO_SUBSCRIPTION_TOKEN_ENDPOINT, {
+        method: 'POST',
+        headers: new Headers({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({
+            channel: ctx.channel
+        })
+    });
+    if (!res.ok) {
+        if (res.status === 403) {
+            // Return special error to not proceed with token refreshes,
+            // client will be disconnected.
+            throw new Centrifuge.UnauthorizedError();
+        }
+        // Any other error thrown will result into token refresh re-attempts.
+        throw new Error(`Unexpected status code ${res.status}`);
+    }
+    const data = await res.json();
+    return data.token;
+}
 
 export default function Message() {
+    const { notification } = App.useApp();
+    const [token, setToken] = useState('');
     const [count, setCount] = useState('-');
     const [connectionStatus, setConnectionStatus] = useState('Disconnected');
 
     useEffect(() => {
-        const centrifuge = new Centrifuge('wss://socketstag.simplepm.io/connection/websocket', {
-            token: './exec centrifugo gentoken -u 123722'
+        RequestUtil.apiCall(urls.getJwt)
+            .then((resp) => {
+                setToken(resp.data.token);
+            })
+            .catch(RequestUtil.displayError(notification));
+    }, []);
+
+    useEffect(() => {
+        if (!token) return;
+        const centrifuge = new Centrifuge(CENTRIFUGO_SOCKET_ENDPOINT, {
+            token,
+            getToken
         });
 
         // Event Handlers
@@ -62,7 +101,7 @@ export default function Message() {
             sub.unsubscribe();
             centrifuge.disconnect();
         };
-    }, []);
+    }, [token]);
 
     const messages = getMessages();
     return (
