@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
+import ColorInput from 'component/common/form/ant/input/color_input';
 import { urls, getLabels } from '../config';
 
 const { TextArea } = Input;
@@ -71,6 +72,10 @@ export default function FeatureForm({ data, onChange }) {
                 rules={[FormUtil.ruleRequired()]}
             >
                 <Input ref={inputRef} />
+            </Form.Item>
+
+            <Form.Item name="color" label={labels.color}>
+                <ColorInput />
             </Form.Item>
 
             <Form.Item name="description" label={labels.description}>

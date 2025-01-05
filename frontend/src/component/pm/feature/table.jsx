@@ -72,11 +72,10 @@ export default function FeatureTable({ projectId }) {
                 }
             >
                 {list.map((record) => (
-                    <DraggableItem key={record.id} id={record.id}>
+                    <DraggableItem key={record.id} id={record.id} color={record.color}>
                         <Badge count={0} offset={[10, -10]}>
                             <div
                                 className="pointer"
-                                style={{ cursor: 'pointer' }}
                                 onClick={() => Dialog.toggle(true, record.id)}
                             >
                                 {record.title}

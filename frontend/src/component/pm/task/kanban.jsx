@@ -47,6 +47,7 @@ export default function TaskKanban({ projectId }) {
                         id: item.id,
                         title: item.title,
                         status: item.status.id,
+                        color: item.feature.color,
                         order: item.order
                     };
                 });
@@ -96,6 +97,7 @@ export default function TaskKanban({ projectId }) {
 
     const handleChange = (data, id) => {
         data.status = data.status.id;
+        data.color = data.feature.color;
         if (!id) {
             const newList = [{ ...Util.appendKey(data) }, ...list];
             newList.sort((a, b) => a.order - b.order);

@@ -7,7 +7,7 @@ const urlMap = {
         endpoints: {
             crud: '',
             option: 'option',
-            reorder: 'reorder',
+            reorder: 'reorder'
         }
     }
 };
@@ -24,5 +24,6 @@ export const getMessages = () => ({
 
 export const getLabels = () => ({
     title: t`Title`,
-    description: t`Description`
+    description: t`Description`,
+    color: t`Color`
 });

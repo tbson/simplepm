@@ -168,6 +168,9 @@ export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
                 ? 'manipulation'
                 : 'none'
     };
+    if (item.color) {
+        style.borderColor = item.color;
+    }
     return (
         <div
             ref={disabled ? null : setNodeRef}

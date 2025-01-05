@@ -5,5 +5,6 @@ type InputData struct {
 	FeatureID   uint   `json:"feature_id" form:"feature_id"`
 	Title       string `json:"title" form:"title" validate:"required"`
 	Description string `json:"description" form:"description"`
+	Color       string `json:"color" form:"color"`
 	Order       int    `json:"order" form:"order"`
 }

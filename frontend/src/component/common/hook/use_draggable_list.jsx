@@ -85,7 +85,7 @@ export default function useDraggableList(initialItems, onSortEnd) {
         );
     }
 
-    function DraggableItem({ id, children }) {
+    function DraggableItem({ id, color, children }) {
         const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
             useSortable({ id });
         const style = {
@@ -100,6 +100,9 @@ export default function useDraggableList(initialItems, onSortEnd) {
             margin: '10px',
             height: '40px'
         };
+        if (color) {
+            style.borderColor = color;
+        }
 
         return (
             <div
