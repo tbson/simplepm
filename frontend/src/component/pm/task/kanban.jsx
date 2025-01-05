@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { App } from 'antd';
 import { useAtomValue } from 'jotai';
 import PemCheck from 'component/common/pem_check';
 import Kanban, { REORDER_TASK } from 'component/common/kanban';
@@ -12,6 +13,7 @@ import { featureColorSt } from 'component/pm/feature/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function TaskKanban({ projectId }) {
+    const { notification } = App.useApp();
     const taskOption = useAtomValue(taskOptionSt);
     const featureColor = useAtomValue(featureColorSt);
     const [statusList, setStatusList] = useState([]);
@@ -43,7 +45,7 @@ export default function TaskKanban({ projectId }) {
         setInit(true);
         const queryParam = {
             ...filterParam,
-            ...sortParam,
+            ...sortParam
         };
         RequestUtil.apiCall(urls.crud, { ...queryParam, project_id: projectId })
             .then((resp) => {
@@ -67,6 +69,7 @@ export default function TaskKanban({ projectId }) {
                 });
                 setStatusList(statusList);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 setInit(false);
             });
@@ -125,6 +128,7 @@ export default function TaskKanban({ projectId }) {
             .then(() => {
                 setList([...list.filter((item) => item.id !== id)]);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 Dialog.toggle(false);
                 Util.toggleGlobalLoading(false);
@@ -146,9 +150,7 @@ export default function TaskKanban({ projectId }) {
             .then((resp) => {
                 console.log(resp);
             })
-            .catch((err) => {
-                console.log(err);
-            });
+            .catch(RequestUtil.displayError(notification));
     };
 
     return (

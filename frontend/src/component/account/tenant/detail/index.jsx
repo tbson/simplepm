@@ -3,7 +3,7 @@ import { t } from 'ttag';
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import { useParams } from 'react-router-dom';
-import { Divider, Button } from 'antd';
+import { App, Divider, Button } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import PageHeading from 'component/common/page_heading';
 import Util from 'service/helper/util';
@@ -14,6 +14,7 @@ import Summary from './summary';
 import Dialog from '../dialog';
 
 export default function Tenant() {
+    const { notification } = App.useApp();
     const { tenant_id } = useParams();
     const [item, setItem] = useState({});
     const [tenantOption, setTenantOption] = useAtom(tenantOptionSt);
@@ -38,7 +39,9 @@ export default function Tenant() {
         Util.toggleGlobalLoading();
         return RequestUtil.apiCall(`${urls.crud}${tenant_id}`).then((resp) => {
             setItem(resp.data);
-        }).finally(() => {
+        })
+        .catch(RequestUtil.displayError(notification))
+        .finally(() => {
             Util.toggleGlobalLoading(false);
         })
     };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { t } from 'ttag';
-import { Button } from 'antd';
+import { App, Button } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import Form from './form';
@@ -13,6 +13,7 @@ import { urls, getMessages } from '../config';
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
 export default function TaskFieldDialog({ id, data, toggle, onChange, onDelete }) {
+    const { notification } = App.useApp();
     const messages = getMessages();
 
     const handleDelete = (id) => {
@@ -26,6 +27,7 @@ export default function TaskFieldDialog({ id, data, toggle, onChange, onDelete }
                 onDelete(id);
                 toggle(false);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
     };
     return (

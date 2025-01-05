@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { t } from 'ttag';
-import { Form, Input, Row, Col } from 'antd';
+import { App, Form, Input, Row, Col } from 'antd';
 import FormUtil from 'service/helper/form_util';
 import ImgInput from 'component/common/form/ant/input/img_input';
 import { urls } from '../config';
@@ -9,6 +9,7 @@ import { urls } from '../config';
 const formName = 'UpdateProfileForm';
 
 export default function UpdateProfileForm({ data, onChange }) {
+    const { notification } = App.useApp();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
 
@@ -47,7 +48,7 @@ export default function UpdateProfileForm({ data, onChange }) {
                 console.log('payload', payload);
                 FormUtil.submit(urls.profile, payload, 'put')
                     .then((data) => onChange(data))
-                    .catch(FormUtil.setFormErrors(form));
+                    .catch(FormUtil.setFormErrors(form, notification));
             }}
         >
             <Row>

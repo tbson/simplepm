@@ -137,7 +137,8 @@ export default class RequestUtil {
         } catch (err) {
             if (err.response.status === 401) {
                 try {
-                    const refreshTokenResponse = await window.refreshTokenUtil.refresh();
+                    const refreshTokenResponse =
+                        await window.refreshTokenUtil.refresh();
                     const { token } = refreshTokenResponse.data;
                     StorageUtil.setToken(token);
 
@@ -167,19 +168,26 @@ export default class RequestUtil {
     }
 
     /**
-     * setFormErrors.
+     * displayError.
      *
      * @param {Dict} errors
      * @returns {FormikErrorDict}
      */
-    static setFormErrors(errors) {
-        return Object.entries(errors)
-            .map(([key, value]) => [key, Util.errorFormat(value)])
-            .filter((item) => !!item[1].length)
-            .reduce((result, [key, value]) => {
-                result[key] = value;
-                return result;
-            }, {});
+    static displayError(notification) {
+        return (resp) => {
+            const { errors } = resp.response.data;
+            const errorDict = {};
+            for (const error of errors) {
+                errorDict[error.field] = error.messages;
+            }
+            if ('detail' in errorDict) {
+                notification.error({
+                    message: 'Error',
+                    description: errorDict.detail,
+                    duration: 5
+                });
+            }
+        };
     }
 
     /**

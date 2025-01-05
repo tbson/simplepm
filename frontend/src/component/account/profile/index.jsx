@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { Divider, Button } from 'antd';
 import { t } from 'ttag';
+import { useEffect, useState } from 'react';
+import { App, Divider, Button } from 'antd';
 import { KeyOutlined, UserOutlined } from '@ant-design/icons';
 import PageHeading from 'component/common/page_heading';
 import Util from 'service/helper/util';
@@ -22,6 +22,7 @@ export const emptyProfile = {
 };
 
 export default function Profile() {
+    const { notification } = App.useApp();
     const [profileData, setProfileData] = useState(emptyProfile);
     useEffect(() => {
         Util.toggleGlobalLoading();
@@ -29,9 +30,7 @@ export default function Profile() {
             .then((resp) => {
                 setProfileData(resp.data);
             })
-            .catch((err) => {
-                console.error(err);
-            })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
     }, []);
     return (

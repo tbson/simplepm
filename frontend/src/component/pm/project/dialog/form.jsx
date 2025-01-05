@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
-import { Form, Input } from 'antd';
+import { App, Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import FormUtil from 'service/helper/form_util';
@@ -43,6 +43,7 @@ const emptyRecord = {
  * @param {FormCallback} props.onChange
  */
 export default function ProjectForm({ data, onChange }) {
+    const { notification } = App.useApp();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
     const projectOption = useAtomValue(projectOptionSt);
@@ -78,7 +79,7 @@ export default function ProjectForm({ data, onChange }) {
                 }
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
-                    .catch(FormUtil.setFormErrors(form));
+                    .catch(FormUtil.setFormErrors(form, notification));
             }}
         >
             <Form.Item

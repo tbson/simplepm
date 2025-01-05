@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { t } from 'ttag';
-import { Row, Col, Form, Input } from 'antd';
+import { App, Row, Col, Form, Input } from 'antd';
 import FormUtil from 'service/helper/form_util';
 import { urls } from '../config';
 
@@ -13,6 +13,7 @@ const initValues = {
 };
 
 export default function ChangePwdForm({ onChange }) {
+    const { notification } = App.useApp();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
 
@@ -42,7 +43,7 @@ export default function ChangePwdForm({ onChange }) {
             onFinish={(payload) =>
                 FormUtil.submit(urls.password, payload, 'put')
                     .then((data) => onChange(data))
-                    .catch(FormUtil.setFormErrors(form))
+                    .catch(FormUtil.setFormErrors(form, notification))
             }
         >
             <Row gutter={24}>

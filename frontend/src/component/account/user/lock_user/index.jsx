@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
 import { t } from 'ttag';
-import { Modal } from 'antd';
+import { useState, useEffect } from 'react';
+import { App, Modal } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import Form from './form';
@@ -24,6 +24,7 @@ export class Service {
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
 export default function UserDialog({ onChange }) {
+    const { notification } = App.useApp();
     const [data, setData] = useState({});
     const [open, setOpen] = useState(false);
 
@@ -38,6 +39,7 @@ export default function UserDialog({ onChange }) {
                     setData(resp.data);
                     setOpen(true);
                 })
+                .catch(RequestUtil.displayError(notification))
                 .finally(() => Util.toggleGlobalLoading(false));
         } else {
             setData({});

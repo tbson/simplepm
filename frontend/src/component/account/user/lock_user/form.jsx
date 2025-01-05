@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Form, Input } from 'antd';
+import { App, Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import CheckInput from 'component/common/form/ant/input/check_input';
@@ -29,6 +29,7 @@ const emptyRecord = {
  * @param {FormCallback} props.onChange
  */
 export default function UserForm({ data, onChange }) {
+    const { notification } = App.useApp();
     const [form] = Form.useForm();
     const locked = Form.useWatch('locked', { form, preserve: true });
 
@@ -59,7 +60,7 @@ export default function UserForm({ data, onChange }) {
             onFinish={(payload) =>
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
-                    .catch(FormUtil.setFormErrors(form))
+                    .catch(FormUtil.setFormErrors(form, notification))
             }
         >
             <Form.Item name="locked" label={labels.locked}>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Table, Flex } from 'antd';
+import { App, Row, Col, Table, Flex } from 'antd';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import {
@@ -20,6 +20,7 @@ import Dialog from './dialog';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function WorkspaceTable() {
+    const { notification } = App.useApp();
     const [searchParam, setSearchParam] = useState({});
     const [filterParam, setFilterParam] = useState({});
     const [sortParam, setSortParam] = useState({});
@@ -48,6 +49,7 @@ export default function WorkspaceTable() {
                 setPages(resp.data.pages);
                 setList(Util.appendKeys(resp.data.items));
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 setInit(false);
             });
@@ -125,6 +127,7 @@ export default function WorkspaceTable() {
             .then(() => {
                 setList([...list.filter((item) => item.id !== id)]);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
     };
 
@@ -137,6 +140,7 @@ export default function WorkspaceTable() {
             .then(() => {
                 setList([...list.filter((item) => !ids.includes(item.id))]);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
     };
 

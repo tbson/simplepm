@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button, Row, Col, Form, Input } from 'antd';
 import { t } from 'ttag';
+import { App, Button, Row, Col, Form, Input } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import StorageUtil from 'service/helper/storage_util';
 import FormUtil from 'service/helper/form_util';
@@ -9,6 +9,7 @@ import { urls } from 'component/auth/config';
 const formName = 'LoginForm';
 
 export default function LoginForm({ onChange, children }) {
+    const { notification } = App.useApp();
     const [form] = Form.useForm();
     const initialValues = {
         tenantUid: StorageUtil.getTenantUid()
@@ -20,7 +21,7 @@ export default function LoginForm({ onChange, children }) {
                 StorageUtil.setStorage('tenantUid', tenantUid);
                 onChange(tenantUid);
             })
-            .catch(FormUtil.setFormErrors(form));
+            .catch(FormUtil.setFormErrors(form, notification));
     };
 
     return (

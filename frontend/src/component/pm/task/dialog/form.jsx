@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
-import { Form, Input, InputNumber } from 'antd';
+import { App, Form, Input, InputNumber } from 'antd';
 import Util from 'service/helper/util';
 import DateUtil from 'service/helper/date_util';
 import FormUtil from 'service/helper/form_util';
@@ -30,6 +30,7 @@ const formName = 'TaskForm';
  * @param {FormCallback} props.onChange
  */
 export default function TaskForm({ data, onChange }) {
+    const { notification } = App.useApp();
     const { project_id } = useParams();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
@@ -126,7 +127,7 @@ export default function TaskForm({ data, onChange }) {
                     method
                 )
                     .then((data) => onChange(data, id))
-                    .catch(FormUtil.setFormErrors(form));
+                    .catch(FormUtil.setFormErrors(form, notification));
             }}
         >
             <Form.Item

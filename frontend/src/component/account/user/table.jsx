@@ -2,7 +2,7 @@ import * as React from 'react';
 import { t } from 'ttag';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Row, Col, Table, Button, Flex, Tooltip } from 'antd';
+import { App, Row, Col, Table, Button, Flex, Tooltip } from 'antd';
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
@@ -16,6 +16,7 @@ import LockUserDialog from './lock_user';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function UserTable() {
+    const { notification } = App.useApp();
     const { tenant_id } = useParams();
     const defaultFilterParam = tenant_id ? { tenant_id } : {};
     const [searchParam, setSearchParam] = useState({});
@@ -46,6 +47,7 @@ export default function UserTable() {
                 setPages(resp.data.pages);
                 setList(Util.appendKeys(resp.data.items));
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 setInit(false);
             });
@@ -123,6 +125,7 @@ export default function UserTable() {
             .then(() => {
                 setList([...list.filter((item) => item.id !== id)]);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
     };
 
@@ -135,6 +138,7 @@ export default function UserTable() {
             .then(() => {
                 setList([...list.filter((item) => !ids.includes(item.id))]);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
     };
 

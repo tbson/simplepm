@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
 import { t } from 'ttag';
-import { Modal, Button } from 'antd';
+import { useState, useEffect } from 'react';
+import { App, Modal, Button } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import Form from './form';
@@ -32,6 +32,7 @@ const emptyData = {
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
 export default function TaskDialog({ onChange, onDelete }) {
+    const { notification } = App.useApp();
     const [data, setData] = useState(emptyData);
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
@@ -49,6 +50,7 @@ export default function TaskDialog({ onChange, onDelete }) {
                     setData(resp.data);
                     setOpen(true);
                 })
+                .catch(RequestUtil.displayError(notification))
                 .finally(() => Util.toggleGlobalLoading(false));
         } else {
             const data = { ...emptyData, status };

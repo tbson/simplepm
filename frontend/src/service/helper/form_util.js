@@ -10,14 +10,14 @@ export default class FormUtil {
      * @param {Object} errorDict - {str: str[]}
      */
 
-    static setFormErrors(form = null, noti = null) {
+    static setFormErrors(form = null, notification = null) {
         return ({ errors }) => {
             const errorDict = {};
             for (const error of errors) {
                 errorDict[error.field] = error.messages;
             }
-            if ('detail' in errorDict && noti) {
-                noti.error({
+            if ('detail' in errorDict && notification) {
+                notification.error({
                     message: 'Error',
                     description: errorDict.detail,
                     duration: 5

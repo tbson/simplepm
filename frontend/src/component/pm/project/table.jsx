@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { t } from 'ttag';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { t } from 'ttag';
 import { useAtomValue } from 'jotai';
-import { Row, Col, Table, Flex } from 'antd';
+import { App, Row, Col, Table, Flex } from 'antd';
 import { ProfileOutlined } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
@@ -25,6 +25,7 @@ import { projectFilterSt } from 'component/pm/project/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function ProjectTable() {
+    const { notification } = App.useApp();
     const projectFilter = useAtomValue(projectFilterSt);
     const [searchParam, setSearchParam] = useState({});
     const [filterParam, setFilterParam] = useState({});
@@ -54,6 +55,7 @@ export default function ProjectTable() {
                 setPages(resp.data.pages);
                 setList(Util.appendKeys(resp.data.items || []));
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 setInit(false);
             });
@@ -131,6 +133,7 @@ export default function ProjectTable() {
             .then(() => {
                 setList([...list.filter((item) => item.id !== id)]);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
     };
 
@@ -143,6 +146,7 @@ export default function ProjectTable() {
             .then(() => {
                 setList([...list.filter((item) => !ids.includes(item.id))]);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
     };
 

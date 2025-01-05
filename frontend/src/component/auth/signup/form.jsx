@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button, Row, Col, Form, Input } from 'antd';
 import { t } from 'ttag';
+import { App, Button, Row, Col, Form, Input } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import FormUtil from 'service/helper/form_util';
 import { signupUrls } from 'component/auth/config';
@@ -8,6 +8,7 @@ import { signupUrls } from 'component/auth/config';
 const formName = 'SignupForm';
 
 export default function SignupForm({ onChange, children }) {
+    const { notification } = App.useApp();
     const [form] = Form.useForm();
     const initialValues = {
         uid: '',
@@ -24,7 +25,7 @@ export default function SignupForm({ onChange, children }) {
             .then(() => {
                 onChange(payload);
             })
-            .catch(FormUtil.setFormErrors(form))
+            .catch(FormUtil.setFormErrors(form, notification));
     };
 
     return (

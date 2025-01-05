@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef, useEffect } from 'react';
-import { Form, Input, Row, Col, InputNumber } from 'antd';
+import { App, Form, Input, Row, Col, InputNumber } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import ImgInput from 'component/common/form/ant/input/img_input';
@@ -32,6 +32,7 @@ const emptyRecord = {
  * @param {FormCallback} props.onChange
  */
 export default function WorkspaceForm({ data, onChange }) {
+    const { notification } = App.useApp();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
 
@@ -58,7 +59,7 @@ export default function WorkspaceForm({ data, onChange }) {
             onFinish={(payload) =>
                 FormUtil.submit(endPoint, payload, method)
                     .then((data) => onChange(data, id))
-                    .catch(FormUtil.setFormErrors(form))
+                    .catch(FormUtil.setFormErrors(form, notification))
             }
         >
             <Row gutter={40}>

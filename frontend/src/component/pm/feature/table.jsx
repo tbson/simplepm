@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useSetAtom } from 'jotai';
-import { Button, Badge, notification } from 'antd';
+import { App, Button, Badge } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
-import FormUtil from 'service/helper/form_util';
 import useDraggableList from 'component/common/hook/use_draggable_list';
 import { featureColorSt } from './state';
 import Dialog from './dialog';
 import { urls, getMessages } from './config';
 
 export default function FeatureTable({ projectId }) {
-    const [noti, contextHolder] = notification.useNotification();
+    const { notification } = App.useApp();
     const setFeatureColor = useSetAtom(featureColorSt);
     const [init, setInit] = useState(false);
     const [list, setList, DraggableListProvider, DraggableItem] = useDraggableList(
@@ -31,6 +30,7 @@ export default function FeatureTable({ projectId }) {
             .then((resp) => {
                 setList(Util.appendKeys(resp.data));
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 setInit(false);
             });
@@ -60,9 +60,8 @@ export default function FeatureTable({ projectId }) {
             .then(() => {
                 setList([...list.filter((item) => item.id !== id)]);
                 Dialog.toggle(false);
-            }).catch((err) => {
-                FormUtil.setFormErrors(null, noti)(err.response.data);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 Util.toggleGlobalLoading(false);
             });
@@ -78,14 +77,11 @@ export default function FeatureTable({ projectId }) {
             .then(() => {
                 console.log('reorder success');
             })
-            .catch((err) => {
-                console.log(err);
-            });
+            .catch(RequestUtil.displayError(notification));
     };
 
     return (
         <div>
-            {contextHolder}
             <DraggableListProvider
                 layout="horizontal"
                 fixedComponent={

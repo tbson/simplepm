@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Table } from 'antd';
+import { App, Table } from 'antd';
 import { EditBtn, RemoveBtn } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Util from 'service/helper/util';
@@ -10,6 +10,7 @@ import Dialog from './dialog';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function TaskTable({ project_id }) {
+    const { notification } = App.useApp();
     const [filterParam, setFilterParam] = useState({});
     const [sortParam, setSortParam] = useState({});
     const [pageParam, setPageParam] = useState({});
@@ -33,6 +34,7 @@ export default function TaskTable({ project_id }) {
             .then((resp) => {
                 setList(Util.appendKeys(resp.data));
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 setInit(false);
             });
@@ -93,6 +95,7 @@ export default function TaskTable({ project_id }) {
             .then(() => {
                 setList([...list.filter((item) => item.id !== id)]);
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
     };
 

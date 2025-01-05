@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Skeleton } from 'antd';
+import { App, Skeleton } from 'antd';
 import RequestUtil from 'service/helper/request_util';
 import Util from 'service/helper/util';
 import useDraggableList from 'component/common/hook/use_draggable_list';
@@ -18,6 +18,7 @@ export class Service {
 }
 
 export default function TaskFieldTable({ projectId }) {
+    const { notification } = App.useApp();
     const [data, setData] = useState({});
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(0);
@@ -40,6 +41,7 @@ export default function TaskFieldTable({ projectId }) {
                     setData(resp.data);
                     setOpen(true);
                 })
+                .catch(RequestUtil.displayError(notification))
                 .finally(() => Util.toggleGlobalLoading(false));
         } else {
             setData({});
@@ -68,9 +70,7 @@ export default function TaskFieldTable({ projectId }) {
             .then(() => {
                 console.log('reorder success');
             })
-            .catch((err) => {
-                console.log(err);
-            });
+            .catch(RequestUtil.displayError(notification));
     };
 
     const getList = () => {
@@ -80,6 +80,7 @@ export default function TaskFieldTable({ projectId }) {
             .then((resp) => {
                 setList(Util.appendKeys(resp.data));
             })
+            .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 setInit(false);
             });
