@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
-import { Table } from 'antd';
-import { EditBtn, RemoveBtn } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Kanban, { REORDER_TASK } from 'component/common/kanban';
 import Util from 'service/helper/util';
@@ -10,35 +8,42 @@ import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
 import Dialog from './dialog';
 import { taskOptionSt } from 'component/pm/task/state';
+import { featureColorSt } from 'component/pm/feature/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function TaskKanban({ projectId }) {
-    const [statusList, setStatusList] = useState([]);
     const taskOption = useAtomValue(taskOptionSt);
+    const featureColor = useAtomValue(featureColorSt);
+    const [statusList, setStatusList] = useState([]);
     const [filterParam, setFilterParam] = useState({});
     const [sortParam, setSortParam] = useState({});
-    const [pageParam, setPageParam] = useState({});
     const [init, setInit] = useState(false);
     const [list, setList] = useState([]);
     const labels = getLabels();
     const messages = getMessages();
-    const statusMap = taskOption.status.reduce((acc, item) => {
-        acc[item.value] = item.label;
-        return acc;
-    }, {});
 
     useEffect(() => {
         if (taskOption.loaded) {
             getList();
         }
-    }, [taskOption.loaded, filterParam, sortParam, pageParam]);
+    }, [taskOption.loaded, filterParam, sortParam]);
+
+    useEffect(() => {
+        if (!featureColor.featureId) return;
+        const newList = list.map((item) => {
+            if (item.featureId === featureColor.featureId) {
+                item.color = featureColor.color;
+            }
+            return item;
+        });
+        setList(newList);
+    }, [featureColor]);
 
     const getList = () => {
         setInit(true);
         const queryParam = {
             ...filterParam,
             ...sortParam,
-            ...pageParam
         };
         RequestUtil.apiCall(urls.crud, { ...queryParam, project_id: projectId })
             .then((resp) => {
@@ -47,6 +52,7 @@ export default function TaskKanban({ projectId }) {
                         id: item.id,
                         title: item.title,
                         status: item.status.id,
+                        featureId: item.feature.id,
                         color: item.feature.color,
                         order: item.order
                     };

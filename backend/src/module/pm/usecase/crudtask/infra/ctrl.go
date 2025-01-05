@@ -38,6 +38,7 @@ func Option(c echo.Context) error {
 
 	featureQueryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"ProjectID": projectID},
+		Order:   "\"order\" ASC",
 	}
 	features, err := featureRepo.List(featureQueryOptions)
 	if err != nil {

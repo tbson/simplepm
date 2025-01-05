@@ -48,8 +48,10 @@ export default function TaskForm({ data, onChange }) {
         initialValues[`EXT_${statusField.value}`] = initialValues.status;
         delete initialValues.status;
     }
-    if (taskOption.feature.length > 0) {
+    if (!initialValues.id && taskOption.feature.length > 0) {
         initialValues.feature_id = taskOption.feature[0].value;
+    } else {
+        initialValues.feature_id = data.feature.id;
     }
     for (const field of data?.task_fields || []) {
         const key = `EXT_${field.task_field_id}`;

@@ -1,14 +1,17 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useSetAtom } from 'jotai';
 import { Button, Badge } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import useDraggableList from 'component/common/hook/use_draggable_list';
+import { featureColorSt } from './state';
 import Dialog from './dialog';
 import { urls } from './config';
 
 export default function FeatureTable({ projectId }) {
+    const setFeatureColor = useSetAtom(featureColorSt);
     const [init, setInit] = useState(false);
     const [list, setList, DraggableListProvider, DraggableItem] = useDraggableList(
         [],
@@ -35,6 +38,10 @@ export default function FeatureTable({ projectId }) {
             setList([{ ...Util.appendKey(data) }, ...list]);
         } else {
             const index = list.findIndex((item) => item.id === id);
+            const item = list[index];
+            if (item.color !== data.color) {
+                setFeatureColor({ featureId: data.id, color: data.color });
+            }
             data.key = data.id;
             list[index] = data;
             setList([...list]);
