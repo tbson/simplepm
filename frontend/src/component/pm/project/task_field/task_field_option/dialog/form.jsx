@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { useRef, useEffect } from 'react';
-import { useAtomValue } from 'jotai';
 import { Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
-import SelectInput from 'component/common/form/ant/input/select_input';
-import { projectOptionSt } from 'component/pm/project/state';
+import ColorInput from 'component/common/form/ant/input/color_input';
 import { getLabels } from '../config';
 
 const { TextArea } = Input;
@@ -35,7 +33,6 @@ const emptyRecord = {
 export default function TaskFieldOptionForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
-    const projectOption = useAtomValue(projectOptionSt);
     const labels = getLabels();
 
     const initialValues = Util.isEmpty(data) ? emptyRecord : data;
@@ -73,7 +70,7 @@ export default function TaskFieldOptionForm({ data, onChange }) {
                 label={labels.color}
                 rules={[FormUtil.ruleRequired()]}
             >
-                <SelectInput block options={projectOption.task_field.color} />
+                <ColorInput/>
             </Form.Item>
         </Form>
     );

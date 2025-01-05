@@ -7,8 +7,7 @@ export const projectOptionSt = atom({
     layout: [],
     status: [],
     task_field: {
-        type: [],
-        color: []
+        type: []
     }
 });
 
