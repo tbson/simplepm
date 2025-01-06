@@ -9,6 +9,7 @@ import {
     UserOutlined,
     TeamOutlined,
     ProjectOutlined,
+    MessageOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
 import PemUtil from 'service/helper/pem_util';
@@ -70,7 +71,7 @@ export default function UserLayout() {
             result.push({
                 label: t`Message`,
                 key: `/event/message`,
-                icon: <ProjectOutlined />
+                icon: <MessageOutlined />
             });
         return result;
     };
