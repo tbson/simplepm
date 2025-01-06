@@ -174,7 +174,6 @@ export default function ProjectTable() {
             filters: projectFilter.workspace,
             onFilter: (value, record) => record.workspace_id === value
         },
-        */
         {
             key: 'layout',
             title: labels.layout,
@@ -184,6 +183,7 @@ export default function ProjectTable() {
             filters: projectFilter.layout,
             onFilter: (value, record) => record.layout === value
         },
+        */
         {
             key: 'status',
             title: labels.status,
