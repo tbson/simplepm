@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useAtom } from 'jotai';
+import { Breadcrumb } from 'antd';
 import PageHeading from 'component/common/page_heading';
 import RequestUtil from 'service/helper/request_util';
 import { taskOptionSt } from './state';
-import { urls, getMessages } from './config';
+import { urls } from './config';
 import TaskKanban from './kanban';
 import FeatureTable from 'component/pm/feature/table';
 
@@ -29,11 +30,23 @@ export default function Task() {
             });
     };
 
-    const messages = getMessages();
     return (
         <>
             <PageHeading>
-                <>{messages.heading}</>
+                <Breadcrumb
+                    items={[
+                        {
+                            title: (
+                                <Link to={`/pm/project`}>
+                                    Project
+                                </Link>
+                            )
+                        },
+                        {
+                            title: taskOption.project_info.title 
+                        }
+                    ]}
+                />
             </PageHeading>
             <FeatureTable projectId={projectId} />
             <br />

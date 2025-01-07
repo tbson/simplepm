@@ -1,17 +1,19 @@
-import * as React from "react";
+import * as React from 'react';
 
 /**
     @param {Object} props
-    @param {ReactElement} props.children
+    @param {React.ReactNode} props.children
 */
 export default function PageHeading({ children }) {
     return (
         <div
             style={{
-                backgroundColor: "#f5f5f5f5",
-                lineHeight: "40px",
-                fontWeight: "bold",
-                paddingLeft: 5
+                backgroundColor: '#f5f5f5',
+                display: 'flex',
+                alignItems: 'center',
+                height: 40,
+                fontWeight: 'bold',
+                paddingLeft: 12
             }}
         >
             {children}
@@ -19,4 +21,4 @@ export default function PageHeading({ children }) {
     );
 }
 
-PageHeading.displayName = "PageHeading";
+PageHeading.displayName = 'PageHeading';

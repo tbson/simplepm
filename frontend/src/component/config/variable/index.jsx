@@ -10,10 +10,12 @@ import Table from './table';
 export default function Variable() {
     const [variableOption, setVariableOption] = useAtom(variableOptionSt);
     useEffect(() => {
-        if (!variableOption.loaded) getOption();
+        if (!variableOption.loaded) {
+            getOption();
+        }
     }, []);
 
-    function getOption() {
+    const getOption = () => {
         RequestUtil.apiCall(urls.option)
             .then((resp) => {
                 setVariableOption({ ...resp.data, loaded: true });
@@ -21,7 +23,7 @@ export default function Variable() {
             .catch(() => {
                 setVariableOption((prev) => ({ ...prev, loaded: true }));
             });
-    }
+    };
 
     const messages = getMessages();
     return (

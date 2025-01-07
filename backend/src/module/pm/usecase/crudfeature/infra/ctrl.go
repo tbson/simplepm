@@ -46,7 +46,8 @@ func Retrieve(c echo.Context) error {
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"id": id},
+		Filters:  ctype.Dict{"id": id},
+		Preloads: []string{"Project"},
 	}
 
 	result, err := cruder.Retrieve(queryOptions)

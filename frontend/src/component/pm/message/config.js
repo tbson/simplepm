@@ -7,9 +7,17 @@ const urlMap = {
         endpoints: {
             getJwt: '',
         }
+    },
+    feature: {
+        prefix: 'pm/feature',
+        endpoints: {
+            crud: '',
+        }
     }
 };
+
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
+export const featureUrls = RequestUtil.prefixMapValues(urlMap.feature);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_MESSAGE_DIALOG';
 export const PEM_GROUP = 'crudmessage';
 const headingTxt = t`Message`;

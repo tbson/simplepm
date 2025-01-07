@@ -12,6 +12,7 @@ import (
 
 	"src/module/abstract/repo/paging"
 	"src/module/pm/repo/feature"
+	"src/module/pm/repo/project"
 	"src/module/pm/repo/task"
 	"src/module/pm/repo/taskfield"
 	"src/module/pm/repo/taskfieldoption"
@@ -32,9 +33,18 @@ var orderableFields = []string{"id", "title", "order"}
 
 func Option(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
+	projectRepo := project.New(dbutil.Db())
 	featureRepo := feature.New(dbutil.Db())
 	taskfieldRepo := taskfield.New(dbutil.Db())
 	taskfieldoptionRepo := taskfieldoption.New(dbutil.Db())
+
+	projectQueryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"ID": projectID},
+	}
+	project, err := projectRepo.Retrieve(projectQueryOptions)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
 
 	featureQueryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"ProjectID": projectID},
@@ -103,6 +113,10 @@ func Option(c echo.Context) error {
 	}
 
 	result := ctype.Dict{
+		"project_info": ctype.Dict{
+			"id":    project.ID,
+			"title": project.Title,
+		},
 		"feature":    featureOptions,
 		"status":     statusOptions,
 		"task_field": taskFieldOptions,

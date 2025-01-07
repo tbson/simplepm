@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useSetAtom } from 'jotai';
+import { Link } from 'react-router-dom';
 import { App, Button, Badge } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';
@@ -98,12 +99,14 @@ export default function FeatureTable({ projectId }) {
                 {list.map((record) => (
                     <DraggableItem key={record.id} id={record.id} color={record.color}>
                         <Badge count={0} offset={[10, -10]}>
-                            <div
-                                className="pointer"
-                                onClick={() => Dialog.toggle(true, record.id)}
-                            >
-                                {record.title}
-                            </div>
+                            <Link to={`/pm/task/message/${projectId}/${record.id}`}>
+                                <div
+                                    className="pointer"
+                                    onClick={() => Dialog.toggle(true, record.id)}
+                                >
+                                    {record.title}
+                                </div>
+                            </Link>
                         </Badge>
                     </DraggableItem>
                 ))}
