@@ -1,4 +1,5 @@
 import React from 'react';
+import { Row, Col, Divider } from 'antd';
 import { generate, green, presetPalettes, red } from '@ant-design/colors';
 import { ColorPicker, theme } from 'antd';
 const genPresets = (presets = presetPalettes) =>
@@ -21,6 +22,24 @@ export default function ColorInput({ value, onChange, disabled = false }) {
         red,
         green
     });
+
+    const customPanelRender = (_, { components: { Picker, Presets } }) => (
+        <Row justify="space-between" wrap={false}>
+            <Col span={12}>
+                <Presets />
+            </Col>
+            <Divider
+                type="vertical"
+                style={{
+                    height: 'auto'
+                }}
+            />
+            <Col flex="auto">
+                <Picker />
+            </Col>
+        </Row>
+    );
+
     return (
         <ColorPicker
             defaultFormat="hex"
@@ -30,6 +49,12 @@ export default function ColorInput({ value, onChange, disabled = false }) {
             onChange={(color) => {
                 onChange(color.toHexString());
             }}
+            styles={{
+                popupOverlayInner: {
+                    width: 320
+                }
+            }}
+            panelRender={customPanelRender}
         />
     );
 }
