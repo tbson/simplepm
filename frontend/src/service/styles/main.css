@@ -206,6 +206,16 @@ table.styled-table {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+.flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-item-remaining {
+    flex: 1;
+}
+
 /* Custom Scroll */
 ::-webkit-scrollbar {
     width: 6px;

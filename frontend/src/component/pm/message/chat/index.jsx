@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { App, Badge, Button, Space } from 'antd';
 import {
     Attachments,
@@ -11,25 +12,28 @@ import {
     useXChat
 } from '@ant-design/x';
 import { createStyles } from 'antd-style';
-import { CloudUploadOutlined, PaperClipOutlined } from '@ant-design/icons';
+import {
+    CloudUploadOutlined,
+    PaperClipOutlined,
+    EditOutlined
+} from '@ant-design/icons';
 import { Centrifuge } from 'centrifuge';
+import Util from 'service/helper/util';
+import NavUtil from 'service/helper/nav_util';
 import RequestUtil from 'service/helper/request_util';
 import {
     CENTRIFUGO_SUBSCRIPTION_TOKEN_ENDPOINT,
     CENTRIFUGO_SOCKET_ENDPOINT
 } from 'src/const';
+import FeatureDialog from 'component/pm/feature/dialog';
 import { getStyles } from './style';
 import { roles } from './role';
-import { urls } from '../config';
+import { urls, featureUrls } from '../config';
 
 const defaultConversationsItems = [
     {
         key: '0',
         label: 'Default'
-    },
-    {
-        key: '1',
-        label: 'Feature 1'
     }
 ];
 
@@ -56,8 +60,12 @@ async function getToken(ctx) {
     return data.token;
 }
 
-export default function Chat() {
+export default function Chat({ defaultFeature }) {
     const { notification } = App.useApp();
+    const { project_id, feature_id } = useParams();
+    const navigate = useNavigate();
+    const [feature, setFeature] = useState(defaultFeature);
+    const [featureList, setFeatureList] = useState([]);
     const [token, setToken] = useState('');
     const [count, setCount] = useState('-');
     const [connectionStatus, setConnectionStatus] = useState('Disconnected');
@@ -73,6 +81,7 @@ export default function Chat() {
     const [activeKey, setActiveKey] = React.useState(defaultConversationsItems[0].key);
     const [attachedFiles, setAttachedFiles] = React.useState([]);
 
+    const navigateTo = NavUtil.navigateTo(navigate);
     // ==================== Runtime ====================
     const [agent] = useXAgent({
         request: async ({ message }, { onSuccess }) => {
@@ -82,12 +91,30 @@ export default function Chat() {
     const { onRequest, messages, setMessages } = useXChat({
         agent
     });
+
     useEffect(() => {
         if (activeKey !== undefined) {
             setMessages([]);
         }
     }, [activeKey]);
 
+    useEffect(() => {
+        console.log('feature', feature);
+        getFeatureList(feature_id);
+    }, [feature_id]);
+
+    const getFeatureList = () => {
+        RequestUtil.apiCall(featureUrls.crud, { project_id })
+            .then((resp) => {
+                setConversationsItems(
+                    resp.data.map((item) => ({ key: item.id, label: item.title }))
+                );
+                setActiveKey(feature_id);
+            })
+            .catch(RequestUtil.displayError(notification));
+    };
+
+    /*
     useEffect(() => {
         RequestUtil.apiCall(urls.getJwt)
             .then((resp) => {
@@ -153,6 +180,31 @@ export default function Chat() {
             centrifuge.disconnect();
         };
     }, [token]);
+    */
+
+    const handleChange = (data, id) => {
+        if (!id) {
+            setList([{ ...Util.appendKey(data) }, ...list]);
+        } else {
+            setFeature(data);
+        }
+    };
+
+    const handleDelete = (id) => {
+        const r = window.confirm('Do you want to remove this feature?');
+        if (!r) return;
+
+        Util.toggleGlobalLoading(true);
+        RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
+            .then(() => {
+                Dialog.toggle(false);
+                navigateTo(`/pm/task/${project_id}`);
+            })
+            .catch(RequestUtil.displayError(notification))
+            .finally(() => {
+                Util.toggleGlobalLoading(false);
+            });
+    };
 
     // ==================== Event ====================
     const onSubmit = (nextContent) => {
@@ -160,34 +212,14 @@ export default function Chat() {
         onRequest(nextContent);
         setContent('');
     };
-    const onPromptsItemClick = (info) => {
-        onRequest(info.data.description);
-    };
-    const onAddConversation = () => {
-        setConversationsItems([
-            ...conversationsItems,
-            {
-                key: `${conversationsItems.length}`,
-                label: `New Conversation ${conversationsItems.length}`
-            }
-        ]);
-        setActiveKey(`${conversationsItems.length}`);
-    };
     const onConversationClick = (key) => {
+        console.log(key);
+        navigateTo(`/pm/task/message/${project_id}/${key}`);
         setActiveKey(key);
     };
     const handleFileChange = (info) => setAttachedFiles(info.fileList);
 
     // ==================== Nodes ====================
-    const placeholderNode = (
-        <Space direction="vertical" size={16} className={styles.placeholder}>
-            <Welcome
-                variant="borderless"
-                title="#Feature 1"
-                description="Feature 1 description"
-            />
-        </Space>
-    );
     const items = messages.map(({ id, message, status }) => ({
         key: id,
         loading: status === 'loading',
@@ -246,17 +278,22 @@ export default function Chat() {
                     />
                 </div>
                 <div className={styles.chat}>
+                    <div className="flex-container">
+                        <div className="flex-item-remaining">
+                            <div>
+                                <strong># {feature.title}</strong>
+                            </div>
+                            <div>{feature.description}</div>
+                        </div>
+                        <div>
+                            <Button
+                                onClick={() => FeatureDialog.toggle(true, feature.id)}
+                                icon={<EditOutlined />}
+                            />
+                        </div>
+                    </div>
                     <Bubble.List
-                        items={
-                            items.length > 0
-                                ? items
-                                : [
-                                      {
-                                          content: placeholderNode,
-                                          variant: 'borderless'
-                                      }
-                                  ]
-                        }
+                        items={items}
                         roles={roles}
                         className={styles.messages}
                     />
@@ -271,44 +308,9 @@ export default function Chat() {
                     />
                 </div>
             </div>
+            <FeatureDialog onChange={handleChange} onDelete={handleDelete} />
         </>
     );
-
-    /*
-    const messages = getMessages();
-    return (
-        <>
-            <PageHeading>
-                <>{messages.heading}</>
-            </PageHeading>
-            <div style={styles.container}>
-                <h1>Centrifugo Counter</h1>
-                <div style={styles.counter}>{count}</div>
-                <div style={styles.status}>Status: {connectionStatus}</div>
-            </div>
-        </>
-    );
-    */
 }
-/*
-const styles = {
-    container: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif'
-    },
-    counter: {
-        fontSize: '48px',
-        margin: '20px 0'
-    },
-    status: {
-        fontSize: '16px',
-        color: '#555'
-    }
-};
-*/
 
 Chat.displayName = 'Chat';
