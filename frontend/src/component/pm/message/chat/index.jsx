@@ -60,9 +60,11 @@ async function getToken(ctx) {
     return data.token;
 }
 
-export default function Chat({ defaultFeature }) {
+export default function Chat({ defaultFeature, onNav }) {
     const { notification } = App.useApp();
     const { project_id, feature_id } = useParams();
+    const featureId = parseInt(feature_id);
+    const projectId = parseInt(project_id);
     const navigate = useNavigate();
     const [feature, setFeature] = useState(defaultFeature);
     const [featureList, setFeatureList] = useState([]);
@@ -78,7 +80,7 @@ export default function Chat({ defaultFeature }) {
     const [conversationsItems, setConversationsItems] = React.useState(
         defaultConversationsItems
     );
-    const [activeKey, setActiveKey] = React.useState(defaultConversationsItems[0].key);
+    const [activeKey, setActiveKey] = React.useState(featureId);
     const [attachedFiles, setAttachedFiles] = React.useState([]);
 
     const navigateTo = NavUtil.navigateTo(navigate);
@@ -99,17 +101,19 @@ export default function Chat({ defaultFeature }) {
     }, [activeKey]);
 
     useEffect(() => {
-        console.log('feature', feature);
-        getFeatureList(feature_id);
-    }, [feature_id]);
+        getFeatureList(featureId);
+    }, [featureId]);
 
     const getFeatureList = () => {
-        RequestUtil.apiCall(featureUrls.crud, { project_id })
+        RequestUtil.apiCall(featureUrls.crud, { project_id: projectId })
             .then((resp) => {
                 setConversationsItems(
-                    resp.data.map((item) => ({ key: item.id, label: item.title }))
+                    resp.data.map((item) => ({
+                        key: item.id,
+                        label: item.title,
+                        description: item.description
+                    }))
                 );
-                setActiveKey(feature_id);
             })
             .catch(RequestUtil.displayError(notification));
     };
@@ -198,7 +202,7 @@ export default function Chat({ defaultFeature }) {
         RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
             .then(() => {
                 Dialog.toggle(false);
-                navigateTo(`/pm/task/${project_id}`);
+                navigateTo(`/pm/task/${projectId}`);
             })
             .catch(RequestUtil.displayError(notification))
             .finally(() => {
@@ -213,8 +217,10 @@ export default function Chat({ defaultFeature }) {
         setContent('');
     };
     const onConversationClick = (key) => {
-        console.log(key);
-        navigateTo(`/pm/task/message/${project_id}/${key}`);
+        const item = conversationsItems.find((item) => item.key === key);
+        onNav(item.label);
+        setFeature({id: key, title: item.label, description: item.description});
+        navigateTo(`/pm/task/message/${projectId}/${key}`);
         setActiveKey(key);
     };
     const handleFileChange = (info) => setAttachedFiles(info.fileList);

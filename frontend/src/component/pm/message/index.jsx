@@ -10,6 +10,7 @@ import Chat from './chat';
 export default function Message() {
     const { notification } = App.useApp();
     const { project_id, feature_id } = useParams();
+    const [feature, setFeature] = useState({});
     const [messageBreadcrumb, setMessageBreadcrumb] = useState({
         project: {
             id: null,
@@ -32,19 +33,25 @@ export default function Message() {
                 const data = {
                     loaded: true,
                     project: {
-                        id: resp.data.project.id,
-                        title: resp.data.project.title,
-                        description: resp.data.project.description
+                        title: resp.data.project.title
                     },
                     feature: {
-                        id: resp.data.id,
-                        title: resp.data.title,
-                        description: resp.data.description
+                        title: resp.data.title
                     }
                 };
                 setMessageBreadcrumb(data);
+                setFeature({
+                    id: resp.data.id,
+                    title: resp.data.title,
+                    description: resp.data.description
+                });
             })
             .catch(RequestUtil.displayError(notification));
+    };
+
+    const handleNav = (featureTitle) => {
+        const data = { ...messageBreadcrumb, feature: { title: featureTitle } };
+        setMessageBreadcrumb(data);
     };
 
     return (
@@ -70,7 +77,7 @@ export default function Message() {
             </PageHeading>
             <Skeleton loading={!messageBreadcrumb.loaded} active />
             {messageBreadcrumb.loaded ? (
-                <Chat defaultFeature={messageBreadcrumb.feature} />
+                <Chat defaultFeature={feature} onNav={handleNav} />
             ) : null}
         </>
     );
