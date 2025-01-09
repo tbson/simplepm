@@ -60,6 +60,18 @@ async function getToken(ctx) {
     return data.token;
 }
 
+const itemToConversation = (item) => ({
+    key: item.id,
+    label: item.title,
+    description: item.description
+});
+
+const conversationToItem = (conversation) => ({
+    id: conversation.key,
+    title: conversation.label,
+    description: conversation.description
+});
+
 export default function Chat({ defaultFeature, onNav }) {
     const { notification } = App.useApp();
     const { project_id, feature_id } = useParams();
@@ -95,8 +107,15 @@ export default function Chat({ defaultFeature, onNav }) {
     });
 
     useEffect(() => {
+        /*
         if (activeKey !== undefined) {
             setMessages([]);
+        }
+        */
+        const conversation = conversationsItems.find((item) => item.key === activeKey);
+        if (conversation) {
+            const item = conversationToItem(conversation);
+            handleFeatureChange(item);
         }
     }, [activeKey]);
 
@@ -104,15 +123,29 @@ export default function Chat({ defaultFeature, onNav }) {
         getFeatureList(featureId);
     }, [featureId]);
 
+    const handleFeatureChange = (item) => {
+        if (!item) return;
+        const conversationIndex = conversationsItems.findIndex(
+            (conversation) => conversation.key === item.id
+        );
+        if (conversationIndex !== -1) {
+            const conversation = itemToConversation(item);
+            conversationsItems[conversationIndex] = conversation;
+            setConversationsItems([...conversationsItems]);
+        }
+        onNav(item.title);
+        setFeature({
+            id: item.id,
+            title: item.title,
+            description: item.description
+        });
+    };
+
     const getFeatureList = () => {
         RequestUtil.apiCall(featureUrls.crud, { project_id: projectId })
             .then((resp) => {
                 setConversationsItems(
-                    resp.data.map((item) => ({
-                        key: item.id,
-                        label: item.title,
-                        description: item.description
-                    }))
+                    resp.data.map(itemToConversation)
                 );
             })
             .catch(RequestUtil.displayError(notification));
@@ -187,11 +220,16 @@ export default function Chat({ defaultFeature, onNav }) {
     */
 
     const handleChange = (data, id) => {
+        const item = { id, title: data.title, description: data.description };
+        setFeature(item);
+        handleFeatureChange(item);
+        /*
         if (!id) {
             setList([{ ...Util.appendKey(data) }, ...list]);
         } else {
             setFeature(data);
         }
+        */
     };
 
     const handleDelete = (id) => {
@@ -217,11 +255,8 @@ export default function Chat({ defaultFeature, onNav }) {
         setContent('');
     };
     const onConversationClick = (key) => {
-        const item = conversationsItems.find((item) => item.key === key);
-        onNav(item.label);
-        setFeature({id: key, title: item.label, description: item.description});
-        navigateTo(`/pm/task/message/${projectId}/${key}`);
         setActiveKey(key);
+        navigateTo(`/pm/task/message/${projectId}/${key}`);
     };
     const handleFileChange = (info) => setAttachedFiles(info.fileList);
 
