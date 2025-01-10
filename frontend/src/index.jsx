@@ -7,6 +7,7 @@ import 'service/styles/main.css';
 import router from './router';
 
 window.refreshTokenUtil = new RefreshTokenUtil();
+window.socConn = null
 
 createRoot(document.getElementById('root')).render(
     <Provider>

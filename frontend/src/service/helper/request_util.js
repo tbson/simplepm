@@ -175,6 +175,7 @@ export default class RequestUtil {
      */
     static displayError(notification) {
         return (resp) => {
+            console.log(resp);
             const { errors } = resp.response.data;
             const errorDict = {};
             for (const error of errors) {

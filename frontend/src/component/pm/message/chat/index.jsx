@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { App, Badge, Button, Space } from 'antd';
+import { App, Badge, Button } from 'antd';
 import {
     Attachments,
     Bubble,
     Conversations,
     Sender,
-    Welcome,
     useXAgent,
     useXChat
 } from '@ant-design/x';
@@ -17,14 +16,10 @@ import {
     PaperClipOutlined,
     EditOutlined
 } from '@ant-design/icons';
-import { Centrifuge } from 'centrifuge';
 import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import RequestUtil from 'service/helper/request_util';
-import {
-    CENTRIFUGO_SUBSCRIPTION_TOKEN_ENDPOINT,
-    CENTRIFUGO_SOCKET_ENDPOINT
-} from 'src/const';
+import SocketUtil from 'service/helper/socket_util';
 import FeatureDialog from 'component/pm/feature/dialog';
 import { getStyles } from './style';
 import { roles } from './role';
@@ -38,27 +33,6 @@ const defaultConversationsItems = [
 ];
 
 const useStyle = getStyles(createStyles);
-
-async function getToken(ctx) {
-    const res = await fetch(CENTRIFUGO_SUBSCRIPTION_TOKEN_ENDPOINT, {
-        method: 'POST',
-        headers: new Headers({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify({
-            channel: ctx.channel
-        })
-    });
-    if (!res.ok) {
-        if (res.status === 403) {
-            // Return special error to not proceed with token refreshes,
-            // client will be disconnected.
-            throw new Centrifuge.UnauthorizedError();
-        }
-        // Any other error thrown will result into token refresh re-attempts.
-        throw new Error(`Unexpected status code ${res.status}`);
-    }
-    const data = await res.json();
-    return data.token;
-}
 
 const itemToConversation = (item) => ({
     key: item.id,
@@ -79,6 +53,7 @@ export default function Chat({ defaultFeature, onNav }) {
     const projectId = parseInt(project_id);
     const navigate = useNavigate();
     const [feature, setFeature] = useState(defaultFeature);
+    const [conn, setConn] = useState(null);
     const [featureList, setFeatureList] = useState([]);
     const [token, setToken] = useState('');
     const [count, setCount] = useState('-');
@@ -144,50 +119,60 @@ export default function Chat({ defaultFeature, onNav }) {
     const getFeatureList = () => {
         RequestUtil.apiCall(featureUrls.crud, { project_id: projectId })
             .then((resp) => {
-                setConversationsItems(
-                    resp.data.map(itemToConversation)
-                );
+                setConversationsItems(resp.data.map(itemToConversation));
             })
             .catch(RequestUtil.displayError(notification));
     };
 
-    /*
     useEffect(() => {
-        RequestUtil.apiCall(urls.getJwt)
-            .then((resp) => {
-                setToken(resp.data.token);
+        SocketUtil.newConn()
+            .then((conn) => {
+                setConn(conn);
             })
             .catch(RequestUtil.displayError(notification));
     }, []);
 
     useEffect(() => {
-        if (!token) return;
-        const centrifuge = new Centrifuge(CENTRIFUGO_SOCKET_ENDPOINT, {
-            token,
-            getToken
-        });
+        if (!conn) return;
+        handleConnect(conn);
+        const sub = handleSubscription(conn, 'channel');
 
+        return () => {
+            sub && sub.unsubscribe();
+            conn.disconnect();
+        };
+    }, [conn]);
+
+    const handleConnect = (conn) => {
+        console.log('subscribe to channel again....');
         // Event Handlers
-        centrifuge.on('connecting', (ctx) => {
+        conn.on('connecting', (ctx) => {
             console.log(`connecting: ${ctx.code}, ${ctx.reason}`);
             setConnectionStatus(`Connecting (${ctx.code}): ${ctx.reason}`);
         });
 
-        centrifuge.on('connected', (ctx) => {
+        conn.on('connected', (ctx) => {
             console.log(`connected over ${ctx.transport}`);
             setConnectionStatus(`Connected via ${ctx.transport}`);
         });
 
-        centrifuge.on('disconnected', (ctx) => {
+        conn.on('disconnected', (ctx) => {
             console.log(`disconnected: ${ctx.code}, ${ctx.reason}`);
             setConnectionStatus(`Disconnected (${ctx.code}): ${ctx.reason}`);
         });
 
-        // Connect to Centrifugo
-        centrifuge.connect();
+        if (conn.state === 'connected') {
+            return conn;
+        }
+        conn.connect();
 
+        return conn;
+    };
+
+    const handleSubscription = (conn, channel) => {
         // Subscribe to the channel
-        const sub = centrifuge.newSubscription('channel');
+        const existSub = conn.getSubscription(channel);
+        const sub = existSub ? existSub : conn.newSubscription(channel);
 
         sub.on('publication', (ctx) => {
             if (ctx.data && typeof ctx.data.value !== 'undefined') {
@@ -210,14 +195,8 @@ export default function Chat({ defaultFeature, onNav }) {
 
         // Subscribe to the channel
         sub.subscribe();
-
-        // Cleanup function to disconnect Centrifuge when the component unmounts
-        return () => {
-            sub.unsubscribe();
-            centrifuge.disconnect();
-        };
-    }, [token]);
-    */
+        return sub;
+    };
 
     const handleChange = (data, id) => {
         const item = { id, title: data.title, description: data.description };
