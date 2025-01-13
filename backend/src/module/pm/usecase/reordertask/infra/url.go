@@ -20,7 +20,12 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 
 	rr.Rbac(
 		"PUT", "/reorder/", Reorder,
-		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
+		[]string{
+			profiletype.ADMIN,
+			profiletype.STAFF,
+			profiletype.MANAGER,
+			profiletype.USER,
+		},
 		fmt.Sprintf("Reorder %s item", useCaseGroupName),
 	)
 	return e, pemMap
