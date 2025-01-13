@@ -124,6 +124,7 @@ func (srv Service) SignupTenant(
 	// create user
 	userData := ctype.Dict{
 		"TenantID":  tenant.ID,
+		"Sub":       &sub,
 		"Email":     email,
 		"Mobile":    mobile,
 		"FirstName": firstName,

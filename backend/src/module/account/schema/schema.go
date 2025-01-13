@@ -88,6 +88,7 @@ func NewUser(data ctype.Dict) *User {
 		TenantID:    dictutil.GetValue[uint](data, "TenantID"),
 		TenantTmpID: dictutil.GetValue[*uint](data, "TenantTmpID"),
 		ExternalID:  dictutil.GetValue[string](data, "ExternalID"),
+		Sub:         dictutil.GetValue[*string](data, "Sub"),
 		Email:       dictutil.GetValue[string](data, "Email"),
 		Mobile:      dictutil.GetValue[*string](data, "Mobile"),
 		FirstName:   dictutil.GetValue[string](data, "FirstName"),

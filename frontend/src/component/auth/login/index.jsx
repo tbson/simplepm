@@ -43,10 +43,10 @@ export default function Login() {
                 >
                     <Card title={t`Login`} style={styles.wrapper}>
                         <Form onChange={handleLogin} />
-                        <Divider plain>Don't have account yet?</Divider>
+                        <Divider plain>Don’t have an account yet?</Divider>
                         <div className="center">
                             <Link to="/signup">
-                                <Button type="link">Signup</Button>
+                                <Button type="link">Register a new team or company</Button>
                             </Link>
                         </div>
                     </Card>

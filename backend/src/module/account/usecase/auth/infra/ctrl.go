@@ -5,6 +5,7 @@ import (
 
 	"src/common/ctype"
 	"src/module/account/repo/iam"
+	"src/module/account/repo/role"
 	"src/module/account/repo/user"
 	"src/module/account/usecase/auth/app"
 	"src/util/cookieutil"
@@ -17,9 +18,10 @@ import (
 func getService() app.Service {
 	client := dbutil.Db()
 	userRepo := user.New(client)
+	roleRepo := role.New(client)
 	iamRepo := iam.New(ssoutil.Client())
 	authRepo := New(client)
-	return app.New(userRepo, iamRepo, authRepo)
+	return app.New(userRepo, roleRepo, iamRepo, authRepo)
 }
 
 func CheckAuthUrl(c echo.Context) error {

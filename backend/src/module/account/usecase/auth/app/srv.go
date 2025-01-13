@@ -4,6 +4,7 @@ import (
 	"context"
 	"src/common/authtype"
 	"src/common/ctype"
+	"src/module/account/schema"
 	"src/util/dictutil"
 	"src/util/errutil"
 	"src/util/localeutil"
@@ -14,12 +15,18 @@ import (
 
 type Service struct {
 	userRepo UserRepo
+	roleRepo RoleRepo
 	iamRepo  IamRepo
 	authRepo AuthRepo
 }
 
-func New(userRepo UserRepo, iamRepo IamRepo, authRepo AuthRepo) Service {
-	return Service{userRepo, iamRepo, authRepo}
+func New(
+	userRepo UserRepo,
+	roleRepo RoleRepo,
+	iamRepo IamRepo,
+	authRepo AuthRepo,
+) Service {
+	return Service{userRepo, roleRepo, iamRepo, authRepo}
 }
 
 func (srv Service) parseTenantUidFromState(state string) (string, error) {
@@ -101,16 +108,35 @@ func (srv Service) HandleCallback(
 	userInfo := tokensAndClaims.UserInfo
 	user, err := srv.authRepo.GetTenantUser(tenantID, userInfo.Email)
 	if err != nil {
+		// get MANAGER role
+		roleOptions := ctype.QueryOptions{
+			Filters: ctype.Dict{
+				"TenantID": tenantID,
+				"Title":    "USER",
+			},
+		}
+		role, err := srv.roleRepo.Retrieve(roleOptions)
+		if err != nil {
+			return blankResult, err
+		}
+
 		userData := dictutil.StructToDict(userInfo)
 		userData["TenantID"] = tenantID
-		_, err := srv.userRepo.Create(userData)
+		userData["Roles"] = []schema.Role{*role}
+
+		_, err = srv.userRepo.Create(userData)
 		if err != nil {
 			return blankResult, err
 		}
 	} else {
 		localizer := localeutil.Get()
 		if user.LockedAt != nil {
-			srv.iamRepo.Logout(clientId, clientSecret, realm, tokensAndClaims.RefreshToken)
+			srv.iamRepo.Logout(
+				clientId,
+				clientSecret,
+				realm,
+				tokensAndClaims.RefreshToken,
+			)
 			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 				DefaultMessage: localeutil.LockedAccount,
 			})
@@ -124,7 +150,6 @@ func (srv Service) HandleCallback(
 			return blankResult, err
 		}
 	}
-
 	result := authtype.AuthCallbackResult{
 		AccessToken:  tokensAndClaims.AccessToken,
 		RefreshToken: tokensAndClaims.RefreshToken,

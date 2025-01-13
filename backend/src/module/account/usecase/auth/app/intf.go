@@ -21,6 +21,10 @@ type UserRepo interface {
 	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
 }
 
+type RoleRepo interface {
+	Retrieve(queryOptions ctype.QueryOptions) (*schema.Role, error)
+}
+
 type IamRepo interface {
 	GetAuthUrl(realm string, clientId string, state ctype.Dict) string
 	GetLogoutUrl(realm string, clientId string, idToken string) string
