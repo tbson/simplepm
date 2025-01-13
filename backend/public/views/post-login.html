@@ -3,12 +3,11 @@
         <title>Authenticating...</title>
         <script>
             const auth = {{ .auth }};
+            const next = {{ .next }};
             localStorage.setItem('auth', auth);
 
-            const nextUrl = localStorage.getItem('nextUrl');
-            if (nextUrl) {
-                localStorage.removeItem('nextUrl');
-                window.location.href = nextUrl;
+            if (next) {
+                window.location.href = next;
             } else {
                 window.location.href = '/';
             }

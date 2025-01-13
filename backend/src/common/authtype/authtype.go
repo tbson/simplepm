@@ -23,6 +23,7 @@ type AuthCallbackResult struct {
 	IDToken      string       `json:"id_token"`
 	Realm        string       `json:"realm"`
 	UserInfo     AuthUserInfo `json:"user_info"`
+	Next         string       `json:"next"`
 }
 
 type SsoUserInfo struct {

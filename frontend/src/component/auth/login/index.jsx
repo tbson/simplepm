@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { t } from 'ttag';
 import { Row, Col, Card, Button, Divider } from 'antd';
 import Util from 'service/helper/util';
@@ -16,6 +16,7 @@ const styles = {
 };
 export default function Login() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const navigateTo = NavUtil.navigateTo(navigate);
 
     useEffect(() => {
@@ -26,7 +27,8 @@ export default function Login() {
         setTimeout(() => {
             Util.toggleGlobalLoading();
         }, 100);
-        const ssoUrl = `/api/v1/account/auth/sso/login/${tenantUid}`;
+        const next = searchParams.get('next') || '';
+        const ssoUrl = `/api/v1/account/auth/sso/login/${tenantUid}/?next=${next}`;
         window.location.href = ssoUrl;
     };
 
@@ -46,7 +48,9 @@ export default function Login() {
                         <Divider plain>Don’t have an account yet?</Divider>
                         <div className="center">
                             <Link to="/signup">
-                                <Button type="link">Register a new team or company</Button>
+                                <Button type="link">
+                                    Register a new team or company
+                                </Button>
                             </Link>
                         </div>
                     </Card>

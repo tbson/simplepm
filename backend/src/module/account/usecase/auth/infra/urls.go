@@ -21,7 +21,7 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 		"GET", "/sso/login/check/:tenantUid", CheckAuthUrl,
 	)
 	rr.Public(
-		"GET", "/sso/login/:tenantUid", GetAuthUrl,
+		"GET", "/sso/login/:tenantUid/", GetAuthUrl,
 	)
 	rr.Public(
 		"GET", "/sso/logout/:tenantUid", GetLogoutUrl,

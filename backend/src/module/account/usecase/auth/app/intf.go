@@ -16,6 +16,11 @@ type AuthClientInfo struct {
 	ClientSecret string
 }
 
+type StateData struct {
+	TenantUid string `json:"tenantUid"`
+	Next      string `json:"next"`
+}
+
 type UserRepo interface {
 	Create(data ctype.Dict) (*schema.User, error)
 	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)

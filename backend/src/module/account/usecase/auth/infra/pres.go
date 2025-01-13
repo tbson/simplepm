@@ -39,6 +39,7 @@ func CallbackPres(c echo.Context, r authtype.AuthCallbackResult) error {
 
 	data := map[string]interface{}{
 		"auth": string(authJson),
+		"next": r.Next,
 	}
 
 	return c.Render(http.StatusOK, "post-login.html", data)

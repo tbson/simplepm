@@ -29,7 +29,7 @@ func CheckAuthUrl(c echo.Context) error {
 
 	srv := getService()
 
-	_, err := srv.GetAuthUrl(tenantUid)
+	_, err := srv.GetAuthUrl(tenantUid, "")
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -39,10 +39,11 @@ func CheckAuthUrl(c echo.Context) error {
 
 func GetAuthUrl(c echo.Context) error {
 	tenantUid := c.Param("tenantUid")
+	nextParam := c.QueryParam("next")
 
 	srv := getService()
 
-	url, err := srv.GetAuthUrl(tenantUid)
+	url, err := srv.GetAuthUrl(tenantUid, nextParam)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

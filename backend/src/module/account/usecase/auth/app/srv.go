@@ -29,27 +29,35 @@ func New(
 	return Service{userRepo, roleRepo, iamRepo, authRepo}
 }
 
-func (srv Service) parseTenantUidFromState(state string) (string, error) {
+func (srv Service) parseState(state string) (StateData, error) {
+	result := StateData{}
 	localizer := localeutil.Get()
 	stateData, err := ssoutil.DecodeState(state)
 	if err != nil {
-		return "", err
+		return result, err
 	}
 
-	tenantUid, ok := stateData["tenantUid"].(string)
-	if !ok {
+	tenantUid, uidErr := stateData["tenantUid"].(string)
+	next, _ := stateData["next"].(string)
+	if !uidErr {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.InvalidState,
 		})
-		return "", errutil.New("", []string{msg})
+		return result, errutil.New("", []string{msg})
 	}
-	return tenantUid, nil
+	result.TenantUid = tenantUid
+	result.Next = next
+	return result, nil
 }
 
-func (srv Service) GetAuthUrl(tenantUid string) (string, error) {
+func (srv Service) GetAuthUrl(tenantUid string, nextParam string) (string, error) {
 	state := ctype.Dict{
 		"tenantUid": tenantUid,
 	}
+	if nextParam != "" {
+		state["next"] = nextParam
+	}
+
 	authClientInfo, err := srv.authRepo.GetAuthClientFromTenantUid(tenantUid)
 	if err != nil {
 		return "", err
@@ -83,7 +91,9 @@ func (srv Service) HandleCallback(
 	code string,
 ) (authtype.AuthCallbackResult, error) {
 	blankResult := authtype.AuthCallbackResult{}
-	tenantUid, err := srv.parseTenantUidFromState(state)
+	stateData, err := srv.parseState(state)
+	tenantUid := stateData.TenantUid
+	next := stateData.Next
 	if err != nil {
 		return blankResult, err
 	}
@@ -156,6 +166,7 @@ func (srv Service) HandleCallback(
 		IDToken:      tokensAndClaims.IDToken,
 		Realm:        tokensAndClaims.Realm,
 		UserInfo:     user,
+		Next:         next,
 	}
 	return result, nil
 }
