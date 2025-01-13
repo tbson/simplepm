@@ -147,8 +147,9 @@ export default class RequestUtil {
                     } catch (err) {
                         if (err.response.status === 401) {
                             // Logout
-                            NavUtil.cleanAndMoveToLoginPage();
-                            return Promise.reject(emptyError);
+                            setTimeout(() => {
+                                NavUtil.cleanAndMoveToLoginPage();
+                            }, 1500);
                         }
                         // Return error
                         return Promise.reject(err);
