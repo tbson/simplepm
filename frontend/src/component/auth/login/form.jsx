@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { t } from 'ttag';
 import { App, Button, Row, Col, Form, Input } from 'antd';
-import { CheckOutlined } from '@ant-design/icons';
+import { ArrowRightOutlined } from '@ant-design/icons';
 import StorageUtil from 'service/helper/storage_util';
 import FormUtil from 'service/helper/form_util';
 import { urls } from 'component/auth/config';
@@ -46,8 +46,12 @@ export default function LoginForm({ onChange, children }) {
             <Row>
                 <Col span={12}>{children}</Col>
                 <Col span={12} className="right">
-                    <Button type="primary" htmlType="submit" icon={<CheckOutlined />}>
-                        {t`Login`}
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        icon={<ArrowRightOutlined />}
+                    >
+                        {t`Process`}
                     </Button>
                 </Col>
             </Row>
