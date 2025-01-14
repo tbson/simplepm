@@ -125,6 +125,7 @@ export default class FormUtil {
             if (result.length === 1 && !result[0]) {
                 return [];
             }
+            return result;
         }
         if (['NUMBER', 'SELECT'].includes(type)) {
             if (!value) {
