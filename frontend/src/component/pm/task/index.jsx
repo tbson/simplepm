@@ -48,8 +48,10 @@ export default function Task() {
                     ]}
                 />
             </PageHeading>
+            {/*
             <FeatureTable projectId={projectId} />
             <br />
+            */}
             <TaskKanban projectId={projectId} />
         </>
     );

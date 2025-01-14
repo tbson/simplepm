@@ -157,7 +157,7 @@ export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
         boxShadow: dragOverlay
             ? '0 0 0 calc(1px / 1) rgba(63, 63, 68, 0.05), -1px 0 15px 0 rgba(34, 33, 81, 0.01), 0px 15px 15px 0 rgba(34, 33, 81, 0.25)'
             : '',
-        border: dragOverlay ? '1px solid rgba(64, 150, 255, 1)' : '1px solid #dcdcdc', 
+        // border: dragOverlay ? '1px solid rgba(64, 150, 255, 1)' : '1px solid #dcdcdc', 
         cursor: dragOverlay ? 'grabbing' : 'grab',
         //transform: dragOverlay ? 'rotate(0deg) scale(1.02)' : 'rotate(0deg) scale(1.0)'
         touchAction:
@@ -168,9 +168,11 @@ export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
                 ? 'manipulation'
                 : 'none'
     };
+    /*
     if (item.color) {
         style.borderColor = item.color;
     }
+    */
     return (
         <div
             ref={disabled ? null : setNodeRef}
