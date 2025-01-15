@@ -30,8 +30,7 @@ export const SectionItem = (props) => {
     });
 
     const getColumnHeight = () => {
-        let h = document.getElementsByClassName('kanban-column')[0].clientHeight;
-        return h;
+        return document.getElementsByClassName('kanban-column')[0].clientHeight;
     };
 
     const style = {
@@ -72,7 +71,7 @@ export const SectionItem = (props) => {
             >
                 {title}
                 <Badge
-                    count={items.length ? items.length : 0}
+                    count={items.length || 0}
                     showZero={true}
                     style={{
                         backgroundColor: '#fff',
@@ -146,7 +145,9 @@ export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
     };
 
     const handleMouseUp = (id) => {
-        if (isItemDragging) return;
+        if (isItemDragging) {
+            return;
+        }
         onView(id);
     };
 
@@ -157,9 +158,10 @@ export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
         boxShadow: dragOverlay
             ? '0 0 0 calc(1px / 1) rgba(63, 63, 68, 0.05), -1px 0 15px 0 rgba(34, 33, 81, 0.01), 0px 15px 15px 0 rgba(34, 33, 81, 0.25)'
             : '',
-        // border: dragOverlay ? '1px solid rgba(64, 150, 255, 1)' : '1px solid #dcdcdc', 
+        // border: dragOverlay ? '1px solid rgba(64, 150, 255, 1)' : '1px solid #dcdcdc',
         cursor: dragOverlay ? 'grabbing' : 'grab',
         //transform: dragOverlay ? 'rotate(0deg) scale(1.02)' : 'rotate(0deg) scale(1.0)'
+        padding: '0',
         touchAction:
             window.PointerEvent ||
             'ontouchstart' in window ||
@@ -186,6 +188,9 @@ export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
                 onMouseMove={handleMouseMove}
                 onMouseUp={() => {
                     handleMouseUp(item.id);
+                }}
+                style={{
+                    padding: '10px',
                 }}
             >
                 <Row justify="space-between">

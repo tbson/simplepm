@@ -84,7 +84,9 @@ export default function TaskForm({ data, onChange }) {
     };
 
     const processFieldValue = (value, type) => {
-        if (!value) return '';
+        if (!value) {
+            return '';
+        }
         if (type === 'DATE') {
             return DateUtil.toIsoDate(value);
         }
