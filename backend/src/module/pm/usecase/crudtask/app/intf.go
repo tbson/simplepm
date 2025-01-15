@@ -35,7 +35,9 @@ type TaskFieldOptionRepo interface {
 }
 
 type TaskFieldValueRepo interface {
+	List(queryOptions ctype.QueryOptions) ([]schema.TaskFieldValue, error)
 	Create(data ctype.Dict) (*schema.TaskFieldValue, error)
 	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskFieldValue, error)
 	UpdateOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskFieldValue, error)
+	DeleteList(ids []uint) ([]uint, error)
 }

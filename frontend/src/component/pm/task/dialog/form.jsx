@@ -98,8 +98,7 @@ export default function TaskForm({ data, onChange }) {
         const data = { task_fields: [] };
         Object.entries(payload).forEach(([key, value]) => {
             if (key.startsWith('EXT_')) {
-                const fieldIdStr = key.replace('EXT_', '');
-                const fieldId = parseInt(fieldIdStr);
+                const fieldId = parseInt(key.replace('EXT_', ''));
                 const type = fieldTypeMap[fieldId];
                 const field = {
                     task_field_id: fieldId,
@@ -110,6 +109,7 @@ export default function TaskForm({ data, onChange }) {
                 data[key] = value;
             }
         });
+        console.log('data', data);
         return data;
     };
 
