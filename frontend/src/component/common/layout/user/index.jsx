@@ -80,9 +80,51 @@ export default function UserLayout() {
 
     return (
         <Layout hasSider className={styles.wrapperContainer}>
+            <Sider
+                trigger={null}
+                breakpoint="lg"
+                collapsedWidth="42"
+                theme="dark"
+                collapsible
+                collapsed={collapsed}
+            >
+                <div className="sider">
+                    {collapsed || (
+                        <div className="logo">
+                            <div className="logo-text">
+                                <NavLink to="/">{LOGO_TEXT}</NavLink>
+                            </div>
+                        </div>
+                    )}
+                    <Menu
+                        selectedKeys={[location.pathname]}
+                        theme="dark"
+                        mode="inline"
+                        items={menuItems}
+                        onSelect={({ key }) => {
+                            navigateTo(key);
+                        }}
+                    />
+                </div>
+            </Sider>
             <Layout className="site-layout">
                 <Header className="site-layout-header" style={{ padding: 0 }}>
                     <div style={{ display: 'flex' }}>
+                        <div
+                            style={{
+                                width: 34,
+                                paddingLeft: 2,
+                                backgroundColor: 'white'
+                            }}
+                        >
+                            {React.createElement(
+                                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                                {
+                                    className: 'trigger',
+                                    onClick: toggle
+                                }
+                            )}
+                        </div>
                         <div style={{ flex: 1 }}>
                             <Menu
                                 mode="horizontal"
@@ -93,7 +135,7 @@ export default function UserLayout() {
                                 }}
                             />
                         </div>
-                        <div style={{ width: 34, backgroundColor: "white" }} >
+                        <div style={{ width: 34, backgroundColor: 'white' }}>
                             <UserMenu />
                         </div>
                     </div>
