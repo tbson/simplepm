@@ -21,6 +21,9 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr.Private(
 		"GET", "/option/", Option,
 	)
+	rr.Private(
+		"GET", "/bookmark/", Bookmark,
+	)
 	rr.Rbac(
 		"GET", "/", List,
 		[]string{

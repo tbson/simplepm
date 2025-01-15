@@ -62,6 +62,20 @@ func Option(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+func Bookmark(c echo.Context) error {
+	tenantId := c.Get("TenantID").(uint)
+	repo := NewRepo(dbutil.Db())
+
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"TenantID": tenantId},
+	}
+	result, err := repo.List(queryOptions)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	return c.JSON(http.StatusOK, ListBookmarkPres(result))
+}
+
 func List(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)

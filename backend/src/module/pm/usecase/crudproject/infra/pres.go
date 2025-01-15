@@ -7,6 +7,26 @@ import (
 	"src/util/dbutil"
 )
 
+type BookmarkOutput struct {
+	ID     uint   `json:"id"`
+	Avatar string `json:"avatar"`
+	Title  string `json:"title"`
+	Order  int    `json:"order"`
+}
+
+func ListBookmarkPres(items []schema.Project) []BookmarkOutput {
+	result := make([]BookmarkOutput, 0)
+	for _, item := range items {
+		result = append(result, BookmarkOutput{
+			ID:     item.ID,
+			Avatar: item.Avatar,
+			Title:  item.Title,
+			Order:  item.Order,
+		})
+	}
+	return result
+}
+
 type ListOutput struct {
 	ID             uint   `json:"id"`
 	Avatar         string `json:"avatar"`

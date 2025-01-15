@@ -27,7 +27,7 @@
 .wrapperContainer :global(.logo) {
     display: flex;
     align-items: center;
-    height: 34px;
+    height: 42px;
 }
 
 .wrapperContainer :global(.logo) :global(.logo-text) {
@@ -42,8 +42,8 @@
 
 .wrapperContainer :global(.site-layout) :global(.site-layout-header) {
     background: #eeeeee;
-    height: 34px;
-    line-height: 34px;
+    height: 42px;
+    line-height: 42px;
 }
 
 .wrapperContainer :global(.site-layout) :global(.site-layout-content) {
@@ -51,7 +51,7 @@
 }
 
 .wrapperContainer :global(.layout-footer) {
-    height: 34px;
+    height: 42px;
     padding: 8px 8px;
     text-align: center;
 }

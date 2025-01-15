@@ -220,6 +220,13 @@ table.styled-table {
     width: 100%;
 }
 
+.bookmark-sider {
+    border-inline-end: 1px solid rgba(5, 5, 5, 0.06);
+}
+.bookmark-sider .ant-menu {
+    border-inline-end: none !important;
+}
+
 /* Custom Scroll */
 ::-webkit-scrollbar {
     width: 6px;

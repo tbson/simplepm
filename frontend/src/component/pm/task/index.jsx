@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAtom } from 'jotai';
-import { Breadcrumb } from 'antd';
+import { Breadcrumb, Skeleton } from 'antd';
 import PageHeading from 'component/common/page_heading';
 import RequestUtil from 'service/helper/request_util';
 import { taskOptionSt } from './state';
@@ -15,13 +15,12 @@ export default function Task() {
     const projectId = parseInt(project_id);
     const [taskOption, setTaskOption] = useAtom(taskOptionSt);
     useEffect(() => {
-        if (!taskOption.loaded) {
-            getOption();
-        }
-    }, []);
+        setTaskOption({ ...taskOption, loaded: false });
+        getOption(projectId);
+    }, [projectId]);
 
-    const getOption = () => {
-        RequestUtil.apiCall(urls.option, { project_id })
+    const getOption = (projectId) => {
+        RequestUtil.apiCall(urls.option, { project_id: projectId })
             .then((resp) => {
                 setTaskOption({ ...resp.data, loaded: true });
             })
@@ -29,21 +28,19 @@ export default function Task() {
                 setTaskOption((prev) => ({ ...prev, loaded: true }));
             });
     };
-
+    if (!taskOption.loaded) {
+        return <Skeleton loading={true} active />;
+    }
     return (
-        <>
+        <div key={projectId}>
             <PageHeading>
                 <Breadcrumb
                     items={[
                         {
-                            title: (
-                                <Link to={`/pm/project`}>
-                                    Project
-                                </Link>
-                            )
+                            title: <Link to={`/pm/project`}>Project</Link>
                         },
                         {
-                            title: taskOption.project_info.title 
+                            title: taskOption.project_info.title
                         }
                     ]}
                 />
@@ -53,7 +50,7 @@ export default function Task() {
             <br />
             */}
             <TaskKanban projectId={projectId} />
-        </>
+        </div>
     );
 }
 
