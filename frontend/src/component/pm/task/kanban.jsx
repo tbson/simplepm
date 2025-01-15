@@ -146,11 +146,9 @@ export default function TaskKanban({ projectId }) {
     const handleReorder = (type, data) => {
         data.project_id = projectId;
         const endpoint = type === REORDER_TASK ? urls.reorder : urls.reorderStatus;
-        return RequestUtil.apiCall(endpoint, data, 'put')
-            .then((resp) => {
-                console.log(resp);
-            })
-            .catch(RequestUtil.displayError(notification));
+        return RequestUtil.apiCall(endpoint, data, 'put').catch(
+            RequestUtil.displayError(notification)
+        );
     };
 
     return (

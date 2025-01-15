@@ -109,7 +109,6 @@ export default function TaskForm({ data, onChange }) {
                 data[key] = value;
             }
         });
-        console.log('data', data);
         return data;
     };
 

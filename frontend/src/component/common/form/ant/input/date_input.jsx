@@ -13,7 +13,6 @@ import { DATE_REABLE_FORMAT } from 'service/helper/date_util';
  */
 export default function DateInput({ value, onChange }) {
     const handleChange = (date) => {
-        console.log("handle chage date", date);
         if (!date) {
             return onChange(null);
         }
