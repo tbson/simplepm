@@ -216,6 +216,10 @@ table.styled-table {
     flex: 1;
 }
 
+.task-item .ant-badge {
+    width: 100%;
+}
+
 /* Custom Scroll */
 ::-webkit-scrollbar {
     width: 6px;

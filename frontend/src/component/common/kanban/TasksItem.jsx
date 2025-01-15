@@ -190,11 +190,16 @@ export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
                     handleMouseUp(item.id);
                 }}
                 style={{
-                    padding: '10px',
+                    width: '100%',
+                    padding: '10px'
                 }}
             >
-                <Row justify="space-between">
-                    <Col span={20}>{item.title}</Col>
+                <Row justify="space-between" className="task-item">
+                    <Col span={24}>
+                        <Badge size="small" count={0} offset={[9, -14]}>
+                            <span>{item.title}</span>
+                        </Badge>
+                    </Col>
                 </Row>
             </div>
         </div>
