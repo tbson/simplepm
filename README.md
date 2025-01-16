@@ -2,8 +2,8 @@
 
 ## Clone the repository
 ```
-git clone git@github.com:tbson/base-go.git
-cd base-go
+git clone git@github.com:tbson/simplepm.git
+cd simplepm
 cp docker/.env.example docker/.env # then update the content
 cp docker/volumes/nginx/conf.d/default.conf.example docker/volumes/nginx/conf.d/default.conf # then update the content
 ```
@@ -18,7 +18,7 @@ cd docker
 ./exec build
 ```
 
-## Run services
+## Start/restart services
 ```
 ./exec restart
 ```
@@ -28,12 +28,12 @@ cd docker
 ./exec migrate
 ```
 
-## Seed database
+## Seedding database
 ```
 ./exec command initdata
 ```
 
-## Seed database
+## Sync user roles and permissions
 ```
 ./exec command syncrolespems
 ```
@@ -67,5 +67,3 @@ Add this line to hosts file
 ```
 ./exec makemigrations
 ```
-
-
