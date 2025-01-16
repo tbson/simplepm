@@ -2,9 +2,11 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { App } from 'antd';
 import { useAtomValue } from 'jotai';
+import { useNavigate } from 'react-router-dom';
 import PemCheck from 'component/common/pem_check';
 import Kanban, { REORDER_TASK } from 'component/common/kanban';
 import Util from 'service/helper/util';
+import NavUtil from 'service/helper/nav_util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
 import Dialog from './dialog';
@@ -14,6 +16,7 @@ import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function TaskKanban({ projectId }) {
     const { notification } = App.useApp();
+    const navigate = useNavigate();
     const taskOption = useAtomValue(taskOptionSt);
     const featureColor = useAtomValue(featureColorSt);
     const [statusList, setStatusList] = useState([]);
@@ -24,6 +27,8 @@ export default function TaskKanban({ projectId }) {
     const labels = getLabels();
     const messages = getMessages();
 
+    const navigateTo = NavUtil.navigateTo(navigate);
+
     useEffect(() => {
         if (taskOption.loaded) {
             getList();
@@ -33,9 +38,11 @@ export default function TaskKanban({ projectId }) {
     useEffect(() => {
         if (!featureColor.featureId) return;
         const newList = list.map((item) => {
+            /*
             if (item.featureId === featureColor.featureId) {
                 item.color = featureColor.color;
             }
+            */
             return item;
         });
         setList(newList);
@@ -54,8 +61,8 @@ export default function TaskKanban({ projectId }) {
                         id: item.id,
                         title: item.title,
                         status: item.status.id,
-                        featureId: item.feature.id,
-                        color: item.feature.color,
+                        // featureId: item.feature.id,
+                        // color: item.feature.color,
                         order: item.order
                     };
                 });
@@ -121,7 +128,9 @@ export default function TaskKanban({ projectId }) {
 
     const handleDelete = (id) => {
         const r = window.confirm(messages.deleteOne);
-        if (!r) return;
+        if (!r) {
+            return;
+        }
 
         Util.toggleGlobalLoading(true);
         RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
@@ -140,7 +149,8 @@ export default function TaskKanban({ projectId }) {
     };
 
     const handleView = (id) => {
-        Dialog.toggle(true, id);
+        // Dialog.toggle(true, id);
+        navigateTo(`/pm/task/${projectId}/${id}`);
     };
 
     const handleReorder = (type, data) => {

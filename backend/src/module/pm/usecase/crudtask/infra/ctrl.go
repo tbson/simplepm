@@ -151,7 +151,7 @@ func Retrieve(c echo.Context) error {
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"id": id},
 		Preloads: []string{
-			"Feature",
+			"Project",
 			"TaskFieldValues.TaskField",
 			"TaskFieldValues.TaskFieldOption",
 		},

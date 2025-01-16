@@ -20,10 +20,10 @@ import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import RequestUtil from 'service/helper/request_util';
 import SocketUtil from 'service/helper/socket_util';
-import FeatureDialog from 'component/pm/feature/dialog';
+import TaskDialog from 'component/pm/task/dialog';
 import { getStyles } from './style';
 import { roles } from './role';
-import { urls, featureUrls } from '../config';
+import { urls, taskUrls } from '../config';
 
 const defaultConversationsItems = [
     {
@@ -46,15 +46,15 @@ const conversationToItem = (conversation) => ({
     description: conversation.description
 });
 
-export default function Chat({ defaultFeature, onNav }) {
+export default function Chat({ defaultTask, onNav }) {
     const { notification } = App.useApp();
-    const { project_id, feature_id } = useParams();
-    const featureId = parseInt(feature_id);
+    const { project_id, task_id } = useParams();
+    const taskId = parseInt(task_id);
     const projectId = parseInt(project_id);
     const navigate = useNavigate();
-    const [feature, setFeature] = useState(defaultFeature);
+    const [task, setTask] = useState(defaultTask);
     const [conn, setConn] = useState(null);
-    const [featureList, setFeatureList] = useState([]);
+    const [taskList, setTaskList] = useState([]);
     const [token, setToken] = useState('');
     const [count, setCount] = useState('-');
     const [connectionStatus, setConnectionStatus] = useState('Disconnected');
@@ -67,7 +67,7 @@ export default function Chat({ defaultFeature, onNav }) {
     const [conversationsItems, setConversationsItems] = React.useState(
         defaultConversationsItems
     );
-    const [activeKey, setActiveKey] = React.useState(featureId);
+    const [activeKey, setActiveKey] = React.useState(taskId);
     const [attachedFiles, setAttachedFiles] = React.useState([]);
 
     const navigateTo = NavUtil.navigateTo(navigate);
@@ -90,15 +90,15 @@ export default function Chat({ defaultFeature, onNav }) {
         const conversation = conversationsItems.find((item) => item.key === activeKey);
         if (conversation) {
             const item = conversationToItem(conversation);
-            handleFeatureChange(item);
+            handleTaskChange(item);
         }
     }, [activeKey]);
 
     useEffect(() => {
-        getFeatureList(featureId);
-    }, [featureId]);
+        getTaskList(taskId);
+    }, [taskId]);
 
-    const handleFeatureChange = (item) => {
+    const handleTaskChange = (item) => {
         if (!item) return;
         const conversationIndex = conversationsItems.findIndex(
             (conversation) => conversation.key === item.id
@@ -109,15 +109,15 @@ export default function Chat({ defaultFeature, onNav }) {
             setConversationsItems([...conversationsItems]);
         }
         onNav(item.title);
-        setFeature({
+        setTask({
             id: item.id,
             title: item.title,
             description: item.description
         });
     };
 
-    const getFeatureList = () => {
-        RequestUtil.apiCall(featureUrls.crud, { project_id: projectId })
+    const getTaskList = () => {
+        RequestUtil.apiCall(taskUrls.crud, { project_id: projectId })
             .then((resp) => {
                 setConversationsItems(resp.data.map(itemToConversation));
             })
@@ -200,19 +200,19 @@ export default function Chat({ defaultFeature, onNav }) {
 
     const handleChange = (data, id) => {
         const item = { id, title: data.title, description: data.description };
-        setFeature(item);
-        handleFeatureChange(item);
+        setTask(item);
+        handleTaskChange(item);
         /*
         if (!id) {
             setList([{ ...Util.appendKey(data) }, ...list]);
         } else {
-            setFeature(data);
+            setTask(data);
         }
         */
     };
 
     const handleDelete = (id) => {
-        const r = window.confirm('Do you want to remove this feature?');
+        const r = window.confirm('Do you want to remove this task?');
         if (!r) return;
 
         Util.toggleGlobalLoading(true);
@@ -235,7 +235,7 @@ export default function Chat({ defaultFeature, onNav }) {
     };
     const onConversationClick = (key) => {
         setActiveKey(key);
-        navigateTo(`/pm/task/message/${projectId}/${key}`);
+        navigateTo(`/pm/task/${projectId}/${key}`);
     };
     const handleFileChange = (info) => setAttachedFiles(info.fileList);
 
@@ -301,13 +301,13 @@ export default function Chat({ defaultFeature, onNav }) {
                     <div className="flex-container">
                         <div className="flex-item-remaining">
                             <div>
-                                <strong># {feature.title}</strong>
+                                <strong># {task.title}</strong>
                             </div>
-                            <div>{feature.description}</div>
+                            <div>{task.description}</div>
                         </div>
                         <div>
                             <Button
-                                onClick={() => FeatureDialog.toggle(true, feature.id)}
+                                onClick={() => TaskDialog.toggle(true, task.id)}
                                 icon={<EditOutlined />}
                             />
                         </div>
@@ -328,7 +328,7 @@ export default function Chat({ defaultFeature, onNav }) {
                     />
                 </div>
             </div>
-            <FeatureDialog onChange={handleChange} onDelete={handleDelete} />
+            <TaskDialog onChange={handleChange} onDelete={handleDelete} />
         </>
     );
 }

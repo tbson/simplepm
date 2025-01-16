@@ -130,7 +130,7 @@ const router = createBrowserRouter([
                                 lazy: async () => ({ Component: Task })
                             },
                             {
-                                path: 'pm/task/message/:project_id/:feature_id',
+                                path: 'pm/task/:project_id/:task_id',
                                 lazy: async () => ({ Component: Message })
                             },
                         ]

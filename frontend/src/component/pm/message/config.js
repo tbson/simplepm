@@ -8,8 +8,8 @@ const urlMap = {
             getJwt: '',
         }
     },
-    feature: {
-        prefix: 'pm/feature',
+    task: {
+        prefix: 'pm/task',
         endpoints: {
             crud: '',
         }
@@ -17,7 +17,7 @@ const urlMap = {
 };
 
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
-export const featureUrls = RequestUtil.prefixMapValues(urlMap.feature);
+export const taskUrls = RequestUtil.prefixMapValues(urlMap.task);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_MESSAGE_DIALOG';
 export const PEM_GROUP = 'crudmessage';
 const headingTxt = t`Message`;
@@ -31,5 +31,5 @@ export const getMessages = () => ({
 export const getLabels = () => ({
     title: t`Title`,
     description: t`Description`,
-    feature: t`Feature`
+    task: t`Task`
 });

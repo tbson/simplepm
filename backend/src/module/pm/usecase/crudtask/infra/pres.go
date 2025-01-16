@@ -9,12 +9,11 @@ import (
 	"strings"
 )
 
-type Feature struct {
+type Project struct {
 	ID          uint   `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Status      string `json:"status"`
-	Color       string `json:"color"`
 	Order       int    `json:"order"`
 }
 
@@ -35,7 +34,7 @@ type ListOutput struct {
 	Description string      `json:"description"`
 	Order       int         `json:"order"`
 	Status      Status      `json:"status"`
-	Feature     Feature     `json:"feature"`
+	Project     Project     `json:"project"`
 	TaskFields  []TaskField `json:"task_fields"`
 }
 
@@ -58,15 +57,14 @@ func presItem(item schema.Task) ListOutput {
 		Order:       item.Order,
 	}
 
-	feature := Feature{
-		ID:          item.Feature.ID,
-		Title:       item.Feature.Title,
-		Description: item.Feature.Description,
-		Status:      item.Feature.Status,
-		Color:       item.Feature.Color,
-		Order:       item.Feature.Order,
+	project := Project{
+		ID:          item.Project.ID,
+		Title:       item.Project.Title,
+		Description: item.Project.Description,
+		Status:      item.Project.Status,
+		Order:       item.Project.Order,
 	}
-	result.Feature = feature
+	result.Project = project
 
 	taskFields := []TaskField{}
 	multipleSelectFieldMap := map[uint][]string{}
@@ -124,7 +122,7 @@ func MutatePres(item schema.Task) ListOutput {
 			"id": item.ID,
 		},
 		Preloads: []string{
-			"Feature",
+			"Project",
 			"TaskFieldValues.TaskField",
 			"TaskFieldValues.TaskFieldOption",
 		},

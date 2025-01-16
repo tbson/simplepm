@@ -37,9 +37,6 @@ export default function Task() {
                 <Breadcrumb
                     items={[
                         {
-                            title: <Link to={`/pm/project`}>Project</Link>
-                        },
-                        {
                             title: taskOption.project_info.title
                         }
                     ]}
