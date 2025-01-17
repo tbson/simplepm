@@ -48,6 +48,8 @@
 
 .wrapperContainer :global(.site-layout) :global(.site-layout-content) {
     background: #fff;
+    display: flex;
+    flex-direction: column;
 }
 
 .wrapperContainer :global(.layout-footer) {

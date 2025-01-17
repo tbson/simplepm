@@ -55,7 +55,7 @@ export default function Message() {
     };
 
     return (
-        <>
+        <div className="flex-column flex-item-remaining">
             <PageHeading>
                 <Breadcrumb
                     items={[
@@ -76,7 +76,7 @@ export default function Message() {
             {messageBreadcrumb.loaded ? (
                 <Chat defaultTask={task} onNav={handleNav} />
             ) : null}
-        </>
+        </div>
     );
 }
 

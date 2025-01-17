@@ -4,7 +4,7 @@ export function getStyles(createStyles) {
             layout: css`
                 width: 100%;
                 min-width: 1000px;
-                height: 722px;
+                height: 100%;
                 border-radius: ${token.borderRadius}px;
                 display: flex;
                 background: ${token.colorBgContainer};
