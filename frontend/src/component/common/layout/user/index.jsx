@@ -173,11 +173,13 @@ export default function UserLayout() {
                 <Content className="site-layout-content">
                     <Outlet />
                 </Content>
+                {/*
                 <Footer className="layout-footer">
                     <div className="layout-footer-text">
                         Copyright<sup>©</sup> {DOMAIN} {new Date().getFullYear()}
                     </div>
                 </Footer>
+                */}
             </Layout>
         </Layout>
     );
