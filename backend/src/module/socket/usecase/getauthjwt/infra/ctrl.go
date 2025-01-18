@@ -3,17 +3,17 @@ package infra
 import (
 	"net/http"
 	"src/common/ctype"
-	"src/common/setting"
-	"src/util/tokenutil"
 
 	"github.com/labstack/echo/v4"
+
+	"src/module/socket/repo/centrifugo"
 )
 
-func GetJWT(c echo.Context) error {
+func GetAuthJWT(c echo.Context) error {
+	repo := centrifugo.New()
+
 	userID := c.Get("UserID").(uint)
-	secret := setting.CENTRIFUGO_SECRET
-	lifeSpan := setting.CENTRIFUGO_JWT_LIFE_SPAN
-	token, err := tokenutil.GenerateSimpleJWT(userID, secret, lifeSpan)
+	token, err := repo.GetAuthJwt(userID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

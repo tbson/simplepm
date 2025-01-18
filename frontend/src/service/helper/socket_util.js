@@ -41,7 +41,7 @@ export default class SocketUtil {
     }
 
     static getConnToken() {
-        const url = '/socket/get-jwt/';
+        const url = '/socket/get-auth-jwt/';
         return RequestUtil.apiCall(url)
             .then((resp) => {
                 return resp.data.token;

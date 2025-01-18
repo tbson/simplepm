@@ -20,6 +20,7 @@ import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import RequestUtil from 'service/helper/request_util';
 import SocketUtil from 'service/helper/socket_util';
+import StorageUtil from 'service/helper/storage_util';
 import TaskDialog from 'component/pm/task/dialog';
 import { getStyles } from './style';
 import { roles } from './role';
@@ -75,8 +76,9 @@ export default function Chat({ defaultTask, onNav }) {
     // ==================== Runtime ====================
     const [agent] = useXAgent({
         request: async ({ message }, { onSuccess }) => {
-            onSuccess('');
-            console.log(message);
+            publishMessage(message).then(() => {
+                onSuccess('');
+            });
         }
     });
     const { onRequest, messages, setMessages } = useXChat({
@@ -85,18 +87,7 @@ export default function Chat({ defaultTask, onNav }) {
 
     useEffect(() => {
         if (activeKey !== undefined) {
-            setMessages([
-                {
-                    id: 1,
-                    message: 'Hello',
-                    status: 'local'
-                },
-                {
-                    id: 2,
-                    message: 'World',
-                    status: 'ai'
-                }
-            ]);
+            setMessages([]);
         }
         const conversation = conversationsItems.find((item) => item.key === activeKey);
         if (conversation) {
@@ -194,10 +185,12 @@ export default function Chat({ defaultTask, onNav }) {
         const sub = conn.newSubscription(channel);
 
         sub.on('publication', (ctx) => {
-            if (ctx.data && typeof ctx.data.value !== 'undefined') {
-                setCount(ctx.data.value);
-                document.title = ctx.data.value.toString();
+            const { data } = ctx;
+            const userId = StorageUtil.getUserId();
+            if (data.user_id === userId) {
+                return;
             }
+            handleAddMessage(data.id, data.text);
         });
         /*
         sub.on('subscribing', (ctx) => {
@@ -247,8 +240,22 @@ export default function Chat({ defaultTask, onNav }) {
 
     // ==================== Event ====================
 
+    const publishMessage = (message) => {
+        const payload = {
+            channel,
+            data: {
+                text: message
+            }
+        };
+        return RequestUtil.apiCall(urls.publishMessage, payload, 'post')
+            .then((resp) => {
+                return resp;
+            })
+            .catch(RequestUtil.displayError(notification));
+    };
+
     const handleAddMessage = (id, message) => {
-        setMessages([
+        setMessages((messages) => [
             ...messages,
             {
                 id,

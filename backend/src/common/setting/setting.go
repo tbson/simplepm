@@ -56,7 +56,9 @@ var FE_REDIRECT_URI string = fmt.Sprintf(
 	"/login",
 )
 
-var CENTRIFUGO_SECRET string = frameworkutil.GetEnv("CENTRIFUGO_SECRET", "")
+var CENTRIFUGO_CLIENT_SECRET string = frameworkutil.GetEnv("CENTRIFUGO_CLIENT_SECRET", "")
+var CENTRIFUGO_API_KEY string = frameworkutil.GetEnv("CENTRIFUGO_API_KEY", "")
+var CENTRIFUGO_API_ENDPOINT string = frameworkutil.GetEnv("CENTRIFUGO_API_ENDPOINT", "")
 var CENTRIFUGO_JWT_LIFE_SPAN int = numberutil.StrToInt(
 	frameworkutil.GetEnv("CENTRIFUGO_JWT_LIFE_SPAN", "1200"), 1200,
 )

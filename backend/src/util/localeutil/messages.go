@@ -225,4 +225,16 @@ var (
 		ID:    "FailedToSignToken",
 		Other: "failed to sign token",
 	}
+	CanNotCreateRequest = &i18n.Message{
+		ID:    "CanNotCreateRequest",
+		Other: "can not create request",
+	}
+	CanNotSendRequest = &i18n.Message{
+		ID:    "CanNotSendRequest",
+		Other: "can not send request",
+	}
+	BadRequest = &i18n.Message{
+		ID:    "BadRequest",
+		Other: "bad request",
+	}
 )

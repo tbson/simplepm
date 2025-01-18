@@ -114,6 +114,16 @@ export default class StorageUtil {
     }
 
     /**
+     * getUserId.
+     *
+     * @returns {number}
+     */
+    static getUserId() {
+        const { userInfo } = StorageUtil.getStorageObj('auth');
+        return userInfo?.id;
+    }
+
+    /**
      * getProfileType.
      *
      * @returns {string}

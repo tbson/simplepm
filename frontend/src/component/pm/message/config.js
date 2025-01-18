@@ -3,9 +3,9 @@ import RequestUtil from 'service/helper/request_util';
 
 const urlMap = {
     base: {
-        prefix: 'socket/get-jwt',
+        prefix: 'socket',
         endpoints: {
-            getJwt: '',
+            publishMessage: 'publish-message',
         }
     },
     task: {
