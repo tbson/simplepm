@@ -1,5 +1,5 @@
 export const roles = {
-    their: {
+    ai: {
         placement: 'start',
         typing: {
             step: 5,
@@ -11,7 +11,7 @@ export const roles = {
             }
         }
     },
-    you: {
+    local: {
         placement: 'end',
         variant: 'shadow'
     }

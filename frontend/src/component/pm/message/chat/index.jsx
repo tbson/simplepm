@@ -49,6 +49,7 @@ const conversationToItem = (conversation) => ({
 export default function Chat({ defaultTask, onNav }) {
     const { notification } = App.useApp();
     const { project_id, task_id } = useParams();
+    const channel = `${project_id}/${task_id}`;
     const taskId = parseInt(task_id);
     const projectId = parseInt(project_id);
     const navigate = useNavigate();
@@ -74,7 +75,8 @@ export default function Chat({ defaultTask, onNav }) {
     // ==================== Runtime ====================
     const [agent] = useXAgent({
         request: async ({ message }, { onSuccess }) => {
-            onSuccess(`Mock success return. You said: ${message}`);
+            onSuccess('');
+            console.log(message);
         }
     });
     const { onRequest, messages, setMessages } = useXChat({
@@ -82,11 +84,20 @@ export default function Chat({ defaultTask, onNav }) {
     });
 
     useEffect(() => {
-        /*
         if (activeKey !== undefined) {
-            setMessages([]);
+            setMessages([
+                {
+                    id: 1,
+                    message: 'Hello',
+                    status: 'local'
+                },
+                {
+                    id: 2,
+                    message: 'World',
+                    status: 'ai'
+                }
+            ]);
         }
-        */
         const conversation = conversationsItems.find((item) => item.key === activeKey);
         if (conversation) {
             const item = conversationToItem(conversation);
@@ -130,21 +141,26 @@ export default function Chat({ defaultTask, onNav }) {
                 setConn(conn);
             })
             .catch(RequestUtil.displayError(notification));
+        return () => {
+            conn && conn.disconnect();
+        };
     }, []);
 
     useEffect(() => {
         if (!conn) return;
         handleConnect(conn);
-        const sub = handleSubscription(conn, 'channel');
+        const sub = handleSubscription(conn, channel);
 
         return () => {
-            sub && sub.unsubscribe();
-            conn.disconnect();
+            if (sub && sub.state === 'subscribed' && conn) {
+                sub.unsubscribe();
+                sub.removeAllListeners();
+                conn.removeSubscription(sub);
+            }
         };
-    }, [conn]);
+    }, [conn, channel]);
 
     const handleConnect = (conn) => {
-        console.log('subscribe to channel again....');
         // Event Handlers
         conn.on('connecting', (ctx) => {
             console.log(`connecting: ${ctx.code}, ${ctx.reason}`);
@@ -152,7 +168,7 @@ export default function Chat({ defaultTask, onNav }) {
         });
 
         conn.on('connected', (ctx) => {
-            console.log(`connected over ${ctx.transport}`);
+            console.log('connected', ctx);
             setConnectionStatus(`Connected via ${ctx.transport}`);
         });
 
@@ -172,7 +188,10 @@ export default function Chat({ defaultTask, onNav }) {
     const handleSubscription = (conn, channel) => {
         // Subscribe to the channel
         const existSub = conn.getSubscription(channel);
-        const sub = existSub ? existSub : conn.newSubscription(channel);
+        if (existSub) {
+            return existSub;
+        }
+        const sub = conn.newSubscription(channel);
 
         sub.on('publication', (ctx) => {
             if (ctx.data && typeof ctx.data.value !== 'undefined') {
@@ -180,15 +199,14 @@ export default function Chat({ defaultTask, onNav }) {
                 document.title = ctx.data.value.toString();
             }
         });
-
+        /*
         sub.on('subscribing', (ctx) => {
             console.log(`subscribing: ${ctx.code}, ${ctx.reason}`);
         });
-
+        */
         sub.on('subscribed', (ctx) => {
             console.log('subscribed', ctx);
         });
-
         sub.on('unsubscribed', (ctx) => {
             console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
         });
@@ -228,7 +246,19 @@ export default function Chat({ defaultTask, onNav }) {
     };
 
     // ==================== Event ====================
-    const onSubmit = (nextContent) => {
+
+    const handleAddMessage = (id, message) => {
+        setMessages([
+            ...messages,
+            {
+                id,
+                message,
+                status: 'ai'
+            }
+        ]);
+    };
+
+    const handleSending = (nextContent) => {
         if (!nextContent) return;
         onRequest(nextContent);
         setContent('');
@@ -240,18 +270,24 @@ export default function Chat({ defaultTask, onNav }) {
     const handleFileChange = (info) => setAttachedFiles(info.fileList);
 
     // ==================== Nodes ====================
-    const items = messages.map(({ id, message, status }) => ({
-        key: id,
-        loading: status === 'loading',
-        role: status === 'you' ? 'you' : 'their',
-        content: message
-    }));
+    const items = messages
+        .filter((i) => i.message)
+        .map(({ id, message, status }) => {
+            return {
+                key: id,
+                loading: status === 'loading',
+                role: status === 'local' ? 'local' : 'ai',
+                content: message
+            };
+        });
     const attachmentsNode = (
         <Badge dot={attachedFiles.length > 0 && !headerOpen}>
             <Button
                 type="text"
                 icon={<PaperClipOutlined />}
-                onClick={() => setHeaderOpen(!headerOpen)}
+                onClick={() => {
+                    setHeaderOpen(!headerOpen);
+                }}
             />
         </Badge>
     );
@@ -320,7 +356,7 @@ export default function Chat({ defaultTask, onNav }) {
                     <Sender
                         value={content}
                         header={senderHeader}
-                        onSubmit={onSubmit}
+                        onSubmit={handleSending}
                         onChange={setContent}
                         prefix={attachmentsNode}
                         loading={agent.isRequesting()}
