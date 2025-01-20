@@ -3,4 +3,6 @@ volumes/keycloak/dbdata/
 volumes/keycloak/theme/
 volumes/nginx/conf/*.conf
 volumes/centrifugo/*.json
+volumes/scylladb/data/
+volumes/scylladb/logs/
 .env

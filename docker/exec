@@ -160,6 +160,8 @@ elif [ "$FIRST_ARG" == "build" ]; then
     docker compose build --no-cache
 elif [ "$FIRST_ARG" == "pg_dump" ]; then
     docker compose exec "$NAME"_db pg_dump $ARGS
+elif [ "$FIRST_ARG" == "scylla_cli" ]; then
+    docker compose exec "$NAME"_nosql cqlsh
 elif [ "$FIRST_ARG" == "tunneling" ]; then
     ngrok http https://simplepm.test --domain=sparrow-knowing-imp.ngrok-free.app
 # elif [ "$FIRST_ARG" == "centrifugo" ]; then

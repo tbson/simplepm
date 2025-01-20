@@ -18,6 +18,16 @@ services:
             timeout: 3s
             retries: 10
 
+    simplepm_nosql:
+        image: scylladb/scylla:6.2
+        container_name: simplepm_nosql
+        ports:
+            - "9042:9042"   # CQL
+            - "9180:9180"   # Scylla Manager (if needed)
+        volumes:
+            - ./volumes/scylladb/data:/var/lib/scylla
+            - ./volumes/scylladb/logs:/var/log/scylla
+
     simplepm_backend:
         container_name: simplepm_backend
         build:
