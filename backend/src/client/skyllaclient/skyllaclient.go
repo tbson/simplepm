@@ -9,14 +9,12 @@ import (
 	"github.com/gocql/gocql"
 )
 
-// We'll keep a single session instance
 var (
 	once    sync.Once
 	session *gocql.Session
 	initErr error
 )
 
-// initSession is called only once (thread-safe) to create the session.
 func initSession() {
 	host := setting.NOSQL_HOST
 	port := setting.NOSQL_PORT
@@ -30,14 +28,11 @@ func initSession() {
 	}
 }
 
-// getSession returns the shared session instance.
 func getSession() (*gocql.Session, error) {
 	once.Do(initSession)
 	return session, initErr
 }
 
-// Query executes a CQL query and returns the rows in []map[string]interface{} form.
-// Example usage: rows, err := repository.Query("SELECT * FROM event.messages")
 func Query(cql string, args ...interface{}) ([]map[string]interface{}, error) {
 	s, err := getSession()
 	if err != nil {
@@ -53,8 +48,19 @@ func Query(cql string, args ...interface{}) ([]map[string]interface{}, error) {
 	return rows, nil
 }
 
-// Close terminates the session.
-// Usually called from main() when the application is shutting down.
+func Exec(cql string, args ...interface{}) error {
+	s, err := getSession()
+	if err != nil {
+		return fmt.Errorf("failed to get session: %w", err)
+	}
+
+	if err := s.Query(cql, args...).Exec(); err != nil {
+		return fmt.Errorf("exec error: %w", err)
+	}
+
+	return nil
+}
+
 func Close() {
 	if session != nil {
 		session.Close()
