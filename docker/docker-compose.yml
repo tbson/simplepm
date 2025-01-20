@@ -21,9 +21,9 @@ services:
     simplepm_nosql:
         image: scylladb/scylla:6.2
         container_name: simplepm_nosql
-        ports:
-            - "9042:9042"   # CQL
-            - "9180:9180"   # Scylla Manager (if needed)
+        # ports:
+        #    - "9042:9042"   # CQL
+        #    - "9180:9180"   # Scylla Manager (if needed)
         volumes:
             - ./volumes/scylladb/data:/var/lib/scylla
             - ./volumes/scylladb/logs:/var/log/scylla
@@ -57,6 +57,9 @@ services:
             DB_URL_TEST: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}_test?sslmode=disable'
             DB_URL_ATLAS: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}_atlas?sslmode=disable'
             DB_URL_ATLAS_TEST: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}_atlas_test?sslmode=disable'
+
+            NOSQL_HOST: ${SCYLLADB_HOST}
+            NOSQL_PORT: ${SCYLLADB_PORT}
 
             S3_ACCOUNT_ID: ${S3_ACCOUNT_ID}
             S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}

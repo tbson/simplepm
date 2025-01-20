@@ -15,6 +15,9 @@ var DB_USER string = frameworkutil.GetEnv("DB_USER", "")
 var DB_NAME string = frameworkutil.GetEnv("DB_NAME", "")
 var DB_PASSWORD string = frameworkutil.GetEnv("DB_PASSWORD", "")
 
+var NOSQL_HOST string = frameworkutil.GetEnv("NOSQL_HOST", "")
+var NOSQL_PORT string = frameworkutil.GetEnv("NOSQL_PORT", "9042")
+
 const DEFAULT_LANG = "en"
 
 var TIME_ZONE string = frameworkutil.GetEnv("TIME_ZONE", "")

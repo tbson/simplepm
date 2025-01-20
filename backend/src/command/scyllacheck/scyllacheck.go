@@ -3,11 +3,16 @@ package main
 import (
 	"fmt"
 
+	"src/common/setting"
+
 	"github.com/gocql/gocql"
 )
 
 func main() {
-	var cluster = gocql.NewCluster("simplepm_nosql:9042")
+	host := setting.NOSQL_HOST
+	port := setting.NOSQL_PORT
+	url := fmt.Sprintf("%s:%s", host, port)
+	var cluster = gocql.NewCluster(url)
 
 	var session, err = cluster.CreateSession()
 	if err != nil {
