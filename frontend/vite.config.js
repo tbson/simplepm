@@ -27,11 +27,12 @@ export default defineConfig({
             host: 'simplepm.test',
             clientPort: 443,
             protocol: 'wss'
-        }
+        },
+        allowedHosts: ['simplepm.test', 'frontend']
     },
     plugins: [
         react({
-            fastRefresh: process.env.NODE_ENV !== 'test',
+            fastRefresh: process.env.NODE_ENV !== 'test'
             /*
             babel: {
                 plugins: [['babel-plugin-react-compiler', ReactCompilerConfig]]
