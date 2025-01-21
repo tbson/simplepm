@@ -13,11 +13,18 @@ const urlMap = {
         endpoints: {
             crud: '',
         }
+    },
+    message: {
+        prefix: 'pm/message',
+        endpoints: {
+            crud: '',
+        }
     }
 };
 
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const taskUrls = RequestUtil.prefixMapValues(urlMap.task);
+export const messageUrls = RequestUtil.prefixMapValues(urlMap.message);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_MESSAGE_DIALOG';
 export const PEM_GROUP = 'crudmessage';
 const headingTxt = t`Message`;

@@ -21,6 +21,10 @@ type Client struct {
 	session *gocql.Session
 }
 
+func GenerateID() gocql.UUID {
+	return gocql.TimeUUID()
+}
+
 // newClient initializes the cluster and session, returning a new Client.
 func newClient() (*Client, error) {
 	host := setting.NOSQL_HOST

@@ -24,7 +24,7 @@ import StorageUtil from 'service/helper/storage_util';
 import TaskDialog from 'component/pm/task/dialog';
 import { getStyles } from './style';
 import { roles } from './role';
-import { urls, taskUrls } from '../config';
+import { urls, taskUrls, messageUrls } from '../config';
 
 const defaultConversationsItems = [
     {
@@ -98,7 +98,17 @@ export default function Chat({ defaultTask, onNav }) {
 
     useEffect(() => {
         getTaskList(taskId);
+        getMessage(taskId);
     }, [taskId]);
+
+    const getMessage = (taskId) => {
+        return RequestUtil.apiCall(messageUrls.crud, { task_id: taskId })
+            .then((resp) => {
+                console.log(resp.data);
+                // setMessages(resp.data);
+            })
+            .catch(RequestUtil.displayError(notification));
+    }
 
     const handleTaskChange = (item) => {
         if (!item) return;

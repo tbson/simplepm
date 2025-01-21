@@ -15,6 +15,7 @@ import (
 	github "src/module/git/usecase/github/infra"
 	gitlab "src/module/git/usecase/gitlab/infra"
 	crudfeature "src/module/pm/usecase/crudfeature/infra"
+	crudmessage "src/module/pm/usecase/crudmessage/infra"
 	crudproject "src/module/pm/usecase/crudproject/infra"
 	crudtask "src/module/pm/usecase/crudtask/infra"
 	crudtaskfield "src/module/pm/usecase/crudtaskfield/infra"
@@ -50,6 +51,7 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = reorderfeature.RegisterUrls(e, pemMap)
 	e, pemMap = reordertask.RegisterUrls(e, pemMap)
 	e, pemMap = reorderstatus.RegisterUrls(e, pemMap)
+	e, pemMap = crudmessage.RegisterUrls(e, pemMap)
 	e, pemMap = getauthjwt.RegisterUrls(e, pemMap)
 	e, pemMap = publishmessage.RegisterUrls(e, pemMap)
 	e, pemMap = github.RegisterUrls(e, pemMap)
