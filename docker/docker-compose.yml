@@ -27,6 +27,7 @@ services:
         volumes:
             - ./volumes/scylladb/data:/var/lib/scylla
             - ./volumes/scylladb/logs:/var/log/scylla
+            - ./volumes/scylladb/migration:/migration
 
     simplepm_backend:
         container_name: simplepm_backend

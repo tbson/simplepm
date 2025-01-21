@@ -162,6 +162,8 @@ elif [ "$FIRST_ARG" == "pg_dump" ]; then
     docker compose exec "$NAME"_db pg_dump $ARGS
 elif [ "$FIRST_ARG" == "scylla_cli" ]; then
     docker compose exec "$NAME"_nosql cqlsh
+elif [ "$FIRST_ARG" == "scylla_migrate" ]; then
+    docker compose exec "$NAME"_nosql cqlsh -f /migration/$ARGS
 elif [ "$FIRST_ARG" == "tunneling" ]; then
     ngrok http https://simplepm.test --domain=sparrow-knowing-imp.ngrok-free.app
 # elif [ "$FIRST_ARG" == "centrifugo" ]; then
