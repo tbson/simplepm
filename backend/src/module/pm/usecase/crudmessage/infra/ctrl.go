@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"src/client/skyllaclient"
+	"src/module/account/schema"
 	"src/module/pm/repo/message"
 	"src/util/numberutil"
 
@@ -11,6 +12,7 @@ import (
 )
 
 func List(c echo.Context) error {
+	user := c.Get("User").(*schema.User)
 	client := skyllaclient.NewClient()
 	repo := message.New(client)
 	// get taskID from query parameter
@@ -22,5 +24,5 @@ func List(c echo.Context) error {
 		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	return c.JSON(http.StatusOK, ListPres(result))
+	return c.JSON(http.StatusOK, ListPres(result, *user))
 }

@@ -104,11 +104,10 @@ export default function Chat({ defaultTask, onNav }) {
     const getMessage = (taskId) => {
         return RequestUtil.apiCall(messageUrls.crud, { task_id: taskId })
             .then((resp) => {
-                console.log(resp.data);
-                // setMessages(resp.data);
+                setMessages(resp.data);
             })
             .catch(RequestUtil.displayError(notification));
-    }
+    };
 
     const handleTaskChange = (item) => {
         if (!item) return;
