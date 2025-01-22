@@ -31,9 +31,6 @@ func (r Repo) GetAuthJwt(userId uint) (string, error) {
 }
 
 func (r Repo) Publish(data ctype.SocketMessage) error {
-	fmt.Println("Publishing message...")
-	fmt.Println("Channel: ", data.Channel)
-	fmt.Println("Data: ", data.Data)
 	localizer := localeutil.Get()
 	apiKey := setting.CENTRIFUGO_API_KEY
 	url := fmt.Sprintf("%s/publish", setting.CENTRIFUGO_API_ENDPOINT)
@@ -74,15 +71,10 @@ func (r Repo) Publish(data ctype.SocketMessage) error {
 
 	// Check the response status
 	if resp.StatusCode != http.StatusOK {
-		fmt.Println(resp.StatusCode)
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.BadRequest,
 		})
 		return errutil.New("", []string{msg})
 	}
-
-	fmt.Println("Message published successfully")
-	fmt.Println("Channel: ", data.Channel)
-	fmt.Println("Data: ", data.Data)
 	return nil
 }

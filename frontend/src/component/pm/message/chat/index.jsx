@@ -199,7 +199,7 @@ export default function Chat({ defaultTask, onNav }) {
             if (data.user_id === userId) {
                 return;
             }
-            handleAddMessage(data.id, data.text);
+            handleAddMessage(data.id, data.content);
         });
         /*
         sub.on('subscribing', (ctx) => {

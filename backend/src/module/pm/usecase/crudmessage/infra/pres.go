@@ -21,7 +21,7 @@ type ListOutput struct {
 
 func presItem(item pmSchema.Message, user accountSchema.User) ListOutput {
 	status := "local"
-	if item.UserID != item.UserID {
+	if item.UserID != user.ID {
 		status = "ai"
 	}
 	name := strings.TrimSpace(user.FirstName + " " + user.LastName)
