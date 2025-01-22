@@ -2,17 +2,13 @@ package message
 
 import (
 	"src/client/skyllaclient"
+	"src/util/dateutil"
+	"time"
+
+	"src/module/pm/schema"
 
 	"github.com/gocql/gocql"
 )
-
-type Schema struct {
-	ID        string `json:"id"`
-	UserID    int    `json:"user_id"`
-	TaskID    int    `json:"task_id"`
-	ProjectID int    `json:"project_id"`
-	Content   string `json:"content"`
-}
 
 type Repo struct {
 	client *skyllaclient.Client
@@ -22,30 +18,34 @@ func New(client *skyllaclient.Client) Repo {
 	return Repo{client: client}
 }
 
-func (r Repo) List(taskID uint) ([]Schema, error) {
+func (r Repo) List(taskID uint) ([]schema.Message, error) {
 	client := skyllaclient.NewClient()
-	defer client.Close()
+	// defer client.Close()
 	rows, err := client.Query("SELECT * FROM event.messages WHERE task_id = ?", taskID)
 	if err != nil {
 		return nil, err
 	}
-	result := make([]Schema, 0)
+	result := make([]schema.Message, 0)
 	for _, row := range rows {
 		id := row["id"].(gocql.UUID).String()
-		result = append(result, Schema{
+		createdAt := dateutil.TimeToStr(row["created_at"].(time.Time))
+		updatedAt := dateutil.TimeToStr(row["updated_at"].(time.Time))
+		result = append(result, schema.Message{
 			ID:        id,
 			UserID:    row["user_id"].(int),
 			TaskID:    row["task_id"].(int),
 			ProjectID: row["project_id"].(int),
 			Content:   row["content"].(string),
+			CreatedAt: createdAt,
+			UpdatedAt: updatedAt,
 		})
 	}
 	return result, nil
 }
 
-func (r Repo) Create(message Schema) (string, error) {
+func (r Repo) Create(message schema.Message) (string, error) {
 	client := skyllaclient.NewClient()
-	defer client.Close()
+	// defer client.Close()
 	id := skyllaclient.GenerateID()
 	err := client.Exec(
 		"INSERT INTO event.messages (id, user_id, task_id, project_id, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?, toTimestamp(now()), toTimestamp(now()))",
@@ -59,7 +59,7 @@ func (r Repo) Create(message Schema) (string, error) {
 
 func (r Repo) Delete(id string) error {
 	client := skyllaclient.NewClient()
-	defer client.Close()
+	// defer client.Close()
 	err := client.Exec("DELETE FROM event.messages WHERE id = ?", id)
 	if err != nil {
 		return err

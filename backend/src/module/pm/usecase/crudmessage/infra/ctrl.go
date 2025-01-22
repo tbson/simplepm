@@ -1,6 +1,7 @@
 package infra
 
 import (
+	"fmt"
 	"net/http"
 	"src/client/skyllaclient"
 	"src/module/pm/repo/message"
@@ -18,7 +19,8 @@ func List(c echo.Context) error {
 	taskID := numberutil.StrToUint(taskIDStr, 0)
 	result, err := repo.List(taskID)
 	if err != nil {
+		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	return c.JSON(http.StatusOK, result)
+	return c.JSON(http.StatusOK, ListPres(result))
 }

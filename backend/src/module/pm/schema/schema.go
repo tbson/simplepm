@@ -308,3 +308,13 @@ func NewTaskFieldValue(data ctype.Dict) *TaskFieldValue {
 		Value:             dictutil.GetValue[string](data, "Value"),
 	}
 }
+
+type Message struct {
+	ID        string `json:"id"`
+	UserID    int    `json:"user_id"`
+	TaskID    int    `json:"task_id"`
+	ProjectID int    `json:"project_id"`
+	Content   string `json:"content"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"update_at"`
+}

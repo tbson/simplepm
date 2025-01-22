@@ -28,3 +28,7 @@ func StrToDate(dateStr string) (time.Time, error) {
 	}
 	return result, nil
 }
+
+func TimeToStr(t time.Time) string {
+	return t.Format("2006-01-02T15:04:05Z07:00")
+}
