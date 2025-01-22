@@ -253,7 +253,9 @@ export default function Chat({ defaultTask, onNav }) {
         const payload = {
             channel,
             data: {
-                text: message
+                project_id: projectId,
+                task_id: taskId,
+                content: message
             }
         };
         return RequestUtil.apiCall(urls.publishMessage, payload, 'post')

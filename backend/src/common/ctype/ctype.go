@@ -32,9 +32,11 @@ type SelectOption[T any] struct {
 }
 
 type socketData struct {
-	ID     string `json:"id"`
-	UserID uint   `json:"user_id"`
-	Text   string `json:"text"`
+	ID        string `json:"id"`
+	UserID    uint   `json:"user_id"`
+	TaskID    uint   `json:"task_id"`
+	ProjectID uint   `json:"project_id"`
+	Content   string `json:"content"`
 }
 
 type SocketMessage struct {

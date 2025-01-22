@@ -27,3 +27,7 @@ func StrToUint(id string, defaultValue uint) uint {
 func UintToStr(id uint) string {
 	return strconv.Itoa(int(id))
 }
+
+func UintToInt(id uint) int {
+	return int(id)
+}

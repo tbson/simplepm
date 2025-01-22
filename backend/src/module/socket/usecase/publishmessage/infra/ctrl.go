@@ -2,28 +2,33 @@ package infra
 
 import (
 	"net/http"
+	"src/client/skyllaclient"
 	"src/common/ctype"
 	"src/util/vldtutil"
 
 	"github.com/labstack/echo/v4"
 
+	"src/module/pm/repo/message"
 	"src/module/socket/repo/centrifugo"
-	"src/util/tokenutil"
+	"src/module/socket/usecase/publishmessage/app"
 )
 
 func Publish(c echo.Context) error {
-	repo := centrifugo.New()
+	client := skyllaclient.NewClient()
+	centrifugoRepo := centrifugo.New()
+	messageRepo := message.New(client)
+
+	srv := app.New(centrifugoRepo, messageRepo)
+
 	userID := c.Get("UserID").(uint)
-	uuid := tokenutil.GenerateUUID()
 	initData := ctype.SocketMessage{}
 	initData.Data.UserID = userID
-	initData.Data.ID = uuid
 	data, err := vldtutil.ValidatePayload(c, initData)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	err = repo.Publish(data)
+	err = srv.Publish(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

@@ -32,9 +32,9 @@ func (r Repo) List(taskID uint) ([]schema.Message, error) {
 		updatedAt := dateutil.TimeToStr(row["updated_at"].(time.Time))
 		result = append(result, schema.Message{
 			ID:        id,
-			UserID:    row["user_id"].(int),
-			TaskID:    row["task_id"].(int),
-			ProjectID: row["project_id"].(int),
+			UserID:    uint(row["user_id"].(int)),
+			TaskID:    uint(row["task_id"].(int)),
+			ProjectID: uint(row["project_id"].(int)),
 			Content:   row["content"].(string),
 			CreatedAt: createdAt,
 			UpdatedAt: updatedAt,
