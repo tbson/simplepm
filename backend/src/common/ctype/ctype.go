@@ -30,16 +30,3 @@ type SelectOption[T any] struct {
 	Group       string                  `json:"group"`
 	Options     []SimpleSelectOption[T] `json:"options"`
 }
-
-type socketData struct {
-	ID        string `json:"id"`
-	UserID    uint   `json:"user_id"`
-	TaskID    uint   `json:"task_id"`
-	ProjectID uint   `json:"project_id"`
-	Content   string `json:"content"`
-}
-
-type SocketMessage struct {
-	Channel string     `json:"channel"`
-	Data    socketData `json:"data"`
-}

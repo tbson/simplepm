@@ -1,7 +1,6 @@
 package app
 
 import (
-	"src/common/ctype"
 	"src/module/pm/schema"
 )
 
@@ -14,7 +13,7 @@ func New(centrifugoRepo CentrifugoRepo, messageRepo MessageRepo) Service {
 	return Service{centrifugoRepo, messageRepo}
 }
 
-func (srv Service) Publish(data ctype.SocketMessage) error {
+func (srv Service) Publish(data SocketMessage) error {
 	message := schema.Message{
 		UserID:    data.Data.UserID,
 		TaskID:    data.Data.TaskID,

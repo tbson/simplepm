@@ -21,7 +21,7 @@ func Publish(c echo.Context) error {
 	srv := app.New(centrifugoRepo, messageRepo)
 
 	userID := c.Get("UserID").(uint)
-	initData := ctype.SocketMessage{}
+	initData := app.SocketMessage{}
 	initData.Data.UserID = userID
 	data, err := vldtutil.ValidatePayload(c, initData)
 	if err != nil {

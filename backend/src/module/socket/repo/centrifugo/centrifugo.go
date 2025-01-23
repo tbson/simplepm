@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"src/common/ctype"
 	"src/common/setting"
 	"src/util/errutil"
 	"src/util/localeutil"
@@ -30,7 +29,7 @@ func (r Repo) GetAuthJwt(userId uint) (string, error) {
 	return token, nil
 }
 
-func (r Repo) Publish(data ctype.SocketMessage) error {
+func (r Repo) Publish(data interface{}) error {
 	localizer := localeutil.Get()
 	apiKey := setting.CENTRIFUGO_API_KEY
 	url := fmt.Sprintf("%s/publish", setting.CENTRIFUGO_API_ENDPOINT)
