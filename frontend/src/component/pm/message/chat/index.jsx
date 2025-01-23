@@ -7,8 +7,6 @@ import {
     Bubble,
     Conversations,
     Sender,
-    useXAgent,
-    useXChat
 } from '@ant-design/x';
 import { createStyles } from 'antd-style';
 import {
@@ -56,6 +54,8 @@ export default function Chat({ defaultTask, onNav }) {
     const navigate = useNavigate();
     const [task, setTask] = useState(defaultTask);
     const [conn, setConn] = useState(null);
+    const [isRequesting, setIsRequesting] = useState(false);
+    const [messages, setMessages] = useState([]);
     const [taskList, setTaskList] = useState([]);
     const [token, setToken] = useState('');
     const [count, setCount] = useState('-');
@@ -74,16 +74,6 @@ export default function Chat({ defaultTask, onNav }) {
 
     const navigateTo = NavUtil.navigateTo(navigate);
     // ==================== Runtime ====================
-    const [agent] = useXAgent({
-        request: async ({ message }, { onSuccess }) => {
-            publishMessage(message).then(() => {
-                onSuccess('');
-            });
-        }
-    });
-    const { onRequest, messages, setMessages } = useXChat({
-        agent
-    });
 
     useEffect(() => {
         if (activeKey !== undefined) {
@@ -196,10 +186,11 @@ export default function Chat({ defaultTask, onNav }) {
         sub.on('publication', (ctx) => {
             const { data } = ctx;
             const userId = StorageUtil.getUserId();
+            let status = 'ai';
             if (data.user_id === userId) {
-                return;
+                status = 'local';
             }
-            handleAddMessage(data.id, data.content);
+            handleAddMessage(data.id, data.content, status);
         });
         /*
         sub.on('subscribing', (ctx) => {
@@ -250,42 +241,53 @@ export default function Chat({ defaultTask, onNav }) {
     // ==================== Event ====================
 
     const publishMessage = (message) => {
+        setIsRequesting(true);
+        console.log(attachedFiles);
         const payload = {
             channel,
             data: {
                 project_id: projectId,
                 task_id: taskId,
                 content: message
-            }
+            },
+            files: attachedFiles.map((file) => file.originFileObj)
         };
         return RequestUtil.apiCall(urls.publishMessage, payload, 'post')
             .then((resp) => {
                 return resp;
             })
-            .catch(RequestUtil.displayError(notification));
+            .catch(RequestUtil.displayError(notification))
+            .finally(() => {
+                setIsRequesting(false);
+            });
     };
 
-    const handleAddMessage = (id, message) => {
+    const handleAddMessage = (id, message, status) => {
         setMessages((messages) => [
             ...messages,
             {
                 id,
                 message,
-                status: 'ai'
+                status
             }
         ]);
     };
 
     const handleSending = (nextContent) => {
         if (!nextContent) return;
-        onRequest(nextContent);
         setContent('');
+        console.log('nextContent:', nextContent);
+        publishMessage(nextContent);
     };
+
     const onConversationClick = (key) => {
         setActiveKey(key);
         navigateTo(`/pm/task/${projectId}/${key}`);
     };
-    const handleFileChange = (info) => setAttachedFiles(info.fileList);
+    const handleFileChange = (info) => {
+        console.log('File change:', info);
+        setAttachedFiles(info.fileList);
+    };
 
     // ==================== Nodes ====================
     const items = messages
@@ -377,7 +379,7 @@ export default function Chat({ defaultTask, onNav }) {
                         onSubmit={handleSending}
                         onChange={setContent}
                         prefix={attachmentsNode}
-                        loading={agent.isRequesting()}
+                        loading={isRequesting}
                         className={styles.sender}
                     />
                 </div>
