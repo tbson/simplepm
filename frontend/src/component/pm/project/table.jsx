@@ -9,7 +9,6 @@ import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import {
     AddNewBtn,
-    RemoveSelectedBtn,
     EditBtn,
     RemoveBtn,
     IconButton
@@ -33,7 +32,6 @@ export default function ProjectTable() {
     const [pageParam, setPageParam] = useState({});
     const [init, setInit] = useState(false);
     const [list, setList] = useState([]);
-    const [ids, setIds] = useState([]);
     const [pages, setPages] = useState(defaultPages);
     const labels = getLabels();
     const messages = getMessages();
@@ -126,25 +124,14 @@ export default function ProjectTable() {
 
     const onDelete = (id) => {
         const r = window.confirm(messages.deleteOne);
-        if (!r) return;
+        if (!r) {
+            return;
+        }
 
         Util.toggleGlobalLoading(true);
         RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
             .then(() => {
                 setList([...list.filter((item) => item.id !== id)]);
-            })
-            .catch(RequestUtil.displayError(notification))
-            .finally(() => Util.toggleGlobalLoading(false));
-    };
-
-    const onBulkDelete = (ids) => {
-        const r = window.confirm(messages.deleteMultiple);
-        if (!r) return;
-
-        Util.toggleGlobalLoading(true);
-        RequestUtil.apiCall(`${urls.crud}?ids=${ids.join(',')}`, {}, 'delete')
-            .then(() => {
-                setList([...list.filter((item) => !ids.includes(item.id))]);
             })
             .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
@@ -218,21 +205,10 @@ export default function ProjectTable() {
         }
     ];
 
-    const rowSelection = {
-        onChange: (ids) => {
-            setIds(ids);
-        }
-    };
-
     return (
         <div>
             <Row>
-                <Col span={12}>
-                    <PemCheck pem_group={PEM_GROUP} pem="delete_list">
-                        <RemoveSelectedBtn ids={ids} onClick={onBulkDelete} />
-                    </PemCheck>
-                </Col>
-                <Col span={12} className="right">
+                <Col span={24} className="right">
                     <PemCheck pem_group={PEM_GROUP} pem="create">
                         <AddNewBtn onClick={() => Dialog.toggle()} />
                     </PemCheck>
@@ -242,10 +218,6 @@ export default function ProjectTable() {
             <SearchInput onChange={handleSearching} />
 
             <Table
-                rowSelection={{
-                    type: 'checkbox',
-                    ...rowSelection
-                }}
                 onChange={handleTableChange}
                 loading={init}
                 columns={columns}
