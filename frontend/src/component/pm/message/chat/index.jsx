@@ -2,12 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { App, Badge, Button } from 'antd';
-import {
-    Attachments,
-    Bubble,
-    Conversations,
-    Sender,
-} from '@ant-design/x';
+import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
 import { createStyles } from 'antd-style';
 import {
     CloudUploadOutlined,
@@ -242,16 +237,15 @@ export default function Chat({ defaultTask, onNav }) {
 
     const publishMessage = (message) => {
         setIsRequesting(true);
-        console.log(attachedFiles);
         const payload = {
             channel,
-            data: {
-                project_id: projectId,
-                task_id: taskId,
-                content: message
-            },
-            files: attachedFiles.map((file) => file.originFileObj)
+            project_id: projectId,
+            task_id: taskId,
+            content: message
         };
+        attachedFiles.forEach((file, index) => {
+            payload[`_file_${index}`] = file.originFileObj;
+        });
         return RequestUtil.apiCall(urls.publishMessage, payload, 'post')
             .then((resp) => {
                 return resp;
@@ -274,9 +268,10 @@ export default function Chat({ defaultTask, onNav }) {
     };
 
     const handleSending = (nextContent) => {
-        if (!nextContent) return;
+        if (!nextContent) {
+            return;
+        }
         setContent('');
-        console.log('nextContent:', nextContent);
         publishMessage(nextContent);
     };
 
@@ -286,6 +281,8 @@ export default function Chat({ defaultTask, onNav }) {
     };
     const handleFileChange = (info) => {
         console.log('File change:', info);
+        console.log(typeof info.file, info.file instanceof Blob);
+        console.log(typeof info.fileList[0], info.fileList[0].originFileObj instanceof Blob);
         setAttachedFiles(info.fileList);
     };
 

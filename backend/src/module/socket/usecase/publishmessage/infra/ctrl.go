@@ -21,14 +21,23 @@ func Publish(c echo.Context) error {
 	srv := app.New(centrifugoRepo, messageRepo)
 
 	userID := c.Get("UserID").(uint)
-	initData := app.SocketMessage{}
-	initData.Data.UserID = userID
-	data, err := vldtutil.ValidatePayload(c, initData)
+	data, err := vldtutil.ValidatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	err = srv.Publish(data)
+	socketMessage := app.SocketMessage{
+		Channel: data.Channel,
+		Data: app.SocketData{
+			ID:        "",
+			UserID:    userID,
+			TaskID:    data.TaskID,
+			ProjectID: data.ProjectID,
+			Content:   data.Content,
+		},
+	}
+
+	err = srv.Publish(socketMessage)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

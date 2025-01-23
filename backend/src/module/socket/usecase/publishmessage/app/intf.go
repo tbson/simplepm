@@ -4,17 +4,17 @@ import (
 	"src/module/pm/schema"
 )
 
-type socketData struct {
-	ID        string `json:"id"`
-	UserID    uint   `json:"user_id"`
-	TaskID    uint   `json:"task_id"`
-	ProjectID uint   `json:"project_id"`
-	Content   string `json:"content"`
+type SocketData struct {
+	ID        string `json:"id" form:"id"`
+	UserID    uint   `json:"user_id" form:"user_id" validate:"required"`
+	TaskID    uint   `json:"task_id" form:"task_id" validate:"required"`
+	ProjectID uint   `json:"project_id" form:"project_id" validate:"required"`
+	Content   string `json:"content" form:"content" validate:"required"`
 }
 
 type SocketMessage struct {
 	Channel string     `json:"channel" form:"channel" validate:"required"`
-	Data    socketData `json:"data" form:"data" validate:"required"`
+	Data    SocketData `json:"data" form:"data" validate:"required"`
 }
 
 type CentrifugoRepo interface {
