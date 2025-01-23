@@ -66,3 +66,22 @@ func (r Repo) Delete(id string) error {
 	}
 	return nil
 }
+
+func (r Repo) CreateAttachment(
+	messageID string,
+	fileName string,
+	fileType string,
+	fileURL string,
+) (string, error) {
+	client := skyllaclient.NewClient()
+	// defer client.Close()
+	id := skyllaclient.GenerateID()
+	err := client.Exec(
+		"INSERT INTO event.attachments (id, message_id, file_name, file_type, file_url, created_at) VALUES (?, ?, ?, ?, ?, toTimestamp(now()))",
+		id, messageID, fileName, fileType, fileURL,
+	)
+	if err != nil {
+		return "", err
+	}
+	return id.String(), nil
+}

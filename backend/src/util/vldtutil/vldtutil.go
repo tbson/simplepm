@@ -216,6 +216,27 @@ func UploadAndUPdatePayload(
 	return result, nil
 }
 
+func UploadAndGetMetadata(
+	c echo.Context,
+	folder string,
+) ([]s3.FileInfo, error) {
+	resultFiles := []s3.FileInfo{}
+	if c.Request().Header.Get("Content-Type") == "application/json" {
+		return resultFiles, nil
+	}
+	s3Repo := s3.New(s3client.NewClient())
+	files, err := getFiles(c)
+	if err != nil {
+		return resultFiles, err
+	}
+
+	s3Result, err := s3Repo.Uploads(c.Request().Context(), folder, files)
+	for _, v := range s3Result {
+		resultFiles = append(resultFiles, v)
+	}
+	return resultFiles, nil
+}
+
 func getFields(c echo.Context) ([]string, error) {
 	if c.Request().Header.Get("Content-Type") == "application/json" {
 		return getJsonFields(c)

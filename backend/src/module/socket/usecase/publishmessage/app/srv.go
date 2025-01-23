@@ -13,7 +13,7 @@ func New(centrifugoRepo CentrifugoRepo, messageRepo MessageRepo) Service {
 	return Service{centrifugoRepo, messageRepo}
 }
 
-func (srv Service) Publish(data SocketMessage) error {
+func (srv Service) Publish(data SocketMessage) (string, error) {
 	message := schema.Message{
 		UserID:    data.Data.UserID,
 		TaskID:    data.Data.TaskID,
@@ -22,12 +22,12 @@ func (srv Service) Publish(data SocketMessage) error {
 	}
 	id, err := srv.messageRepo.Create(message)
 	if err != nil {
-		return err
+		return "", err
 	}
 	data.Data.ID = id
 	err = srv.centrifugoRepo.Publish(data)
 	if err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return id, nil
 }
