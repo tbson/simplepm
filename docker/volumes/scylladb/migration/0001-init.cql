@@ -21,8 +21,9 @@ CREATE TABLE IF NOT EXISTS event.messages (
 CREATE TABLE IF NOT EXISTS event.attachments (
     id timeuuid,
     message_id timeuuid,
-    name text,
-    url text,
+    file_type text,
+    file_name text,
+    file_url text,
     thumbnail_url text,
     created_at timestamp,
     PRIMARY KEY ((message_id), id)
