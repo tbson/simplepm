@@ -1,4 +1,4 @@
-package awsutil
+package s3client
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-func S3Client() *s3.Client {
+func NewClient() *s3.Client {
 	region := setting.S3_REGION
 	cfg, _ := config.LoadDefaultConfig(
 		context.TODO(),
@@ -22,6 +22,11 @@ func S3Client() *s3.Client {
 		config.WithRegion(region),
 	)
 	return s3.NewFromConfig(cfg, func(o *s3.Options) {
-		o.BaseEndpoint = aws.String(fmt.Sprintf("https://%s.r2.cloudflarestorage.com", setting.S3_ACCOUNT_ID))
+		o.BaseEndpoint = aws.String(
+			fmt.Sprintf(
+				"https://%s.r2.cloudflarestorage.com",
+				setting.S3_ACCOUNT_ID,
+			),
+		)
 	})
 }

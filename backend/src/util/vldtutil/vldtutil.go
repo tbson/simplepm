@@ -7,9 +7,9 @@ import (
 	"mime/multipart"
 	"reflect"
 	"slices"
+	"src/client/s3client"
 	"src/common/ctype"
 	"src/module/aws/repo/s3"
-	"src/util/awsutil"
 	"src/util/dictutil"
 	"src/util/errutil"
 	"src/util/localeutil"
@@ -203,7 +203,7 @@ func UploadAndUPdatePayload(
 	if c.Request().Header.Get("Content-Type") == "application/json" {
 		return result, nil
 	}
-	s3Repo := s3.New(awsutil.S3Client())
+	s3Repo := s3.New(s3client.NewClient())
 	files, err := getFiles(c)
 	if err != nil {
 		return result, err
