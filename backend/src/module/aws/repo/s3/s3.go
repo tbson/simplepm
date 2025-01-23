@@ -21,6 +21,12 @@ type Repo struct {
 	region     string
 }
 
+type FileInfo struct {
+	FileName string
+	FileType string
+	FileURL  string
+}
+
 func New(client *s3.Client) Repo {
 	bucketName := setting.S3_BUCKET_NAME
 	region := setting.S3_REGION
@@ -31,7 +37,8 @@ func (u *Repo) Upload(
 	ctx context.Context,
 	folder string,
 	fileHeader *multipart.FileHeader,
-) (string, error) {
+) (FileInfo, error) {
+	emptyResult := FileInfo{}
 	localizer := localeutil.Get()
 	file, err := fileHeader.Open()
 	if err != nil {
@@ -41,7 +48,7 @@ func (u *Repo) Upload(
 				"Filename": fileHeader.Filename,
 			},
 		})
-		return "", errutil.New("", []string{msg})
+		return emptyResult, errutil.New("", []string{msg})
 
 	}
 	defer file.Close()
@@ -59,12 +66,14 @@ func (u *Repo) Upload(
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.FailedToUploadFileToS3,
 		})
-		return "", errutil.New("", []string{msg})
+		return emptyResult, errutil.New("", []string{msg})
 	}
 
 	// Generate the S3 URL
-	s3URL := fmt.Sprintf("%s/%s", setting.S3_ENDPOINT_URL, key)
-	return s3URL, nil
+	fileUrl := fmt.Sprintf("%s/%s", setting.S3_ENDPOINT_URL, key)
+	fileName := fileHeader.Filename
+	fileType := fileHeader.Header.Get("Content-Type")
+	return FileInfo{FileName: fileName, FileType: fileType, FileURL: fileUrl}, nil
 }
 
 // write Uploads function that receive map of fileHeaders, upload to S3 parallelly using goroutine return map of fieldName and s3URL, reuse Upload function
@@ -72,20 +81,20 @@ func (u *Repo) Uploads(
 	ctx context.Context,
 	folder string,
 	files map[string][]*multipart.FileHeader,
-) (map[string]string, error) {
-	result := map[string]string{}
+) (map[string]FileInfo, error) {
+	result := map[string]FileInfo{}
 	errChan := make(chan error, len(files))
 	doneChan := make(chan struct{}, len(files))
 
 	for fieldName, fileHeaders := range files {
 		go func(fieldName string, fileHeaders []*multipart.FileHeader) {
 			for _, fileHeader := range fileHeaders {
-				s3URL, err := u.Upload(ctx, folder, fileHeader)
+				fileInfo, err := u.Upload(ctx, folder, fileHeader)
 				if err != nil {
 					errChan <- err
 					return
 				}
-				result[fieldName] = s3URL
+				result[fieldName] = fileInfo
 			}
 			doneChan <- struct{}{}
 		}(fieldName, fileHeaders)
