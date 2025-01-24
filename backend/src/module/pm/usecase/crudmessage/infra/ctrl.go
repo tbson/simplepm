@@ -21,10 +21,10 @@ func List(c echo.Context) error {
 	messageRepo := message.New(client)
 	srv := app.New(messageRepo)
 
-	result, err := srv.List(taskID)
+	messages, attachmentMap, err := srv.List(taskID)
 	if err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	return c.JSON(http.StatusOK, ListPres(result, *user))
+	return c.JSON(http.StatusOK, ListPres(messages, attachmentMap, *user))
 }

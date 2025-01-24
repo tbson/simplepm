@@ -101,3 +101,34 @@ func (r Repo) CreateAttachment(
 	}
 	return result, nil
 }
+
+func (r Repo) GetAttachmentMap(
+	messages []schema.Message,
+) (map[string][]schema.Attachment, error) {
+	client := skyllaclient.NewClient()
+	// defer client.Close()
+	messageIDs := make([]string, 0)
+	for _, message := range messages {
+		messageIDs = append(messageIDs, message.ID)
+	}
+	rows, err := client.Query(
+		"SELECT * FROM event.attachments WHERE message_id IN ?",
+		messageIDs,
+	)
+	if err != nil {
+		return nil, err
+	}
+	attachments := make(map[string][]schema.Attachment)
+	for _, row := range rows {
+		messageID := row["message_id"].(gocql.UUID).String()
+		attachment := schema.Attachment{
+			MessageID: messageID,
+			FileName:  row["file_name"].(string),
+			FileType:  row["file_type"].(string),
+			FileURL:   row["file_url"].(string),
+		}
+		attachments[messageID] = append(attachments[messageID], attachment)
+	}
+
+	return attachments, nil
+}
