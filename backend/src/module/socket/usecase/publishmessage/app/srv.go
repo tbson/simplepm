@@ -20,7 +20,7 @@ func (srv Service) Publish(
 ) (string, error) {
 	socketAttachments := []SocketAttachment{}
 	messageData := schema.Message{
-		UserID:    socketMessage.Data.UserID,
+		UserID:    socketMessage.Data.User.ID,
 		TaskID:    socketMessage.Data.TaskID,
 		ProjectID: socketMessage.Data.ProjectID,
 		Content:   socketMessage.Data.Content,
