@@ -47,9 +47,8 @@ func (srv Service) Publish(
 		}
 		socketAttachments = append(socketAttachments, socketAttachment)
 	}
-	socketMessage.Data.Attachments = socketAttachments
-
 	socketMessage.Data.ID = message.ID
+	socketMessage.Data.Attachments = socketAttachments
 	err = srv.centrifugoRepo.Publish(socketMessage)
 	if err != nil {
 		return "", err

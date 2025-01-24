@@ -234,13 +234,13 @@ export default function Chat({ defaultTask, onNav }) {
 
     // ==================== Event ====================
 
-    const publishMessage = (message) => {
+    const publishMessage = (content) => {
         setIsRequesting(true);
         const payload = {
             channel,
             project_id: projectId,
             task_id: taskId,
-            content: message
+            content
         };
         attachedFiles.forEach((file, index) => {
             payload[`_file_${index}`] = file.originFileObj;
@@ -290,13 +290,13 @@ export default function Chat({ defaultTask, onNav }) {
 
     // ==================== Nodes ====================
     const items = messages
-        .filter((i) => i.message)
-        .map(({ id, message, status }) => {
+        .filter((i) => i.content)
+        .map(({ id, content, status }) => {
             return {
                 key: id,
                 loading: status === 'loading',
                 role: status === 'local' ? 'local' : 'ai',
-                content: message
+                content
             };
         });
     const attachmentsNode = (

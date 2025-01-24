@@ -14,7 +14,7 @@ type UserInfo struct {
 
 type ListOutput struct {
 	ID       string   `json:"id"`
-	Message  string   `json:"message"`
+	Content  string   `json:"content"`
 	Status   string   `json:"status"`
 	UserInfo UserInfo `json:"user_info"`
 }
@@ -32,7 +32,7 @@ func presItem(item pmSchema.Message, user accountSchema.User) ListOutput {
 	}
 	result := ListOutput{
 		ID:       item.ID,
-		Message:  item.Content,
+		Content:  item.Content,
 		Status:   status,
 		UserInfo: userInfo,
 	}

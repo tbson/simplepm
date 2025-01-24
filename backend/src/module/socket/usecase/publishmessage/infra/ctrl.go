@@ -39,9 +39,10 @@ func Publish(c echo.Context) error {
 				Name:   userFullName,
 				Avatar: user.Avatar,
 			},
-			TaskID:    data.TaskID,
-			ProjectID: data.ProjectID,
-			Content:   data.Content,
+			TaskID:      data.TaskID,
+			ProjectID:   data.ProjectID,
+			Content:     data.Content,
+			Attachments: []app.SocketAttachment{},
 		},
 	}
 
