@@ -4,12 +4,19 @@ import (
 	"src/module/pm/schema"
 )
 
+type SocketAttachment struct {
+	FileName string `json:"file_name" form:"file_name" validate:"required"`
+	FileType string `json:"file_type" form:"file_type" validate:"required"`
+	FileURL  string `json:"file_url" form:"file_url" validate:"required"`
+}
+
 type SocketData struct {
-	ID        string `json:"id" form:"id"`
-	UserID    uint   `json:"user_id" form:"user_id" validate:"required"`
-	TaskID    uint   `json:"task_id" form:"task_id" validate:"required"`
-	ProjectID uint   `json:"project_id" form:"project_id" validate:"required"`
-	Content   string `json:"content" form:"content" validate:"required"`
+	ID          string             `json:"id" form:"id"`
+	UserID      uint               `json:"user_id" form:"user_id" validate:"required"`
+	TaskID      uint               `json:"task_id" form:"task_id" validate:"required"`
+	ProjectID   uint               `json:"project_id" form:"project_id" validate:"required"`
+	Content     string             `json:"content" form:"content" validate:"required"`
+	Attachments []SocketAttachment `json:"attachments" form:"attachments"`
 }
 
 type SocketMessage struct {
@@ -22,5 +29,11 @@ type CentrifugoRepo interface {
 }
 
 type MessageRepo interface {
-	Create(message schema.Message) (string, error)
+	Create(message schema.Message) (schema.Message, error)
+	CreateAttachment(
+		messageID string,
+		fileName string,
+		fileType string,
+		fileURL string,
+	) (schema.Attachment, error)
 }

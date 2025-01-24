@@ -51,11 +51,6 @@ export default function Chat({ defaultTask, onNav }) {
     const [conn, setConn] = useState(null);
     const [isRequesting, setIsRequesting] = useState(false);
     const [messages, setMessages] = useState([]);
-    const [taskList, setTaskList] = useState([]);
-    const [token, setToken] = useState('');
-    const [count, setCount] = useState('-');
-    const [connectionStatus, setConnectionStatus] = useState('Disconnected');
-
     const { styles } = useStyle();
 
     // ==================== State ====================
@@ -95,7 +90,9 @@ export default function Chat({ defaultTask, onNav }) {
     };
 
     const handleTaskChange = (item) => {
-        if (!item) return;
+        if (!item) {
+            return;
+        }
         const conversationIndex = conversationsItems.findIndex(
             (conversation) => conversation.key === item.id
         );
@@ -132,7 +129,9 @@ export default function Chat({ defaultTask, onNav }) {
     }, []);
 
     useEffect(() => {
-        if (!conn) return;
+        if (!conn) {
+            return;
+        }
         handleConnect(conn);
         const sub = handleSubscription(conn, channel);
 
@@ -149,17 +148,14 @@ export default function Chat({ defaultTask, onNav }) {
         // Event Handlers
         conn.on('connecting', (ctx) => {
             console.log(`connecting: ${ctx.code}, ${ctx.reason}`);
-            setConnectionStatus(`Connecting (${ctx.code}): ${ctx.reason}`);
         });
 
         conn.on('connected', (ctx) => {
             console.log('connected', ctx);
-            setConnectionStatus(`Connected via ${ctx.transport}`);
         });
 
         conn.on('disconnected', (ctx) => {
             console.log(`disconnected: ${ctx.code}, ${ctx.reason}`);
-            setConnectionStatus(`Disconnected (${ctx.code}): ${ctx.reason}`);
         });
 
         if (conn.state === 'connected') {
@@ -180,6 +176,7 @@ export default function Chat({ defaultTask, onNav }) {
 
         sub.on('publication', (ctx) => {
             const { data } = ctx;
+            console.log('publication', data);
             const userId = StorageUtil.getUserId();
             let status = 'ai';
             if (data.user_id === userId) {
@@ -219,7 +216,9 @@ export default function Chat({ defaultTask, onNav }) {
 
     const handleDelete = (id) => {
         const r = window.confirm('Do you want to remove this task?');
-        if (!r) return;
+        if (!r) {
+            return;
+        }
 
         Util.toggleGlobalLoading(true);
         RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
@@ -282,7 +281,10 @@ export default function Chat({ defaultTask, onNav }) {
     const handleFileChange = (info) => {
         console.log('File change:', info);
         console.log(typeof info.file, info.file instanceof Blob);
-        console.log(typeof info.fileList[0], info.fileList[0].originFileObj instanceof Blob);
+        console.log(
+            typeof info.fileList[0],
+            info.fileList[0].originFileObj instanceof Blob
+        );
         setAttachedFiles(info.fileList);
     };
 

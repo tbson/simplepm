@@ -43,7 +43,8 @@ func (r Repo) List(taskID uint) ([]schema.Message, error) {
 	return result, nil
 }
 
-func (r Repo) Create(message schema.Message) (string, error) {
+func (r Repo) Create(message schema.Message) (schema.Message, error) {
+	defaultResult := schema.Message{}
 	client := skyllaclient.NewClient()
 	// defer client.Close()
 	id := skyllaclient.GenerateID()
@@ -52,9 +53,16 @@ func (r Repo) Create(message schema.Message) (string, error) {
 		id, message.UserID, message.TaskID, message.ProjectID, message.Content,
 	)
 	if err != nil {
-		return "", err
+		return defaultResult, err
 	}
-	return id.String(), nil
+	result := schema.Message{
+		ID:        id.String(),
+		UserID:    message.UserID,
+		TaskID:    message.TaskID,
+		ProjectID: message.ProjectID,
+		Content:   message.Content,
+	}
+	return result, nil
 }
 
 func (r Repo) Delete(id string) error {
@@ -72,7 +80,8 @@ func (r Repo) CreateAttachment(
 	fileName string,
 	fileType string,
 	fileURL string,
-) (string, error) {
+) (schema.Attachment, error) {
+	emptyResult := schema.Attachment{}
 	client := skyllaclient.NewClient()
 	// defer client.Close()
 	id := skyllaclient.GenerateID()
@@ -81,7 +90,14 @@ func (r Repo) CreateAttachment(
 		id, messageID, fileName, fileType, fileURL,
 	)
 	if err != nil {
-		return "", err
+		return emptyResult, err
 	}
-	return id.String(), nil
+	result := schema.Attachment{
+		ID:        id.String(),
+		MessageID: messageID,
+		FileName:  fileName,
+		FileType:  fileType,
+		FileURL:   fileURL,
+	}
+	return result, nil
 }

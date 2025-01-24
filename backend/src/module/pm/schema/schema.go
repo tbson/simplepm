@@ -318,3 +318,12 @@ type Message struct {
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"update_at"`
 }
+
+type Attachment struct {
+	ID        string `json:"id"`
+	MessageID string `json:"message_id"`
+	FileName  string `json:"file_name"`
+	FileType  string `json:"file_type"`
+	FileURL   string `json:"file_url"`
+	CreatedAt string `json:"created_at"`
+}

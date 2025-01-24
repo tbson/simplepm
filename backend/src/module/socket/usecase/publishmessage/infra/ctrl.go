@@ -37,23 +37,14 @@ func Publish(c echo.Context) error {
 		},
 	}
 
-	resultFiles, err := vldtutil.UploadAndGetMetadata(c, "message")
+	files, err := vldtutil.UploadAndGetMetadata(c, "message")
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	messageID, err := srv.Publish(socketMessage)
+	_, err = srv.Publish(socketMessage, files)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	for _, file := range resultFiles {
-		messageRepo.CreateAttachment(
-			messageID,
-			file.FileName,
-			file.FileType,
-			file.FileURL,
-		)
 	}
 
 	return c.JSON(http.StatusOK, ctype.Dict{})
