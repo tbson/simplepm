@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { App, Badge, Button, Flex, Avatar } from 'antd';
+import { App, Badge, Button, Flex, Avatar, Image } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
 import { createStyles } from 'antd-style';
 import {
@@ -375,6 +375,18 @@ export default function Chat({ defaultTask, onNav }) {
                                             />
                                         )
                                     }}
+                                    footer={
+                                        <Flex gap="middle" align="start">
+                                            {item.attachments.map((attachment) => {
+                                                return (
+                                                    <Image
+                                                        width={150}
+                                                        src={attachment.file_url}
+                                                    />
+                                                );
+                                            })}
+                                        </Flex>
+                                    }
                                 />
                             );
                         })}
