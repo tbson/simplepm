@@ -21,7 +21,7 @@ type Attachment struct {
 type ListOutput struct {
 	ID          string       `json:"id"`
 	Content     string       `json:"content"`
-	Status      string       `json:"status"`
+	Editable    bool         `json:"editable"`
 	UserInfo    UserInfo     `json:"user_info"`
 	Attachments []Attachment `json:"attachments"`
 }
@@ -29,17 +29,17 @@ type ListOutput struct {
 func presItem(
 	item pmSchema.Message,
 	attachmentMap map[string][]pmSchema.Attachment,
-	user accountSchema.User,
+	currentUser accountSchema.User,
 ) ListOutput {
-	status := "local"
-	if item.UserID != user.ID {
-		status = "ai"
+	editable := false
+	if item.UserID != currentUser.ID {
+		editable = true
 	}
-	name := strings.TrimSpace(user.FirstName + " " + user.LastName)
+	name := strings.TrimSpace(currentUser.FirstName + " " + currentUser.LastName)
 	userInfo := UserInfo{
-		ID:     int(user.ID),
+		ID:     int(currentUser.ID),
 		Name:   name,
-		Avatar: user.Avatar,
+		Avatar: currentUser.Avatar,
 	}
 	rawAttachments := attachmentMap[item.ID]
 	attachments := make([]Attachment, 0)
@@ -54,7 +54,7 @@ func presItem(
 	result := ListOutput{
 		ID:          item.ID,
 		Content:     item.Content,
-		Status:      status,
+		Editable:    editable,
 		UserInfo:    userInfo,
 		Attachments: attachments,
 	}
@@ -64,11 +64,11 @@ func presItem(
 func ListPres(
 	items []pmSchema.Message,
 	attachmentMap map[string][]pmSchema.Attachment,
-	user accountSchema.User,
+	currentUser accountSchema.User,
 ) []ListOutput {
 	result := make([]ListOutput, 0)
 	for _, item := range items {
-		result = append(result, presItem(item, attachmentMap, user))
+		result = append(result, presItem(item, attachmentMap, currentUser))
 	}
 	return result
 }

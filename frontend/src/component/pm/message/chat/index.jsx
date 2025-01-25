@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { App, Badge, Button } from 'antd';
+import { App, Badge, Button, Flex, Avatar } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
 import { createStyles } from 'antd-style';
 import {
@@ -44,6 +44,7 @@ export default function Chat({ defaultTask, onNav }) {
     const { notification } = App.useApp();
     const { project_id, task_id } = useParams();
     const channel = `${project_id}/${task_id}`;
+    const userId = StorageUtil.getUserId();
     const taskId = parseInt(task_id);
     const projectId = parseInt(project_id);
     const navigate = useNavigate();
@@ -84,6 +85,7 @@ export default function Chat({ defaultTask, onNav }) {
     const getMessage = (taskId) => {
         return RequestUtil.apiCall(messageUrls.crud, { task_id: taskId })
             .then((resp) => {
+                console.log('Messages:', resp.data);
                 setMessages(resp.data);
             })
             .catch(RequestUtil.displayError(notification));
@@ -177,12 +179,8 @@ export default function Chat({ defaultTask, onNav }) {
         sub.on('publication', (ctx) => {
             const { data } = ctx;
             console.log('publication', data);
-            const userId = StorageUtil.getUserId();
-            let status = 'ai';
-            if (data.user_id === userId) {
-                status = 'local';
-            }
-            handleAddMessage(data.id, data.content, status);
+            data.editable = data.user_id === userId;
+            handleAddMessage(data);
         });
         /*
         sub.on('subscribing', (ctx) => {
@@ -255,15 +253,8 @@ export default function Chat({ defaultTask, onNav }) {
             });
     };
 
-    const handleAddMessage = (id, message, status) => {
-        setMessages((messages) => [
-            ...messages,
-            {
-                id,
-                message,
-                status
-            }
-        ]);
+    const handleAddMessage = (message) => {
+        setMessages((messages) => [...messages, { ...message }]);
     };
 
     const handleSending = (nextContent) => {
@@ -289,16 +280,11 @@ export default function Chat({ defaultTask, onNav }) {
     };
 
     // ==================== Nodes ====================
-    const items = messages
-        .filter((i) => i.content)
-        .map(({ id, content, status }) => {
-            return {
-                key: id,
-                loading: status === 'loading',
-                role: status === 'local' ? 'local' : 'ai',
-                content
-            };
-        });
+    const items = messages.map((message) => {
+        const editable = message.user_info.id === userId;
+        message.editable = editable;
+        return message;
+    });
     const attachmentsNode = (
         <Badge dot={attachedFiles.length > 0 && !headerOpen}>
             <Button
@@ -367,11 +353,32 @@ export default function Chat({ defaultTask, onNav }) {
                             />
                         </div>
                     </div>
+                    {/*
                     <Bubble.List
                         items={items}
                         roles={roles}
                         className={styles.messages}
                     />
+                    */}
+                    <Flex gap="middle" vertical>
+                        {items.map((item) => {
+                            return (
+                                <Bubble
+                                    key={item.id}
+                                    content={item.content}
+                                    className={styles.message}
+                                    avatar={{
+                                        icon: (
+                                            <Avatar
+                                                size="small"
+                                                src={item.user_info.avatar}
+                                            />
+                                        )
+                                    }}
+                                />
+                            );
+                        })}
+                    </Flex>
                     <Sender
                         value={content}
                         header={senderHeader}
