@@ -14,6 +14,7 @@ type SocketUser struct {
 	ID     uint   `json:"id" validate:"required"`
 	Name   string `json:"name" validate:"required"`
 	Avatar string `json:"avatar"`
+	Color  string `json:"color"`
 }
 
 type SocketData struct {

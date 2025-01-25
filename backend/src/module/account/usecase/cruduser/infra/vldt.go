@@ -10,7 +10,7 @@ type InputData struct {
 	Mobile      *string    `json:"mobile" form:"mobile"`
 	FirstName   string     `json:"first_name" form:"first_name"`
 	LastName    string     `json:"last_name" form:"last_name"`
-	AvatarStr   string     `json:"avatar_str" form:"avatar_str"`
+	Color       string     `json:"avatar_str" form:"color"`
 	ExtraInfo   ctype.Dict `json:"extra_info" form:"extra_info"`
 	RoleIDs     []uint     `json:"role_ids" form:"role_ids" validate:"required"`
 	// Admin       bool       `json:"admin" form:"admin"`

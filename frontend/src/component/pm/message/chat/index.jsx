@@ -85,7 +85,6 @@ export default function Chat({ defaultTask, onNav }) {
     const getMessage = (taskId) => {
         return RequestUtil.apiCall(messageUrls.crud, { task_id: taskId })
             .then((resp) => {
-                console.log('Messages:', resp.data);
                 setMessages(resp.data);
             })
             .catch(RequestUtil.displayError(notification));
@@ -281,7 +280,7 @@ export default function Chat({ defaultTask, onNav }) {
 
     // ==================== Nodes ====================
     const items = messages.map((message) => {
-        const editable = message.user_info.id === userId;
+        const editable = message.user.id === userId;
         message.editable = editable;
         return message;
     });
@@ -367,11 +366,12 @@ export default function Chat({ defaultTask, onNav }) {
                                     key={item.id}
                                     content={item.content}
                                     className={styles.message}
+                                    header={item.user.name}
                                     avatar={{
                                         icon: (
                                             <Avatar
                                                 size="small"
-                                                src={item.user_info.avatar}
+                                                src={item.user.avatar}
                                             />
                                         )
                                     }}

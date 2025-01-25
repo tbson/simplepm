@@ -20,10 +20,13 @@ func (srv Service) Publish(
 ) (string, error) {
 	socketAttachments := []SocketAttachment{}
 	messageData := schema.Message{
-		UserID:    socketMessage.Data.User.ID,
-		TaskID:    socketMessage.Data.TaskID,
-		ProjectID: socketMessage.Data.ProjectID,
-		Content:   socketMessage.Data.Content,
+		UserID:     socketMessage.Data.User.ID,
+		TaskID:     socketMessage.Data.TaskID,
+		ProjectID:  socketMessage.Data.ProjectID,
+		Content:    socketMessage.Data.Content,
+		UserName:   socketMessage.Data.User.Name,
+		UserAvatar: socketMessage.Data.User.Avatar,
+		UserColor:  socketMessage.Data.User.Color,
 	}
 	message, err := srv.messageRepo.Create(messageData)
 	if err != nil {

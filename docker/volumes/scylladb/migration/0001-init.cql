@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS event.messages (
     project_id int,
     content text,
     hash_tags list<text>,
+    user_name text,
+    user_avatar text,
+    user_color text,
     created_at timestamp,
     updated_at timestamp,
     PRIMARY KEY ((task_id), id)

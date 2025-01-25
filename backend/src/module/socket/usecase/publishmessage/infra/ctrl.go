@@ -38,6 +38,7 @@ func Publish(c echo.Context) error {
 				ID:     user.ID,
 				Name:   userFullName,
 				Avatar: user.Avatar,
+				Color:  user.Color,
 			},
 			TaskID:      data.TaskID,
 			ProjectID:   data.ProjectID,

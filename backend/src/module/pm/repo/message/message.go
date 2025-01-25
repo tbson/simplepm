@@ -31,13 +31,16 @@ func (r Repo) List(taskID uint) ([]schema.Message, error) {
 		createdAt := dateutil.TimeToStr(row["created_at"].(time.Time))
 		updatedAt := dateutil.TimeToStr(row["updated_at"].(time.Time))
 		result = append(result, schema.Message{
-			ID:        id,
-			UserID:    uint(row["user_id"].(int)),
-			TaskID:    uint(row["task_id"].(int)),
-			ProjectID: uint(row["project_id"].(int)),
-			Content:   row["content"].(string),
-			CreatedAt: createdAt,
-			UpdatedAt: updatedAt,
+			ID:         id,
+			UserID:     uint(row["user_id"].(int)),
+			TaskID:     uint(row["task_id"].(int)),
+			ProjectID:  uint(row["project_id"].(int)),
+			Content:    row["content"].(string),
+			UserName:   row["user_name"].(string),
+			UserAvatar: row["user_avatar"].(string),
+			UserColor:  row["user_color"].(string),
+			CreatedAt:  createdAt,
+			UpdatedAt:  updatedAt,
 		})
 	}
 	return result, nil
@@ -49,18 +52,23 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 	// defer client.Close()
 	id := skyllaclient.GenerateID()
 	err := client.Exec(
-		"INSERT INTO event.messages (id, user_id, task_id, project_id, content, created_at, updated_at) VALUES (?, ?, ?, ?, ?, toTimestamp(now()), toTimestamp(now()))",
-		id, message.UserID, message.TaskID, message.ProjectID, message.Content,
+		"INSERT INTO event.messages (id, user_id, task_id, project_id, content, user_name, user_avatar, user_color, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, toTimestamp(now()), toTimestamp(now()))",
+		id, message.UserID, message.TaskID, message.ProjectID, message.Content, message.UserName, message.UserAvatar, message.UserColor,
 	)
 	if err != nil {
 		return defaultResult, err
 	}
 	result := schema.Message{
-		ID:        id.String(),
-		UserID:    message.UserID,
-		TaskID:    message.TaskID,
-		ProjectID: message.ProjectID,
-		Content:   message.Content,
+		ID:         id.String(),
+		UserID:     message.UserID,
+		TaskID:     message.TaskID,
+		ProjectID:  message.ProjectID,
+		Content:    message.Content,
+		UserName:   message.UserName,
+		UserAvatar: message.UserAvatar,
+		UserColor:  message.UserColor,
+		CreatedAt:  dateutil.TimeToStr(time.Now()),
+		UpdatedAt:  dateutil.TimeToStr(time.Now()),
 	}
 	return result, nil
 }

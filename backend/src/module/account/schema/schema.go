@@ -70,7 +70,7 @@ type User struct {
 	FirstName    string         `gorm:"type:text;not null;default:''" json:"first_name"`
 	LastName     string         `gorm:"type:text;not null;default:''" json:"last_name"`
 	Avatar       string         `gorm:"type:text;not null;default:''" json:"avatar"`
-	AvatarStr    string         `gorm:"type:text;not null;default:''" json:"avatar_str"`
+	Color        string         `gorm:"type:text;not null;default:''" json:"color"`
 	ExtraInfo    datatypes.JSON `gorm:"type:json;not null;default:'{}'" json:"extra_info"`
 	Admin        bool           `gorm:"type:boolean;not null;default:false" json:"admin"`
 	LockedAt     *time.Time     `gorm:"type:timestamp;default:null" json:"locked_at"`
@@ -94,7 +94,7 @@ func NewUser(data ctype.Dict) *User {
 		FirstName:   dictutil.GetValue[string](data, "FirstName"),
 		LastName:    dictutil.GetValue[string](data, "LastName"),
 		Avatar:      dictutil.GetValue[string](data, "Avatar"),
-		AvatarStr:   dictutil.GetValue[string](data, "AvatarStr"),
+		Color:       dictutil.GetValue[string](data, "Color"),
 		ExtraInfo:   datatypes.JSON(extraInfoJSON),
 		Roles:       dictutil.GetValue[[]Role](data, "Roles"),
 	}
