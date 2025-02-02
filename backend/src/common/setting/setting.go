@@ -65,3 +65,7 @@ var CENTRIFUGO_API_ENDPOINT string = frameworkutil.GetEnv("CENTRIFUGO_API_ENDPOI
 var CENTRIFUGO_JWT_LIFE_SPAN int = numberutil.StrToInt(
 	frameworkutil.GetEnv("CENTRIFUGO_JWT_LIFE_SPAN", "1200"), 1200,
 )
+
+var MSG_PAGE_SIZE int = numberutil.StrToInt(
+	frameworkutil.GetEnv("MSG_PAGE_SIZE", "20"), 20,
+)

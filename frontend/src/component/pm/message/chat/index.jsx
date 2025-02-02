@@ -53,6 +53,7 @@ export default function Chat({ defaultTask, onNav }) {
     const [conn, setConn] = useState(null);
     const [isRequesting, setIsRequesting] = useState(false);
     const [messages, setMessages] = useState([]);
+    const [pageState, setPageState] = useState('');
     const { styles } = useStyle();
 
     // ==================== State ====================
@@ -84,9 +85,16 @@ export default function Chat({ defaultTask, onNav }) {
     }, [taskId]);
 
     const getMessage = (taskId) => {
-        return RequestUtil.apiCall(messageUrls.crud, { task_id: taskId })
+        const params = {
+            task_id: taskId
+        };
+        if (pageState) {
+            params.page_state = pageState;
+        }
+        return RequestUtil.apiCall(messageUrls.crud, params)
             .then((resp) => {
-                setMessages(resp.data);
+                setMessages(resp.data.items);
+                setPageState(resp.data.page_state);
             })
             .catch(RequestUtil.displayError(notification));
     };

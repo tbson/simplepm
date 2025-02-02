@@ -11,6 +11,8 @@ import (
 	"src/module/pm/usecase/crudmessage/app"
 
 	"github.com/labstack/echo/v4"
+
+	"encoding/base64"
 )
 
 func List(c echo.Context) error {
@@ -21,10 +23,22 @@ func List(c echo.Context) error {
 	messageRepo := message.New(client)
 	srv := app.New(messageRepo)
 
-	messages, attachmentMap, err := srv.List(taskID)
+	pageStateParam := c.QueryParam("page_state")
+	var pageState []byte
+	if pageStateParam != "" {
+		decoded, err := base64.StdEncoding.DecodeString(pageStateParam)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Invalid page_state",
+			})
+		}
+		pageState = decoded
+	}
+
+	messages, pageState, attachmentMap, err := srv.List(taskID, pageState)
 	if err != nil {
 		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	return c.JSON(http.StatusOK, ListPres(messages, attachmentMap, *user))
+	return c.JSON(http.StatusOK, ListPres(messages, pageState, attachmentMap, *user))
 }

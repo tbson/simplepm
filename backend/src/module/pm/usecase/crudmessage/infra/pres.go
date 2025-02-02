@@ -26,6 +26,11 @@ type ListOutput struct {
 	Attachments []Attachment `json:"attachments"`
 }
 
+type ListResult struct {
+	Items     []ListOutput `json:"items"`
+	PageState []byte       `json:"page_state"`
+}
+
 func presItem(
 	item pmSchema.Message,
 	attachmentMap map[string][]pmSchema.Attachment,
@@ -63,12 +68,16 @@ func presItem(
 
 func ListPres(
 	items []pmSchema.Message,
+	pageState []byte,
 	attachmentMap map[string][]pmSchema.Attachment,
 	currentUser accountSchema.User,
-) []ListOutput {
+) ListResult {
 	result := make([]ListOutput, 0)
 	for _, item := range items {
 		result = append(result, presItem(item, attachmentMap, currentUser))
 	}
-	return result
+	return ListResult{
+		Items:     result,
+		PageState: pageState,
+	}
 }

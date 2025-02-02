@@ -13,12 +13,12 @@ func New(messageRepo MessageRepo) Service {
 }
 
 func (srv Service) List(
-	taskID uint,
-) ([]schema.Message, map[string][]schema.Attachment, error) {
-	messages, err := srv.messageRepo.List(taskID)
+	taskID uint, pageState []byte,
+) ([]schema.Message, []byte, map[string][]schema.Attachment, error) {
+	messages, nextPageState, err := srv.messageRepo.List(taskID, pageState)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	attachmentMap, err := srv.messageRepo.GetAttachmentMap(messages)
-	return messages, attachmentMap, nil
+	return messages, nextPageState, attachmentMap, nil
 }

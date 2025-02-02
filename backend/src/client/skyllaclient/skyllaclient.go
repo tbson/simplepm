@@ -72,6 +72,19 @@ func (c *Client) Query(cql string, args ...interface{}) ([]map[string]interface{
 	return rows, nil
 }
 
+func (c *Client) QueryWithPaging(
+	cql string,
+	pageSize int,
+	pageState []byte,
+	args ...interface{},
+) *gocql.Query {
+	q := c.session.Query(cql, args...).PageSize(pageSize)
+	if len(pageState) > 0 {
+		q = q.PageState(pageState)
+	}
+	return q
+}
+
 // Exec runs an INSERT, UPDATE, DELETE, or any CQL statement that does not return rows.
 func (c *Client) Exec(cql string, args ...interface{}) error {
 	if err := c.session.Query(cql, args...).Exec(); err != nil {

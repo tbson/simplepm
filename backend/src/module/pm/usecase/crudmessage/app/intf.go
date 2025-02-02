@@ -5,6 +5,6 @@ import (
 )
 
 type MessageRepo interface {
-	List(taskID uint) ([]schema.Message, error)
+	List(taskID uint, pageState []byte) ([]schema.Message, []byte, error)
 	GetAttachmentMap(messages []schema.Message) (map[string][]schema.Attachment, error)
 }

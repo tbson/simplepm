@@ -5,6 +5,7 @@ import (
 	"src/util/dateutil"
 	"time"
 
+	"src/common/setting"
 	"src/module/pm/schema"
 
 	"github.com/gocql/gocql"
@@ -18,32 +19,46 @@ func New(client *skyllaclient.Client) Repo {
 	return Repo{client: client}
 }
 
-func (r Repo) List(taskID uint) ([]schema.Message, error) {
+func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, error) {
+	pageSize := setting.MSG_PAGE_SIZE
 	client := skyllaclient.NewClient()
-	// defer client.Close()
-	rows, err := client.Query("SELECT * FROM event.messages WHERE task_id = ?", taskID)
-	if err != nil {
-		return nil, err
+
+	// Use QueryWithPaging to build the query
+	q := client.QueryWithPaging("SELECT * FROM event.messages WHERE task_id = ?", pageSize, pageState, taskID)
+	iter := q.Iter()
+
+	var messages []schema.Message
+	rowData := map[string]interface{}{}
+
+	// Manually iterate over rows up to pageSize
+	count := 0
+	for count < pageSize && iter.MapScan(rowData) {
+		msg := schema.Message{
+			ID:         rowData["id"].(gocql.UUID).String(),
+			UserID:     uint(rowData["user_id"].(int)),
+			TaskID:     uint(rowData["task_id"].(int)),
+			ProjectID:  uint(rowData["project_id"].(int)),
+			Content:    rowData["content"].(string),
+			UserName:   rowData["user_name"].(string),
+			UserAvatar: rowData["user_avatar"].(string),
+			UserColor:  rowData["user_color"].(string),
+			CreatedAt:  dateutil.TimeToStr(rowData["created_at"].(time.Time)),
+			UpdatedAt:  dateutil.TimeToStr(rowData["updated_at"].(time.Time)),
+		}
+		messages = append(messages, msg)
+		count++
+		// Reinitialize rowData for the next row
+		rowData = map[string]interface{}{}
 	}
-	result := make([]schema.Message, 0)
-	for _, row := range rows {
-		id := row["id"].(gocql.UUID).String()
-		createdAt := dateutil.TimeToStr(row["created_at"].(time.Time))
-		updatedAt := dateutil.TimeToStr(row["updated_at"].(time.Time))
-		result = append(result, schema.Message{
-			ID:         id,
-			UserID:     uint(row["user_id"].(int)),
-			TaskID:     uint(row["task_id"].(int)),
-			ProjectID:  uint(row["project_id"].(int)),
-			Content:    row["content"].(string),
-			UserName:   row["user_name"].(string),
-			UserAvatar: row["user_avatar"].(string),
-			UserColor:  row["user_color"].(string),
-			CreatedAt:  createdAt,
-			UpdatedAt:  updatedAt,
-		})
+
+	// Get the paging state for the next page.
+	nextPageState := iter.PageState()
+
+	if err := iter.Close(); err != nil {
+		return nil, nil, err
 	}
-	return result, nil
+
+	return messages, nextPageState, nil
 }
 
 func (r Repo) Create(message schema.Message) (schema.Message, error) {
