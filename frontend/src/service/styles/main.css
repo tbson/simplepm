@@ -131,6 +131,18 @@ table.styled-table {
     padding: 0 !important;
 }
 
+.ant-bubble-content {
+    width: 100%;
+    padding: 0 !important;
+}
+.ant-bubble-content code {
+    color: #F52570;
+}
+
+.ant-bubble-content-filled {
+    background-color: transparent !important;
+}
+
 .flex-space {
     display: flex;
     justify-content: space-between;

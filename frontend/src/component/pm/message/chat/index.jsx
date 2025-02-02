@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { App, Badge, Button, Flex, Avatar, Image } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
+import Markdown from 'react-markdown'
 import { createStyles } from 'antd-style';
 import {
     CloudUploadOutlined,
@@ -360,8 +361,8 @@ export default function Chat({ defaultTask, onNav }) {
                             return (
                                 <Bubble
                                     key={item.id}
-                                    content={item.content}
-                                    className={styles.message}
+                                    content={<Markdown>{item.content}</Markdown>}
+                                    className={styles.messages}
                                     header={item.user.name}
                                     avatar={{
                                         icon: (
