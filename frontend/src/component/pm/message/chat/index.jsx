@@ -262,6 +262,8 @@ export default function Chat({ defaultTask, onNav }) {
         }
         setContent('');
         publishMessage(nextContent);
+        setAttachedFiles([]);
+        setHeaderOpen(false);
     };
 
     const onConversationClick = (key) => {
@@ -269,12 +271,6 @@ export default function Chat({ defaultTask, onNav }) {
         navigateTo(`/pm/task/${projectId}/${key}`);
     };
     const handleFileChange = (info) => {
-        console.log('File change:', info);
-        console.log(typeof info.file, info.file instanceof Blob);
-        console.log(
-            typeof info.fileList[0],
-            info.fileList[0].originFileObj instanceof Blob
-        );
         setAttachedFiles(info.fileList);
     };
 
