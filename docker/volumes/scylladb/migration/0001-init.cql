@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS event.messages;
-DROP TABLE IF EXISTS event.attachments;
+-- DROP TABLE IF EXISTS event.messages;
+-- DROP TABLE IF EXISTS event.attachments;
 
 CREATE KEYSPACE IF NOT EXISTS event WITH replication = {
     'class': 'SimpleStrategy', 
@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS event.attachments (
     file_name text,
     file_type text,
     file_url text,
+    file_size int,
     thumbnail_url text,
     created_at timestamp,
     PRIMARY KEY ((message_id), id)

@@ -358,7 +358,7 @@ export default function Chat({ defaultTask, onNav }) {
                 uid: index,
                 name: attachment.file_name,
                 url: attachment.file_url,
-                size: 123456
+                size: attachment.file_size
             };
             return (
                 <a key={index} href={item.url} target="_blank">

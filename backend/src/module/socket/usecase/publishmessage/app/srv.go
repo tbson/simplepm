@@ -39,6 +39,7 @@ func (srv Service) Publish(
 			file.FileName,
 			file.FileType,
 			file.FileURL,
+			file.FileSize,
 		)
 		if err != nil {
 			return "", err
@@ -47,6 +48,7 @@ func (srv Service) Publish(
 			FileName: attachment.FileName,
 			FileType: attachment.FileType,
 			FileURL:  attachment.FileURL,
+			FileSize: attachment.FileSize,
 		}
 		socketAttachments = append(socketAttachments, socketAttachment)
 	}

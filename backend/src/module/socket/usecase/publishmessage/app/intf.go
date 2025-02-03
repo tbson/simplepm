@@ -8,6 +8,7 @@ type SocketAttachment struct {
 	FileName string `json:"file_name" form:"file_name" validate:"required"`
 	FileType string `json:"file_type" form:"file_type" validate:"required"`
 	FileURL  string `json:"file_url" form:"file_url" validate:"required"`
+	FileSize int    `json:"file_size" form:"file_size" validate:"required"`
 }
 
 type SocketUser struct {
@@ -42,5 +43,6 @@ type MessageRepo interface {
 		fileName string,
 		fileType string,
 		fileURL string,
+		fileSize int,
 	) (schema.Attachment, error)
 }

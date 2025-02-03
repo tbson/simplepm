@@ -115,14 +115,15 @@ func (r Repo) CreateAttachment(
 	fileName string,
 	fileType string,
 	fileURL string,
+	fileSize int,
 ) (schema.Attachment, error) {
 	emptyResult := schema.Attachment{}
 	client := skyllaclient.NewClient()
 	// defer client.Close()
 	id := skyllaclient.GenerateID()
 	err := client.Exec(
-		"INSERT INTO event.attachments (id, message_id, file_name, file_type, file_url, created_at) VALUES (?, ?, ?, ?, ?, toTimestamp(now()))",
-		id, messageID, fileName, fileType, fileURL,
+		"INSERT INTO event.attachments (id, message_id, file_name, file_type, file_url, file_size, created_at) VALUES (?, ?, ?, ?, ?, ?, toTimestamp(now()))",
+		id, messageID, fileName, fileType, fileURL, fileSize,
 	)
 	if err != nil {
 		return emptyResult, err
@@ -133,6 +134,7 @@ func (r Repo) CreateAttachment(
 		FileName:  fileName,
 		FileType:  fileType,
 		FileURL:   fileURL,
+		FileSize:  fileSize,
 	}
 	return result, nil
 }
@@ -161,6 +163,7 @@ func (r Repo) GetAttachmentMap(
 			FileName:  row["file_name"].(string),
 			FileType:  row["file_type"].(string),
 			FileURL:   row["file_url"].(string),
+			FileSize:  row["file_size"].(int),
 		}
 		attachments[messageID] = append(attachments[messageID], attachment)
 	}

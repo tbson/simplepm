@@ -25,6 +25,7 @@ type FileInfo struct {
 	FileName string
 	FileType string
 	FileURL  string
+	FileSize int
 }
 
 func New(client *s3.Client) Repo {
@@ -73,7 +74,13 @@ func (u *Repo) Upload(
 	fileUrl := fmt.Sprintf("%s/%s", setting.S3_ENDPOINT_URL, key)
 	fileName := fileHeader.Filename
 	fileType := fileHeader.Header.Get("Content-Type")
-	return FileInfo{FileName: fileName, FileType: fileType, FileURL: fileUrl}, nil
+	fileSize := int(fileHeader.Size)
+	return FileInfo{
+		FileName: fileName,
+		FileType: fileType,
+		FileURL:  fileUrl,
+		FileSize: fileSize,
+	}, nil
 }
 
 // write Uploads function that receive map of fileHeaders, upload to S3 parallelly using goroutine return map of fieldName and s3URL, reuse Upload function

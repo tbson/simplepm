@@ -16,6 +16,7 @@ type Attachment struct {
 	FileName string `json:"file_name"`
 	FileType string `json:"file_type"`
 	FileURL  string `json:"file_url"`
+	FileSize int    `json:"file_size"`
 }
 
 type ListOutput struct {
@@ -53,6 +54,7 @@ func presItem(
 			FileName: rawAttachment.FileName,
 			FileType: rawAttachment.FileType,
 			FileURL:  rawAttachment.FileURL,
+			FileSize: rawAttachment.FileSize,
 		}
 		attachments = append(attachments, attachment)
 	}

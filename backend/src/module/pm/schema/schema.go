@@ -328,5 +328,6 @@ type Attachment struct {
 	FileName  string `json:"file_name"`
 	FileType  string `json:"file_type"`
 	FileURL   string `json:"file_url"`
+	FileSize  int    `json:"file_size"`
 	CreatedAt string `json:"created_at"`
 }
