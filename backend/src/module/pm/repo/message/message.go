@@ -24,7 +24,12 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 	client := skyllaclient.NewClient()
 
 	// Use QueryWithPaging to build the query
-	q := client.QueryWithPaging("SELECT * FROM event.messages WHERE task_id = ?", pageSize, pageState, taskID)
+	q := client.QueryWithPaging(
+		"SELECT * FROM event.messages WHERE task_id = ? ORDER BY id DESC",
+		pageSize,
+		pageState,
+		taskID,
+	)
 	iter := q.Iter()
 
 	var messages []schema.Message
@@ -57,7 +62,14 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 	if err := iter.Close(); err != nil {
 		return nil, nil, err
 	}
-
+	// check messages length to return empty page state
+	if len(messages) < pageSize {
+		nextPageState = nil
+	}
+	// reverse the messages
+	for i, j := 0, len(messages)-1; i < j; i, j = i+1, j-1 {
+		messages[i], messages[j] = messages[j], messages[i]
+	}
 	return messages, nextPageState, nil
 }
 

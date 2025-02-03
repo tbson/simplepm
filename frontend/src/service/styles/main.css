@@ -244,6 +244,11 @@ table.styled-table {
     border-inline-end: none !important;
 }
 
+.chat-content {
+    height: calc(100vh - 250px);
+    overflow: auto;
+}
+
 /* Custom Scroll */
 ::-webkit-scrollbar {
     width: 6px;

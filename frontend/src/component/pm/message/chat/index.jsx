@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { App, Badge, Button, Flex, Avatar } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
+import { Virtuoso } from 'react-virtuoso';
 import Markdown from 'react-markdown';
 import { createStyles } from 'antd-style';
 import {
@@ -19,6 +20,8 @@ import TaskDialog from 'component/pm/task/dialog';
 import { getStyles } from './style';
 import { roles } from './role';
 import { urls, taskUrls, messageUrls } from '../config';
+
+const START_INDEX = 999999;
 
 const defaultConversationsItems = [
     {
@@ -48,7 +51,9 @@ export default function Chat({ defaultTask, onNav }) {
     const userId = StorageUtil.getUserId();
     const taskId = parseInt(task_id);
     const projectId = parseInt(project_id);
+    const virtuoso = useRef(null);
     const navigate = useNavigate();
+    const [firstItemIndex, setFirstItemIndex] = useState(START_INDEX);
     const [task, setTask] = useState(defaultTask);
     const [conn, setConn] = useState(null);
     const [isRequesting, setIsRequesting] = useState(false);
@@ -81,10 +86,10 @@ export default function Chat({ defaultTask, onNav }) {
 
     useEffect(() => {
         getTaskList(taskId);
-        getMessage(taskId);
+        getMessage();
     }, [taskId]);
 
-    const getMessage = (taskId) => {
+    const getMessage = () => {
         const params = {
             task_id: taskId
         };
@@ -93,8 +98,12 @@ export default function Chat({ defaultTask, onNav }) {
         }
         return RequestUtil.apiCall(messageUrls.crud, params)
             .then((resp) => {
-                setMessages(resp.data.items);
+                const newMessages = resp.data.items;
+                setMessages((messages) =>
+                    formatMessages([...newMessages, ...messages])
+                );
                 setPageState(resp.data.page_state);
+                setFirstItemIndex((index) => index - newMessages.length);
             })
             .catch(RequestUtil.displayError(notification));
     };
@@ -262,7 +271,18 @@ export default function Chat({ defaultTask, onNav }) {
     };
 
     const handleAddMessage = (message) => {
-        setMessages((messages) => [...messages, { ...message }]);
+        setMessages((messages) => {
+            setTimeout(() => {
+                virtuoso.current.scrollToIndex({
+                    index: messages.length,
+                    align: 'end',
+                    behavior: 'smooth'
+                });
+            }, 250);
+
+            return formatMessages([...messages, { ...message }]);
+        });
+        setFirstItemIndex((index) => index - 1);
     };
 
     const handleSending = (nextContent) => {
@@ -284,11 +304,13 @@ export default function Chat({ defaultTask, onNav }) {
     };
 
     // ==================== Nodes ====================
-    const items = messages.map((message) => {
-        const editable = message.user.id === userId;
-        message.editable = editable;
-        return message;
-    });
+    const formatMessages = (messages) => {
+        return messages.map((message) => {
+            const editable = message.user.id === userId;
+            message.editable = editable;
+            return message;
+        });
+    };
     const attachmentsNode = (
         <Badge dot={attachedFiles.length > 0 && !headerOpen}>
             <Button
@@ -339,7 +361,7 @@ export default function Chat({ defaultTask, onNav }) {
                 size: 123456
             };
             return (
-                <a href={item.url} target="_blank">
+                <a key={index} href={item.url} target="_blank">
                     <Attachments.FileCard key={index} item={item} className="pointer" />
                 </a>
             );
@@ -354,6 +376,27 @@ export default function Chat({ defaultTask, onNav }) {
             </div>
         );
     };
+
+    const ScrollHeader = () => {
+        return (
+            <div
+                style={{
+                    padding: '2rem',
+                    display: 'flex',
+                    justifyContent: 'center'
+                }}
+            >
+                Loading...
+            </div>
+        );
+    };
+
+    const handleStartReached = useCallback(() => {
+        if (pageState === null) {
+            return;
+        }
+        getMessage();
+    }, [pageState]);
 
     // ==================== Render =================
     return (
@@ -382,8 +425,14 @@ export default function Chat({ defaultTask, onNav }) {
                             />
                         </div>
                     </div>
-                    <Flex gap="middle" vertical>
-                        {items.map((item) => {
+                    <Virtuoso
+                        ref={virtuoso}
+                        initialTopMostItemIndex={firstItemIndex}
+                        firstItemIndex={firstItemIndex}
+                        style={{ height: 'calc(100vh - 250px)' }}
+                        data={messages}
+                        startReached={handleStartReached}
+                        itemContent={(_index, item) => {
                             return (
                                 <Bubble
                                     key={item.id}
@@ -401,9 +450,14 @@ export default function Chat({ defaultTask, onNav }) {
                                     footer={renderAttachments(item.attachments)}
                                 />
                             );
-                        })}
-                    </Flex>
+                        }}
+                        components={{
+                            Header: pageState !== null ? ScrollHeader : null
+                        }}
+                    />
+
                     <Sender
+                        alignToBottom
                         value={content}
                         header={senderHeader}
                         onSubmit={handleSending}
