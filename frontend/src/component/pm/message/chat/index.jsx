@@ -480,17 +480,19 @@ export default function Chat({ defaultTask, onNav }) {
                                                 size="small"
                                                 src={item.user.avatar}
                                             />
-                                            <Dropdown
-                                                menu={getMessageMenuItems(item)}
-                                                trigger={['click']}
-                                            >
-                                                <Button
-                                                    style={{ top: -4 }}
-                                                    color="default"
-                                                    variant="link"
-                                                    icon={<MoreOutlined />}
-                                                />
-                                            </Dropdown>
+                                            {item.editable ? (
+                                                <Dropdown
+                                                    menu={getMessageMenuItems(item)}
+                                                    trigger={['click']}
+                                                >
+                                                    <Button
+                                                        style={{ top: -4 }}
+                                                        color="default"
+                                                        variant="link"
+                                                        icon={<MoreOutlined />}
+                                                    />
+                                                </Dropdown>
+                                            ) : null}
                                         </Flex>
                                     }
                                     footer={renderFooter(item)}
