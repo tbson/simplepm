@@ -308,7 +308,9 @@ func (r Repo) CreateUser(
 ) (string, error) {
 	ctx := context.Background()
 	localizer := localeutil.Get()
-
+	if mobile == nil {
+		mobile = gocloak.StringP("")
+	}
 	user := gocloak.User{
 		FirstName: gocloak.StringP(firstName),
 		LastName:  gocloak.StringP(lastName),

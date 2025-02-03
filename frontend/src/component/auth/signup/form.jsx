@@ -2,6 +2,7 @@ import * as React from 'react';
 import { t } from 'ttag';
 import { App, Button, Row, Col, Form, Input } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
+import StorageUtil from "service/helper/storage_util";
 import FormUtil from 'service/helper/form_util';
 import { signupUrls } from 'component/auth/config';
 
@@ -23,6 +24,7 @@ export default function SignupForm({ onChange, children }) {
     const handleSignup = (payload) => {
         FormUtil.submit(`${signupUrls.signup}`, payload, 'post')
             .then(() => {
+                StorageUtil.setStorage('tenantUid', payload.uid);
                 onChange(payload);
             })
             .catch(FormUtil.setFormErrors(form, notification));
