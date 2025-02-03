@@ -12,6 +12,7 @@ import Icon, {
     MessageOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
+import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import PemUtil from 'service/helper/pem_util';
 import NavUtil from 'service/helper/nav_util';
@@ -21,7 +22,8 @@ import styles from './styles.module.css';
 const { Header, Footer, Sider, Content } = Layout;
 
 function CustomIcon(imageUrl) {
-    return () => <img src={imageUrl} alt="icon" style={{ width: 16, height: 16 }} />;
+    const url = imageUrl || '/image/default.png';
+    return () => <img src={url} alt="icon" style={{ width: 16, height: 16 }} />;
 }
 
 /**
@@ -42,6 +44,17 @@ export default function UserLayout() {
         setMenuItems(getMenuItems());
         getBookmarks();
     }, [collapsed]);
+
+    useEffect(() => {
+        Util.event.listen("FETCH_BOOKMARK", handleFetchBookmark);
+        return () => {
+            Util.event.remove("FETCH_BOOKMARK", handleFetchBookmark);
+        };
+    }, []);
+
+    const handleFetchBookmark = () => {
+        getBookmarks();
+    }
 
     const navigateTo = NavUtil.navigateTo(navigate);
 

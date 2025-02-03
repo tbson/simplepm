@@ -114,6 +114,7 @@ export default function ProjectTable() {
     const onChange = (data, id) => {
         if (!id) {
             setList([{ ...Util.appendKey(data) }, ...list]);
+            Util.event.dispatch("FETCH_BOOKMARK", {});
         } else {
             const index = list.findIndex((item) => item.id === id);
             data.key = data.id;
@@ -132,6 +133,7 @@ export default function ProjectTable() {
         RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
             .then(() => {
                 setList([...list.filter((item) => item.id !== id)]);
+                Util.event.dispatch("FETCH_BOOKMARK", {});
             })
             .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
