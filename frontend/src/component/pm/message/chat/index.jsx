@@ -357,11 +357,17 @@ export default function Chat({ defaultTask, onNav }) {
             const item = {
                 uid: index,
                 name: attachment.file_name,
-                url: attachment.file_url,
+                file_url: attachment.file_url,
                 size: attachment.file_size
             };
+            if (
+                attachment.file_type.startsWith('image') &&
+                !attachment.file_type.includes('svg')
+            ) {
+                item.url = attachment.file_url;
+            }
             return (
-                <a key={index} href={item.url} target="_blank">
+                <a key={index} href={item.file_url} target="_blank">
                     <Attachments.FileCard key={index} item={item} className="pointer" />
                 </a>
             );
