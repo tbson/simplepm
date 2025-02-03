@@ -52,6 +52,7 @@ export default function Chat({ defaultTask, onNav }) {
     const userId = StorageUtil.getUserId();
     const taskId = parseInt(task_id);
     const projectId = parseInt(project_id);
+    const senderRef = useRef(null);
     const virtuoso = useRef(null);
     const navigate = useNavigate();
     const [firstItemIndex, setFirstItemIndex] = useState(START_INDEX);
@@ -336,10 +337,17 @@ export default function Chat({ defaultTask, onNav }) {
     const attachmentsNode = (
         <Badge dot={attachedFiles.length > 0 && !headerOpen}>
             <Button
-                type="text"
                 icon={<PaperClipOutlined />}
                 onClick={() => {
                     setHeaderOpen(!headerOpen);
+                    // scroll main content to bottom
+                    setTimeout(() => {
+                        window.scrollTo({
+                            left: 0,
+                            top: document.body.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }, 250);
                 }}
             />
         </Badge>
@@ -370,6 +378,7 @@ export default function Chat({ defaultTask, onNav }) {
                               description: 'Click or drag files to this area to upload'
                           }
                 }
+                getDropContainer={() => senderRef.current?.nativeElement}
             />
         </Sender.Header>
     );
@@ -506,6 +515,7 @@ export default function Chat({ defaultTask, onNav }) {
 
                     <Sender
                         alignToBottom
+                        ref={senderRef}
                         value={content}
                         header={senderHeader}
                         onSubmit={handleSending}
