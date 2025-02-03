@@ -1,4 +1,4 @@
-package skyllaclient
+package scyllaclient
 
 import (
 	"fmt"

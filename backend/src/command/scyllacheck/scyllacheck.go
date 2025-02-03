@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 
-	"src/client/skyllaclient"
+	"src/client/scyllaclient"
 )
 
 func main() {
-	client := skyllaclient.NewClient()
+	client := scyllaclient.NewClient()
 	defer client.Close()
 	user_id := 1
 	rows, err := client.Query("SELECT * FROM event.messages WHERE user_id = ?", user_id)

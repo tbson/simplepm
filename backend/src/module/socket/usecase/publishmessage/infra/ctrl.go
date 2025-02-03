@@ -2,7 +2,7 @@ package infra
 
 import (
 	"net/http"
-	"src/client/skyllaclient"
+	"src/client/scyllaclient"
 	"src/common/ctype"
 	"src/util/vldtutil"
 	"strings"
@@ -16,7 +16,7 @@ import (
 )
 
 func Publish(c echo.Context) error {
-	client := skyllaclient.NewClient()
+	client := scyllaclient.NewClient()
 	centrifugoRepo := centrifugo.New()
 	messageRepo := message.New(client)
 

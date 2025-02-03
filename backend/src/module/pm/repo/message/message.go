@@ -1,7 +1,7 @@
 package message
 
 import (
-	"src/client/skyllaclient"
+	"src/client/scyllaclient"
 	"src/util/dateutil"
 	"time"
 
@@ -12,16 +12,16 @@ import (
 )
 
 type Repo struct {
-	client *skyllaclient.Client
+	client *scyllaclient.Client
 }
 
-func New(client *skyllaclient.Client) Repo {
+func New(client *scyllaclient.Client) Repo {
 	return Repo{client: client}
 }
 
 func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, error) {
 	pageSize := setting.MSG_PAGE_SIZE
-	client := skyllaclient.NewClient()
+	client := scyllaclient.NewClient()
 
 	// Use QueryWithPaging to build the query
 	q := client.QueryWithPaging(
@@ -75,9 +75,9 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 
 func (r Repo) Create(message schema.Message) (schema.Message, error) {
 	defaultResult := schema.Message{}
-	client := skyllaclient.NewClient()
+	client := scyllaclient.NewClient()
 	// defer client.Close()
-	id := skyllaclient.GenerateID()
+	id := scyllaclient.GenerateID()
 	err := client.Exec(
 		"INSERT INTO event.messages (id, user_id, task_id, project_id, content, user_name, user_avatar, user_color, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, toTimestamp(now()), toTimestamp(now()))",
 		id, message.UserID, message.TaskID, message.ProjectID, message.Content, message.UserName, message.UserAvatar, message.UserColor,
@@ -101,7 +101,7 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 }
 
 func (r Repo) Delete(id string) error {
-	client := skyllaclient.NewClient()
+	client := scyllaclient.NewClient()
 	// defer client.Close()
 	err := client.Exec("DELETE FROM event.messages WHERE id = ?", id)
 	if err != nil {
@@ -118,9 +118,9 @@ func (r Repo) CreateAttachment(
 	fileSize int,
 ) (schema.Attachment, error) {
 	emptyResult := schema.Attachment{}
-	client := skyllaclient.NewClient()
+	client := scyllaclient.NewClient()
 	// defer client.Close()
-	id := skyllaclient.GenerateID()
+	id := scyllaclient.GenerateID()
 	err := client.Exec(
 		"INSERT INTO event.attachments (id, message_id, file_name, file_type, file_url, file_size, created_at) VALUES (?, ?, ?, ?, ?, ?, toTimestamp(now()))",
 		id, messageID, fileName, fileType, fileURL, fileSize,
@@ -142,7 +142,7 @@ func (r Repo) CreateAttachment(
 func (r Repo) GetAttachmentMap(
 	messages []schema.Message,
 ) (map[string][]schema.Attachment, error) {
-	client := skyllaclient.NewClient()
+	client := scyllaclient.NewClient()
 	// defer client.Close()
 	messageIDs := make([]string, 0)
 	for _, message := range messages {
