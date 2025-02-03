@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { App, Badge, Button, Flex, Avatar } from 'antd';
+import { App, Badge, Button, Flex, Avatar, Dropdown } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
 import { Virtuoso } from 'react-virtuoso';
 import Markdown from 'react-markdown';
@@ -9,7 +9,8 @@ import { createStyles } from 'antd-style';
 import {
     CloudUploadOutlined,
     PaperClipOutlined,
-    EditOutlined
+    EditOutlined,
+    MoreOutlined
 } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
@@ -303,6 +304,27 @@ export default function Chat({ defaultTask, onNav }) {
         setAttachedFiles(info.fileList);
     };
 
+    const getMessageMenuItems = (item) => {
+        return {
+            items: [
+                {
+                    key: 'edit',
+                    label: 'Edit',
+                    onClick: () => {
+                        console.log('edit', item);
+                    }
+                },
+                {
+                    key: 'delete',
+                    label: 'Delete',
+                    onClick: () => {
+                        console.log('delete', item);
+                    }
+                }
+            ]
+        };
+    };
+
     // ==================== Nodes ====================
     const formatMessages = (messages) => {
         return messages.map((message) => {
@@ -351,6 +373,10 @@ export default function Chat({ defaultTask, onNav }) {
             />
         </Sender.Header>
     );
+
+    const renderFooter = (item) => {
+        return renderAttachments(item.attachments);
+    };
 
     const renderAttachments = (files) => {
         const fileBlock = files.map((attachment, index) => {
@@ -442,18 +468,32 @@ export default function Chat({ defaultTask, onNav }) {
                             return (
                                 <Bubble
                                     key={item.id}
-                                    content={<Markdown>{item.content}</Markdown>}
+                                    content={item.content}
+                                    messageRender={(content) => (
+                                        <Markdown>{content}</Markdown>
+                                    )}
                                     className={styles.messages}
                                     header={item.user.name}
-                                    avatar={{
-                                        icon: (
+                                    avatar={
+                                        <Flex gap="middle" vertical>
                                             <Avatar
                                                 size="small"
                                                 src={item.user.avatar}
                                             />
-                                        )
-                                    }}
-                                    footer={renderAttachments(item.attachments)}
+                                            <Dropdown
+                                                menu={getMessageMenuItems(item)}
+                                                trigger={['click']}
+                                            >
+                                                <Button
+                                                    style={{ top: -4 }}
+                                                    color="default"
+                                                    variant="link"
+                                                    icon={<MoreOutlined />}
+                                                />
+                                            </Dropdown>
+                                        </Flex>
+                                    }
+                                    footer={renderFooter(item)}
                                 />
                             );
                         }}
