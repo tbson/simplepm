@@ -118,7 +118,6 @@ func (srv Service) HandleCallback(
 	userInfo := tokensAndClaims.UserInfo
 	user, err := srv.authRepo.GetTenantUser(tenantID, userInfo.Email)
 	if err != nil {
-		// get MANAGER role
 		roleOptions := ctype.QueryOptions{
 			Filters: ctype.Dict{
 				"TenantID": tenantID,
@@ -138,6 +137,7 @@ func (srv Service) HandleCallback(
 		if err != nil {
 			return blankResult, err
 		}
+		user, _ = srv.authRepo.GetTenantUser(tenantID, userInfo.Email)
 	} else {
 		localizer := localeutil.Get()
 		if user.LockedAt != nil {
