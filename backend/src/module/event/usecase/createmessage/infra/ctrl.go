@@ -10,6 +10,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"src/module/account/schema"
+	"src/module/event"
 	"src/module/event/repo/centrifugo"
 	"src/module/event/repo/message"
 	"src/module/event/usecase/createmessage/app"
@@ -33,7 +34,8 @@ func Create(c echo.Context) error {
 	socketMessage := app.SocketMessage{
 		Channel: data.Channel,
 		Data: app.SocketData{
-			ID: "",
+			ID:   "",
+			Type: event.CREATE_MESSAGE,
 			User: app.SocketUser{
 				ID:     user.ID,
 				Name:   userFullName,

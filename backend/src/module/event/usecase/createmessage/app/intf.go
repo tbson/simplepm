@@ -20,6 +20,7 @@ type SocketUser struct {
 
 type SocketData struct {
 	ID          string             `json:"id" form:"id"`
+	Type        string             `json:"type" form:"type"`
 	User        SocketUser         `json:"user" form:"user" validate:"required"`
 	TaskID      uint               `json:"task_id" form:"task_id" validate:"required"`
 	ProjectID   uint               `json:"project_id" form:"project_id" validate:"required"`
