@@ -20,7 +20,7 @@ import StorageUtil from 'service/helper/storage_util';
 import TaskDialog from 'component/pm/task/dialog';
 import { getStyles } from './style';
 import { roles } from './role';
-import { urls, taskUrls, messageUrls } from '../config';
+import { urls, taskUrls } from '../config';
 
 const START_INDEX = 999999;
 
@@ -98,7 +98,7 @@ export default function Chat({ defaultTask, onNav }) {
         if (pageState) {
             params.page_state = pageState;
         }
-        return RequestUtil.apiCall(messageUrls.crud, params)
+        return RequestUtil.apiCall(urls.crud, params)
             .then((resp) => {
                 const newMessages = resp.data.items;
                 setMessages((messages) =>
@@ -251,7 +251,7 @@ export default function Chat({ defaultTask, onNav }) {
 
     // ==================== Event ====================
 
-    const publishMessage = (content) => {
+    const createMessage = (content) => {
         setIsRequesting(true);
         const payload = {
             channel,
@@ -262,7 +262,7 @@ export default function Chat({ defaultTask, onNav }) {
         attachedFiles.forEach((file, index) => {
             payload[`_file_${index}`] = file.originFileObj;
         });
-        return RequestUtil.apiCall(urls.publishMessage, payload, 'post')
+        return RequestUtil.apiCall(urls.crud, payload, 'post')
             .then((resp) => {
                 return resp;
             })
@@ -292,7 +292,7 @@ export default function Chat({ defaultTask, onNav }) {
             return;
         }
         setContent('');
-        publishMessage(nextContent);
+        createMessage(nextContent);
         setAttachedFiles([]);
         setHeaderOpen(false);
     };

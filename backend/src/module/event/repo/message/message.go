@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"src/common/setting"
-	"src/module/pm/schema"
+	"src/module/event/schema"
 
 	"github.com/gocql/gocql"
 )

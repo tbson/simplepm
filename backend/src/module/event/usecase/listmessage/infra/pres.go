@@ -2,7 +2,7 @@ package infra
 
 import (
 	accountSchema "src/module/account/schema"
-	pmSchema "src/module/pm/schema"
+	pmSchema "src/module/event/schema"
 )
 
 type UserInfo struct {

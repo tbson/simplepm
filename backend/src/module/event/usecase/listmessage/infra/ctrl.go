@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"src/client/scyllaclient"
 	"src/module/account/schema"
-	"src/module/pm/repo/message"
+	"src/module/event/repo/message"
 	"src/util/numberutil"
 
-	"src/module/pm/usecase/crudmessage/app"
+	"src/module/event/usecase/listmessage/app"
 
 	"github.com/labstack/echo/v4"
 

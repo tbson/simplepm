@@ -1,7 +1,7 @@
 package app
 
 import (
-	"src/module/pm/schema"
+	"src/module/event/schema"
 )
 
 type MessageRepo interface {

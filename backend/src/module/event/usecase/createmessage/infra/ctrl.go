@@ -10,12 +10,12 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"src/module/account/schema"
-	"src/module/pm/repo/message"
-	"src/module/socket/repo/centrifugo"
-	"src/module/socket/usecase/publishmessage/app"
+	"src/module/event/repo/centrifugo"
+	"src/module/event/repo/message"
+	"src/module/event/usecase/createmessage/app"
 )
 
-func Publish(c echo.Context) error {
+func Create(c echo.Context) error {
 	client := scyllaclient.NewClient()
 	centrifugoRepo := centrifugo.New()
 	messageRepo := message.New(client)
@@ -52,7 +52,7 @@ func Publish(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	_, err = srv.Publish(socketMessage, files)
+	_, err = srv.Create(socketMessage, files)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

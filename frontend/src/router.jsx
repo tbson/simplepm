@@ -23,7 +23,7 @@ const Tenant = (await import('component/account/tenant')).default;
 const Workspace = (await import('component/pm/workspace')).default;
 const Project = (await import('component/pm/project')).default;
 const Task = (await import('component/pm/task')).default;
-const Message = (await import('component/pm/message')).default;
+const Message = (await import('component/event/message')).default;
 
 const userInfor = StorageUtil.getUserInfo();
 const MainLayout = userInfor?.profile_type === 'admin' ? AdminLayout : UserLayout;

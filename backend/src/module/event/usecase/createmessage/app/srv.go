@@ -2,7 +2,7 @@ package app
 
 import (
 	"src/module/aws/repo/s3"
-	"src/module/pm/schema"
+	"src/module/event/schema"
 )
 
 type Service struct {
@@ -14,7 +14,7 @@ func New(centrifugoRepo CentrifugoRepo, messageRepo MessageRepo) Service {
 	return Service{centrifugoRepo, messageRepo}
 }
 
-func (srv Service) Publish(
+func (srv Service) Create(
 	socketMessage SocketMessage,
 	files []s3.FileInfo,
 ) (string, error) {

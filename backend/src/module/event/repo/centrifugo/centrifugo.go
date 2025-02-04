@@ -8,7 +8,6 @@ import (
 	"src/common/setting"
 	"src/util/errutil"
 	"src/util/localeutil"
-	"src/util/tokenutil"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
@@ -17,16 +16,6 @@ type Repo struct{}
 
 func New() Repo {
 	return Repo{}
-}
-
-func (r Repo) GetAuthJwt(userId uint) (string, error) {
-	clientSecret := setting.CENTRIFUGO_CLIENT_SECRET
-	lifeSpan := setting.CENTRIFUGO_JWT_LIFE_SPAN
-	token, err := tokenutil.GenerateSimpleJWT(userId, clientSecret, lifeSpan)
-	if err != nil {
-		return "", err
-	}
-	return token, nil
 }
 
 func (r Repo) Publish(data interface{}) error {
