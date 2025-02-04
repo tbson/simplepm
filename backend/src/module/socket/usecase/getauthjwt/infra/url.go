@@ -10,8 +10,8 @@ import (
 )
 
 var module = "socket"
-var useCaseGroup = "get-auth-jwt"
-var useCaseGroupName = "get JWT"
+var useCaseGroup = "auth-jwt"
+var useCaseGroupName = "auth JWT"
 
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
 	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
