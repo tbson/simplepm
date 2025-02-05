@@ -1,9 +1,12 @@
 package infra
 
 import (
+	"encoding/base64"
+	"fmt"
 	"net/http"
 	"src/client/scyllaclient"
 	"src/common/ctype"
+	"src/util/numberutil"
 	"src/util/vldtutil"
 	"strings"
 
@@ -13,8 +16,37 @@ import (
 	"src/module/event"
 	"src/module/event/repo/centrifugo"
 	"src/module/event/repo/message"
-	"src/module/event/usecase/createmessage/app"
+	"src/module/event/usecase/message/app"
 )
+
+func List(c echo.Context) error {
+	user := c.Get("User").(*schema.User)
+	taskID := numberutil.StrToUint(c.QueryParam("task_id"), 0)
+
+	client := scyllaclient.NewClient()
+	centrifugoRepo := centrifugo.New()
+	messageRepo := message.New(client)
+	srv := app.New(centrifugoRepo, messageRepo)
+
+	pageStateParam := c.QueryParam("page_state")
+	var pageState []byte
+	if pageStateParam != "" {
+		decoded, err := base64.StdEncoding.DecodeString(pageStateParam)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, map[string]string{
+				"error": "Invalid page_state",
+			})
+		}
+		pageState = decoded
+	}
+
+	messages, pageState, attachmentMap, err := srv.List(taskID, pageState)
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	return c.JSON(http.StatusOK, ListPres(messages, pageState, attachmentMap, *user))
+}
 
 func Create(c echo.Context) error {
 	client := scyllaclient.NewClient()

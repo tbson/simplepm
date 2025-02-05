@@ -18,6 +18,9 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr := routeutil.RegisterRoute(g, pemMap)
 
 	rr.Private(
+		"GET", "/", List,
+	)
+	rr.Private(
 		"POST", "/", Create,
 	)
 	return e, pemMap

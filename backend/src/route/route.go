@@ -12,8 +12,7 @@ import (
 	signuptenant "src/module/account/usecase/signuptenant/infra"
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 	configoption "src/module/config/usecase/option/infra"
-	createmessage "src/module/event/usecase/createmessage/infra"
-	listmessage "src/module/event/usecase/listmessage/infra"
+	message "src/module/event/usecase/message/infra"
 	github "src/module/git/usecase/github/infra"
 	gitlab "src/module/git/usecase/gitlab/infra"
 	crudfeature "src/module/pm/usecase/crudfeature/infra"
@@ -51,9 +50,8 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = reorderfeature.RegisterUrls(e, pemMap)
 	e, pemMap = reordertask.RegisterUrls(e, pemMap)
 	e, pemMap = reorderstatus.RegisterUrls(e, pemMap)
-	e, pemMap = listmessage.RegisterUrls(e, pemMap)
+	e, pemMap = message.RegisterUrls(e, pemMap)
 	e, pemMap = getauthjwt.RegisterUrls(e, pemMap)
-	e, pemMap = createmessage.RegisterUrls(e, pemMap)
 	e, pemMap = github.RegisterUrls(e, pemMap)
 	e, pemMap = gitlab.RegisterUrls(e, pemMap)
 	return e, pemMap

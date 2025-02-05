@@ -14,6 +14,17 @@ func New(centrifugoRepo CentrifugoRepo, messageRepo MessageRepo) Service {
 	return Service{centrifugoRepo, messageRepo}
 }
 
+func (srv Service) List(
+	taskID uint, pageState []byte,
+) ([]schema.Message, []byte, map[string][]schema.Attachment, error) {
+	messages, nextPageState, err := srv.messageRepo.List(taskID, pageState)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	attachmentMap, err := srv.messageRepo.GetAttachmentMap(messages)
+	return messages, nextPageState, attachmentMap, nil
+}
+
 func (srv Service) Create(
 	socketMessage SocketMessage,
 	files []s3.FileInfo,
