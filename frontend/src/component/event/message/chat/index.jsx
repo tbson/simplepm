@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { App, Badge, Button, Flex, Avatar, Dropdown } from 'antd';
+import { App, Badge, Button, Flex, Avatar, Dropdown, Space } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
 import { Virtuoso } from 'react-virtuoso';
 import Markdown from 'react-markdown';
@@ -10,7 +10,8 @@ import {
     CloudUploadOutlined,
     PaperClipOutlined,
     EditOutlined,
-    MoreOutlined
+    MoreOutlined,
+    ArrowUpOutlined
 } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
@@ -62,6 +63,7 @@ export default function Chat({ defaultTask, onNav }) {
     const [task, setTask] = useState(defaultTask);
     const [conn, setConn] = useState(null);
     const [isRequesting, setIsRequesting] = useState(false);
+    const [editId, setEditId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [pageState, setPageState] = useState('');
     const { styles } = useStyle();
@@ -206,17 +208,10 @@ export default function Chat({ defaultTask, onNav }) {
                 handleAddMessage(data);
             }
             if (data.type === UPDATE_MESSAGE) {
-                const index = messages.findIndex((item) => item.id === data.id);
-                if (index !== -1) {
-                    const newMessages = [...messages];
-                    newMessages[index].content = data.content;
-                    setMessages(newMessages);
-                }
+                handleUpdateMessage(data);
             }
             if (data.type === DELETE_MESSAGE) {
-                setMessages((messages) =>
-                    messages.filter((item) => item.id !== data.id)
-                );
+                handleDeleteMessage(data);
             }
         });
         /*
@@ -296,13 +291,14 @@ export default function Chat({ defaultTask, onNav }) {
             channel,
             content
         };
-        return RequestUtil.apiCall(`${urls.crud}${id}`, payload, 'put')
+        return RequestUtil.apiCall(`${urls.crud}${id}/${taskId}`, payload, 'put')
             .then((resp) => {
                 return resp;
             })
             .catch(RequestUtil.displayError(notification))
             .finally(() => {
                 setIsRequesting(false);
+                setEditId(null);
             });
     };
 
@@ -311,7 +307,7 @@ export default function Chat({ defaultTask, onNav }) {
         const payload = {
             channel
         };
-        return RequestUtil.apiCall(`${urls.crud}${id}/${taskId}`, payload, 'put')
+        return RequestUtil.apiCall(`${urls.delete}${id}/${taskId}`, payload, 'put')
             .then((resp) => {
                 return resp;
             })
@@ -336,12 +332,32 @@ export default function Chat({ defaultTask, onNav }) {
         setFirstItemIndex((index) => index - 1);
     };
 
+    const handleUpdateMessage = (data) => {
+        setMessages((messages) => {
+            const index = messages.findIndex((item) => item.id === data.id);
+            if (index === -1) {
+                return messages;
+            }
+            const newMessages = [...messages];
+            newMessages[index].content = data.content;
+            return newMessages;
+        });
+    };
+
+    const handleDeleteMessage = (data) => {
+        setMessages((messages) => messages.filter((item) => item.id !== data.id));
+    };
+
     const handleSending = (nextContent) => {
         if (!nextContent) {
             return;
         }
         setContent('');
-        createMessage(nextContent);
+        if (editId) {
+            updateMessage(editId, nextContent);
+        } else {
+            createMessage(nextContent);
+        }
         setAttachedFiles([]);
         setHeaderOpen(false);
     };
@@ -362,6 +378,8 @@ export default function Chat({ defaultTask, onNav }) {
                     label: 'Edit',
                     onClick: () => {
                         console.log('edit', item);
+                        setEditId(item.id);
+                        setContent(item.content);
                     }
                 },
                 {
@@ -369,6 +387,10 @@ export default function Chat({ defaultTask, onNav }) {
                     label: 'Delete',
                     onClick: () => {
                         console.log('delete', item);
+                        const r = window.confirm('Do you want to remove this message?');
+                        if (!r) {
+                            return;
+                        }
                         deleteMessage(item.id);
                     }
                 }
@@ -570,9 +592,24 @@ export default function Chat({ defaultTask, onNav }) {
                         header={senderHeader}
                         onSubmit={handleSending}
                         onChange={setContent}
-                        prefix={attachmentsNode}
+                        prefix={editId ? null : attachmentsNode}
                         loading={isRequesting}
                         className={styles.sender}
+                        actions={(_, info) => {
+                            const { SendButton, ClearButton } = info.components;
+                            return (
+                                <Space size="small">
+                                    {editId ? (
+                                        <ClearButton onClick={() => setEditId(null)} />
+                                    ) : null}
+                                    <SendButton
+                                        type="primary"
+                                        icon={<ArrowUpOutlined />}
+                                        disabled={isRequesting}
+                                    />
+                                </Space>
+                            );
+                        }}
                     />
                 </div>
             </div>

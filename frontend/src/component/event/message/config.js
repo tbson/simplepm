@@ -6,6 +6,7 @@ const urlMap = {
         prefix: 'event/message',
         endpoints: {
             crud: '',
+            delete: '/delete',
         }
     },
     task: {

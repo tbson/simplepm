@@ -102,6 +102,7 @@ func Update(c echo.Context) error {
 	srv := app.New(centrifugoRepo, messageRepo)
 
 	id := c.Param("id")
+	taskID := vldtutil.ValidateId(c.Param("task_id"))
 
 	structData, _, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
@@ -117,7 +118,7 @@ func Update(c echo.Context) error {
 		},
 	}
 
-	_, err = srv.Update(id, socketMessage)
+	_, err = srv.Update(id, taskID, socketMessage)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -133,10 +134,10 @@ func Delete(c echo.Context) error {
 	srv := app.New(centrifugoRepo, messageRepo)
 
 	id := c.Param("id")
-	task_id := vldtutil.ValidateId(c.Param("task_id"))
+	taskID := vldtutil.ValidateId(c.Param("task_id"))
 
 	fmt.Println("id", id)
-	fmt.Println("task_id", task_id)
+	fmt.Println("task_id", taskID)
 
 	structData, _, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
@@ -150,7 +151,7 @@ func Delete(c echo.Context) error {
 		},
 	}
 
-	err = srv.Delete(id, task_id, socketMessage)
+	err = srv.Delete(id, taskID, socketMessage)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

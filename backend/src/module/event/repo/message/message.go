@@ -101,13 +101,13 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 	return result, nil
 }
 
-func (r Repo) Update(id string, message schema.Message) (schema.Message, error) {
+func (r Repo) Update(id string, taskId uint, message schema.Message) (schema.Message, error) {
 	defaultResult := schema.Message{}
 	client := scyllaclient.NewClient()
 	// defer client.Close()
 	err := client.Exec(
-		"UPDATE event.messages SET content = ?, updated_at = toTimestamp(now()) WHERE id = ?",
-		message.Content, message.ID,
+		"UPDATE event.messages SET content = ?, updated_at = toTimestamp(now()) WHERE id = ? AND task_id = ?",
+		message.Content, id, taskId,
 	)
 	if err != nil {
 		return defaultResult, err

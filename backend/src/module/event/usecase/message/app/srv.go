@@ -76,12 +76,13 @@ func (srv Service) Create(
 
 func (srv Service) Update(
 	id string,
+	taskID uint,
 	socketMessage SocketMessage,
 ) (string, error) {
 	messageData := schema.Message{
 		Content: socketMessage.Data.Content,
 	}
-	message, err := srv.messageRepo.Update(id, messageData)
+	message, err := srv.messageRepo.Update(id, taskID, messageData)
 	if err != nil {
 		fmt.Println("case 1")
 		return "", err
@@ -95,8 +96,8 @@ func (srv Service) Update(
 	return message.ID, nil
 }
 
-func (srv Service) Delete(id string, task_id uint, socketMessage SocketMessage) error {
-	err := srv.messageRepo.Delete(id, task_id)
+func (srv Service) Delete(id string, taskID uint, socketMessage SocketMessage) error {
+	err := srv.messageRepo.Delete(id, taskID)
 	if err != nil {
 		fmt.Println("case 1")
 		return err
