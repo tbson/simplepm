@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"src/module/aws/repo/s3"
 	"src/module/event/schema"
 )
@@ -71,4 +72,40 @@ func (srv Service) Create(
 	}
 
 	return message.ID, nil
+}
+
+func (srv Service) Update(
+	id string,
+	socketMessage SocketMessage,
+) (string, error) {
+	messageData := schema.Message{
+		Content: socketMessage.Data.Content,
+	}
+	message, err := srv.messageRepo.Update(id, messageData)
+	if err != nil {
+		fmt.Println("case 1")
+		return "", err
+	}
+	err = srv.centrifugoRepo.Publish(socketMessage)
+	if err != nil {
+		fmt.Println("case 2")
+		return "", err
+	}
+
+	return message.ID, nil
+}
+
+func (srv Service) Delete(id string, task_id uint, socketMessage SocketMessage) error {
+	err := srv.messageRepo.Delete(id, task_id)
+	if err != nil {
+		fmt.Println("case 1")
+		return err
+	}
+	err = srv.centrifugoRepo.Publish(socketMessage)
+	if err != nil {
+		fmt.Println("case 2")
+		return err
+	}
+
+	return nil
 }

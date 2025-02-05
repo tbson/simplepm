@@ -23,6 +23,9 @@ import { roles } from './role';
 import { urls, taskUrls } from '../config';
 
 const START_INDEX = 999999;
+const CREATE_MESSAGE = 'CREATE_MESSAGE';
+const UPDATE_MESSAGE = 'UPDATE_MESSAGE';
+const DELETE_MESSAGE = 'DELETE_MESSAGE';
 
 const defaultConversationsItems = [
     {
@@ -199,7 +202,22 @@ export default function Chat({ defaultTask, onNav }) {
             const { data } = ctx;
             console.log('publication', data);
             data.editable = data.user_id === userId;
-            handleAddMessage(data);
+            if (data.type === CREATE_MESSAGE) {
+                handleAddMessage(data);
+            }
+            if (data.type === UPDATE_MESSAGE) {
+                const index = messages.findIndex((item) => item.id === data.id);
+                if (index !== -1) {
+                    const newMessages = [...messages];
+                    newMessages[index].content = data.content;
+                    setMessages(newMessages);
+                }
+            }
+            if (data.type === DELETE_MESSAGE) {
+                setMessages((messages) =>
+                    messages.filter((item) => item.id !== data.id)
+                );
+            }
         });
         /*
         sub.on('subscribing', (ctx) => {
@@ -272,6 +290,37 @@ export default function Chat({ defaultTask, onNav }) {
             });
     };
 
+    const updateMessage = (id, content) => {
+        setIsRequesting(true);
+        const payload = {
+            channel,
+            content
+        };
+        return RequestUtil.apiCall(`${urls.crud}${id}`, payload, 'put')
+            .then((resp) => {
+                return resp;
+            })
+            .catch(RequestUtil.displayError(notification))
+            .finally(() => {
+                setIsRequesting(false);
+            });
+    };
+
+    const deleteMessage = (id) => {
+        setIsRequesting(true);
+        const payload = {
+            channel
+        };
+        return RequestUtil.apiCall(`${urls.crud}${id}/${taskId}`, payload, 'put')
+            .then((resp) => {
+                return resp;
+            })
+            .catch(RequestUtil.displayError(notification))
+            .finally(() => {
+                setIsRequesting(false);
+            });
+    };
+
     const handleAddMessage = (message) => {
         setMessages((messages) => {
             setTimeout(() => {
@@ -320,6 +369,7 @@ export default function Chat({ defaultTask, onNav }) {
                     label: 'Delete',
                     onClick: () => {
                         console.log('delete', item);
+                        deleteMessage(item.id);
                     }
                 }
             ]

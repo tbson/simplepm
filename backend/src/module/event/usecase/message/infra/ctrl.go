@@ -93,3 +93,67 @@ func Create(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, ctype.Dict{})
 }
+
+func Update(c echo.Context) error {
+	client := scyllaclient.NewClient()
+	centrifugoRepo := centrifugo.New()
+	messageRepo := message.New(client)
+
+	srv := app.New(centrifugoRepo, messageRepo)
+
+	id := c.Param("id")
+
+	structData, _, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	socketMessage := app.SocketMessage{
+		Channel: structData.Channel,
+		Data: app.SocketData{
+			ID:      id,
+			Type:    event.UPDATE_MESSAGE,
+			Content: structData.Content,
+		},
+	}
+
+	_, err = srv.Update(id, socketMessage)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, ctype.Dict{})
+}
+
+func Delete(c echo.Context) error {
+	client := scyllaclient.NewClient()
+	centrifugoRepo := centrifugo.New()
+	messageRepo := message.New(client)
+
+	srv := app.New(centrifugoRepo, messageRepo)
+
+	id := c.Param("id")
+	task_id := vldtutil.ValidateId(c.Param("task_id"))
+
+	fmt.Println("id", id)
+	fmt.Println("task_id", task_id)
+
+	structData, _, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	socketMessage := app.SocketMessage{
+		Channel: structData.Channel,
+		Data: app.SocketData{
+			ID:   id,
+			Type: event.DELETE_MESSAGE,
+		},
+	}
+
+	err = srv.Delete(id, task_id, socketMessage)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	return c.JSON(http.StatusOK, ctype.Dict{})
+}

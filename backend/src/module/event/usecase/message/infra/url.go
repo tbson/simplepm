@@ -23,5 +23,11 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr.Private(
 		"POST", "/", Create,
 	)
+	rr.Private(
+		"PUT", "/:id", Update,
+	)
+	rr.Private(
+		"PUT", "/:id/:task_id", Delete,
+	)
 	return e, pemMap
 }

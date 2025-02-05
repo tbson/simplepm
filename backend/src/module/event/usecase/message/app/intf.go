@@ -41,6 +41,8 @@ type MessageRepo interface {
 	List(taskID uint, pageState []byte) ([]schema.Message, []byte, error)
 	GetAttachmentMap(messages []schema.Message) (map[string][]schema.Attachment, error)
 	Create(message schema.Message) (schema.Message, error)
+	Update(id string, message schema.Message) (schema.Message, error)
+	Delete(id string, task_id uint) error
 	CreateAttachment(
 		messageID string,
 		fileName string,

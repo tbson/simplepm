@@ -1,6 +1,7 @@
 package message
 
 import (
+	"fmt"
 	"src/client/scyllaclient"
 	"src/util/dateutil"
 	"time"
@@ -100,11 +101,31 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 	return result, nil
 }
 
-func (r Repo) Delete(id string) error {
+func (r Repo) Update(id string, message schema.Message) (schema.Message, error) {
+	defaultResult := schema.Message{}
 	client := scyllaclient.NewClient()
 	// defer client.Close()
-	err := client.Exec("DELETE FROM event.messages WHERE id = ?", id)
+	err := client.Exec(
+		"UPDATE event.messages SET content = ?, updated_at = toTimestamp(now()) WHERE id = ?",
+		message.Content, message.ID,
+	)
 	if err != nil {
+		return defaultResult, err
+	}
+	result := schema.Message{
+		ID:        id,
+		Content:   message.Content,
+		UpdatedAt: dateutil.TimeToStr(time.Now()),
+	}
+	return result, nil
+}
+
+func (r Repo) Delete(id string, task_id uint) error {
+	client := scyllaclient.NewClient()
+	// defer client.Close()
+	err := client.Exec("DELETE FROM event.messages WHERE id = ? AND task_id = ?", id, task_id)
+	if err != nil {
+		fmt.Println("error deleting message", err)
 		return err
 	}
 	return nil
