@@ -516,7 +516,7 @@ export default function Chat({ defaultTask, onNav }) {
         <>
             <div className={styles.layout}>
                 <div className={styles.menu}>
-                    <div className={styles.chatHeading}>Task list</div>
+                    <div className={styles.chatHeading}>Project name...</div>
                     <Conversations
                         items={conversationsItems}
                         className={styles.conversations}
