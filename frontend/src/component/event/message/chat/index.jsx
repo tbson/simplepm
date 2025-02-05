@@ -516,6 +516,7 @@ export default function Chat({ defaultTask, onNav }) {
         <>
             <div className={styles.layout}>
                 <div className={styles.menu}>
+                    <div className={styles.chatHeading}>Task list</div>
                     <Conversations
                         items={conversationsItems}
                         className={styles.conversations}
@@ -524,7 +525,7 @@ export default function Chat({ defaultTask, onNav }) {
                     />
                 </div>
                 <div className={styles.chat}>
-                    <div className="flex-container">
+                    <div className={styles.chatHeading}>
                         <div className="flex-item-remaining">
                             <div>
                                 <strong># {task.title}</strong>
@@ -542,7 +543,12 @@ export default function Chat({ defaultTask, onNav }) {
                         ref={virtuoso}
                         initialTopMostItemIndex={firstItemIndex}
                         firstItemIndex={firstItemIndex}
-                        style={{ height: 'calc(100vh - 250px)' }}
+                        style={{
+                            height: 'calc(100vh - 250px)',
+                            paddingLeft: 5,
+                            paddingRight: 5,
+                            overflowX: 'hidden'
+                        }}
                         data={messages}
                         startReached={handleStartReached}
                         itemContent={(_index, item) => {
@@ -611,6 +617,12 @@ export default function Chat({ defaultTask, onNav }) {
                             );
                         }}
                     />
+                </div>
+                <div className={styles.document}>
+                    <div className={styles.chatHeading}>Documents</div>
+                    <div className={styles.documentRow}>Document 1</div>
+                    <div className={styles.documentRow}>Document 2</div>
+                    <div className={styles.documentRow}>Document 3</div>
                 </div>
             </div>
             <TaskDialog onChange={handleChange} onDelete={handleDelete} />

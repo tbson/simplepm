@@ -16,7 +16,7 @@ export function getStyles(createStyles) {
             `,
             menu: css`
                 background: ${token.colorBgLayout}80;
-                width: 280px;
+                width: 25%;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
@@ -29,7 +29,9 @@ export function getStyles(createStyles) {
             chat: css`
                 height: 100%;
                 width: 100%;
-                max-width: 700px;
+                flex: 1;
+                // max-width: 700px;
+                padding: 0 !important;
                 margin: 0 auto;
                 box-sizing: border-box;
                 display: flex;
@@ -73,7 +75,29 @@ export function getStyles(createStyles) {
                 border: 1px solid #1677ff34;
                 width: calc(100% - 24px);
                 margin: 0 12px 24px 12px;
-            `
+            `,
+            document: css`
+                width: 30%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            `,
+            documentRow: css`
+                padding: 10px;
+                padding-top: 0;
+                padding-bottom: 0;
+            `,
+            chatHeading: css`
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 12px;
+                height: 48px;
+                font-weight: bold;
+                background: ${token.colorBgLayout}80;
+                border-bottom: 1px solid ${token.colorBorder};
+            `,
         };
     });
 }
