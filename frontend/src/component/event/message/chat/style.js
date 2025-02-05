@@ -77,7 +77,7 @@ export function getStyles(createStyles) {
                 margin: 0 12px 24px 12px;
             `,
             document: css`
-                width: 30%;
+                width: 25%;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
