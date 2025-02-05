@@ -10,15 +10,18 @@ import (
 )
 
 var module = "socket"
-var useCaseGroup = "auth-jwt"
-var useCaseGroupName = "auth JWT"
+var useCaseGroup = "jwt"
+var useCaseGroupName = "JWT"
 
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
 	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
 	rr := routeutil.RegisterRoute(g, pemMap)
 
 	rr.Private(
-		"GET", "/", GetAuthJWT,
+		"GET", "/auth/", GetAuthJWT,
+	)
+	rr.Private(
+		"GET", "/subscription/", GetSubscriptionJWT,
 	)
 	return e, pemMap
 }

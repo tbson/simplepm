@@ -18,10 +18,12 @@ func CallbackPres(c echo.Context, r authtype.AuthCallbackResult) error {
 	accessTokenCookie := cookieutil.NewAccessTokenCookie(r.AccessToken)
 	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(r.RefreshToken)
 	idTokenCookie := cookieutil.NewIDTokenCookie(r.IDToken)
+	sessionIDCookie := cookieutil.NewSessionIDCookie()
 	c.SetCookie(realmCookie)
 	c.SetCookie(accessTokenCookie)
 	c.SetCookie(refreshTokenCookie)
 	c.SetCookie(idTokenCookie)
+	c.SetCookie(sessionIDCookie)
 
 	userInfo := r.UserInfo
 

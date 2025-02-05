@@ -3,6 +3,7 @@ package cookieutil
 import (
 	"net/http"
 	"src/common/setting"
+	"src/util/tokenutil"
 	"strings"
 
 	"github.com/labstack/echo/v4"
@@ -34,6 +35,11 @@ func NewIDTokenCookie(value string) *http.Cookie {
 
 func NewRealmCookie(value string) *http.Cookie {
 	return newCookie("realm", value, "/api/v1/")
+}
+
+func NewSessionIDCookie() *http.Cookie {
+	uuid := tokenutil.GenerateUUID()
+	return newCookie("session_id", uuid, "/api/v1/socket/jwt/subscription/")
 }
 
 func GetValue(c echo.Context, name string) string {

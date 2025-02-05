@@ -24,7 +24,7 @@ import (
 	reorderstatus "src/module/pm/usecase/reorderstatus/infra"
 	reordertask "src/module/pm/usecase/reordertask/infra"
 	reordertaskfield "src/module/pm/usecase/reordertaskfield/infra"
-	getauthjwt "src/module/socket/usecase/getauthjwt/infra"
+	jwt "src/module/socket/usecase/jwt/infra"
 
 	"github.com/labstack/echo/v4"
 )
@@ -51,7 +51,7 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = reordertask.RegisterUrls(e, pemMap)
 	e, pemMap = reorderstatus.RegisterUrls(e, pemMap)
 	e, pemMap = message.RegisterUrls(e, pemMap)
-	e, pemMap = getauthjwt.RegisterUrls(e, pemMap)
+	e, pemMap = jwt.RegisterUrls(e, pemMap)
 	e, pemMap = github.RegisterUrls(e, pemMap)
 	e, pemMap = gitlab.RegisterUrls(e, pemMap)
 	return e, pemMap
