@@ -22,7 +22,7 @@ export function getStyles(createStyles) {
                 flex-direction: column;
             `,
             conversations: css`
-                padding: 0 12px;
+                padding: 0 5px;
                 flex: 1;
                 overflow-y: auto;
             `,
