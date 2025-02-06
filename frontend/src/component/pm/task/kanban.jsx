@@ -150,7 +150,7 @@ export default function TaskKanban({ projectId }) {
 
     const handleView = (id) => {
         // Dialog.toggle(true, id);
-        navigateTo(`/pm/task/${projectId}/${id}`);
+        navigateTo(`/pm/task/${id}`);
     };
 
     const handleReorder = (type, data) => {

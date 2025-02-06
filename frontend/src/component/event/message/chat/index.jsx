@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { App, Badge, Button, Flex, Avatar, Dropdown, Space } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
 import { Virtuoso } from 'react-virtuoso';
@@ -51,13 +51,12 @@ const conversationToItem = (conversation) => ({
     description: conversation.description
 });
 
-export default function Chat({ defaultTask, onNav }) {
+export default function Chat({ project, defaultTask, onNav }) {
     const { notification } = App.useApp();
-    const { project_id, task_id } = useParams();
-    const channel = `${project_id}/${task_id}`;
     const userId = StorageUtil.getUserId();
-    const taskId = parseInt(task_id);
-    const projectId = parseInt(project_id);
+    const { id: projectId, title: projectTitle } = project;
+    const taskId = defaultTask.id;
+    const channel = `${projectId}/${taskId}`;
     const senderRef = useRef(null);
     const virtuoso = useRef(null);
     const navigate = useNavigate();
@@ -521,7 +520,7 @@ export default function Chat({ defaultTask, onNav }) {
         <>
             <div className={styles.layout}>
                 <div className={styles.menu}>
-                    <div className={styles.chatHeading}>Project name...</div>
+                    <div className={styles.chatHeading}>{projectTitle}</div>
                     <Conversations
                         items={conversationsItems}
                         className={styles.conversations}

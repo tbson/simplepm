@@ -9,9 +9,10 @@ import Chat from './chat';
 
 export default function Message() {
     const { notification } = App.useApp();
-    const { project_id, task_id } = useParams();
+    const { task_id } = useParams();
+    const [project, setProject] = useState({});
     const [task, setTask] = useState({});
-    const [messageBreadcrumb, setMessageBreadcrumb] = useState({
+    const [breadcrumb, setBreadcrumb] = useState({
         project: {
             id: null,
             title: 'Loading...',
@@ -30,6 +31,7 @@ export default function Message() {
     const getBreadcrumb = () => {
         RequestUtil.apiCall(`${taskUrls.crud}${task_id}`)
             .then((resp) => {
+                setProject(resp.data.project);
                 const data = {
                     loaded: true,
                     project: {
@@ -39,7 +41,7 @@ export default function Message() {
                         title: resp.data.title
                     }
                 };
-                setMessageBreadcrumb(data);
+                setBreadcrumb(data);
                 setTask({
                     id: resp.data.id,
                     title: resp.data.title,
@@ -50,8 +52,8 @@ export default function Message() {
     };
 
     const handleNav = (taskTitle) => {
-        const data = { ...messageBreadcrumb, task: { title: taskTitle } };
-        setMessageBreadcrumb(data);
+        const data = { ...breadcrumb, task: { title: taskTitle } };
+        setBreadcrumb(data);
     };
 
     return (
@@ -61,20 +63,20 @@ export default function Message() {
                     items={[
                         {
                             title: (
-                                <Link to={`/pm/task/${project_id}`}>
-                                    {messageBreadcrumb.project.title}
+                                <Link to={`/pm/task/${project.id}`}>
+                                    {breadcrumb.project.title}
                                 </Link>
                             )
                         },
                         {
-                            title: messageBreadcrumb.task.title
+                            title: breadcrumb.task.title
                         }
                     ]}
                 />
             </PageHeading>
-            <Skeleton loading={!messageBreadcrumb.loaded} active />
-            {messageBreadcrumb.loaded ? (
-                <Chat defaultTask={task} onNav={handleNav} />
+            <Skeleton loading={!breadcrumb.loaded} active />
+            {breadcrumb.loaded ? (
+                <Chat project={project} defaultTask={task} onNav={handleNav} />
             ) : null}
         </div>
     );
