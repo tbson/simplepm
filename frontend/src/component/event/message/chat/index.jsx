@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { App, Badge, Button, Flex, Avatar, Dropdown, Space, List } from 'antd';
+import { App, Badge, Button, Flex, Avatar, Dropdown, Space } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
 import { Virtuoso } from 'react-virtuoso';
 import Markdown from 'react-markdown';
