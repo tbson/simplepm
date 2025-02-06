@@ -10,6 +10,7 @@ import (
 
 	account "src/module/account/schema"
 	config "src/module/config/schema"
+	document "src/module/document/schema"
 	pm "src/module/pm/schema"
 )
 
@@ -37,6 +38,7 @@ func RegisterModels() []interface{} {
 		&pm.Task{},
 		&pm.TaskFieldValue{},
 		&pm.GitBranch{},
+		&document.Doc{},
 	}
 }
 
@@ -50,7 +52,9 @@ func InitDb() {
 	if testutil.IsTest() {
 		dbName = dbName + "_test"
 	}
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=%s", host, user, password, dbName, port, timeZone)
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=%s",
+		host, user, password, dbName, port, timeZone)
 	db, e = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if e != nil {
