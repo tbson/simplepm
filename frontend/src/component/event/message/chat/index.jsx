@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { App, Badge, Button, Flex, Avatar, Dropdown, Space } from 'antd';
+import { App, Badge, Button, Flex, Avatar, Dropdown, Space, List } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
 import { Virtuoso } from 'react-virtuoso';
 import Markdown from 'react-markdown';
@@ -10,7 +10,12 @@ import {
     CloudUploadOutlined,
     PaperClipOutlined,
     EditOutlined,
+    DeleteOutlined,
+    PlusOutlined,
     MoreOutlined,
+    FileWordOutlined,
+    UploadOutlined,
+    LinkOutlined,
     ArrowUpOutlined
 } from '@ant-design/icons';
 import Util from 'service/helper/util';
@@ -32,6 +37,24 @@ const defaultConversationsItems = [
     {
         key: '0',
         label: 'Default'
+    }
+];
+
+const testDocList = [
+    {
+        title: 'Document 1',
+        url: 'https://www.google.com',
+        type: 'DOCUMENT'
+    },
+    {
+        title: 'Document 2',
+        url: 'https://www.google.com',
+        type: 'FILE'
+    },
+    {
+        title: 'Document 3',
+        url: 'https://www.google.com',
+        type: 'LINK'
     }
 ];
 
@@ -65,6 +88,7 @@ export default function Chat({ defaultTask, onNav }) {
     const [isRequesting, setIsRequesting] = useState(false);
     const [editId, setEditId] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [documents, setDocuments] = useState(testDocList);
     const [pageState, setPageState] = useState('');
     const { styles } = useStyle();
 
@@ -376,6 +400,7 @@ export default function Chat({ defaultTask, onNav }) {
                 {
                     key: 'edit',
                     label: 'Edit',
+                    icon: <EditOutlined />,
                     onClick: () => {
                         console.log('edit', item);
                         setEditId(item.id);
@@ -385,6 +410,8 @@ export default function Chat({ defaultTask, onNav }) {
                 {
                     key: 'delete',
                     label: 'Delete',
+                    danger: true,
+                    icon: <DeleteOutlined />,
                     onClick: () => {
                         console.log('delete', item);
                         const r = window.confirm('Do you want to remove this message?');
@@ -396,6 +423,50 @@ export default function Chat({ defaultTask, onNav }) {
                 }
             ]
         };
+    };
+
+    const getDocumentMenuItems = () => {
+        return {
+            items: [
+                {
+                    key: 'document',
+                    label: 'Documnet',
+                    icon: <FileWordOutlined />,
+                    onClick: () => {
+                        console.log('document');
+                    }
+                },
+                {
+                    key: 'file',
+                    label: 'File',
+                    icon: <UploadOutlined />,
+                    onClick: () => {
+                        console.log('document');
+                    }
+                },
+                {
+                    key: 'link',
+                    label: 'Link',
+                    icon: <LinkOutlined />,
+                    onClick: () => {
+                        console.log('document');
+                    }
+                }
+            ]
+        };
+    };
+
+    const getDocumentIcon = (type) => {
+        if (type === 'DOCUMENT') {
+            return <FileWordOutlined />;
+        }
+        if (type === 'FILE') {
+            return <UploadOutlined />;
+        }
+        if (type === 'LINK') {
+            return <LinkOutlined />;
+        }
+        return null;
     };
 
     // ==================== Nodes ====================
@@ -576,7 +647,13 @@ export default function Chat({ defaultTask, onNav }) {
                                                         style={{ top: -4 }}
                                                         color="default"
                                                         variant="link"
-                                                        icon={<MoreOutlined />}
+                                                        icon={
+                                                            <MoreOutlined
+                                                                style={{
+                                                                    fontSize: '20px'
+                                                                }}
+                                                            />
+                                                        }
                                                     />
                                                 </Dropdown>
                                             ) : null}
@@ -619,10 +696,39 @@ export default function Chat({ defaultTask, onNav }) {
                     />
                 </div>
                 <div className={styles.document}>
-                    <div className={styles.chatHeading}>Documents</div>
-                    <div className={styles.documentRow}>Document 1</div>
-                    <div className={styles.documentRow}>Document 2</div>
-                    <div className={styles.documentRow}>Document 3</div>
+                    <div className={styles.chatHeading}>
+                        <div className="flex-item-remaining">
+                            <div>
+                                <strong>Documents</strong>
+                            </div>
+                            <div>{task.description}</div>
+                        </div>
+                        <div>
+                            <Dropdown menu={getDocumentMenuItems()} trigger={['click']}>
+                                <Button icon={<PlusOutlined />} />
+                            </Dropdown>
+                        </div>
+                    </div>
+                    <List
+                        itemLayout="horizontal"
+                        size="small"
+                        dataSource={documents}
+                        renderItem={(item) => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    avatar={getDocumentIcon(item.type)}
+                                    title={
+                                        <a href={item.url} target="_blank">
+                                            {item.title}
+                                        </a>
+                                    }
+                                />
+                                <div>
+                                    <MoreOutlined style={{ fontSize: '20px' }} />
+                                </div>
+                            </List.Item>
+                        )}
+                    />
                 </div>
             </div>
             <TaskDialog onChange={handleChange} onDelete={handleDelete} />
