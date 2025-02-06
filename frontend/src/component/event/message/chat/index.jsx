@@ -11,11 +11,7 @@ import {
     PaperClipOutlined,
     EditOutlined,
     DeleteOutlined,
-    PlusOutlined,
     MoreOutlined,
-    FileWordOutlined,
-    UploadOutlined,
-    LinkOutlined,
     ArrowUpOutlined
 } from '@ant-design/icons';
 import Util from 'service/helper/util';
@@ -24,6 +20,7 @@ import RequestUtil from 'service/helper/request_util';
 import SocketUtil from 'service/helper/socket_util';
 import StorageUtil from 'service/helper/storage_util';
 import TaskDialog from 'component/pm/task/dialog';
+import Doc from 'component/document/doc';
 import { getStyles } from './style';
 import { roles } from './role';
 import { urls, taskUrls } from '../config';
@@ -37,24 +34,6 @@ const defaultConversationsItems = [
     {
         key: '0',
         label: 'Default'
-    }
-];
-
-const testDocList = [
-    {
-        title: 'Document 1',
-        url: 'https://www.google.com',
-        type: 'DOC'
-    },
-    {
-        title: 'Document 2',
-        url: 'https://www.google.com',
-        type: 'FILE'
-    },
-    {
-        title: 'Document 3',
-        url: 'https://www.google.com',
-        type: 'LINK'
     }
 ];
 
@@ -88,7 +67,6 @@ export default function Chat({ defaultTask, onNav }) {
     const [isRequesting, setIsRequesting] = useState(false);
     const [editId, setEditId] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [documents, setDocuments] = useState(testDocList);
     const [pageState, setPageState] = useState('');
     const { styles } = useStyle();
 
@@ -425,50 +403,6 @@ export default function Chat({ defaultTask, onNav }) {
         };
     };
 
-    const getDocumentMenuItems = () => {
-        return {
-            items: [
-                {
-                    key: 'document',
-                    label: 'Documnet',
-                    icon: <FileWordOutlined />,
-                    onClick: () => {
-                        console.log('document');
-                    }
-                },
-                {
-                    key: 'file',
-                    label: 'File',
-                    icon: <UploadOutlined />,
-                    onClick: () => {
-                        console.log('document');
-                    }
-                },
-                {
-                    key: 'link',
-                    label: 'Link',
-                    icon: <LinkOutlined />,
-                    onClick: () => {
-                        console.log('document');
-                    }
-                }
-            ]
-        };
-    };
-
-    const getDocumentIcon = (type) => {
-        if (type === 'DOC') {
-            return <FileWordOutlined />;
-        }
-        if (type === 'FILE') {
-            return <UploadOutlined />;
-        }
-        if (type === 'LINK') {
-            return <LinkOutlined />;
-        }
-        return null;
-    };
-
     // ==================== Nodes ====================
     const formatMessages = (messages) => {
         return messages.map((message) => {
@@ -695,41 +629,7 @@ export default function Chat({ defaultTask, onNav }) {
                         }}
                     />
                 </div>
-                <div className={styles.document}>
-                    <div className={styles.chatHeading}>
-                        <div className="flex-item-remaining">
-                            <div>
-                                <strong>Documents</strong>
-                            </div>
-                            <div>{task.description}</div>
-                        </div>
-                        <div>
-                            <Dropdown menu={getDocumentMenuItems()} trigger={['click']}>
-                                <Button icon={<PlusOutlined />} />
-                            </Dropdown>
-                        </div>
-                    </div>
-                    <List
-                        itemLayout="horizontal"
-                        size="small"
-                        dataSource={documents}
-                        renderItem={(item) => (
-                            <List.Item>
-                                <List.Item.Meta
-                                    avatar={getDocumentIcon(item.type)}
-                                    title={
-                                        <a href={item.url} target="_blank">
-                                            {item.title}
-                                        </a>
-                                    }
-                                />
-                                <div>
-                                    <MoreOutlined style={{ fontSize: '20px' }} />
-                                </div>
-                            </List.Item>
-                        )}
-                    />
-                </div>
+                <Doc taskId={taskId} />
             </div>
             <TaskDialog onChange={handleChange} onDelete={handleDelete} />
         </>
