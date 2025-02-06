@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { createStyles } from 'antd-style';
 import { Button, Dropdown, List } from 'antd';
 import {
+    EditOutlined,
+    DeleteOutlined,
     PlusOutlined,
     MoreOutlined,
     FileWordOutlined,
@@ -39,7 +41,7 @@ export default function Doc({ taskId }) {
             items: [
                 {
                     key: 'document',
-                    label: 'Documnet',
+                    label: 'Doc',
                     icon: <FileWordOutlined />,
                     onClick: () => {
                         console.log('document');
@@ -59,6 +61,39 @@ export default function Doc({ taskId }) {
                     icon: <LinkOutlined />,
                     onClick: () => {
                         console.log('document');
+                    }
+                }
+            ]
+        };
+    };
+
+    const getMessageMenuItems = (item) => {
+        return {
+            items: [
+                {
+                    key: 'edit',
+                    label: 'Edit',
+                    icon: <EditOutlined />,
+                    onClick: () => {
+                        console.log('edit', item);
+                        setEditId(item.id);
+                        setContent(item.content);
+                    }
+                },
+                {
+                    key: 'delete',
+                    label: 'Delete',
+                    danger: true,
+                    icon: <DeleteOutlined />,
+                    onClick: () => {
+                        console.log('delete', item);
+                        const r = window.confirm(
+                            'Do you want to remove this document?'
+                        );
+                        if (!r) {
+                            return;
+                        }
+                        deleteMessage(item.id);
                     }
                 }
             ]
@@ -107,7 +142,12 @@ export default function Doc({ taskId }) {
                             }
                         />
                         <div>
-                            <MoreOutlined style={{ fontSize: '20px' }} />
+                            <Dropdown
+                                menu={getMessageMenuItems(item)}
+                                trigger={['click']}
+                            >
+                                <MoreOutlined style={{ fontSize: '20px' }} />
+                            </Dropdown>
                         </div>
                     </List.Item>
                 )}
