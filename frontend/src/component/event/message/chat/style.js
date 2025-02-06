@@ -3,12 +3,10 @@ export function getStyles(createStyles) {
         return {
             layout: css`
                 width: 100%;
-                min-width: 1000px;
                 height: 100%;
                 border-radius: ${token.borderRadius}px;
                 display: flex;
                 background: ${token.colorBgContainer};
-                font-family: AlibabaPuHuiTi, ${token.fontFamily}, sans-serif;
 
                 .ant-prompts {
                     color: ${token.colorText};
