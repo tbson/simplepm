@@ -570,6 +570,7 @@ export default function Chat({ defaultTask, onNav }) {
                                         <Flex gap="middle" vertical>
                                             <Avatar
                                                 size="small"
+                                                shape="square"
                                                 src={item.user.avatar}
                                             />
                                             {item.editable ? (

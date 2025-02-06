@@ -11,7 +11,7 @@ function MenuHeading({ email, fullName, avatar }) {
     return (
         <div style={{ display: 'flex' }}>
             <div style={{ width: 40 }}>
-                <Avatar src={avatar || null} icon={<UserOutlined />} />
+                <Avatar shape="square" src={avatar || null} icon={<UserOutlined />} />
             </div>
             <div style={{ flex: 1 }}>
                 <div>
@@ -53,6 +53,7 @@ export default function UserMenu() {
         <>
             <Avatar
                 src={avatar || null}
+                shape="square"
                 icon={<UserOutlined />}
                 onClick={handleShow}
                 className="pointer"
