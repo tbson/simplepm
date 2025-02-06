@@ -44,7 +44,7 @@ const testDocList = [
     {
         title: 'Document 1',
         url: 'https://www.google.com',
-        type: 'DOCUMENT'
+        type: 'DOC'
     },
     {
         title: 'Document 2',
@@ -457,7 +457,7 @@ export default function Chat({ defaultTask, onNav }) {
     };
 
     const getDocumentIcon = (type) => {
-        if (type === 'DOCUMENT') {
+        if (type === 'DOC') {
             return <FileWordOutlined />;
         }
         if (type === 'FILE') {
