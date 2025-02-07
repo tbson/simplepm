@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createStyles } from 'antd-style';
+import { useNavigate } from 'react-router-dom';
 import { Button, Dropdown, List } from 'antd';
 import {
     EditOutlined,
@@ -11,6 +12,7 @@ import {
     UploadOutlined,
     LinkOutlined
 } from '@ant-design/icons';
+import NavUtil from 'service/helper/nav_util';
 import { getStyles } from './style';
 
 const testDocList = [
@@ -32,9 +34,12 @@ const testDocList = [
 ];
 
 export default function DocTable({ taskId, showControl = false }) {
+    const navigate = useNavigate();
     const useStyle = getStyles(createStyles);
     const [documents, setDocuments] = useState(testDocList);
     const { styles } = useStyle();
+
+    const navigateTo = NavUtil.navigateTo(navigate);
 
     const getDocumentMenuItems = () => {
         return {
@@ -45,6 +50,7 @@ export default function DocTable({ taskId, showControl = false }) {
                     icon: <FileWordOutlined />,
                     onClick: () => {
                         console.log('document');
+                        navigateTo(`/pm/task/${taskId}/doc`);
                     }
                 },
                 {

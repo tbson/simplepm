@@ -55,7 +55,7 @@ export default function Chat({ project, defaultTask, onNav }) {
     const [editId, setEditId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [pageState, setPageState] = useState('');
-    const [showDocList, setShowDocList] = useState(false);
+    const [showDocList, setShowDocList] = useState(true);
     const { styles } = useStyle();
 
     // ==================== State ====================

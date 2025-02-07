@@ -7,10 +7,17 @@ const urlMap = {
         endpoints: {
             crud: '',
         }
-    }
+    },
+    task: {
+        prefix: 'pm/task',
+        endpoints: {
+            crud: '',
+        }
+    },
 };
 
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
+export const taskUrls = RequestUtil.prefixMapValues(urlMap.task);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_DOC_DIALOG';
 export const PEM_GROUP = 'doc';
 const headingTxt = t`Doc`;
