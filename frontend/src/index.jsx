@@ -1,4 +1,5 @@
 import * as React from 'react';
+import '@ant-design/v5-patch-for-react-19';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 import { Provider } from 'jotai';
