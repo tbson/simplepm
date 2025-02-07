@@ -12,7 +12,8 @@ import {
     EditOutlined,
     DeleteOutlined,
     MoreOutlined,
-    ArrowUpOutlined
+    ArrowUpOutlined,
+    MenuOutlined
 } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
@@ -54,6 +55,7 @@ export default function Chat({ project, defaultTask, onNav }) {
     const [editId, setEditId] = useState(null);
     const [messages, setMessages] = useState([]);
     const [pageState, setPageState] = useState('');
+    const [showDocList, setShowDocList] = useState(false);
     const { styles } = useStyle();
 
     // ==================== State ====================
@@ -503,7 +505,7 @@ export default function Chat({ project, defaultTask, onNav }) {
                     />
                 </div>
                 <div className={styles.chat}>
-                    <div className={styles.chatHeading}>
+                    <div className={styles.chatHeading} style={{paddingRight: 0}}>
                         <div className="flex-item-remaining">
                             <div>
                                 <strong># {task.title}</strong>
@@ -514,6 +516,13 @@ export default function Chat({ project, defaultTask, onNav }) {
                             <Button
                                 onClick={() => TaskDialog.toggle(true, task.id)}
                                 icon={<EditOutlined />}
+                            />
+                            &nbsp;
+                            <Button
+                                color="default"
+                                variant="link"
+                                onClick={() => setShowDocList(!showDocList)}
+                                icon={<MenuOutlined />}
                             />
                         </div>
                     </div>
@@ -604,7 +613,7 @@ export default function Chat({ project, defaultTask, onNav }) {
                         }}
                     />
                 </div>
-                <Doc taskId={taskId} />
+                {showDocList ? <Doc taskId={taskId} /> : null}
             </div>
             <TaskDialog onChange={handleChange} onDelete={handleDelete} />
         </>
