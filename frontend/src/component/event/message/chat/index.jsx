@@ -128,13 +128,13 @@ export default function Chat({ project, defaultTask, onNav }) {
                 connection = conn;
                 // Register event listeners once
                 conn.on('connecting', (ctx) => {
-                    console.log(`Connecting: ${ctx.code}, ${ctx.reason}`);
+                    // console.log(`Connecting: ${ctx.code}, ${ctx.reason}`);
                 });
                 conn.on('connected', (ctx) => {
-                    console.log('Connected', ctx);
+                    // console.log('Connected', ctx);
                 });
                 conn.on('disconnected', (ctx) => {
-                    console.log(`Disconnected: ${ctx.code}, ${ctx.reason}`);
+                    // console.log(`Disconnected: ${ctx.code}, ${ctx.reason}`);
                 });
                 // Ensure the connection is active
                 if (conn.state !== 'connected') {
