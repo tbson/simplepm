@@ -21,7 +21,7 @@ import RequestUtil from 'service/helper/request_util';
 import SocketUtil from 'service/helper/socket_util';
 import StorageUtil from 'service/helper/storage_util';
 import TaskDialog from 'component/pm/task/dialog';
-import Doc from 'component/document/doc';
+import DocTable from 'component/document/doc/table';
 import { getStyles } from './style';
 import { roles } from './role';
 import { urls, taskUrls } from '../config';
@@ -613,7 +613,7 @@ export default function Chat({ project, defaultTask, onNav }) {
                         }}
                     />
                 </div>
-                {showDocList ? <Doc taskId={taskId} /> : null}
+                {showDocList ? <DocTable taskId={taskId} showControl /> : null}
             </div>
             <TaskDialog onChange={handleChange} onDelete={handleDelete} />
         </>

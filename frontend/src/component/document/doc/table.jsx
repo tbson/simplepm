@@ -31,7 +31,7 @@ const testDocList = [
     }
 ];
 
-export default function Doc({ taskId }) {
+export default function DocTable({ taskId, showControl = false }) {
     const useStyle = getStyles(createStyles);
     const [documents, setDocuments] = useState(testDocList);
     const { styles } = useStyle();
@@ -141,14 +141,16 @@ export default function Doc({ taskId }) {
                                 </a>
                             }
                         />
-                        <div>
-                            <Dropdown
-                                menu={getMessageMenuItems(item)}
-                                trigger={['click']}
-                            >
-                                <MoreOutlined style={{ fontSize: '20px' }} />
-                            </Dropdown>
-                        </div>
+                        {showControl ? (
+                            <div>
+                                <Dropdown
+                                    menu={getMessageMenuItems(item)}
+                                    trigger={['click']}
+                                >
+                                    <MoreOutlined style={{ fontSize: '20px' }} />
+                                </Dropdown>
+                            </div>
+                        ) : null}
                     </List.Item>
                 )}
             />
