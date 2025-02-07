@@ -63,7 +63,7 @@ export default function Message() {
                     items={[
                         {
                             title: (
-                                <Link to={`/pm/task/${project.id}`}>
+                                <Link to={`/pm/project/${project.id}`}>
                                     {breadcrumb.project.title}
                                 </Link>
                             )

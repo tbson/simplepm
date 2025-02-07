@@ -25,17 +25,10 @@ import { getStyles } from './style';
 import { roles } from './role';
 import { urls, taskUrls } from '../config';
 
-const START_INDEX = 999999;
+const START_INDEX = 100000;
 const CREATE_MESSAGE = 'CREATE_MESSAGE';
 const UPDATE_MESSAGE = 'UPDATE_MESSAGE';
 const DELETE_MESSAGE = 'DELETE_MESSAGE';
-
-const defaultConversationsItems = [
-    {
-        key: '0',
-        label: 'Default'
-    }
-];
 
 const useStyle = getStyles(createStyles);
 
@@ -45,17 +38,11 @@ const itemToConversation = (item) => ({
     description: item.description
 });
 
-const conversationToItem = (conversation) => ({
-    id: conversation.key,
-    title: conversation.label,
-    description: conversation.description
-});
-
 export default function Chat({ project, defaultTask, onNav }) {
     const { notification } = App.useApp();
     const userId = StorageUtil.getUserId();
     const { id: projectId, title: projectTitle } = project;
-    const taskId = defaultTask.id;
+    const [taskId, setTaskId] = useState(defaultTask.id);
     const channel = `${projectId}/${taskId}`;
     const senderRef = useRef(null);
     const virtuoso = useRef(null);
@@ -72,61 +59,36 @@ export default function Chat({ project, defaultTask, onNav }) {
     // ==================== State ====================
     const [headerOpen, setHeaderOpen] = React.useState(false);
     const [content, setContent] = React.useState('');
-    const [conversationsItems, setConversationsItems] = React.useState(
-        defaultConversationsItems
-    );
-    const [activeKey, setActiveKey] = React.useState(taskId);
+    const [taskList, setTaskList] = React.useState([]);
     const [attachedFiles, setAttachedFiles] = React.useState([]);
 
     const navigateTo = NavUtil.navigateTo(navigate);
     // ==================== Runtime ====================
 
     useEffect(() => {
-        if (activeKey !== undefined) {
-            setMessages([]);
-        }
-        const conversation = conversationsItems.find((item) => item.key === activeKey);
-        if (conversation) {
-            const item = conversationToItem(conversation);
-            handleTaskChange(item);
-        }
-    }, [activeKey]);
-
-    useEffect(() => {
-        getTaskList(taskId);
-        getMessage();
+        if (!taskId) return;
+        getTaskList()
+            .then(handleTaskChange)
+            .then(() => getMessage(true));
     }, [taskId]);
 
-    const getMessage = () => {
-        const params = {
-            task_id: taskId
-        };
-        if (pageState) {
-            params.page_state = pageState;
-        }
-        return RequestUtil.apiCall(urls.crud, params)
+    const getTaskList = () => {
+        return RequestUtil.apiCall(taskUrls.crud, { project_id: projectId })
             .then((resp) => {
-                const newMessages = resp.data.items;
-                setMessages((messages) =>
-                    formatMessages([...newMessages, ...messages])
-                );
-                setPageState(resp.data.page_state);
-                setFirstItemIndex((index) => index - newMessages.length);
+                const taskList = resp.data;
+                setTaskList(taskList);
+                return taskList;
             })
             .catch(RequestUtil.displayError(notification));
     };
 
-    const handleTaskChange = (item) => {
-        if (!item) {
-            return;
-        }
-        const conversationIndex = conversationsItems.findIndex(
-            (conversation) => conversation.key === item.id
-        );
-        if (conversationIndex !== -1) {
-            const conversation = itemToConversation(item);
-            conversationsItems[conversationIndex] = conversation;
-            setConversationsItems([...conversationsItems]);
+    const handleTaskChange = (taskList) => {
+        let item = {};
+        const index = taskList.findIndex((item) => item.id === taskId);
+        if (index !== -1) {
+            item = taskList[index];
+            taskList[index] = item;
+            setTaskList([...taskList]);
         }
         onNav(item.title);
         setTask({
@@ -136,22 +98,57 @@ export default function Chat({ project, defaultTask, onNav }) {
         });
     };
 
-    const getTaskList = () => {
-        RequestUtil.apiCall(taskUrls.crud, { project_id: projectId })
+    const getMessage = (isInit = false) => {
+        const params = {
+            task_id: taskId
+        };
+        if (pageState && !isInit) {
+            params.page_state = pageState;
+        }
+        return RequestUtil.apiCall(urls.crud, params)
             .then((resp) => {
-                setConversationsItems(resp.data.map(itemToConversation));
+                const newMsgs = resp.data.items;
+                setMessages((messages) => {
+                    const finalMessages = isInit ? newMsgs : [...newMsgs, ...messages];
+                    return formatMessages(finalMessages);
+                });
+                setPageState(resp.data.page_state);
+                setFirstItemIndex((index) => {
+                    return (isInit ? START_INDEX : index) - newMsgs.length;
+                });
             })
             .catch(RequestUtil.displayError(notification));
     };
 
     useEffect(() => {
+        let connection; // local variable to keep track of the connection
+
         SocketUtil.newConn()
             .then((conn) => {
+                connection = conn;
+                // Register event listeners once
+                conn.on('connecting', (ctx) => {
+                    console.log(`Connecting: ${ctx.code}, ${ctx.reason}`);
+                });
+                conn.on('connected', (ctx) => {
+                    console.log('Connected', ctx);
+                });
+                conn.on('disconnected', (ctx) => {
+                    console.log(`Disconnected: ${ctx.code}, ${ctx.reason}`);
+                });
+                // Ensure the connection is active
+                if (conn.state !== 'connected') {
+                    conn.connect();
+                }
                 setConn(conn);
             })
             .catch(RequestUtil.displayError(notification));
+
+        // Cleanup on unmount: disconnect the connection
         return () => {
-            conn && conn.disconnect();
+            if (connection) {
+                connection.disconnect();
+            }
         };
     }, []);
 
@@ -159,7 +156,6 @@ export default function Chat({ project, defaultTask, onNav }) {
         if (!conn) {
             return;
         }
-        handleConnect(conn);
         const sub = handleSubscription(conn, channel);
 
         return () => {
@@ -170,28 +166,6 @@ export default function Chat({ project, defaultTask, onNav }) {
             }
         };
     }, [conn, channel]);
-
-    const handleConnect = (conn) => {
-        // Event Handlers
-        conn.on('connecting', (ctx) => {
-            console.log(`connecting: ${ctx.code}, ${ctx.reason}`);
-        });
-
-        conn.on('connected', (ctx) => {
-            console.log('connected', ctx);
-        });
-
-        conn.on('disconnected', (ctx) => {
-            console.log(`disconnected: ${ctx.code}, ${ctx.reason}`);
-        });
-
-        if (conn.state === 'connected') {
-            return conn;
-        }
-        conn.connect();
-
-        return conn;
-    };
 
     const handleSubscription = (conn, channel) => {
         // Subscribe to the channel
@@ -221,10 +195,10 @@ export default function Chat({ project, defaultTask, onNav }) {
         });
         */
         sub.on('subscribed', (ctx) => {
-            console.log('subscribed', ctx);
+            // console.log('subscribed', ctx);
         });
         sub.on('unsubscribed', (ctx) => {
-            console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
+            // console.log(`unsubscribed: ${ctx.code}, ${ctx.reason}`);
         });
 
         // Subscribe to the channel
@@ -364,8 +338,8 @@ export default function Chat({ project, defaultTask, onNav }) {
     };
 
     const onConversationClick = (key) => {
-        setActiveKey(key);
-        navigateTo(`/pm/task/${projectId}/${key}`);
+        setTaskId(key);
+        navigateTo(`/pm/task/${key}`);
     };
     const handleFileChange = (info) => {
         setAttachedFiles(info.fileList);
@@ -508,12 +482,12 @@ export default function Chat({ project, defaultTask, onNav }) {
         );
     };
 
-    const handleStartReached = useCallback(() => {
+    const handleStartReached = () => {
         if (pageState === null) {
             return;
         }
         getMessage();
-    }, [pageState]);
+    };
 
     // ==================== Render =================
     return (
@@ -522,9 +496,9 @@ export default function Chat({ project, defaultTask, onNav }) {
                 <div className={styles.menu}>
                     <div className={styles.chatHeading}>{projectTitle}</div>
                     <Conversations
-                        items={conversationsItems}
+                        items={taskList.map(itemToConversation)}
                         className={styles.conversations}
-                        activeKey={activeKey}
+                        activeKey={taskId}
                         onActiveChange={onConversationClick}
                     />
                 </div>
@@ -544,6 +518,7 @@ export default function Chat({ project, defaultTask, onNav }) {
                         </div>
                     </div>
                     <Virtuoso
+                        key={taskId}
                         ref={virtuoso}
                         initialTopMostItemIndex={firstItemIndex}
                         firstItemIndex={firstItemIndex}

@@ -66,7 +66,7 @@ export default function UserLayout() {
                     resp.data.map((item) => {
                         return {
                             label: item.title,
-                            key: `/pm/task/${item.id}`,
+                            key: `/pm/project/${item.id}`,
                             icon: (
                                 <Badge
                                     size="small"
