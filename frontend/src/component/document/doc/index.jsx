@@ -7,6 +7,7 @@ import PageHeading from 'component/common/page_heading';
 import RequestUtil from 'service/helper/request_util';
 import { taskUrls } from './config';
 import DocTable from './table';
+import DocForm from './form';
 import { getStyles } from './style';
 
 export default function Doc() {
@@ -89,7 +90,14 @@ export default function Doc() {
             {breadcrumb.loaded ? (
                 <div className={styles.layout}>
                     <DocTable taskId={task.id} />
-                    <div className="flex-item-remaining">Doc display here......</div>
+                    <div className="flex-item-remaining">
+                        <DocForm
+                            data={{}}
+                            onChange={(data) => {
+                                console.log(data);
+                            }}
+                        />
+                    </div>
                 </div>
             ) : null}
         </div>

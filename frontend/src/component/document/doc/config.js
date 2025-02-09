@@ -30,6 +30,5 @@ export const getDocs = () => ({
 
 export const getLabels = () => ({
     title: t`Title`,
-    description: t`Description`,
-    task: t`Task`
+    content: t`Content`,
 });
