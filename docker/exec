@@ -63,6 +63,7 @@ help () {
     echo "bserver           :  run phoenix dev server"
     echo "fserver           :  run frontendpack dev server"
     echo "yarn              :  run yarn on frontend"
+    echo "npx               :  run npx on frontend"
     echo "command <args>    :   run spefic command on backend/src/command"
     echo "backend <args>    :  execute random command on backend, ex: ./exec backend ls"
 }
@@ -86,6 +87,8 @@ elif [ "$FIRST_ARG" == "goi18n" ]; then
     docker compose exec "$NAME"_backend goi18n $ARGS
 elif [ "$FIRST_ARG" == "yarn" ]; then
     docker compose exec "$NAME"_frontend yarn $ARGS
+elif [ "$FIRST_ARG" == "npx" ]; then
+    docker compose exec "$NAME"_frontend npx $ARGS
 elif [ "$FIRST_ARG" == "fserver" ]; then
     docker compose exec "$NAME"_frontend yarn dev
 elif [ "$FIRST_ARG" == "fmakemessages" ]; then
