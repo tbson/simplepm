@@ -39,6 +39,7 @@ func RegisterModels() []interface{} {
 		&pm.TaskFieldValue{},
 		&pm.GitBranch{},
 		&document.Doc{},
+		&document.DocAttachment{},
 	}
 }
 
