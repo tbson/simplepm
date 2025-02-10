@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef, useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams, Link } from 'react-router';
 import { App, Form, Input, Button, Row, Col } from 'antd';
 import { LeftOutlined, CheckOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';
@@ -32,7 +32,7 @@ const emptyRecord = {
  */
 export default function DocForm({ data, onChange }) {
     const { task_id } = useParams();
-    const taskID = parseInt(task_id, 10);
+    const taskId = parseInt(task_id, 10);
     const { notification } = App.useApp();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
@@ -59,7 +59,7 @@ export default function DocForm({ data, onChange }) {
                 labelWrap
                 initialValues={{ ...initialValues }}
                 onFinish={(payload) => {
-                    payload.task_id = taskID;
+                    payload.task_id = taskId;
                     payload.type = 'DOC';
                     FormUtil.submit(endPoint, payload, method)
                         .then((data) => onChange(data, id))
@@ -81,7 +81,9 @@ export default function DocForm({ data, onChange }) {
                 <Form.Item>
                     <Row>
                         <Col span={12}>
-                            <Button icon={<LeftOutlined />}>Back</Button>
+                            <Link to={`/pm/task/${taskId}`}>
+                                <Button icon={<LeftOutlined />}>Back</Button>
+                            </Link>
                         </Col>
                         <Col span={12} className="right">
                             <Button
