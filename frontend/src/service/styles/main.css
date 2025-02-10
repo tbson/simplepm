@@ -250,6 +250,11 @@ table.styled-table {
     overflow: auto;
 }
 
+.codex-editor {
+    border: 1px solid #d9d9d9;
+    border-radius: 3px;
+}
+
 /* Custom Scroll */
 ::-webkit-scrollbar {
     width: 6px;

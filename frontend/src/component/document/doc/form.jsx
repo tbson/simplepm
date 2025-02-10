@@ -10,7 +10,7 @@ const formName = 'DocForm';
 const emptyRecord = {
     id: 0,
     title: '',
-    content: '',
+    content: {}
 };
 
 /**
@@ -45,28 +45,33 @@ export default function DocForm({ data, onChange }) {
     }, []);
 
     return (
-        <Form
-            form={form}
-            name={formName}
-            colon={false}
-            labelWrap
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
-            initialValues={{ ...initialValues }}
-            onFinish={(payload) =>
-                FormUtil.submit(endPoint, payload, method)
-                    .then((data) => onChange(data, id))
-                    .catch(FormUtil.setFormErrors(form, notification))
-            }
-        >
-            <Form.Item name="title" label={labels.title} rules={[FormUtil.ruleRequired()]}>
-                <Input ref={inputRef} />
-            </Form.Item>
+        <div className="content">
+            <Form
+                form={form}
+                name={formName}
+                colon={false}
+                layout="vertical"
+                labelWrap
+                initialValues={{ ...initialValues }}
+                onFinish={(payload) =>
+                    FormUtil.submit(endPoint, payload, method)
+                        .then((data) => onChange(data, id))
+                        .catch(FormUtil.setFormErrors(form, notification))
+                }
+            >
+                <Form.Item
+                    name="title"
+                    label={labels.title}
+                    rules={[FormUtil.ruleRequired()]}
+                >
+                    <Input ref={inputRef} />
+                </Form.Item>
 
-            <Form.Item name="content" label={labels.content}>
-                <RichTextInput />
-            </Form.Item>
-        </Form>
+                <Form.Item name="content" label={labels.content}>
+                    <RichTextInput />
+                </Form.Item>
+            </Form>
+        </div>
     );
 }
 
