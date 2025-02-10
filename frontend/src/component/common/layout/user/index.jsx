@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Outlet, NavLink } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet, NavLink } from 'react-router';
 import { t } from 'ttag';
 import { Layout, Menu, Badge } from 'antd';
 import Icon, {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { App } from 'antd';
 import { useAtomValue } from 'jotai';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import PemCheck from 'component/common/pem_check';
 import Kanban, { REORDER_TASK } from 'component/common/kanban';
 import Util from 'service/helper/util';

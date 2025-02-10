@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { t } from 'ttag';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Drawer, Avatar, Menu, Divider } from 'antd';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import Util from 'service/helper/util';
 import StorageUtil from 'service/helper/storage_util';
 import NavUtil from 'service/helper/nav_util';

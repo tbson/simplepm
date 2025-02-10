@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router';
 import StorageUtil from 'service/helper/storage_util';
 import PrivateRoute from 'component/common/route/private_route.jsx';
 

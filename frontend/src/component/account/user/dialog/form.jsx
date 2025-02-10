@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useAtomValue } from 'jotai';
 import { App, Form, Input } from 'antd';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import CheckInput from 'component/common/form/ant/input/check_input';

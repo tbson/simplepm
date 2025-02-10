@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router';
 import { t } from 'ttag';
 import { Row, Col, Card, Button, Divider } from 'antd';
 import NavUtil from 'service/helper/nav_util';

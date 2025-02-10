@@ -2,7 +2,7 @@ import * as React from 'react';
 import { t } from 'ttag';
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { App, Divider, Button } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import PageHeading from 'component/common/page_heading';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { t } from 'ttag';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { App, Row, Col, Table, Button, Flex, Tooltip } from 'antd';
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';

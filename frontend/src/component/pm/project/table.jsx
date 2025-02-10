@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { t } from 'ttag';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useAtomValue } from 'jotai';
 import { App, Row, Col, Table, Flex } from 'antd';
 import { ProfileOutlined } from '@ant-design/icons';

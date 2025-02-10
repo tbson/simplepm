@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router';
 import { useAtom } from 'jotai';
 import { Breadcrumb, Skeleton } from 'antd';
 import PageHeading from 'component/common/page_heading';

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRef, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { App, Form, Input } from 'antd';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import TransferInput from 'component/common/form/ant/input/transfer_input.jsx';

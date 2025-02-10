@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router';
 import { App, Breadcrumb, Skeleton } from 'antd';
 import PageHeading from 'component/common/page_heading';
 import RequestUtil from 'service/helper/request_util';

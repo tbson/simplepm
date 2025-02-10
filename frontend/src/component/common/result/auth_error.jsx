@@ -2,7 +2,7 @@ import * as React from "react";
 import { t } from 'ttag';
 import { Result, Button } from "antd";
 import { HomeFilled } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export default function AuthError() {
     return (

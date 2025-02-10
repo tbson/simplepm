@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useSetAtom } from 'jotai';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { App, Button, Badge } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';

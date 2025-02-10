@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate } from "react-router";
 import StorageUtil from "service/helper/storage_util";
 
 export default function PrivateRoute() {

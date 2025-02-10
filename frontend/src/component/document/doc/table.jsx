@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createStyles } from 'antd-style';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Button, Dropdown, List } from 'antd';
 import {
     EditOutlined,

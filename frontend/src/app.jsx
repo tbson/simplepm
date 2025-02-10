@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { useLocale } from 'ttag';
 import { App, ConfigProvider } from 'antd';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import Spinner from 'component/common/spinner';
 import Util from 'service/helper/util';
 import LocaleUtil from 'service/helper/locale_util';
