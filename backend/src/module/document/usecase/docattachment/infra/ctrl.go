@@ -21,7 +21,6 @@ var folder = "docattachment"
 
 func Create(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
-	fmt.Println(c.QueryParam("task_id"))
 	taskID := numberutil.StrToUint(c.QueryParam("task_id"), 0)
 	cruder := NewRepo(dbutil.Db())
 	structData := InputData{
