@@ -19,6 +19,8 @@ import (
 	"src/module/event/usecase/message/app"
 )
 
+var folder = "message"
+
 func List(c echo.Context) error {
 	user := c.Get("User").(*schema.User)
 	taskID := numberutil.StrToUint(c.QueryParam("task_id"), 0)
@@ -81,7 +83,7 @@ func Create(c echo.Context) error {
 		},
 	}
 
-	files, err := vldtutil.UploadAndGetMetadata(c, "message")
+	files, err := vldtutil.UploadAndGetMetadata(c, folder)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

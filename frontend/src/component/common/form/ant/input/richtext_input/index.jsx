@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createReactEditorJS } from 'react-editor-js';
-import { EDITOR_JS_TOOLS } from './tools';
+import { getTools } from './tools';
 
 /**
  * RichTextInput.
@@ -8,7 +8,7 @@ import { EDITOR_JS_TOOLS } from './tools';
  * @param {Object} props
  * @param {number[]} props.value
  */
-export default function RichTextInput({ value, onChange, disabled = false }) {
+export default function RichTextInput({ value, onChange, taskId, disabled = false }) {
     const ReactEditorJS = createReactEditorJS();
     const editorCore = React.useRef(null);
 
@@ -23,7 +23,7 @@ export default function RichTextInput({ value, onChange, disabled = false }) {
         <ReactEditorJS
             readOnly={disabled}
             onInitialize={handleInitialize}
-            tools={EDITOR_JS_TOOLS}
+            tools={getTools(taskId)}
             onChange={() => {
                 handleSave().then((data) => {
                     onChange(data);

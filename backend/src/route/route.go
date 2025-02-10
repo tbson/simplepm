@@ -13,6 +13,7 @@ import (
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 	configoption "src/module/config/usecase/option/infra"
 	doc "src/module/document/usecase/doc/infra"
+	docattachment "src/module/document/usecase/docattachment/infra"
 	message "src/module/event/usecase/message/infra"
 	github "src/module/git/usecase/github/infra"
 	gitlab "src/module/git/usecase/gitlab/infra"
@@ -53,6 +54,7 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = reorderstatus.RegisterUrls(e, pemMap)
 	e, pemMap = message.RegisterUrls(e, pemMap)
 	e, pemMap = doc.RegisterUrls(e, pemMap)
+	e, pemMap = docattachment.RegisterUrls(e, pemMap)
 	e, pemMap = jwt.RegisterUrls(e, pemMap)
 	e, pemMap = github.RegisterUrls(e, pemMap)
 	e, pemMap = gitlab.RegisterUrls(e, pemMap)

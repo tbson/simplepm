@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useRef, useEffect } from 'react';
+import { useParams } from 'react-router';
 import { App, Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
@@ -28,6 +29,7 @@ const emptyRecord = {
  * @param {FormCallback} props.onChange
  */
 export default function DocForm({ data, onChange }) {
+    const { task_id } = useParams();
     const { notification } = App.useApp();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
@@ -68,7 +70,7 @@ export default function DocForm({ data, onChange }) {
                 </Form.Item>
 
                 <Form.Item name="content" label={labels.content}>
-                    <RichTextInput />
+                    <RichTextInput taskId={task_id}/>
                 </Form.Item>
             </Form>
         </div>

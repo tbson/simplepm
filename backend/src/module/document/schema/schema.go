@@ -24,7 +24,7 @@ type Doc struct {
 	FileName    string         `gorm:"type:text;not null;default:''" json:"file_name"`
 	FileType    string         `gorm:"type:text;not null;default:''" json:"file_type"`
 	FileSize    int            `gorm:"not null;default:0" json:"file_size"`
-	FileUrl     string         `gorm:"type:text;not null;default:''" json:"file_url"`
+	FileURL     string         `gorm:"type:text;not null;default:''" json:"file_url"`
 	Order       int            `gorm:"not null;default:0" json:"order"`
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`
@@ -42,7 +42,7 @@ func NewDoc(data ctype.Dict) *Doc {
 		FileName:    dictutil.GetValue[string](data, "FileName"),
 		FileType:    dictutil.GetValue[string](data, "FileType"),
 		FileSize:    dictutil.GetValue[int](data, "FileSize"),
-		FileUrl:     dictutil.GetValue[string](data, "FileUrl"),
+		FileURL:     dictutil.GetValue[string](data, "FileURL"),
 		Order:       dictutil.GetValue[int](data, "Order"),
 	}
 }
@@ -56,7 +56,7 @@ type DocAttachment struct {
 	FileName  string       `gorm:"type:text;not null" json:"file_name"`
 	FileType  string       `gorm:"type:text;not null" json:"file_type"`
 	FileSize  int          `gorm:"not null" json:"file_size"`
-	FileUrl   string       `gorm:"type:text;not null" json:"file_url"`
+	FileURL   string       `gorm:"type:text;not null" json:"file_url"`
 	CreatedAt time.Time    `json:"created_at"`
 	UpdatedAt time.Time    `json:"updated_at"`
 }
@@ -68,6 +68,6 @@ func NewDocAttachment(data ctype.Dict) *DocAttachment {
 		FileName: dictutil.GetValue[string](data, "FileName"),
 		FileType: dictutil.GetValue[string](data, "FileType"),
 		FileSize: dictutil.GetValue[int](data, "FileSize"),
-		FileUrl:  dictutil.GetValue[string](data, "FileUrl"),
+		FileURL:  dictutil.GetValue[string](data, "FileURL"),
 	}
 }
