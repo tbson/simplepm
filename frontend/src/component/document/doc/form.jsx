@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { useRef, useEffect } from 'react';
 import { useParams } from 'react-router';
-import { App, Form, Input } from 'antd';
+import { App, Form, Input, Button, Row, Col } from 'antd';
+import { LeftOutlined, CheckOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import RichTextInput from 'component/common/form/ant/input/richtext_input';
@@ -10,6 +11,7 @@ import { urls, getLabels } from './config';
 const formName = 'DocForm';
 const emptyRecord = {
     id: 0,
+    task_id: 0,
     title: '',
     content: {}
 };
@@ -30,6 +32,7 @@ const emptyRecord = {
  */
 export default function DocForm({ data, onChange }) {
     const { task_id } = useParams();
+    const taskID = parseInt(task_id, 10);
     const { notification } = App.useApp();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
@@ -55,11 +58,13 @@ export default function DocForm({ data, onChange }) {
                 layout="vertical"
                 labelWrap
                 initialValues={{ ...initialValues }}
-                onFinish={(payload) =>
+                onFinish={(payload) => {
+                    payload.task_id = taskID;
+                    payload.type = 'DOC';
                     FormUtil.submit(endPoint, payload, method)
                         .then((data) => onChange(data, id))
-                        .catch(FormUtil.setFormErrors(form, notification))
-                }
+                        .catch(FormUtil.setFormErrors(form, notification));
+                }}
             >
                 <Form.Item
                     name="title"
@@ -70,7 +75,24 @@ export default function DocForm({ data, onChange }) {
                 </Form.Item>
 
                 <Form.Item name="content" label={labels.content}>
-                    <RichTextInput taskId={task_id}/>
+                    <RichTextInput taskId={task_id} />
+                </Form.Item>
+
+                <Form.Item>
+                    <Row>
+                        <Col span={12}>
+                            <Button icon={<LeftOutlined />}>Back</Button>
+                        </Col>
+                        <Col span={12} className="right">
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                icon={<CheckOutlined />}
+                            >
+                                Submit
+                            </Button>
+                        </Col>
+                    </Row>
                 </Form.Item>
             </Form>
         </div>

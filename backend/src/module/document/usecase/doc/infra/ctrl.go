@@ -55,9 +55,9 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	taskID := c.Get("TaskID").(uint)
+	userID := c.Get("UserID").(uint)
 	cruder := NewRepo(dbutil.Db())
-	structData, err := vldtutil.ValidatePayload(c, InputData{TaskID: taskID})
+	structData, err := vldtutil.ValidatePayload(c, InputData{UserID: userID})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
