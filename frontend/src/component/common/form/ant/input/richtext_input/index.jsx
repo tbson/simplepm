@@ -16,8 +16,8 @@ export default function RichTextInput({ value, onChange, disabled = false }) {
         editorCore.current = instance;
     }, []);
 
-    const handleSave = React.useCallback(async () => {
-        return await editorCore.current.save();
+    const handleSave = React.useCallback(() => {
+        return editorCore.current.save();
     }, []);
     return (
         <ReactEditorJS
@@ -25,7 +25,9 @@ export default function RichTextInput({ value, onChange, disabled = false }) {
             onInitialize={handleInitialize}
             tools={EDITOR_JS_TOOLS}
             onChange={() => {
-                handleSave().then(onChange);
+                handleSave().then((data) => {
+                    onChange(data);
+                });
             }}
             defaultValue={value}
             placeholder="Content..."
