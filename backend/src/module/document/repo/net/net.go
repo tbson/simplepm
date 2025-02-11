@@ -1,4 +1,4 @@
-package requestutil
+package net
 
 import (
 	"io"
@@ -17,10 +17,20 @@ type HTMLMeta struct {
 	SiteName    string `json:"site_name"`
 }
 
-func GetHTMLMeta(link string) (HTMLMeta, error) {
+type Repo struct {
+	client *http.Client
+}
+
+func New(client *http.Client) Repo {
+	return Repo{
+		client: client,
+	}
+}
+
+func (r Repo) GetHTMLMeta(link string) (HTMLMeta, error) {
 	localizer := localeutil.Get()
 	result := HTMLMeta{}
-	resp, err := http.Get(link)
+	resp, err := r.client.Get(link)
 
 	msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 		DefaultMessage: localeutil.CanNotParseLinkMetaData,
@@ -30,21 +40,21 @@ func GetHTMLMeta(link string) (HTMLMeta, error) {
 	}
 	defer resp.Body.Close()
 
-	result = *extract(resp.Body)
+	result = extract(resp.Body)
 
 	if result.Title == "" {
 		return result, errutil.New("", []string{msg})
 	}
 
-	return *extract(resp.Body), nil
+	return result, nil
 }
 
-func extract(resp io.Reader) *HTMLMeta {
+func extract(resp io.Reader) HTMLMeta {
 	z := html.NewTokenizer(resp)
 
 	titleFound := false
 
-	hm := new(HTMLMeta)
+	hm := HTMLMeta{}
 
 	for {
 		tt := z.Next()
