@@ -237,4 +237,8 @@ var (
 		ID:    "BadRequest",
 		Other: "bad request",
 	}
+	CanNotParseLinkMetaData = &i18n.Message{
+		ID:    "CanNotParseLinkMetaData",
+		Other: "can not parse link meta data",
+	}
 )
