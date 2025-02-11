@@ -8,8 +8,9 @@ import RequestUtil from 'service/helper/request_util';
 import NavUtil from 'service/helper/nav_util';
 import DocTable from './table';
 import DocForm from './form';
+import DocView from './view';
 import { getStyles } from './style';
-import { urls, taskUrls } from './config';
+import { urls, taskUrls, MODE } from './config';
 
 export default function Doc() {
     const { notification } = App.useApp();
@@ -19,6 +20,7 @@ export default function Doc() {
     const [project, setProject] = useState({});
     const [task, setTask] = useState({});
     const [init, setInit] = useState(true);
+    const [mode, setMode] = useState(docId ? MODE.VIEW : MODE.EDIT);
     const [doc, setDoc] = useState({});
     const [breadcrumb, setBreadcrumb] = useState({
         project: {
@@ -41,7 +43,7 @@ export default function Doc() {
 
     useEffect(() => {
         if (!docId) {
-            setInit(true);
+            setInit(false);
             return;
         }
         getDetail();
@@ -86,6 +88,25 @@ export default function Doc() {
         setBreadcrumb(data);
     };
 
+    const renderDisplay = () => {
+        if (init) {
+            return <Skeleton active />;
+        }
+        if (mode === MODE.EDIT) {
+            return (
+                <DocForm
+                    data={doc}
+                    onChange={() => {
+                        navigateTo(`/pm/task/${taskId}`);
+                    }}
+                />
+            );
+        }
+        return <DocView data={doc} toggleMode={() => {
+            setMode(MODE.EDIT);
+        }}/>;
+    };
+
     return (
         <div className="flex-column flex-item-remaining">
             <PageHeading>
@@ -115,16 +136,7 @@ export default function Doc() {
             {breadcrumb.loaded ? (
                 <div className={styles.layout}>
                     <DocTable taskId={task.id} />
-                    <div className="flex-item-remaining">
-                        {init ? null : (
-                            <DocForm
-                                data={doc}
-                                onChange={(data) => {
-                                    navigateTo(`/pm/task/${taskId}`);
-                                }}
-                            />
-                        )}
-                    </div>
+                    <div className="flex-item-remaining">{renderDisplay()}</div>
                 </div>
             ) : null}
         </div>

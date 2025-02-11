@@ -17,7 +17,7 @@ body {
 }
 
 .content {
-    padding: 5px;
+    padding: 12px;
 }
 
 .pointer {
@@ -250,9 +250,21 @@ table.styled-table {
     overflow: auto;
 }
 
-.codex-editor {
+.richtext-edit .codex-editor {
     border: 1px solid #d9d9d9;
     border-radius: 3px;
+}
+
+.richtext-edit .ce-toolbar__content {
+    max-width: 86%;
+}
+
+.richtext-edit .ce-block__content {
+    max-width: 86%;
+}
+
+.richtext-view .ce-block__content {
+    max-width: 100%;
 }
 
 /* Custom Scroll */

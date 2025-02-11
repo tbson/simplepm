@@ -32,3 +32,8 @@ export const getLabels = () => ({
     title: t`Title`,
     content: t`Content`,
 });
+
+export const MODE = {
+    EDIT: 'EDIT',
+    VIEW: 'VIEW',
+};

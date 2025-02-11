@@ -2,10 +2,12 @@ import * as React from 'react';
 import { useRef, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
 import { App, Form, Input, Button, Row, Col } from 'antd';
+import { createStyles } from 'antd-style';
 import { LeftOutlined, CheckOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
 import RichTextInput from 'component/common/form/ant/input/richtext_input';
+import { getStyles } from './style';
 import { urls, getLabels } from './config';
 
 const formName = 'DocForm';
@@ -37,6 +39,8 @@ export default function DocForm({ data, onChange }) {
     const inputRef = useRef(null);
     const [form] = Form.useForm();
 
+    const useStyle = getStyles(createStyles);
+    const { styles } = useStyle();
     const labels = getLabels();
 
     const initialValues = Util.isEmpty(data) ? emptyRecord : data;
@@ -50,53 +54,53 @@ export default function DocForm({ data, onChange }) {
     }, []);
 
     return (
-        <div className="content">
-            <Form
-                form={form}
-                name={formName}
-                colon={false}
-                layout="vertical"
-                labelWrap
-                initialValues={{ ...initialValues }}
-                onFinish={(payload) => {
-                    payload.task_id = taskId;
-                    payload.type = 'DOC';
-                    FormUtil.submit(endPoint, payload, method)
-                        .then((data) => onChange(data, id))
-                        .catch(FormUtil.setFormErrors(form, notification));
-                }}
-            >
-                <Form.Item
-                    name="title"
-                    label={labels.title}
-                    rules={[FormUtil.ruleRequired()]}
+        <div>
+            <div className={styles.chatHeading}>
+                <div className="flex-item-remaining">
+                    <Link to={`/pm/task/${taskId}`}>
+                        <Button icon={<LeftOutlined />}>Back</Button>
+                    </Link>
+                </div>
+                <div>
+                    <Button
+                        type="primary"
+                        form={formName}
+                        htmlType="submit"
+                        icon={<CheckOutlined />}
+                    >
+                        Submit
+                    </Button>
+                </div>
+            </div>
+            <div className="content">
+                <Form
+                    form={form}
+                    name={formName}
+                    colon={false}
+                    layout="vertical"
+                    labelWrap
+                    initialValues={{ ...initialValues }}
+                    onFinish={(payload) => {
+                        payload.task_id = taskId;
+                        payload.type = 'DOC';
+                        FormUtil.submit(endPoint, payload, method)
+                            .then((data) => onChange(data, id))
+                            .catch(FormUtil.setFormErrors(form, notification));
+                    }}
                 >
-                    <Input ref={inputRef} />
-                </Form.Item>
+                    <Form.Item
+                        name="title"
+                        label={labels.title}
+                        rules={[FormUtil.ruleRequired()]}
+                    >
+                        <Input ref={inputRef} />
+                    </Form.Item>
 
-                <Form.Item name="content" label={labels.content}>
-                    <RichTextInput taskId={taskId} />
-                </Form.Item>
-
-                <Form.Item>
-                    <Row>
-                        <Col span={12}>
-                            <Link to={`/pm/task/${taskId}`}>
-                                <Button icon={<LeftOutlined />}>Back</Button>
-                            </Link>
-                        </Col>
-                        <Col span={12} className="right">
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                icon={<CheckOutlined />}
-                            >
-                                Submit
-                            </Button>
-                        </Col>
-                    </Row>
-                </Form.Item>
-            </Form>
+                    <Form.Item name="content" label={labels.content}>
+                        <RichTextInput taskId={taskId} />
+                    </Form.Item>
+                </Form>
+            </div>
         </div>
     );
 }

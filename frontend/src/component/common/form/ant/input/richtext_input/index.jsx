@@ -20,17 +20,20 @@ export default function RichTextInput({ value, onChange, taskId, disabled = fals
         return editorCore.current.save();
     }, []);
     return (
-        <ReactEditorJS
-            readOnly={disabled}
-            onInitialize={handleInitialize}
-            tools={getTools(taskId)}
-            onChange={() => {
-                handleSave().then((data) => {
-                    onChange(data);
-                });
-            }}
-            defaultValue={value}
-            placeholder="Content..."
-        />
+        <div className={disabled ? "richtext-view" : "richtext-edit"}>
+            <ReactEditorJS
+                readOnly={disabled}
+                onInitialize={handleInitialize}
+                tools={getTools(taskId)}
+                onChange={() => {
+                    handleSave().then((data) => {
+                        onChange(data);
+                    });
+                }}
+                defaultValue={value}
+                placeholder="Content..."
+                minHeight={200}
+            />
+        </div>
     );
 }
