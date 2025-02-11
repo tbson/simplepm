@@ -50,7 +50,9 @@ export default function DocForm({ data, onChange }) {
     const method = id ? 'put' : 'post';
 
     useEffect(() => {
-        inputRef.current.focus({ cursor: 'end' });
+        setTimeout(() => {
+            inputRef.current.focus({ cursor: 'end' });
+        }, 100);
     }, []);
 
     return (

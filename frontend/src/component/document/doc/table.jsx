@@ -38,12 +38,12 @@ export default function DocTable({ taskId, showControl = false }) {
                 // setPages(resp.data.pages);
                 setList(Util.appendKeys(resp.data.items));
             })
-            .catch(RequestUtil.displayError(notification))
+            .catch(RequestUtil.displayError(notification));
     };
 
     const navigateTo = NavUtil.navigateTo(navigate);
 
-    const getDocumentMenuItems = () => {
+    const getDocCreateOptions = () => {
         return {
             items: [
                 {
@@ -75,19 +75,22 @@ export default function DocTable({ taskId, showControl = false }) {
         };
     };
 
-    const getMessageMenuItems = (item) => {
+    const getDocIcon = (type) => {
+        if (type === 'DOC') {
+            return <FileWordOutlined />;
+        }
+        if (type === 'FILE') {
+            return <UploadOutlined />;
+        }
+        if (type === 'LINK') {
+            return <LinkOutlined />;
+        }
+        return null;
+    };
+
+    const getDocActionOptions = (item) => {
         return {
             items: [
-                {
-                    key: 'edit',
-                    label: 'Edit',
-                    icon: <EditOutlined />,
-                    onClick: () => {
-                        console.log('edit', item);
-                        setEditId(item.id);
-                        setContent(item.content);
-                    }
-                },
                 {
                     key: 'delete',
                     label: 'Delete',
@@ -101,24 +104,15 @@ export default function DocTable({ taskId, showControl = false }) {
                         if (!r) {
                             return;
                         }
-                        deleteMessage(item.id);
+                        RequestUtil.apiCall(`${urls.crud}${item.id}`, {}, 'delete')
+                            .then(() => {
+                                getList();
+                            })
+                            .catch(RequestUtil.displayError(notification));
                     }
                 }
             ]
         };
-    };
-
-    const getDocumentIcon = (type) => {
-        if (type === 'DOC') {
-            return <FileWordOutlined />;
-        }
-        if (type === 'FILE') {
-            return <UploadOutlined />;
-        }
-        if (type === 'LINK') {
-            return <LinkOutlined />;
-        }
-        return null;
     };
 
     return (
@@ -130,7 +124,7 @@ export default function DocTable({ taskId, showControl = false }) {
                     </div>
                 </div>
                 <div>
-                    <Dropdown menu={getDocumentMenuItems()} trigger={['click']}>
+                    <Dropdown menu={getDocCreateOptions()} trigger={['click']}>
                         <Button icon={<PlusOutlined />} />
                     </Dropdown>
                 </div>
@@ -142,7 +136,7 @@ export default function DocTable({ taskId, showControl = false }) {
                 renderItem={(item) => (
                     <List.Item>
                         <List.Item.Meta
-                            avatar={getDocumentIcon(item.type)}
+                            avatar={getDocIcon(item.type)}
                             title={
                                 <a href={item.url} target="_blank">
                                     {item.title}
@@ -155,7 +149,7 @@ export default function DocTable({ taskId, showControl = false }) {
                         {showControl ? (
                             <div>
                                 <Dropdown
-                                    menu={getMessageMenuItems(item)}
+                                    menu={getDocActionOptions(item)}
                                     trigger={['click']}
                                 >
                                     <MoreOutlined style={{ fontSize: '20px' }} />
