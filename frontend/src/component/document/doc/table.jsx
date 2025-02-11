@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { createStyles } from 'antd-style';
 import { useNavigate } from 'react-router';
-import { Button, Dropdown, List } from 'antd';
+import { App, Button, Dropdown, List } from 'antd';
 import {
     EditOutlined,
     DeleteOutlined,
@@ -12,32 +12,34 @@ import {
     UploadOutlined,
     LinkOutlined
 } from '@ant-design/icons';
+import Util from 'service/helper/util';
+import RequestUtil from 'service/helper/request_util';
 import NavUtil from 'service/helper/nav_util';
 import { getStyles } from './style';
-
-const testDocList = [
-    {
-        title: 'Document 1',
-        url: 'https://www.google.com',
-        type: 'DOC'
-    },
-    {
-        title: 'Document 2',
-        url: 'https://www.google.com',
-        type: 'FILE'
-    },
-    {
-        title: 'Document 3',
-        url: 'https://www.google.com',
-        type: 'LINK'
-    }
-];
+import { urls } from './config';
 
 export default function DocTable({ taskId, showControl = false }) {
+    const { notification } = App.useApp();
     const navigate = useNavigate();
     const useStyle = getStyles(createStyles);
-    const [documents, setDocuments] = useState(testDocList);
+    const [list, setList] = useState([]);
     const { styles } = useStyle();
+
+    React.useEffect(() => {
+        getList();
+    }, [taskId]);
+
+    const getList = () => {
+        const queryParam = {
+            task_id: taskId
+        };
+        RequestUtil.apiCall(urls.crud, queryParam)
+            .then((resp) => {
+                // setPages(resp.data.pages);
+                setList(Util.appendKeys(resp.data.items));
+            })
+            .catch(RequestUtil.displayError(notification))
+    };
 
     const navigateTo = NavUtil.navigateTo(navigate);
 
@@ -136,7 +138,7 @@ export default function DocTable({ taskId, showControl = false }) {
             <List
                 itemLayout="horizontal"
                 size="small"
-                dataSource={documents}
+                dataSource={list}
                 renderItem={(item) => (
                     <List.Item>
                         <List.Item.Meta
@@ -146,6 +148,9 @@ export default function DocTable({ taskId, showControl = false }) {
                                     {item.title}
                                 </a>
                             }
+                            onClick={() => {
+                                navigateTo(`/pm/task/${taskId}/doc/${item.id}`);
+                            }}
                         />
                         {showControl ? (
                             <div>

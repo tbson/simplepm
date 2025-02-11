@@ -31,8 +31,8 @@ const emptyRecord = {
  * @param {FormCallback} props.onChange
  */
 export default function DocForm({ data, onChange }) {
-    const { task_id } = useParams();
-    const taskId = parseInt(task_id, 10);
+    let { taskId } = useParams();
+    taskId = parseInt(taskId, 10);
     const { notification } = App.useApp();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
@@ -75,7 +75,7 @@ export default function DocForm({ data, onChange }) {
                 </Form.Item>
 
                 <Form.Item name="content" label={labels.content}>
-                    <RichTextInput taskId={task_id} />
+                    <RichTextInput taskId={taskId} />
                 </Form.Item>
 
                 <Form.Item>

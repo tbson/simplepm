@@ -24,11 +24,11 @@ var filterableFields = []string{}
 var orderableFields = []string{"id", "title", "order"}
 
 func List(c echo.Context) error {
-	taskID := c.Get("TaskID").(uint)
+	taskID := vldtutil.ValidateId(c.QueryParam("task_id"))
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
-	options.Filters["tenant_id"] = taskID
+	options.Filters["task_id"] = taskID
 	listResult, err := pager.Paging(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -78,10 +78,9 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	taskID := c.Get("TaskID").(uint)
 	cruder := NewRepo(dbutil.Db())
 
-	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{TaskID: taskID})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
