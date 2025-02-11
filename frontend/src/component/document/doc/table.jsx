@@ -4,7 +4,6 @@ import { createStyles } from 'antd-style';
 import { useNavigate } from 'react-router';
 import { App, Button, Dropdown, List } from 'antd';
 import {
-    EditOutlined,
     DeleteOutlined,
     PlusOutlined,
     MoreOutlined,
@@ -14,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
+import FormUtil from 'service/helper/form_util';
 import NavUtil from 'service/helper/nav_util';
 import { getStyles } from './style';
 import { urls } from './config';
@@ -51,7 +51,6 @@ export default function DocTable({ taskId, showControl = false }) {
                     label: 'Doc',
                     icon: <FileWordOutlined />,
                     onClick: () => {
-                        console.log('document');
                         navigateTo(`/pm/task/${taskId}/doc`);
                     }
                 },
@@ -60,7 +59,25 @@ export default function DocTable({ taskId, showControl = false }) {
                     label: 'File',
                     icon: <UploadOutlined />,
                     onClick: () => {
-                        console.log('document');
+                        FormUtil.getFile().then((file) => {
+                            const fileName = file.name;
+                            const fileSize = file.size;
+                            const fileType = file.type;
+                            const payload = {
+                                type: 'FILE',
+                                task_id: taskId,
+                                title: fileName,
+                                file_name: fileName,
+                                file_size: fileSize,
+                                file_type: fileType,
+                                file_url: file,
+                            };
+                            RequestUtil.apiCall(urls.crud, payload, 'post')
+                                .then(() => {
+                                    getList();
+                                })
+                                .catch(RequestUtil.displayError(notification));
+                        });
                     }
                 },
                 {
@@ -143,6 +160,9 @@ export default function DocTable({ taskId, showControl = false }) {
                                 </a>
                             }
                             onClick={() => {
+                                if (item.type === 'FILE') {
+                                    return window.open(item.file_url);
+                                }
                                 navigateTo(`/pm/task/${taskId}/doc/${item.id}`);
                             }}
                         />

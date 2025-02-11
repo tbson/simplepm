@@ -135,4 +135,24 @@ export default class FormUtil {
         }
         return value;
     }
+
+    static getFile() {
+        return new Promise((resolve) => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.style.display = 'none';
+
+            document.body.appendChild(input);
+
+            input.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    resolve(file);
+                }
+                document.body.removeChild(input);
+            });
+
+            input.click();
+        });
+    }
 }

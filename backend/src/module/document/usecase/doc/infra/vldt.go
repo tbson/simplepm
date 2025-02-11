@@ -9,6 +9,9 @@ type InputData struct {
 	Title       string         `json:"title" form:"title" validate:"required"`
 	Description string         `json:"description" form:"description"`
 	Content     datatypes.JSON `json:"content" form:"content"`
-	URL         string         `json:"url" form:"url"`
+	Link        string         `json:"link" form:"link"`
+	FileName    string         `json:"file_name" form:"file_name"`
+	FileType    string         `json:"file_type" form:"file_type"`
+	FileSize    int            `json:"file_size" form:"file_size"`
 	Order       int            `json:"order" form:"order"`
 }

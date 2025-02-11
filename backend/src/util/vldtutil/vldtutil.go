@@ -3,6 +3,7 @@ package vldtutil
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"mime/multipart"
 	"reflect"
@@ -212,6 +213,7 @@ func UploadAndUPdatePayload(
 	s3Result, err := s3Repo.Uploads(c.Request().Context(), folder, files)
 	for k, v := range s3Result {
 		result[k] = v.FileURL
+		fmt.Println(k, v.FileURL)
 	}
 	return result, nil
 }

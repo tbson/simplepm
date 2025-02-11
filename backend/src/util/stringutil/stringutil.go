@@ -26,6 +26,7 @@ func ToSnakeCaseEnd(s string) string {
 }
 
 func ToCamelCase(s string) string {
+	result := ""
 	// Split the input string into words separated by underscores
 	words := strings.Split(s, "_")
 
@@ -38,5 +39,11 @@ func ToCamelCase(s string) string {
 	}
 
 	// Join the words without separators to form CamelCase
-	return strings.Join(words, "")
+	result = strings.Join(words, "")
+
+	// ensure all Url convert to URL
+	if strings.Contains(result, "Url") {
+		return strings.ReplaceAll(result, "Url", "URL")
+	}
+	return result
 }

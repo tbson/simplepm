@@ -94,6 +94,7 @@ func (u *Repo) Uploads(
 	doneChan := make(chan struct{}, len(files))
 
 	for fieldName, fileHeaders := range files {
+		fmt.Println(fieldName, fileHeaders)
 		go func(fieldName string, fileHeaders []*multipart.FileHeader) {
 			for _, fileHeader := range fileHeaders {
 				fileInfo, err := u.Upload(ctx, folder, fileHeader)
