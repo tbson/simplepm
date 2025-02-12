@@ -11,8 +11,7 @@ import TaskKanban from './kanban';
 import FeatureTable from 'component/pm/feature/table';
 
 export default function Task() {
-    const { project_id } = useParams();
-    const projectId = parseInt(project_id);
+    const projectId = parseInt(useParams().projectId, 10);
     const [taskOption, setTaskOption] = useAtom(taskOptionSt);
     useEffect(() => {
         setTaskOption({ ...taskOption, loaded: false });

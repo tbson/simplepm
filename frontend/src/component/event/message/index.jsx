@@ -9,7 +9,7 @@ import Chat from './chat';
 
 export default function Message() {
     const { notification } = App.useApp();
-    const { task_id } = useParams();
+    const taskId = parseInt(useParams().taskId, 10);
     const [project, setProject] = useState({});
     const [task, setTask] = useState({});
     const [breadcrumb, setBreadcrumb] = useState({
@@ -29,7 +29,7 @@ export default function Message() {
     }, []);
 
     const getBreadcrumb = () => {
-        RequestUtil.apiCall(`${taskUrls.crud}${task_id}`)
+        RequestUtil.apiCall(`${taskUrls.crud}${taskId}`)
             .then((resp) => {
                 setProject(resp.data.project);
                 const data = {

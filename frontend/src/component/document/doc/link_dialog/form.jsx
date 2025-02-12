@@ -18,7 +18,7 @@ const emptyRecord = {
  * @param {FormCallback} props.onChange
  */
 export default function DocLinkForm({ onChange }) {
-    const { task_id } = useParams();
+    const taskId = parseInt(useParams().taskId, 10);
     const { notification } = App.useApp();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
@@ -43,7 +43,7 @@ export default function DocLinkForm({ onChange }) {
             onFinish={(data) => {
                 const payload = {
                     ...data,
-                    task_id: parseInt(task_id)
+                    task_id: taskId
                 };
                 FormUtil.submit(urls.createDocFromLink, payload, 'post')
                     .then((data) => onChange(data))
