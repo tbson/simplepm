@@ -15,6 +15,7 @@ import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import FormUtil from 'service/helper/form_util';
 import NavUtil from 'service/helper/nav_util';
+import DocLinkDialog from './link_dialog';
 import { getStyles } from './style';
 import { urls } from './config';
 
@@ -70,7 +71,7 @@ export default function DocTable({ taskId, showControl = false }) {
                                 file_name: fileName,
                                 file_size: fileSize,
                                 file_type: fileType,
-                                file_url: file,
+                                file_url: file
                             };
                             RequestUtil.apiCall(urls.crud, payload, 'post')
                                 .then(() => {
@@ -85,7 +86,7 @@ export default function DocTable({ taskId, showControl = false }) {
                     label: 'Link',
                     icon: <LinkOutlined />,
                     onClick: () => {
-                        console.log('document');
+                        DocLinkDialog.toggle(true);
                     }
                 }
             ]
@@ -133,52 +134,58 @@ export default function DocTable({ taskId, showControl = false }) {
     };
 
     return (
-        <div className={styles.document}>
-            <div className={styles.chatHeading}>
-                <div className="flex-item-remaining">
+        <>
+            <div className={styles.document}>
+                <div className={styles.chatHeading}>
+                    <div className="flex-item-remaining">
+                        <div>
+                            <strong>Documents</strong>
+                        </div>
+                    </div>
                     <div>
-                        <strong>Documents</strong>
+                        <Dropdown menu={getDocCreateOptions()} trigger={['click']}>
+                            <Button icon={<PlusOutlined />} />
+                        </Dropdown>
                     </div>
                 </div>
-                <div>
-                    <Dropdown menu={getDocCreateOptions()} trigger={['click']}>
-                        <Button icon={<PlusOutlined />} />
-                    </Dropdown>
-                </div>
-            </div>
-            <List
-                itemLayout="horizontal"
-                size="small"
-                dataSource={list}
-                renderItem={(item) => (
-                    <List.Item>
-                        <List.Item.Meta
-                            avatar={getDocIcon(item.type)}
-                            title={
-                                <a href={item.url} target="_blank">
-                                    {item.title}
-                                </a>
-                            }
-                            onClick={() => {
-                                if (item.type === 'FILE') {
-                                    return window.open(item.file_url);
+                <List
+                    itemLayout="horizontal"
+                    size="small"
+                    dataSource={list}
+                    renderItem={(item) => (
+                        <List.Item>
+                            <List.Item.Meta
+                                avatar={getDocIcon(item.type)}
+                                title={
+                                    <a href={item.url} target="_blank">
+                                        {item.title}
+                                    </a>
                                 }
-                                navigateTo(`/pm/task/${taskId}/doc/${item.id}`);
-                            }}
-                        />
-                        {showControl ? (
-                            <div>
-                                <Dropdown
-                                    menu={getDocActionOptions(item)}
-                                    trigger={['click']}
-                                >
-                                    <MoreOutlined style={{ fontSize: '20px' }} />
-                                </Dropdown>
-                            </div>
-                        ) : null}
-                    </List.Item>
-                )}
-            />
-        </div>
+                                onClick={() => {
+                                    if (item.type === 'FILE') {
+                                        return window.open(item.file_url);
+                                    }
+                                    if (item.type === 'LINK') {
+                                        return window.open(item.link);
+                                    }
+                                    navigateTo(`/pm/task/${taskId}/doc/${item.id}`);
+                                }}
+                            />
+                            {showControl ? (
+                                <div>
+                                    <Dropdown
+                                        menu={getDocActionOptions(item)}
+                                        trigger={['click']}
+                                    >
+                                        <MoreOutlined style={{ fontSize: '20px' }} />
+                                    </Dropdown>
+                                </div>
+                            ) : null}
+                        </List.Item>
+                    )}
+                />
+            </div>
+            <DocLinkDialog onChange={getList} />
+        </>
     );
 }

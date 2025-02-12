@@ -12,6 +12,7 @@ import (
 	signuptenant "src/module/account/usecase/signuptenant/infra"
 	crudvariable "src/module/config/usecase/crudvariable/infra"
 	configoption "src/module/config/usecase/option/infra"
+	createdocfromlink "src/module/document/usecase/createdocfromlink/infra"
 	doc "src/module/document/usecase/doc/infra"
 	docattachment "src/module/document/usecase/docattachment/infra"
 	message "src/module/event/usecase/message/infra"
@@ -55,6 +56,7 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = message.RegisterUrls(e, pemMap)
 	e, pemMap = doc.RegisterUrls(e, pemMap)
 	e, pemMap = docattachment.RegisterUrls(e, pemMap)
+	e, pemMap = createdocfromlink.RegisterUrls(e, pemMap)
 	e, pemMap = jwt.RegisterUrls(e, pemMap)
 	e, pemMap = github.RegisterUrls(e, pemMap)
 	e, pemMap = gitlab.RegisterUrls(e, pemMap)
