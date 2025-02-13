@@ -66,6 +66,11 @@ var CENTRIFUGO_JWT_LIFE_SPAN int = numberutil.StrToInt(
 	frameworkutil.GetEnv("CENTRIFUGO_JWT_LIFE_SPAN", "1200"), 1200,
 )
 
+var GITHUB_CLIENT_ID string = frameworkutil.GetEnv("GITHUB_CLIENT_ID", "")
+var GITHUB_CLIENT_SECRET string = frameworkutil.GetEnv("GITHUB_CLIENT_SECRET", "")
+var GITHUB_PRIVATE_KEY string = frameworkutil.GetEnv("GITHUB_PRIVATE_KEY", "")
+var GITHUB_PRIVATE_KEY_PATH string = "config/" + GITHUB_PRIVATE_KEY
+
 var MSG_PAGE_SIZE int = numberutil.StrToInt(
 	frameworkutil.GetEnv("MSG_PAGE_SIZE", "25"), 25,
 )

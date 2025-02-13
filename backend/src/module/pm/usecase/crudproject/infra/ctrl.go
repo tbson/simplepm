@@ -2,7 +2,6 @@ package infra
 
 import (
 	"net/http"
-	"slices"
 	"src/common/ctype"
 	"src/util/dbutil"
 	"src/util/dictutil"
@@ -129,7 +128,6 @@ func Create(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	structData.EnsureGitHost()
 
 	data := dictutil.StructToDict(structData)
 	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
@@ -174,10 +172,7 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	fieldModifier := []string{}
-	if slices.Contains(fields, "git_repo") {
-		structData.EnsureGitHost()
-		fieldModifier = append(fieldModifier, "git_host")
-	}
+
 	data := vldtutil.GetDictByFields(structData, fields, fieldModifier)
 	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
 	if err != nil {

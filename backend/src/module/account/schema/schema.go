@@ -33,17 +33,18 @@ func NewAuthClient(data ctype.Dict) *AuthClient {
 }
 
 type Tenant struct {
-	ID           uint        `gorm:"primaryKey" json:"id"`
-	AuthClientID uint        `json:"auth_client_id"`
-	AuthClient   *AuthClient `json:"auth_client"`
-	Roles        []Role      `gorm:"constraint:OnDelete:CASCADE;" json:"roles"`
-	Users        []User      `gorm:"constraint:OnDelete:CASCADE;" json:"users"`
-	Uid          string      `gorm:"type:text;not null;unique" json:"uid"`
-	Title        string      `gorm:"type:text;not null" json:"title"`
-	Avatar       string      `gorm:"type:text;not null;default:''" json:"avatar"`
-	AvatarStr    string      `gorm:"type:text;not null;default:''" json:"avatar_str"`
-	CreatedAt    time.Time   `json:"created_at"`
-	UpdatedAt    time.Time   `json:"updated_at"`
+	ID           uint         `gorm:"primaryKey" json:"id"`
+	AuthClientID uint         `json:"auth_client_id"`
+	AuthClient   *AuthClient  `json:"auth_client"`
+	Roles        []Role       `gorm:"constraint:OnDelete:CASCADE;" json:"roles"`
+	Users        []User       `gorm:"constraint:OnDelete:CASCADE;" json:"users"`
+	GitAccounts  []GitAccount `gorm:"constraint:OnDelete:CASCADE;" json:"git_accounts"`
+	Uid          string       `gorm:"type:text;not null;unique" json:"uid"`
+	Title        string       `gorm:"type:text;not null" json:"title"`
+	Avatar       string       `gorm:"type:text;not null;default:''" json:"avatar"`
+	AvatarStr    string       `gorm:"type:text;not null;default:''" json:"avatar_str"`
+	CreatedAt    time.Time    `json:"created_at"`
+	UpdatedAt    time.Time    `json:"updated_at"`
 }
 
 func NewTenant(data ctype.Dict) *Tenant {
@@ -63,7 +64,6 @@ type User struct {
 	TenantTmpID  *uint          `json:"tenant_tmp_id"`
 	Sub          *string        `gorm:"type:text;default:null;unique" json:"sub"`
 	Roles        []Role         `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"roles"`
-	GitUsers     []GitUser      `gorm:"constraint:OnDelete:CASCADE;" json:"git_users"`
 	ExternalID   string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_external" json:"uid"`
 	Email        string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email" json:"email"`
 	Mobile       *string        `gorm:"type:text" json:"mobile"`
@@ -97,24 +97,6 @@ func NewUser(data ctype.Dict) *User {
 		Color:       dictutil.GetValue[string](data, "Color"),
 		ExtraInfo:   datatypes.JSON(extraInfoJSON),
 		Roles:       dictutil.GetValue[[]Role](data, "Roles"),
-	}
-}
-
-type GitUser struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	UserID    uint      `gorm:"not null" json:"user_id"`
-	User      User      `gorm:"foreignKey:UserID" json:"user"`
-	Username  string    `gorm:"type:text;not null" json:"username"`
-	GitHost   string    `gorm:"type:text;not null;default:'GITHUB';check:git_host IN ('GITHUB', 'GITLAB')" json:"git_host"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-func NewGitUser(data ctype.Dict) *GitUser {
-	return &GitUser{
-		UserID:   dictutil.GetValue[uint](data, "UserID"),
-		Username: dictutil.GetValue[string](data, "Username"),
-		GitHost:  dictutil.GetValue[string](data, "GitHost"),
 	}
 }
 
@@ -152,5 +134,27 @@ func NewPem(data ctype.Dict) *Pem {
 		Module: dictutil.GetValue[string](data, "Module"),
 		Action: dictutil.GetValue[string](data, "Action"),
 		Admin:  dictutil.GetValue[bool](data, "Admin"),
+	}
+}
+
+type GitAccount struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	TenantID  *uint     `json:"tenant_id"`
+	Tenant    *Tenant   `gorm:"constraint:OnDelete:CASCADE;" json:"tenant"`
+	Uid       *string   `gorm:"type:text;default:null" json:"uid"`
+	Title     string    `gorm:"type:text;not null;default:''" json:"title"`
+	Avatar    string    `gorm:"type:text;not null;default:''" json:"avatar"`
+	Type      string    `gorm:"type:text;not null;default:'GITHUB';check:type IN ('GITHUB', 'GITLAB')" json:"type"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func NewGitAccount(data ctype.Dict) *GitAccount {
+	return &GitAccount{
+		TenantID: dictutil.GetValue[*uint](data, "TenantID"),
+		Uid:      dictutil.GetValue[*string](data, "Uid"),
+		Title:    dictutil.GetValue[string](data, "Title"),
+		Avatar:   dictutil.GetValue[string](data, "Avatar"),
+		Type:     dictutil.GetValue[string](data, "Type"),
 	}
 }

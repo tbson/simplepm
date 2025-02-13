@@ -2,10 +2,14 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"src/module/git/repo/github"
 )
 
 func main() {
-	arg0 := os.Args[1:][0]
-	fmt.Println(arg0)
+	repo := github.New()
+	result, err := repo.GenerateJWT()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(result)
 }

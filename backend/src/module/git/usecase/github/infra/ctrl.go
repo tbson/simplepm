@@ -10,6 +10,13 @@ import (
 )
 
 func Callback(c echo.Context) error {
+	fmt.Println("query params.....................")
+	for k, v := range c.QueryParams() {
+		fmt.Println(k, v)
+	}
+
+	// instalationID := c.QueryParam("installation_id")
+	// tenantUID := c.QueryParam("state")
 
 	var result ctype.Dict
 	err := c.Bind(&result)
@@ -23,6 +30,11 @@ func Callback(c echo.Context) error {
 }
 
 func Webhook(c echo.Context) error {
+	// print all query params
+	fmt.Println("query params.....................")
+	for k, v := range c.QueryParams() {
+		fmt.Println(k, v)
+	}
 
 	var result ctype.Dict
 	err := c.Bind(&result)
