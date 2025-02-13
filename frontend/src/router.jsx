@@ -14,6 +14,7 @@ const VerifyEmail = (await import('component/common/result/verify_email')).defau
 const Login = (await import('component/auth/login')).default;
 const Signup = (await import('component/auth/signup')).default;
 const TenantDetail = (await import('component/account/tenant/detail')).default;
+const TenantSetting = (await import('component/account/tenant/setting')).default;
 const Role = (await import('component/account/role')).default;
 const User = (await import('component/account/user')).default;
 const Profile = (await import('component/account/profile')).default;
@@ -97,6 +98,10 @@ const router = createBrowserRouter([
                             {
                                 path: '',
                                 lazy: async () => ({ Component: Profile })
+                            },
+                            {
+                                path: '/account/tenant/setting',
+                                lazy: async () => ({ Component: TenantSetting })
                             },
                             {
                                 path: 'config/variable',

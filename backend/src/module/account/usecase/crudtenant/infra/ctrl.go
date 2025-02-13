@@ -65,9 +65,13 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
+	user := c.Get("User").(*schema.User)
 	cruder := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
+	if id == 0 {
+		id = user.TenantID
+	}
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"id": id},
 	}

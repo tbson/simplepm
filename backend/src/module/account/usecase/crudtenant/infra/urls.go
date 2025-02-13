@@ -27,7 +27,7 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	)
 	rr.Rbac(
 		"GET", "/:id", Retrieve,
-		[]string{profiletype.ADMIN, profiletype.STAFF},
+		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
 		fmt.Sprintf("Get %s detail", useCaseGroupName),
 	)
 	rr.Rbac(

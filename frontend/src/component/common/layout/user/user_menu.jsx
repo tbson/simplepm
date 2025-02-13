@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { t } from 'ttag';
-import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { UserOutlined, LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 import { Drawer, Avatar, Menu, Divider } from 'antd';
 import { useLocation, useNavigate } from 'react-router';
 import Util from 'service/helper/util';
@@ -67,6 +67,11 @@ export default function UserMenu() {
                     mode="inline"
                     items={[
                         { label: t`Your profile`, key: '/', icon: <UserOutlined /> },
+                        {
+                            label: t`Setting`,
+                            key: '/account/tenant/setting',
+                            icon: <SettingOutlined />
+                        },
                         {
                             label: t`Sign out`,
                             key: `/logout`,

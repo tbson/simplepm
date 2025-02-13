@@ -13,7 +13,7 @@ import { urls, getMessages } from '../config';
 import Summary from './summary';
 import Dialog from '../dialog';
 
-export default function TenantDetail() {
+export default function TenantSetting() {
     const { notification } = App.useApp();
     const { tenant_id } = useParams();
     const [item, setItem] = useState({});
@@ -74,4 +74,4 @@ export default function TenantDetail() {
     );
 }
 
-TenantDetail.displayName = 'TenantDetail';
+TenantSetting.displayName = 'TenantSetting';

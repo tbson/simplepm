@@ -4,7 +4,7 @@ import { t } from 'ttag';
 import Img from 'component/common/display/img';
 import { tenantDictSt } from 'component/account/tenant/state';
 
-export default function TenantDetailSummary({ data }) {
+export default function TenantSettingSummary({ data }) {
     const tenantDict = useAtomValue(tenantDictSt);
     return (
         <table className="styled-table">
@@ -41,4 +41,4 @@ export default function TenantDetailSummary({ data }) {
         </table>
     );
 }
-TenantDetailSummary.displayName = 'TenantDetailSummary';
+TenantSettingSummary.displayName = 'TenantSettingSummary';
