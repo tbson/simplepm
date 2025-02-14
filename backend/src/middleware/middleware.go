@@ -58,7 +58,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			// preload roles and pems which pem
 			user, err := userRepo.Retrieve(ctype.QueryOptions{
 				Filters:  ctype.Dict{"email": email},
-				Preloads: []string{"Roles.Pems"},
+				Preloads: []string{"Roles.Pems", "Tenant"},
 			})
 			if err != nil {
 				return c.JSON(401, errutil.New("", []string{msg}))
@@ -91,6 +91,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 				c.Set("UserID", user.ID)
 				c.Set("Admin", user.Admin)
 				c.Set("TenantID", tenantID)
+				c.Set("TenantUid", user.Tenant.Uid)
 				return next(c)
 			}
 
@@ -101,6 +102,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 						c.Set("UserID", user.ID)
 						c.Set("Admin", user.Admin)
 						c.Set("TenantID", tenantID)
+						c.Set("TenantUid", user.Tenant.Uid)
 						return next(c)
 					}
 				}

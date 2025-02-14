@@ -66,6 +66,7 @@ var CENTRIFUGO_JWT_LIFE_SPAN int = numberutil.StrToInt(
 	frameworkutil.GetEnv("CENTRIFUGO_JWT_LIFE_SPAN", "1200"), 1200,
 )
 
+var GITHUB_APP_PUBLIC_LINK string = frameworkutil.GetEnv("GITHUB_APP_PUBLIC_LINK", "")
 var GITHUB_CLIENT_ID string = frameworkutil.GetEnv("GITHUB_CLIENT_ID", "")
 var GITHUB_CLIENT_SECRET string = frameworkutil.GetEnv("GITHUB_CLIENT_SECRET", "")
 var GITHUB_PRIVATE_KEY string = frameworkutil.GetEnv("GITHUB_PRIVATE_KEY", "")

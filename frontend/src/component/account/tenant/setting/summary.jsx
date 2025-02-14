@@ -1,11 +1,19 @@
 import * as React from 'react';
-import { useAtomValue } from 'jotai';
 import { t } from 'ttag';
+import { Button } from 'antd';
+import { GithubOutlined } from '@ant-design/icons';
+import RequestUtil from 'service/helper/request_util';
 import Img from 'component/common/display/img';
-import { tenantDictSt } from 'component/account/tenant/state';
+import { githubUrls } from '../config';
 
 export default function TenantSettingSummary({ data }) {
-    const tenantDict = useAtomValue(tenantDictSt);
+    const getGithubInstallUrl = () => {
+        return RequestUtil.apiCall(githubUrls.installUrl).then((resp) => {
+            console.log(resp.data.url);
+            // window.location.href = resp.data.url;
+        });
+    };
+
     return (
         <table className="styled-table">
             <tbody>
@@ -19,22 +27,29 @@ export default function TenantSettingSummary({ data }) {
                 </tr>
                 <tr>
                     <td span={6}>
-                        <strong>{t`UID`}</strong>
+                        <strong>{t`Code`}</strong>
                     </td>
                     <td span={18}>{data.uid}</td>
                 </tr>
                 <tr>
                     <td span={6}>
-                        <strong>{t`Title`}</strong>
+                        <strong>{t`Name`}</strong>
                     </td>
                     <td span={18}>{data.title}</td>
                 </tr>
                 <tr>
                     <td span={6}>
-                        <strong>{t`Auth client`}</strong>
+                        <strong>{t`Github account`}</strong>
                     </td>
                     <td span={18}>
-                        {tenantDict.auth_client[data.auth_client_id] || ''}
+                        <Button
+                            icon={<GithubOutlined />}
+                            onClick={() => {
+                                getGithubInstallUrl();
+                            }}
+                        >
+                            Connect to Github account
+                        </Button>
                     </td>
                 </tr>
             </tbody>

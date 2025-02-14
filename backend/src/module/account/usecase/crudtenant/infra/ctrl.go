@@ -73,7 +73,8 @@ func Retrieve(c echo.Context) error {
 		id = user.TenantID
 	}
 	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"id": id},
+		Filters:  ctype.Dict{"id": id},
+		Preloads: []string{"GitAccounts"},
 	}
 
 	result, err := cruder.Retrieve(queryOptions)

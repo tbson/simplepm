@@ -139,7 +139,7 @@ func NewPem(data ctype.Dict) *Pem {
 
 type GitAccount struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
-	TenantID  *uint     `json:"tenant_id"`
+	TenantID  *uint     `gorm:"default:null;" json:"tenant_id"`
 	Tenant    *Tenant   `gorm:"constraint:OnDelete:CASCADE;" json:"tenant"`
 	Uid       *string   `gorm:"type:text;default:null" json:"uid"`
 	Title     string    `gorm:"type:text;not null;default:''" json:"title"`

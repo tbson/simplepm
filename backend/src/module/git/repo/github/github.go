@@ -25,6 +25,11 @@ type TokenResult struct {
 	Token string `json:"token"`
 }
 
+func (r Repo) GetInstallUrl(tenantUid string) string {
+	publicLink := setting.GITHUB_APP_PUBLIC_LINK
+	return fmt.Sprintf("%s?state=%s", publicLink, tenantUid)
+}
+
 func (r Repo) GetToken() (TokenResult, error) {
 	result := TokenResult{
 		Token: "github",

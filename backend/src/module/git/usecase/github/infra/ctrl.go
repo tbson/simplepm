@@ -1,48 +1,79 @@
 package infra
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"src/common/ctype"
+	"src/util/dbutil"
+	"src/util/numberutil"
+	"src/util/vldtutil"
+
+	"src/module/git/repo/github"
+
+	"src/module/account/repo/gitaccount"
+	"src/module/account/repo/tenant"
+
+	"src/module/git/usecase/github/app"
 
 	"github.com/labstack/echo/v4"
 )
 
-func Callback(c echo.Context) error {
-	fmt.Println("query params.....................")
-	for k, v := range c.QueryParams() {
-		fmt.Println(k, v)
+func GetInstallUrl(c echo.Context) error {
+	gitaccountRepo := github.New()
+	tenantUid := c.Get("TenantUid").(string)
+	url := gitaccountRepo.GetInstallUrl(tenantUid)
+	result := ctype.Dict{
+		"url": url,
 	}
-
-	// instalationID := c.QueryParam("installation_id")
-	// tenantUID := c.QueryParam("state")
-
-	var result ctype.Dict
-	err := c.Bind(&result)
-	if err != nil {
-		return c.String(http.StatusBadRequest, "bad request")
-	}
-	jsonString, err := json.MarshalIndent(result, "", "  ")
-	fmt.Println("github callback.....................")
-	fmt.Println(string(jsonString))
 	return c.JSON(http.StatusOK, result)
 }
 
-func Webhook(c echo.Context) error {
-	// print all query params
-	fmt.Println("query params.....................")
-	for k, v := range c.QueryParams() {
-		fmt.Println(k, v)
+func Callback(c echo.Context) error {
+	tenantRepo := tenant.New(dbutil.Db())
+	gitaccountRepo := gitaccount.New(dbutil.Db())
+	srv := app.New(tenantRepo, gitaccountRepo)
+
+	setupAction := c.QueryParam("setup_action")
+	installationID := c.QueryParam("installation_id")
+	tenantUid := c.QueryParam("state")
+
+	if setupAction == app.GITHUB_CALLBACK_ACTION_INSTALL {
+		_, err := srv.HandleInstallCallback(installationID, tenantUid)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+		return c.Redirect(http.StatusFound, "/account/tenant/setting")
 	}
 
-	var result ctype.Dict
-	err := c.Bind(&result)
+	return c.JSON(http.StatusOK, ctype.Dict{})
+}
+
+func Webhook(c echo.Context) error {
+	tenantRepo := tenant.New(dbutil.Db())
+	gitaccountRepo := gitaccount.New(dbutil.Db())
+	srv := app.New(tenantRepo, gitaccountRepo)
+
+	structData, err := vldtutil.ValidatePayload(c, app.GithubInstallWebhook{})
 	if err != nil {
-		return c.String(http.StatusBadRequest, "bad request")
+		return c.JSON(http.StatusBadRequest, err)
 	}
-	jsonString, err := json.MarshalIndent(result, "", "  ")
-	fmt.Println("github webhook.....................")
-	fmt.Println(string(jsonString))
-	return c.JSON(http.StatusOK, result)
+
+	uid := numberutil.UintToStr(structData.Installation.ID)
+	title := structData.Sender.Login
+	avatar := structData.Sender.AvatarURL
+
+	if structData.Action == app.GITHUB_WEBHOOK_ACTION_CREATED {
+		_, err = srv.HandleInstallWebhook(uid, title, avatar)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+	}
+
+	if structData.Action == app.GITHUB_WEBHOOK_ACTION_DELETED {
+		err = srv.HandleUninstallWebhook(uid)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+	}
+
+	return c.JSON(http.StatusOK, ctype.Dict{})
 }
