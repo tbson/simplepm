@@ -3,8 +3,13 @@ import { t } from 'ttag';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useAtomValue } from 'jotai';
-import { App, Row, Col, Table, Flex } from 'antd';
-import { ProfileOutlined } from '@ant-design/icons';
+import { App, Row, Col, Table, Flex, Dropdown } from 'antd';
+import {
+    ProfileOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    MoreOutlined
+} from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import {
@@ -139,6 +144,38 @@ export default function ProjectTable() {
             .finally(() => Util.toggleGlobalLoading(false));
     };
 
+    const getTableActions = (item) => {
+        return {
+            items: [
+                {
+                    key: 'edit',
+                    label: 'Edit',
+                    icon: <EditOutlined />,
+                    onClick: () => {
+                        Dialog.toggle(true, item.id);
+                    }
+                },
+                {
+                    key: 'show_task_field',
+                    label: 'Show task field',
+                    icon: <ProfileOutlined />,
+                    onClick: () => {
+                        TaskField.toggle(true, item.id);
+                    }
+                },
+                {
+                    key: 'delete',
+                    label: 'Delete',
+                    danger: true,
+                    icon: <DeleteOutlined />,
+                    onClick: () => {
+                        onDelete(item.id);
+                    }
+                }
+            ]
+        };
+    };
+
     const columns = [
         {
             key: 'avatar',
@@ -155,26 +192,6 @@ export default function ProjectTable() {
                 <Link to={`/pm/project/${record.id}`}>{value}</Link>
             )
         },
-        /*
-        {
-            key: 'workspace_label',
-            title: labels.workspace_id,
-            dataIndex: 'workspace_label',
-            width: 120,
-            filterMultiple: false,
-            filters: projectFilter.workspace,
-            onFilter: (value, record) => record.workspace_id === value
-        },
-        {
-            key: 'layout',
-            title: labels.layout,
-            dataIndex: 'layout',
-            width: 120,
-            filterMultiple: false,
-            filters: projectFilter.layout,
-            onFilter: (value, record) => record.layout === value
-        },
-        */
         {
             key: 'status',
             title: labels.status,
@@ -188,23 +205,11 @@ export default function ProjectTable() {
             key: 'action',
             title: '',
             fixed: 'right',
-            width: 90,
+            width: 50,
             render: (_text, record) => (
-                <Flex wrap gap={5} justify="flex-end">
-                    <PemCheck pem_group={PEM_GROUP} pem="update">
-                        <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
-                    </PemCheck>
-                    <PemCheck pem_group={PEM_GROUP} pem="delete">
-                        <RemoveBtn onClick={() => onDelete(record.id)} />
-                    </PemCheck>
-                    <PemCheck pem_group={PEM_GROUP} pem="update">
-                        <IconButton
-                            icon={<ProfileOutlined />}
-                            tootip={t`Toggle field page`}
-                            onClick={() => TaskField.toggle(true, record.id)}
-                        />
-                    </PemCheck>
-                </Flex>
+                <Dropdown menu={getTableActions(record)} trigger={['click']}>
+                    <MoreOutlined style={{ fontSize: '20px' }}/>
+                </Dropdown>
             )
         }
     ];

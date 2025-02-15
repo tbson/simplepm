@@ -106,7 +106,7 @@ export default function DocTable({ taskId, showControl = false }) {
         return null;
     };
 
-    const getDocActionOptions = (item) => {
+    const getTableActions = (item) => {
         return {
             items: [
                 {
@@ -115,7 +115,6 @@ export default function DocTable({ taskId, showControl = false }) {
                     danger: true,
                     icon: <DeleteOutlined />,
                     onClick: () => {
-                        console.log('delete', item);
                         const r = window.confirm(
                             'Do you want to remove this document?'
                         );
@@ -174,7 +173,7 @@ export default function DocTable({ taskId, showControl = false }) {
                             {showControl ? (
                                 <div>
                                     <Dropdown
-                                        menu={getDocActionOptions(item)}
+                                        menu={getTableActions(item)}
                                         trigger={['click']}
                                     >
                                         <MoreOutlined style={{ fontSize: '20px' }} />
