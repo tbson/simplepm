@@ -27,6 +27,8 @@ export const emptyRecord = {
     first_name: "",
     email: "",
     phone_number: "",
+    github_id: "",
+    gitlab_id: "",
     groups: []
 };
 
@@ -36,6 +38,8 @@ export const labels = {
     first_name: t`Firstname`,
     email: t`Email`,
     phone_number: t`Phone number`,
+    github_id: t`Github ID`,
+    gitlab_id: t`Gitlab ID`,
     is_active: t`Active`,
     groups: t`Groups`
 };

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { t } from 'ttag';
+import { GithubOutlined, GitlabOutlined } from '@ant-design/icons';
 import Img from 'component/common/display/img';
 
 export default function ProfileSummary(data) {
@@ -11,11 +12,7 @@ export default function ProfileSummary(data) {
                         <strong>{t`Avatar`}</strong>
                     </td>
                     <td span={18}>
-                        <Img
-                            src={data.avatar}
-                            width={150}
-                            height={150}
-                        />
+                        <Img src={data.avatar} width={150} height={150} />
                     </td>
                 </tr>
                 <tr>
@@ -41,6 +38,21 @@ export default function ProfileSummary(data) {
                         <strong>{t`Last name`}</strong>
                     </td>
                     <td span={18}>{data.last_name}</td>
+                </tr>
+                <tr>
+                    <td span={6}>
+                        <strong>{t`Git users`}</strong>
+                    </td>
+                    <td span={18}>
+                        <div>
+                            <GithubOutlined />{' '}
+                            <span>{data.github_id || <em>Notset</em>}</span>
+                        </div>
+                        <div>
+                            <GitlabOutlined />{' '}
+                            <span>{data.gitlab_id || <em>Notset</em>}</span>
+                        </div>
+                    </td>
                 </tr>
             </tbody>
         </table>

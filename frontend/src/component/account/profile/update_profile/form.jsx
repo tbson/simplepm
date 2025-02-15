@@ -35,7 +35,15 @@ export default function UpdateProfileForm({ data, onChange }) {
             name: 'last_name',
             label: t`Last Name`,
             rules: [FormUtil.ruleRequired()]
-        }
+        },
+        github_id: {
+            name: 'github_id',
+            label: t`Github ID`
+        },
+        gitlab_id: {
+            name: 'gitlab_id',
+            label: t`Gitlab ID`
+        },
     };
 
     return (
@@ -65,6 +73,12 @@ export default function UpdateProfileForm({ data, onChange }) {
                         <Input />
                     </Form.Item>
                     <Form.Item {...formAttrs.last_name}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item {...formAttrs.github_id}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item {...formAttrs.gitlab_id}>
                         <Input />
                     </Form.Item>
                 </Col>
