@@ -6,17 +6,14 @@ import { useAtomValue } from 'jotai';
 import { App, Row, Col, Table, Flex, Dropdown } from 'antd';
 import {
     ProfileOutlined,
-    EditOutlined,
+    SettingOutlined,
     DeleteOutlined,
     MoreOutlined
 } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import {
-    AddNewBtn,
-    EditBtn,
-    RemoveBtn,
-    IconButton
+    AddNewBtn
 } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Img from 'component/common/display/img';
@@ -148,16 +145,16 @@ export default function ProjectTable() {
         return {
             items: [
                 {
-                    key: 'edit',
-                    label: 'Edit',
-                    icon: <EditOutlined />,
+                    key: 'setting',
+                    label: t`Setting`,
+                    icon: <SettingOutlined />,
                     onClick: () => {
                         Dialog.toggle(true, item.id);
                     }
                 },
                 {
                     key: 'show_task_field',
-                    label: 'Show task field',
+                    label: t`Task field`,
                     icon: <ProfileOutlined />,
                     onClick: () => {
                         TaskField.toggle(true, item.id);
@@ -165,7 +162,7 @@ export default function ProjectTable() {
                 },
                 {
                     key: 'delete',
-                    label: 'Delete',
+                    label: t`Delete`,
                     danger: true,
                     icon: <DeleteOutlined />,
                     onClick: () => {
