@@ -55,27 +55,26 @@ func NewWorkspaceUser(data ctype.Dict) *WorkspaceUser {
 }
 
 type Project struct {
-	ID           uint                `gorm:"primaryKey" json:"id"`
-	TenantID     uint                `gorm:"not null" json:"tenant_id"`
-	Tenant       account.Tenant      `gorm:"foreignKey:TenantID" json:"tenant"`
-	WorkspaceID  *uint               `gorm:"default:null" json:"workspace_id"`
-	Workspace    *Workspace          `gorm:"foreignKey:WorkspaceID" json:"workspace"`
-	GitAccountID *uint               `gorm:"default:null" json:"git_account_id"`
-	GitAccount   *account.GitAccount `gorm:"foreignKey:GitAccountID" json:"git_account"`
-	Tasks        []Task              `gorm:"constraint:OnDelete:CASCADE;" json:"tasks"`
-	TaskFields   []TaskField         `gorm:"constraint:OnDelete:CASCADE;" json:"task_fields"`
-	Features     []Feature           `gorm:"constraint:OnDelete:CASCADE;" json:"features"`
-	Users        []account.User      `gorm:"many2many:projects_users;" json:"users"`
-	Title        string              `gorm:"type:text;not null" json:"title"`
-	Description  string              `gorm:"ntype:text;ot null;default:''" json:"description"`
-	Avatar       string              `gorm:"type:text;not null;default:''" json:"avatar"`
-	GitRepo      string              `gorm:"type:text;not null;default:''" json:"git_repo"`
-	Layout       string              `gorm:"type:text;not null;default:'TABLE';check:layout IN ('TABLE', 'KANBAN', 'ROADMAP')" json:"layout"`
-	Status       string              `gorm:"type:text;not null;default:'ACTIVE';check:status IN ('ACTIVE', 'FINISHED', 'ARCHIEVED')" json:"status"`
-	Order        int                 `gorm:"not null;default:0" json:"order"`
-	FinishedAt   *time.Time          `json:"finished_at"`
-	CreatedAt    time.Time           `json:"created_at"`
-	UpdatedAt    time.Time           `json:"updated_at"`
+	ID          uint           `gorm:"primaryKey" json:"id"`
+	TenantID    uint           `gorm:"not null" json:"tenant_id"`
+	Tenant      account.Tenant `gorm:"foreignKey:TenantID" json:"tenant"`
+	WorkspaceID *uint          `gorm:"default:null" json:"workspace_id"`
+	Workspace   *Workspace     `gorm:"foreignKey:WorkspaceID" json:"workspace"`
+	Tasks       []Task         `gorm:"constraint:OnDelete:CASCADE;" json:"tasks"`
+	TaskFields  []TaskField    `gorm:"constraint:OnDelete:CASCADE;" json:"task_fields"`
+	Features    []Feature      `gorm:"constraint:OnDelete:CASCADE;" json:"features"`
+	Users       []account.User `gorm:"many2many:projects_users;" json:"users"`
+	Title       string         `gorm:"type:text;not null" json:"title"`
+	Description string         `gorm:"ntype:text;ot null;default:''" json:"description"`
+	Avatar      string         `gorm:"type:text;not null;default:''" json:"avatar"`
+	GitRepo     string         `gorm:"type:text;not null;default:''" json:"git_repo"`
+	GitHost     string         `gorm:"type:text;not null;default:'GITHUB';check:git_host IN ('GITHUB', 'GITLAB')" json:"git_host"`
+	Layout      string         `gorm:"type:text;not null;default:'TABLE';check:layout IN ('TABLE', 'KANBAN', 'ROADMAP')" json:"layout"`
+	Status      string         `gorm:"type:text;not null;default:'ACTIVE';check:status IN ('ACTIVE', 'FINISHED', 'ARCHIEVED')" json:"status"`
+	Order       int            `gorm:"not null;default:0" json:"order"`
+	FinishedAt  *time.Time     `json:"finished_at"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
 }
 
 func NewProject(data ctype.Dict) *Project {
@@ -243,10 +242,15 @@ func NewTask(data ctype.Dict) *Task {
 }
 
 type GitBranch struct {
-	ID     uint   `gorm:"primaryKey" json:"id"`
-	TaskID uint   `gorm:"not null" json:"task_id"`
-	Task   Task   `gorm:"foreignKey:TaskID" json:"task"`
-	Title  string `gorm:"type:text;not null" json:"title"`
+	ID         uint         `gorm:"primaryKey" json:"id"`
+	UserID     uint         `gorm:"not null;uniqueIndex:idx_workspace_user" json:"user_id"`
+	User       account.User `gorm:"foreignKey:UserID" json:"user"`
+	TaskID     uint         `gorm:"not null" json:"task_id"`
+	Task       Task         `gorm:"foreignKey:TaskID" json:"task"`
+	GitCommits []GitCommit  `gorm:"constraint:OnDelete:CASCADE;" json:"git_commits"`
+	Title      string       `gorm:"type:text;not null" json:"title"`
+	CreatedAt  time.Time    `json:"created_at"`
+	UpdatedAt  time.Time    `json:"updated_at"`
 }
 
 func (GitBranch) TableName() string {
@@ -255,8 +259,32 @@ func (GitBranch) TableName() string {
 
 func NewGitBranch(data ctype.Dict) *GitBranch {
 	return &GitBranch{
+		UserID: dictutil.GetValue[uint](data, "UserID"),
 		TaskID: dictutil.GetValue[uint](data, "TaskID"),
 		Title:  dictutil.GetValue[string](data, "Title"),
+	}
+}
+
+type GitCommit struct {
+	ID            uint      `gorm:"primaryKey" json:"id"`
+	TaskID        uint      `gorm:"not null" json:"task_id"`
+	Task          Task      `gorm:"foreignKey:TaskID" json:"task"`
+	GitBranchID   uint      `gorm:"not null" json:"git_branch_id"`
+	GitBranch     GitBranch `gorm:"foreignKey:GitBranchID" json:"git_branch"`
+	CommitID      string    `gorm:"type:text;not null" json:"commit_id"`
+	CommitURL     string    `gorm:"type:text;not null" json:"commit_url"`
+	CommitMessage string    `gorm:"type:text;not null" json:"commit_message"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+}
+
+func NewGitCommit(data ctype.Dict) *GitCommit {
+	return &GitCommit{
+		TaskID:        dictutil.GetValue[uint](data, "TaskID"),
+		GitBranchID:   dictutil.GetValue[uint](data, "GitBranchID"),
+		CommitID:      dictutil.GetValue[string](data, "CommitID"),
+		CommitURL:     dictutil.GetValue[string](data, "CommitURL"),
+		CommitMessage: dictutil.GetValue[string](data, "CommitMessage"),
 	}
 }
 

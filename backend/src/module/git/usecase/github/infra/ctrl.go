@@ -1,6 +1,8 @@
 package infra
 
 import (
+	"fmt"
+	"io"
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
@@ -49,13 +51,23 @@ func Callback(c echo.Context) error {
 	return c.JSON(http.StatusOK, ctype.Dict{})
 }
 
+func Webhook1(c echo.Context) error {
+	bodyBytes, err := io.ReadAll(c.Request().Body)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	fmt.Println(string(bodyBytes))
+	return c.JSON(http.StatusOK, ctype.Dict{})
+}
+
 func Webhook(c echo.Context) error {
 	tenantRepo := tenant.New(dbutil.Db())
 	gitaccountRepo := gitaccount.New(dbutil.Db())
 	gitRepoRepo := gitrepo.New(dbutil.Db())
 	srv := app.New(tenantRepo, gitaccountRepo, gitRepoRepo)
 
-	structData, err := vldtutil.ValidatePayload(c, app.GithubInstallWebhook{})
+	structData, err := vldtutil.ValidatePayload(c, app.GithubWebhook{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

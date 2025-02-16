@@ -39,21 +39,6 @@ export default function ProfileSummary(data) {
                     </td>
                     <td span={18}>{data.last_name}</td>
                 </tr>
-                <tr>
-                    <td span={6}>
-                        <strong>{t`Git users`}</strong>
-                    </td>
-                    <td span={18}>
-                        <div>
-                            <GithubOutlined />{' '}
-                            <span>{data.github_id || <em>Notset</em>}</span>
-                        </div>
-                        <div>
-                            <GitlabOutlined />{' '}
-                            <span>{data.gitlab_id || <em>Notset</em>}</span>
-                        </div>
-                    </td>
-                </tr>
             </tbody>
         </table>
     );
