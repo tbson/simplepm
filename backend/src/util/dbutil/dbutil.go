@@ -28,6 +28,7 @@ func RegisterModels() []interface{} {
 		&account.Role{},
 		&account.Pem{},
 		&account.GitAccount{},
+		&account.GitRepo{},
 		&pm.Workspace{},
 		&pm.WorkspaceUser{},
 		&pm.Project{},

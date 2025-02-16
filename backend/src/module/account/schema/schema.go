@@ -162,3 +162,21 @@ func NewGitAccount(data ctype.Dict) *GitAccount {
 		Type:     dictutil.GetValue[string](data, "Type"),
 	}
 }
+
+type GitRepo struct {
+	ID           uint       `gorm:"primaryKey" json:"id"`
+	GitAccountID uint       `json:"git_account_id"`
+	GitAccount   GitAccount `gorm:"constraint:OnDelete:CASCADE;" json:"git_account"`
+	RepoID       string     `gorm:"type:text;not null" json:"repo_id"`
+	Uid          string     `gorm:"type:text;not null" json:"uid"`
+	Private      bool       `gorm:"type:boolean;not null" json:"private"`
+}
+
+func NewGitRepo(data ctype.Dict) *GitRepo {
+	return &GitRepo{
+		GitAccountID: dictutil.GetValue[uint](data, "GitAccountID"),
+		RepoID:       dictutil.GetValue[string](data, "RepoID"),
+		Uid:          dictutil.GetValue[string](data, "Uid"),
+		Private:      dictutil.GetValue[bool](data, "Private"),
+	}
+}

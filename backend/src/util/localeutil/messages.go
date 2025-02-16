@@ -217,9 +217,9 @@ var (
 		ID:    "FeatureInUse",
 		Other: "feature is in use",
 	}
-	FailedToCreateToken = &i18n.Message{
-		ID:    "FailedToCreateToken",
-		Other: "failed to create token",
+	FailedToBuildToken = &i18n.Message{
+		ID:    "FailedToBuildToken",
+		Other: "failed to build token",
 	}
 	FailedToSignToken = &i18n.Message{
 		ID:    "FailedToSignToken",
@@ -233,6 +233,10 @@ var (
 		ID:    "CanNotSendRequest",
 		Other: "can not send request",
 	}
+	CanNotReadResponse = &i18n.Message{
+		ID:    "CanNotReadResponse",
+		Other: "can not read response",
+	}
 	BadRequest = &i18n.Message{
 		ID:    "BadRequest",
 		Other: "bad request",
@@ -240,5 +244,13 @@ var (
 	CanNotParseLinkMetaData = &i18n.Message{
 		ID:    "CanNotParseLinkMetaData",
 		Other: "can not parse link meta data",
+	}
+	FailedToReadPrivateKey = &i18n.Message{
+		ID:    "FailedToReadPrivateKey",
+		Other: "failed to read private key",
+	}
+	FailToParsRSAPrivateKey = &i18n.Message{
+		ID:    "FailToParsRSAPrivateKey",
+		Other: "failed to parse RSA private key",
 	}
 )

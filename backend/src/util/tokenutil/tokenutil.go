@@ -33,7 +33,7 @@ func GenerateSimpleJWT(
 		Build()
 	if err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToCreateToken,
+			DefaultMessage: localeutil.FailedToBuildToken,
 		})
 		return "", errutil.New("", []string{msg})
 	}
@@ -62,7 +62,7 @@ func GenerateSubscriptionJWT(
 		Build()
 	if err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToCreateToken,
+			DefaultMessage: localeutil.FailedToBuildToken,
 		})
 		return "", errutil.New("", []string{msg})
 	}
