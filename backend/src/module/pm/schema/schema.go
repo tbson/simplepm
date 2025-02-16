@@ -223,7 +223,6 @@ type Task struct {
 	// Feature         Feature          `gorm:"foreignKey:FeatureID" json:"feature"`
 	TaskFieldValues []TaskFieldValue `gorm:"constraint:OnDelete:CASCADE;" json:"task_field_values"`
 	Users           []account.User   `gorm:"many2many:tasks_users;" json:"users"`
-	GitBranches     []GitBranch      `gorm:"constraint:OnDelete:CASCADE;" json:"git_branches"`
 	Title           string           `gorm:"type:text;not null" json:"title"`
 	Description     string           `gorm:"ntype:text;ot null;default:''" json:"description"`
 	Order           int              `gorm:"not null;default:0" json:"order"`
@@ -241,47 +240,31 @@ func NewTask(data ctype.Dict) *Task {
 	}
 }
 
-type GitBranch struct {
-	ID         uint         `gorm:"primaryKey" json:"id"`
-	UserID     uint         `gorm:"not null;uniqueIndex:idx_workspace_user" json:"user_id"`
-	User       account.User `gorm:"foreignKey:UserID" json:"user"`
-	TaskID     uint         `gorm:"not null" json:"task_id"`
-	Task       Task         `gorm:"foreignKey:TaskID" json:"task"`
-	GitCommits []GitCommit  `gorm:"constraint:OnDelete:CASCADE;" json:"git_commits"`
-	Title      string       `gorm:"type:text;not null" json:"title"`
-	CreatedAt  time.Time    `json:"created_at"`
-	UpdatedAt  time.Time    `json:"updated_at"`
-}
-
-func (GitBranch) TableName() string {
-	return "git_branches"
-}
-
-func NewGitBranch(data ctype.Dict) *GitBranch {
-	return &GitBranch{
-		UserID: dictutil.GetValue[uint](data, "UserID"),
-		TaskID: dictutil.GetValue[uint](data, "TaskID"),
-		Title:  dictutil.GetValue[string](data, "Title"),
-	}
-}
-
 type GitCommit struct {
-	ID            uint      `gorm:"primaryKey" json:"id"`
-	TaskID        uint      `gorm:"not null" json:"task_id"`
-	Task          Task      `gorm:"foreignKey:TaskID" json:"task"`
-	GitBranchID   uint      `gorm:"not null" json:"git_branch_id"`
-	GitBranch     GitBranch `gorm:"foreignKey:GitBranchID" json:"git_branch"`
-	CommitID      string    `gorm:"type:text;not null" json:"commit_id"`
-	CommitURL     string    `gorm:"type:text;not null" json:"commit_url"`
-	CommitMessage string    `gorm:"type:text;not null" json:"commit_message"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID            uint          `gorm:"primaryKey" json:"id"`
+	TaskID        *uint         `gorm:"default:null" json:"task_id"`
+	Task          *Task         `gorm:"foreignKey:TaskID" json:"task"`
+	UserID        *uint         `gorm:"default:null" json:"user_id"`
+	User          *account.User `gorm:"foreignKey:UserID" json:"user"`
+	GitAccountUid string        `gorm:"type:text;not null" json:"git_account_uid"`
+	GitRepo       string        `gorm:"type:text;not null" json:"git_repo"`
+	GitHost       string        `gorm:"type:text;not null;default:'GITHUB';check:git_host IN ('GITHUB', 'GITLAB')" json:"git_host"`
+	GitBranch     string        `gorm:"type:text;not null" json:"git_branch"`
+	CommitID      string        `gorm:"type:text;not null" json:"commit_id"`
+	CommitURL     string        `gorm:"type:text;not null" json:"commit_url"`
+	CommitMessage string        `gorm:"type:text;not null" json:"commit_message"`
+	CreatedAt     time.Time     `json:"created_at"`
+	UpdatedAt     time.Time     `json:"updated_at"`
 }
 
 func NewGitCommit(data ctype.Dict) *GitCommit {
 	return &GitCommit{
-		TaskID:        dictutil.GetValue[uint](data, "TaskID"),
-		GitBranchID:   dictutil.GetValue[uint](data, "GitBranchID"),
+		TaskID:        dictutil.GetValue[*uint](data, "TaskID"),
+		UserID:        dictutil.GetValue[*uint](data, "UserID"),
+		GitAccountUid: dictutil.GetValue[string](data, "GitAccountUid"),
+		GitRepo:       dictutil.GetValue[string](data, "GitRepo"),
+		GitHost:       dictutil.GetValue[string](data, "GitHost"),
+		GitBranch:     dictutil.GetValue[string](data, "GitBranch"),
 		CommitID:      dictutil.GetValue[string](data, "CommitID"),
 		CommitURL:     dictutil.GetValue[string](data, "CommitURL"),
 		CommitMessage: dictutil.GetValue[string](data, "CommitMessage"),
@@ -290,13 +273,15 @@ func NewGitCommit(data ctype.Dict) *GitCommit {
 
 type TaskUser struct {
 	ID        uint         `gorm:"primaryKey" json:"id"`
-	TaskID    uint         `gorm:"not null;uniqueIndex:idx_task_user" json:"task_id"`
-	Task      Task         `gorm:"foreignKey:TaskID" json:"task"`
-	UserID    uint         `gorm:"not null;uniqueIndex:idx_task_user" json:"user_id"`
-	User      account.User `gorm:"foreignKey:UserID" json:"user"`
 	CreatorID uint         `gorm:"default:null" json:"creator_id"`
 	Creator   account.User `gorm:"foreignKey:CreatorID" json:"creator"`
+	TaskID    uint         `gorm:"not null;uniqueIndex:idx_task_user_branch" json:"task_id"`
+	Task      Task         `gorm:"foreignKey:TaskID" json:"task"`
+	UserID    uint         `gorm:"not null;uniqueIndex:idx_task_user_branch" json:"user_id"`
+	User      account.User `gorm:"foreignKey:UserID" json:"user"`
+	GitBranch *string      `gorm:"type:text;default:null;uniqueIndex:idx_task_user_branch" json:"git_branch"`
 	CreatedAt time.Time    `json:"created_at"`
+	UpdateAt  time.Time    `json:"updated_at"`
 }
 
 func (TaskUser) TableName() string {
@@ -305,9 +290,10 @@ func (TaskUser) TableName() string {
 
 func NewTaskUser(data ctype.Dict) *TaskUser {
 	return &TaskUser{
+		CreatorID: dictutil.GetValue[uint](data, "CreatorID"),
 		TaskID:    dictutil.GetValue[uint](data, "TaskID"),
 		UserID:    dictutil.GetValue[uint](data, "UserID"),
-		CreatorID: dictutil.GetValue[uint](data, "CreatorID"),
+		GitBranch: dictutil.GetValue[*string](data, "GitBranch"),
 	}
 }
 
