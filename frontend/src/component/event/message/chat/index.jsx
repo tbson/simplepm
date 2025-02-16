@@ -114,15 +114,10 @@ export default function Chat({ project, defaultTask, onNav }) {
         });
     };
 
-    const handleSingleTaskChange = (item) => {
-        getTaskList().then(() => {
-            onNav(item.title);
-            setTask({
-                id: item.id,
-                title: item.title,
-                description: item.description
-            });
-        });
+    const handleSingleTaskChange = () => {
+        getTaskList()
+            .then(handleTaskChange)
+            .then(() => getMessage(true));
     };
 
     const getMessage = (isInit = false) => {
@@ -236,7 +231,7 @@ export default function Chat({ project, defaultTask, onNav }) {
     const handleChange = (data, id) => {
         const item = { id, title: data.title, description: data.description };
         setTask(item);
-        handleSingleTaskChange(item);
+        handleSingleTaskChange();
         /*
         if (!id) {
             setList([{ ...Util.appendKey(data) }, ...list]);
@@ -253,10 +248,10 @@ export default function Chat({ project, defaultTask, onNav }) {
         }
 
         Util.toggleGlobalLoading(true);
-        RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
+        RequestUtil.apiCall(`${taskUrls.crud}${id}`, {}, 'delete')
             .then(() => {
-                Dialog.toggle(false);
-                navigateTo(`/pm/task/${projectId}`);
+                TaskDialog.toggle(false);
+                navigateTo(`/pm/project/${projectId}`);
             })
             .catch(RequestUtil.displayError(notification))
             .finally(() => {

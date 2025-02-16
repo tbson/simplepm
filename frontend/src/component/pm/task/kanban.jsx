@@ -11,14 +11,14 @@ import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
 import TaskDialog from './dialog';
 import { taskOptionSt } from 'component/pm/task/state';
-import { featureColorSt } from 'component/pm/feature/state';
+// import { featureColorSt } from 'component/pm/feature/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function TaskKanban({ projectId }) {
     const { notification } = App.useApp();
     const navigate = useNavigate();
     const taskOption = useAtomValue(taskOptionSt);
-    const featureColor = useAtomValue(featureColorSt);
+    // const featureColor = useAtomValue(featureColorSt);
     const [statusList, setStatusList] = useState([]);
     const [filterParam, setFilterParam] = useState({});
     const [sortParam, setSortParam] = useState({});
@@ -35,18 +35,18 @@ export default function TaskKanban({ projectId }) {
         }
     }, [taskOption.loaded, filterParam, sortParam]);
 
+    /*
     useEffect(() => {
         if (!featureColor.featureId) return;
-        const newList = list.map((item) => {
-            /*
-            if (item.featureId === featureColor.featureId) {
-                item.color = featureColor.color;
-            }
-            */
+        const newList = list.map((item) => { 
+            // if (item.featureId === featureColor.featureId) {
+            //    item.color = featureColor.color;
+            // } 
             return item;
         });
         setList(newList);
     }, [featureColor]);
+    */
 
     const getList = () => {
         setInit(true);
@@ -113,7 +113,7 @@ export default function TaskKanban({ projectId }) {
 
     const handleChange = (data, id) => {
         data.status = data.status.id;
-        data.color = data.feature.color;
+        // data.color = data.feature.color;
         if (!id) {
             const newList = [{ ...Util.appendKey(data) }, ...list];
             newList.sort((a, b) => a.order - b.order);
