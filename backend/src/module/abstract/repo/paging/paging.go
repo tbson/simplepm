@@ -109,14 +109,14 @@ func (r Repo[S, P]) List(
 	query = restlistutil.ApplyOrder(query, options.Order)
 
 	// Count total records before pagination
-	total, err := restlistutil.GetTotalRecords(query)
-	if err != nil {
-		return emptyResult, err
-	}
+	// total, err := restlistutil.GetTotalRecords(query)
+	// if err != nil {
+	//		return emptyResult, err
+	// }
 
 	// Apply paging
-	pagingREsult := restlistutil.ApplyPaging(query, options.Page, total)
-	query = pagingREsult.Query
+	// pagingREsult := restlistutil.ApplyPaging(query, options.Page, total)
+	// query = pagingREsult.Query
 
 	// Fetch the results
 	schemaItems := []S{}
