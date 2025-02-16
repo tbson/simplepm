@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { App, Modal, Button } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
-import Form from './form';
+import TaskForm from './form';
 import { urls, getMessages, TOGGLE_DIALOG_EVENT } from '../config';
 
 export class Service {
@@ -31,7 +31,7 @@ const emptyData = {
  * @param {Object} props
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
-export default function TaskDialog({ onChange, onDelete }) {
+export default function TaskDialog({ projectId, onChange, onDelete }) {
     const { notification } = App.useApp();
     const [data, setData] = useState(emptyData);
     const [open, setOpen] = useState(false);
@@ -68,7 +68,7 @@ export default function TaskDialog({ onChange, onDelete }) {
 
     const handleDelete = (id) => {
         console.log('delete', id);
-    }
+    };
 
     return (
         <Modal
@@ -76,7 +76,11 @@ export default function TaskDialog({ onChange, onDelete }) {
             maskClosable={false}
             destroyOnClose
             open={open}
-            okButtonProps={{ form: Form.formName, key: 'submit', htmlType: 'submit' }}
+            okButtonProps={{
+                form: TaskForm.formName,
+                key: 'submit',
+                htmlType: 'submit'
+            }}
             okText={t`Save`}
             onCancel={() => Service.toggle(false)}
             cancelText={t`Cancel`}
@@ -96,7 +100,7 @@ export default function TaskDialog({ onChange, onDelete }) {
                         &nbsp; &nbsp;
                         <Button
                             type="primary"
-                            form={Form.formName}
+                            form={TaskForm.formName}
                             key="submit"
                             htmlType="submit"
                         >
@@ -106,7 +110,8 @@ export default function TaskDialog({ onChange, onDelete }) {
                 </div>
             )}
         >
-            <Form
+            <TaskForm
+                projectId={projectId}
                 data={data}
                 onChange={(data, id) => {
                     setOpen(false);

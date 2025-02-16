@@ -165,10 +165,10 @@ func NewTaskFieldOption(data ctype.Dict) *TaskFieldOption {
 }
 
 type Feature struct {
-	ID          uint           `gorm:"primaryKey" json:"id"`
-	ProjectID   uint           `gorm:"not null" json:"project_id"`
-	Project     Project        `gorm:"foreignKey:ProjectID" json:"project"`
-	Tasks       []Task         `gorm:"constraint:OnDelete:CASCADE;" json:"tasks"`
+	ID        uint    `gorm:"primaryKey" json:"id"`
+	ProjectID uint    `gorm:"not null" json:"project_id"`
+	Project   Project `gorm:"foreignKey:ProjectID" json:"project"`
+	// Tasks       []Task         `gorm:"constraint:OnDelete:CASCADE;" json:"tasks"`
 	Users       []account.User `gorm:"many2many:features_users;" json:"users"`
 	Title       string         `gorm:"type:text;not null" json:"title"`
 	Description string         `gorm:"ntype:text;not null;default:''" json:"description"`
@@ -216,11 +216,11 @@ func NewFeatureUser(data ctype.Dict) *FeatureUser {
 }
 
 type Task struct {
-	ID              uint             `gorm:"primaryKey" json:"id"`
-	ProjectID       uint             `gorm:"not null" json:"project_id"`
-	Project         Project          `gorm:"foreignKey:ProjectID" json:"project"`
-	FeatureID       uint             `gorm:"not null" json:"feature_id"`
-	Feature         Feature          `gorm:"foreignKey:FeatureID" json:"feature"`
+	ID        uint    `gorm:"primaryKey" json:"id"`
+	ProjectID uint    `gorm:"not null" json:"project_id"`
+	Project   Project `gorm:"foreignKey:ProjectID" json:"project"`
+	// FeatureID       uint             `gorm:"not null" json:"feature_id"`
+	// Feature         Feature          `gorm:"foreignKey:FeatureID" json:"feature"`
 	TaskFieldValues []TaskFieldValue `gorm:"constraint:OnDelete:CASCADE;" json:"task_field_values"`
 	Users           []account.User   `gorm:"many2many:tasks_users;" json:"users"`
 	GitBranches     []GitBranch      `gorm:"constraint:OnDelete:CASCADE;" json:"git_branches"`
@@ -233,8 +233,8 @@ type Task struct {
 
 func NewTask(data ctype.Dict) *Task {
 	return &Task{
-		ProjectID:   dictutil.GetValue[uint](data, "ProjectID"),
-		FeatureID:   dictutil.GetValue[uint](data, "FeatureID"),
+		ProjectID: dictutil.GetValue[uint](data, "ProjectID"),
+		// FeatureID:   dictutil.GetValue[uint](data, "FeatureID"),
 		Title:       dictutil.GetValue[string](data, "Title"),
 		Description: dictutil.GetValue[string](data, "Description"),
 		Order:       dictutil.GetValue[int](data, "Order"),

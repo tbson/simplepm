@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router';
+import { useSetAtom } from 'jotai';
 import { App, Badge, Button, Flex, Avatar, Dropdown, Space } from 'antd';
 import { Attachments, Bubble, Conversations, Sender } from '@ant-design/x';
 import { Virtuoso } from 'react-virtuoso';
@@ -20,6 +21,7 @@ import NavUtil from 'service/helper/nav_util';
 import RequestUtil from 'service/helper/request_util';
 import SocketUtil from 'service/helper/socket_util';
 import StorageUtil from 'service/helper/storage_util';
+import { taskOptionSt } from 'component/pm/task/state';
 import TaskDialog from 'component/pm/task/dialog';
 import DocTable from 'component/document/doc/table';
 import { getStyles } from './style';
@@ -42,6 +44,7 @@ const itemToConversation = (item) => ({
 export default function Chat({ project, defaultTask, onNav }) {
     const { notification } = App.useApp();
     const userId = StorageUtil.getUserId();
+    const setTaskOption = useSetAtom(taskOptionSt);
     const { id: projectId, title: projectTitle } = project;
     const [taskId, setTaskId] = useState(defaultTask.id);
     const channel = `${projectId}/${taskId}`;
@@ -69,10 +72,21 @@ export default function Chat({ project, defaultTask, onNav }) {
 
     useEffect(() => {
         if (!taskId) return;
+        getOption(projectId);
         getTaskList()
             .then(handleTaskChange)
             .then(() => getMessage(true));
     }, [taskId]);
+
+    const getOption = (projectId) => {
+        RequestUtil.apiCall(taskUrls.option, { project_id: projectId })
+            .then((resp) => {
+                setTaskOption({ ...resp.data, loaded: true });
+            })
+            .catch(() => {
+                setTaskOption((prev) => ({ ...prev, loaded: true }));
+            });
+    };
 
     const getTaskList = () => {
         return RequestUtil.apiCall(taskUrls.crud, { project_id: projectId })
@@ -97,6 +111,17 @@ export default function Chat({ project, defaultTask, onNav }) {
             id: item.id,
             title: item.title,
             description: item.description
+        });
+    };
+
+    const handleSingleTaskChange = (item) => {
+        getTaskList().then(() => {
+            onNav(item.title);
+            setTask({
+                id: item.id,
+                title: item.title,
+                description: item.description
+            });
         });
     };
 
@@ -211,7 +236,7 @@ export default function Chat({ project, defaultTask, onNav }) {
     const handleChange = (data, id) => {
         const item = { id, title: data.title, description: data.description };
         setTask(item);
-        handleTaskChange(item);
+        handleSingleTaskChange(item);
         /*
         if (!id) {
             setList([{ ...Util.appendKey(data) }, ...list]);
@@ -505,7 +530,7 @@ export default function Chat({ project, defaultTask, onNav }) {
                     />
                 </div>
                 <div className={styles.chat}>
-                    <div className={styles.chatHeading} style={{paddingRight: 0}}>
+                    <div className={styles.chatHeading} style={{ paddingRight: 0 }}>
                         <div className="flex-item-remaining">
                             <div>
                                 <strong># {task.title}</strong>
@@ -615,7 +640,11 @@ export default function Chat({ project, defaultTask, onNav }) {
                 </div>
                 {showDocList ? <DocTable taskId={taskId} showControl /> : null}
             </div>
-            <TaskDialog onChange={handleChange} onDelete={handleDelete} />
+            <TaskDialog
+                projectId={projectId}
+                onChange={handleChange}
+                onDelete={handleDelete}
+            />
         </>
     );
 }

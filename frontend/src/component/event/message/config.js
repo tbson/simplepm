@@ -12,6 +12,7 @@ const urlMap = {
     task: {
         prefix: 'pm/task',
         endpoints: {
+            option: 'option',
             crud: '',
         }
     },

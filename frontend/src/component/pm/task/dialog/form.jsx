@@ -29,9 +29,8 @@ const formName = 'TaskForm';
  * @param {Object} props.data
  * @param {FormCallback} props.onChange
  */
-export default function TaskForm({ data, onChange }) {
+export default function TaskForm({ projectId, data, onChange }) {
     const { notification } = App.useApp();
-    const { project_id } = useParams();
     const inputRef = useRef(null);
     const [form] = Form.useForm();
     const taskOption = useAtomValue(taskOptionSt);
@@ -49,11 +48,7 @@ export default function TaskForm({ data, onChange }) {
         initialValues[`EXT_${statusField.value}`] = initialValues.status;
         delete initialValues.status;
     }
-    if (!initialValues.id && taskOption.feature.length > 0) {
-        initialValues.feature_id = taskOption.feature[0].value;
-    } else {
-        initialValues.feature_id = data.feature.id;
-    }
+
     for (const field of data?.task_fields || []) {
         const key = `EXT_${field.task_field_id}`;
         initialValues[key] = FormUtil.parseFieldValue(field.value, field.type);
@@ -124,7 +119,7 @@ export default function TaskForm({ data, onChange }) {
                 const data = processPayload(payload);
                 FormUtil.submit(
                     endPoint,
-                    { ...data, project_id: parseInt(project_id) },
+                    { ...data, project_id: projectId },
                     method
                 )
                     .then((data) => onChange(data, id))
@@ -137,14 +132,6 @@ export default function TaskForm({ data, onChange }) {
                 rules={[FormUtil.ruleRequired()]}
             >
                 <Input ref={inputRef} />
-            </Form.Item>
-
-            <Form.Item
-                name="feature_id"
-                label={labels.feature}
-                rules={[FormUtil.ruleRequired()]}
-            >
-                <SelectInput block options={taskOption.feature} />
             </Form.Item>
 
             <Form.Item name="description" label={labels.description}>

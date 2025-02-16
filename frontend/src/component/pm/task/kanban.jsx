@@ -9,7 +9,7 @@ import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
-import Dialog from './dialog';
+import TaskDialog from './dialog';
 import { taskOptionSt } from 'component/pm/task/state';
 import { featureColorSt } from 'component/pm/feature/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
@@ -139,17 +139,16 @@ export default function TaskKanban({ projectId }) {
             })
             .catch(RequestUtil.displayError(notification))
             .finally(() => {
-                Dialog.toggle(false);
+                TaskDialog.toggle(false);
                 Util.toggleGlobalLoading(false);
             });
     };
 
     const handleAdd = (status) => {
-        Dialog.toggle(true, 0, status);
+        TaskDialog.toggle(true, 0, status);
     };
 
     const handleView = (id) => {
-        // Dialog.toggle(true, id);
         navigateTo(`/pm/task/${id}`);
     };
 
@@ -170,7 +169,11 @@ export default function TaskKanban({ projectId }) {
                 onAdd={handleAdd}
                 onView={handleView}
             />
-            <Dialog onChange={handleChange} onDelete={handleDelete} />
+            <TaskDialog
+                projectId={projectId}
+                onChange={handleChange}
+                onDelete={handleDelete}
+            />
         </div>
     );
 }

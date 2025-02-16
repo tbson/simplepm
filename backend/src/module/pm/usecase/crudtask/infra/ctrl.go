@@ -131,7 +131,6 @@ func List(c echo.Context) error {
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	options.Filters["project_id"] = projectID
 	options.Preloads = []string{
-		"Feature",
 		"TaskFieldValues.TaskField",
 		"TaskFieldValues.TaskFieldOption",
 	}
