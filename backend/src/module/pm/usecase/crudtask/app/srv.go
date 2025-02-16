@@ -101,6 +101,10 @@ func (srv Service) upsertTaskFieldValueDate(
 	taskField schema.TaskField,
 	value string,
 ) error {
+	data := ctype.Dict{
+		"TaskID":      taskID,
+		"TaskFieldID": taskField.ID,
+	}
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
 			"TaskID":      taskID,
@@ -108,15 +112,12 @@ func (srv Service) upsertTaskFieldValueDate(
 		},
 	}
 	dateValue, err := dateutil.StrToDate(value)
-	data := ctype.Dict{
-		"TaskID":      taskID,
-		"TaskFieldID": taskField.ID,
-	}
+
 	if err == nil {
 		data["DateValue"] = &dateValue
 		data["Value"] = value
 	} else {
-		data["DateValue"] = nil
+		// data["DateValue"] = nil
 		data["Value"] = ""
 	}
 	_, err = srv.taskFieldValueRepo.UpdateOrCreate(queryOptions, data)
