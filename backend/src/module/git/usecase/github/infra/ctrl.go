@@ -10,6 +10,7 @@ import (
 	"src/module/git/repo/github"
 
 	"src/module/account/repo/gitaccount"
+	"src/module/account/repo/gitrepo"
 	"src/module/account/repo/tenant"
 
 	"src/module/git/usecase/github/app"
@@ -30,7 +31,8 @@ func GetInstallUrl(c echo.Context) error {
 func Callback(c echo.Context) error {
 	tenantRepo := tenant.New(dbutil.Db())
 	gitaccountRepo := gitaccount.New(dbutil.Db())
-	srv := app.New(tenantRepo, gitaccountRepo)
+	gitRepoRepo := gitrepo.New(dbutil.Db())
+	srv := app.New(tenantRepo, gitaccountRepo, gitRepoRepo)
 
 	setupAction := c.QueryParam("setup_action")
 	installationID := c.QueryParam("installation_id")
@@ -50,7 +52,8 @@ func Callback(c echo.Context) error {
 func Webhook(c echo.Context) error {
 	tenantRepo := tenant.New(dbutil.Db())
 	gitaccountRepo := gitaccount.New(dbutil.Db())
-	srv := app.New(tenantRepo, gitaccountRepo)
+	gitRepoRepo := gitrepo.New(dbutil.Db())
+	srv := app.New(tenantRepo, gitaccountRepo, gitRepoRepo)
 
 	structData, err := vldtutil.ValidatePayload(c, app.GithubInstallWebhook{})
 	if err != nil {
@@ -60,9 +63,10 @@ func Webhook(c echo.Context) error {
 	uid := numberutil.UintToStr(structData.Installation.ID)
 	title := structData.Sender.Login
 	avatar := structData.Sender.AvatarURL
+	repos := structData.Repositories
 
 	if structData.Action == app.GITHUB_WEBHOOK_ACTION_CREATED {
-		_, err = srv.HandleInstallWebhook(uid, title, avatar)
+		_, err = srv.HandleInstallWebhook(uid, title, avatar, repos)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
 		}

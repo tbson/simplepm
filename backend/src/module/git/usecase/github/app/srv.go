@@ -1,17 +1,24 @@
 package app
 
 import (
+	"fmt"
 	"src/common/ctype"
 	"src/module/account/schema"
+	"src/util/numberutil"
 )
 
 type Service struct {
 	tenantRepo     TenantRepo
 	gitAccountRepo GitAccountRepo
+	gitRepoRepo    GitRepoRepo
 }
 
-func New(tenantRepo TenantRepo, gitAccountRepo GitAccountRepo) Service {
-	return Service{tenantRepo, gitAccountRepo}
+func New(
+	tenantRepo TenantRepo,
+	gitAccountRepo GitAccountRepo,
+	gitRepoRepo GitRepoRepo,
+) Service {
+	return Service{tenantRepo, gitAccountRepo, gitRepoRepo}
 }
 
 func (srv Service) HandleInstallCallback(
@@ -49,6 +56,7 @@ func (srv Service) HandleInstallWebhook(
 	uid string,
 	title string,
 	avatar string,
+	repos []GithubRepo,
 ) (*schema.GitAccount, error) {
 	data := ctype.Dict{
 		"Uid":    &uid,
@@ -63,6 +71,34 @@ func (srv Service) HandleInstallWebhook(
 	}, data)
 	if err != nil {
 		return nil, err
+	}
+
+	gitAccountID := gitAccount.ID
+
+	_, err = srv.gitRepoRepo.DeleteBy(ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"GitAccountID": &gitAccountID,
+		},
+	})
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	for _, repo := range repos {
+		data := ctype.Dict{
+			"GitAccountID": gitAccountID,
+			"RepoID":       numberutil.UintToStr(repo.ID),
+			"Uid":          repo.FullName,
+			"Private":      repo.Private,
+		}
+
+		_, err = srv.gitRepoRepo.Create(data)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
 	}
 
 	return gitAccount, nil
