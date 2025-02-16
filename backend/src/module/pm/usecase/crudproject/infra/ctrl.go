@@ -17,6 +17,7 @@ import (
 	"src/module/pm/repo/taskfieldoption"
 	"src/module/pm/schema"
 
+	"src/module/account/repo/gitrepo"
 	"src/module/pm/repo/workspace"
 
 	"github.com/labstack/echo/v4"
@@ -35,6 +36,7 @@ var orderableFields = []string{"id", "title", "order"}
 func Option(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	workspaceRepo := workspace.New(dbutil.Db())
+	gitRepoRepo := gitrepo.New(dbutil.Db())
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"tenant_id": tenantId},
 	}
@@ -50,6 +52,24 @@ func Option(c echo.Context) error {
 		})
 	}
 
+	gitRepoQueryOptions := ctype.QueryOptions{
+		Joins:   []string{"GitAccount"},
+		Filters: ctype.Dict{"GitAccount.TenantID": tenantId},
+	}
+
+	gitRepos, err := gitRepoRepo.List(gitRepoQueryOptions)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	gitRepoData := []ctype.SimpleSelectOption[string]{}
+
+	for _, gitRepo := range gitRepos {
+		gitRepoData = append(gitRepoData, ctype.SimpleSelectOption[string]{
+			Value: gitRepo.Uid,
+			Label: gitRepo.Uid,
+		})
+	}
+
 	result := ctype.Dict{
 		"workspace": workspaceOptions,
 		"layout":    pm.ProjectLayoutOptions,
@@ -57,6 +77,7 @@ func Option(c echo.Context) error {
 		"task_field": ctype.Dict{
 			"type": pm.TaskFieldTypeOptions,
 		},
+		"git_repo": gitRepoData,
 	}
 	return c.JSON(http.StatusOK, result)
 }

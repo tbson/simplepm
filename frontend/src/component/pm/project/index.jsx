@@ -10,7 +10,9 @@ import Table from './table';
 export default function Project() {
     const [projectOption, setProjectOption] = useAtom(projectOptionSt);
     useEffect(() => {
-        if (!projectOption.loaded) getOption();
+        if (!projectOption.loaded) {
+            getOption();
+        }
     }, []);
 
     function getOption() {

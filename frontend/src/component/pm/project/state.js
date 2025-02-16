@@ -8,7 +8,8 @@ export const projectOptionSt = atom({
     status: [],
     task_field: {
         type: []
-    }
+    },
+    git_repo: [],
 });
 
 export const projectFilterSt = atom((get) => {

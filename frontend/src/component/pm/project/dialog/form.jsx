@@ -95,7 +95,7 @@ export default function ProjectForm({ data, onChange }) {
             </Form.Item>
 
             <Form.Item name="git_repo" label={labels.git_repo}>
-                <Input />
+                <SelectInput block options={projectOption.git_repo} />
             </Form.Item>
 
             <Form.Item name="avatar" label={labels.avatar}>
