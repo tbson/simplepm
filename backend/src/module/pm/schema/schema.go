@@ -222,6 +222,7 @@ type Task struct {
 	// FeatureID       uint             `gorm:"not null" json:"feature_id"`
 	// Feature         Feature          `gorm:"foreignKey:FeatureID" json:"feature"`
 	TaskFieldValues []TaskFieldValue `gorm:"constraint:OnDelete:CASCADE;" json:"task_field_values"`
+	TaskUsers       []TaskUser       `gorm:"constraint:OnDelete:CASCADE;" json:"task_users"`
 	Users           []account.User   `gorm:"many2many:tasks_users;" json:"users"`
 	Title           string           `gorm:"type:text;not null" json:"title"`
 	Description     string           `gorm:"ntype:text;ot null;default:''" json:"description"`

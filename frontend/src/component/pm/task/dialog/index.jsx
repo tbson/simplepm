@@ -22,7 +22,8 @@ const emptyData = {
     title: '',
     description: '',
     feature_id: null,
-    task_fields: []
+    task_fields: [],
+    task_users: [],
 };
 
 /**

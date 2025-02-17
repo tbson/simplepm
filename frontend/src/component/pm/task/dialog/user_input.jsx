@@ -2,13 +2,13 @@ import * as React from "react";
 import { Checkbox } from "antd";
 
 /**
- * CheckInput.
+ * UserInput.
  *
  * @param {Object} props
  * @param {number[]} props.value
  * @param {function} props.onChange
  */
-export default function CheckInput({ value, onChange, disabled=false }) {
+export default function UserInput({ value, onChange, disabled=false }) {
     return (
         <Checkbox
             disabled={disabled}

@@ -23,6 +23,12 @@ type TaskField struct {
 	Value       string `json:"value"`
 }
 
+type TaskUser struct {
+	ID        uint    `json:"id"`
+	UserID    uint    `json:"user_id"`
+	GitBranch *string `json:"git_branch"`
+}
+
 type Status struct {
 	ID    uint   `json:"id"`
 	Title string `json:"title"`
@@ -36,6 +42,7 @@ type ListOutput struct {
 	Status      Status      `json:"status"`
 	Project     Project     `json:"project"`
 	TaskFields  []TaskField `json:"task_fields"`
+	TaskUsers   []TaskUser  `json:"task_users"`
 }
 
 type TaskFieldOption struct {
@@ -99,6 +106,16 @@ func presItem(item schema.Task) ListOutput {
 		})
 	}
 	result.TaskFields = taskFields
+
+	taskUsers := []TaskUser{}
+	for _, taskUser := range item.TaskUsers {
+		taskUsers = append(taskUsers, TaskUser{
+			ID:        taskUser.ID,
+			UserID:    taskUser.UserID,
+			GitBranch: taskUser.GitBranch,
+		})
+	}
+	result.TaskUsers = taskUsers
 
 	return result
 }

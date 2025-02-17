@@ -2,7 +2,8 @@ import * as React from 'react';
 import { useRef, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { useAtomValue } from 'jotai';
-import { App, Form, Input, InputNumber } from 'antd';
+import { App, Space, Button, Form, Input, InputNumber } from 'antd';
+import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import DateUtil from 'service/helper/date_util';
 import FormUtil from 'service/helper/form_util';
@@ -14,6 +15,12 @@ import { urls, getLabels } from '../config';
 const { TextArea } = Input;
 
 const formName = 'TaskForm';
+
+const userOptions = [
+    { label: 'User 1', value: 1 },
+    { label: 'User 2', value: 2 },
+    { label: 'User 3', value: 3 }
+];
 
 /**
  * @callback FormCallback
@@ -117,11 +124,7 @@ export default function TaskForm({ projectId, data, onChange }) {
             initialValues={{ ...initialValues }}
             onFinish={(payload) => {
                 const data = processPayload(payload);
-                FormUtil.submit(
-                    endPoint,
-                    { ...data, project_id: projectId },
-                    method
-                )
+                FormUtil.submit(endPoint, { ...data, project_id: projectId }, method)
                     .then((data) => onChange(data, id))
                     .catch(FormUtil.setFormErrors(form, notification));
             }}
@@ -138,6 +141,61 @@ export default function TaskForm({ projectId, data, onChange }) {
                 <TextArea />
             </Form.Item>
 
+            <Form.List name="task_users">
+                {(fields, { add, remove }) => (
+                    <div>
+                        <div style={{ marginBottom: 8 }}>
+                            <label>Users</label>
+                        </div>
+                        {fields.map(({ key, name, ...restField }) => (
+                            <Space
+                                key={key}
+                                style={{
+                                    display: 'flex',
+                                    marginBottom: 8
+                                }}
+                                align="baseline"
+                            >
+                                <Form.Item
+                                    {...restField}
+                                    style={{ width: '200px' }}
+                                    name={[name, 'user_id']}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Missing user'
+                                        }
+                                    ]}
+                                >
+                                    <SelectInput
+                                        block
+                                        placeholder="User"
+                                        options={userOptions}
+                                    />
+                                </Form.Item>
+
+                                <Form.Item
+                                    {...restField}
+                                    style={{ width: '200px' }}
+                                    name={[name, 'git_branch']}
+                                >
+                                    <Input placeholder="Git branch" />
+                                </Form.Item>
+                                <MinusCircleOutlined onClick={() => remove(name)} />
+                            </Space>
+                        ))}
+                        <Button
+                            type="dashed"
+                            onClick={() => add()}
+                            block
+                            icon={<PlusOutlined />}
+                        >
+                            Add user
+                        </Button>
+                    </div>
+                )}
+            </Form.List>
+            <br />
             {taskField.map((field) => {
                 return (
                     <Form.Item
