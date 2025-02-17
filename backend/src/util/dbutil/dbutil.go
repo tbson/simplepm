@@ -33,6 +33,7 @@ func RegisterModels() []interface{} {
 		&pm.WorkspaceUser{},
 		&pm.Project{},
 		&pm.ProjectUser{},
+		&pm.TaskUser{},
 		&pm.TaskField{},
 		&pm.TaskFieldOption{},
 		&pm.Feature{},
