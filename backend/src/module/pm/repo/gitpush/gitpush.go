@@ -1,4 +1,4 @@
-package gitcommit
+package gitpush
 
 import (
 	"src/common/ctype"
@@ -11,9 +11,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type Schema = schema.GitCommit
+type Schema = schema.GitPush
 
-var newSchema = schema.NewGitCommit
+var newSchema = schema.NewGitPush
 
 type Repo struct {
 	client *gorm.DB

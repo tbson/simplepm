@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"src/common/ctype"
 	"src/module/account/schema"
+	"src/module/pm"
 	"src/util/numberutil"
 )
 
@@ -11,14 +12,24 @@ type Service struct {
 	tenantRepo     TenantRepo
 	gitAccountRepo GitAccountRepo
 	gitRepoRepo    GitRepoRepo
+	gitPushRepo    GitPushRepo
+	gitCommitRepo  GitCommitRepo
 }
 
 func New(
 	tenantRepo TenantRepo,
 	gitAccountRepo GitAccountRepo,
 	gitRepoRepo GitRepoRepo,
+	gitPushRepo GitPushRepo,
+	gitCommitRepo GitCommitRepo,
 ) Service {
-	return Service{tenantRepo, gitAccountRepo, gitRepoRepo}
+	return Service{
+		tenantRepo,
+		gitAccountRepo,
+		gitRepoRepo,
+		gitPushRepo,
+		gitCommitRepo,
+	}
 }
 
 func (srv Service) HandleInstallCallback(
@@ -117,4 +128,51 @@ func (srv Service) HandleUninstallWebhook(
 	}
 
 	return nil
+}
+
+func getBranchFromRef(ref string) string {
+	return ref[11:]
+}
+
+func (srv Service) HandlePushWebhook(
+	ref string,
+	installationID string,
+	repoUid string,
+	commits []GithubCommit,
+) (ctype.Dict, error) {
+	fmt.Println("HandlePushWebhook............")
+	branch := getBranchFromRef(ref)
+	fmt.Println(branch)
+
+	gitPushData := ctype.Dict{
+		"GitAccountUid": installationID,
+		"GitRepoUid":    repoUid,
+		"GitHost":       pm.PROJECT_REPO_TYPE_GITHUB,
+		"GitBranch":     branch,
+	}
+
+	gitPush, err := srv.gitPushRepo.Create(gitPushData)
+	if err != nil {
+		fmt.Println("srv.gitPushRepo.Create")
+		fmt.Println(err)
+		return nil, err
+	}
+
+	for _, commit := range commits {
+		gitCommitData := ctype.Dict{
+			"GitPushID":     gitPush.ID,
+			"CommitID":      commit.ID,
+			"CommitURL":     commit.URL,
+			"CommitMessage": commit.Message,
+		}
+
+		_, err = srv.gitCommitRepo.Create(gitCommitData)
+		if err != nil {
+			fmt.Println("srv.gitCommitRepo.Create")
+			fmt.Println(err)
+			return nil, err
+		}
+	}
+
+	return ctype.Dict{}, nil
 }

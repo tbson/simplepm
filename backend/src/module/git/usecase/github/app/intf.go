@@ -2,7 +2,8 @@ package app
 
 import (
 	"src/common/ctype"
-	"src/module/account/schema"
+	account "src/module/account/schema"
+	pm "src/module/pm/schema"
 )
 
 const GITHUB_CALLBACK_ACTION_INSTALL = "install"
@@ -45,18 +46,26 @@ type GithubWebhook struct {
 }
 
 type TenantRepo interface {
-	Retrieve(queryOptions ctype.QueryOptions) (*schema.Tenant, error)
+	Retrieve(queryOptions ctype.QueryOptions) (*account.Tenant, error)
 }
 
 type GitAccountRepo interface {
 	UpdateOrCreate(
 		queryOptions ctype.QueryOptions,
 		data ctype.Dict,
-	) (*schema.GitAccount, error)
+	) (*account.GitAccount, error)
 	DeleteBy(queryOptions ctype.QueryOptions) ([]uint, error)
 }
 
 type GitRepoRepo interface {
-	Create(data ctype.Dict) (*schema.GitRepo, error)
+	Create(data ctype.Dict) (*account.GitRepo, error)
 	DeleteBy(queryOptions ctype.QueryOptions) ([]uint, error)
+}
+
+type GitPushRepo interface {
+	Create(data ctype.Dict) (*pm.GitPush, error)
+}
+
+type GitCommitRepo interface {
+	Create(data ctype.Dict) (*pm.GitCommit, error)
 }

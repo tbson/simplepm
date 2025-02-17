@@ -14,6 +14,8 @@ import (
 	"src/module/account/repo/gitaccount"
 	"src/module/account/repo/gitrepo"
 	"src/module/account/repo/tenant"
+	"src/module/pm/repo/gitcommit"
+	"src/module/pm/repo/gitpush"
 
 	"src/module/git/usecase/github/app"
 
@@ -34,7 +36,10 @@ func Callback(c echo.Context) error {
 	tenantRepo := tenant.New(dbutil.Db())
 	gitaccountRepo := gitaccount.New(dbutil.Db())
 	gitRepoRepo := gitrepo.New(dbutil.Db())
-	srv := app.New(tenantRepo, gitaccountRepo, gitRepoRepo)
+	gitPushRepo := gitpush.New(dbutil.Db())
+	gitCommitRepo := gitcommit.New(dbutil.Db())
+
+	srv := app.New(tenantRepo, gitaccountRepo, gitRepoRepo, gitPushRepo, gitCommitRepo)
 
 	setupAction := c.QueryParam("setup_action")
 	installationID := c.QueryParam("installation_id")
@@ -65,7 +70,10 @@ func Webhook(c echo.Context) error {
 	tenantRepo := tenant.New(dbutil.Db())
 	gitaccountRepo := gitaccount.New(dbutil.Db())
 	gitRepoRepo := gitrepo.New(dbutil.Db())
-	srv := app.New(tenantRepo, gitaccountRepo, gitRepoRepo)
+	gitPushRepo := gitpush.New(dbutil.Db())
+	gitCommitRepo := gitcommit.New(dbutil.Db())
+
+	srv := app.New(tenantRepo, gitaccountRepo, gitRepoRepo, gitPushRepo, gitCommitRepo)
 
 	structData, err := vldtutil.ValidatePayload(c, app.GithubWebhook{})
 	if err != nil {
@@ -86,6 +94,23 @@ func Webhook(c echo.Context) error {
 
 	if structData.Action == app.GITHUB_WEBHOOK_ACTION_DELETED {
 		err = srv.HandleUninstallWebhook(uid)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+	}
+
+	fmt.Println("structData.Ref", structData.Ref)
+	if structData.Ref != "" {
+		ref := structData.Ref
+		installationID := structData.Installation.ID
+		repoUid := structData.Repository.FullName
+		commits := structData.Commits
+		_, err = srv.HandlePushWebhook(
+			ref,
+			numberutil.UintToStr(installationID),
+			repoUid,
+			commits,
+		)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
 		}

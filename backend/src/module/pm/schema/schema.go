@@ -248,7 +248,7 @@ type GitPush struct {
 	User          *account.User `gorm:"foreignKey:UserID" json:"user"`
 	GitCommits    []GitCommit   `gorm:"constraint:OnDelete:CASCADE;" json:"git_commits"`
 	GitAccountUid string        `gorm:"type:text;not null" json:"git_account_uid"`
-	GitRepo       string        `gorm:"type:text;not null" json:"git_repo"`
+	GitRepoUid    string        `gorm:"type:text;not null" json:"git_repo_uid"`
 	GitHost       string        `gorm:"type:text;not null;default:'GITHUB';check:git_host IN ('GITHUB', 'GITLAB')" json:"git_host"`
 	GitBranch     string        `gorm:"type:text;not null" json:"git_branch"`
 	CreatedAt     time.Time     `json:"created_at"`
@@ -260,7 +260,7 @@ func NewGitPush(data ctype.Dict) *GitPush {
 		TaskID:        dictutil.GetValue[*uint](data, "TaskID"),
 		UserID:        dictutil.GetValue[*uint](data, "UserID"),
 		GitAccountUid: dictutil.GetValue[string](data, "GitAccountUid"),
-		GitRepo:       dictutil.GetValue[string](data, "GitRepo"),
+		GitRepoUid:    dictutil.GetValue[string](data, "GitRepoUid"),
 		GitHost:       dictutil.GetValue[string](data, "GitHost"),
 		GitBranch:     dictutil.GetValue[string](data, "GitBranch"),
 	}
