@@ -240,31 +240,46 @@ func NewTask(data ctype.Dict) *Task {
 	}
 }
 
-type GitCommit struct {
+type GitPush struct {
 	ID            uint          `gorm:"primaryKey" json:"id"`
 	TaskID        *uint         `gorm:"default:null" json:"task_id"`
 	Task          *Task         `gorm:"foreignKey:TaskID" json:"task"`
 	UserID        *uint         `gorm:"default:null" json:"user_id"`
 	User          *account.User `gorm:"foreignKey:UserID" json:"user"`
+	GitCommits    []GitCommit   `gorm:"constraint:OnDelete:CASCADE;" json:"git_commits"`
 	GitAccountUid string        `gorm:"type:text;not null" json:"git_account_uid"`
 	GitRepo       string        `gorm:"type:text;not null" json:"git_repo"`
 	GitHost       string        `gorm:"type:text;not null;default:'GITHUB';check:git_host IN ('GITHUB', 'GITLAB')" json:"git_host"`
 	GitBranch     string        `gorm:"type:text;not null" json:"git_branch"`
-	CommitID      string        `gorm:"type:text;not null" json:"commit_id"`
-	CommitURL     string        `gorm:"type:text;not null" json:"commit_url"`
-	CommitMessage string        `gorm:"type:text;not null" json:"commit_message"`
 	CreatedAt     time.Time     `json:"created_at"`
 	UpdatedAt     time.Time     `json:"updated_at"`
 }
 
-func NewGitCommit(data ctype.Dict) *GitCommit {
-	return &GitCommit{
+func NewGitPush(data ctype.Dict) *GitPush {
+	return &GitPush{
 		TaskID:        dictutil.GetValue[*uint](data, "TaskID"),
 		UserID:        dictutil.GetValue[*uint](data, "UserID"),
 		GitAccountUid: dictutil.GetValue[string](data, "GitAccountUid"),
 		GitRepo:       dictutil.GetValue[string](data, "GitRepo"),
 		GitHost:       dictutil.GetValue[string](data, "GitHost"),
 		GitBranch:     dictutil.GetValue[string](data, "GitBranch"),
+	}
+}
+
+type GitCommit struct {
+	ID            uint      `gorm:"primaryKey" json:"id"`
+	GitPushID     uint      `gorm:"default:null" json:"git_push_id"`
+	GitPush       GitPush   `gorm:"foreignKey:GitPushID" json:"git_push"`
+	CommitID      string    `gorm:"type:text;not null" json:"commit_id"`
+	CommitURL     string    `gorm:"type:text;not null" json:"commit_url"`
+	CommitMessage string    `gorm:"type:text;not null" json:"commit_message"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+}
+
+func NewGitCommit(data ctype.Dict) *GitCommit {
+	return &GitCommit{
+		GitPushID:     dictutil.GetValue[uint](data, "GitPushID"),
 		CommitID:      dictutil.GetValue[string](data, "CommitID"),
 		CommitURL:     dictutil.GetValue[string](data, "CommitURL"),
 		CommitMessage: dictutil.GetValue[string](data, "CommitMessage"),
