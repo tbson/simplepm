@@ -11,7 +11,6 @@ import {
     CloudUploadOutlined,
     PaperClipOutlined,
     EditOutlined,
-    UsergroupAddOutlined,
     DeleteOutlined,
     MoreOutlined,
     ArrowUpOutlined,
@@ -534,11 +533,6 @@ export default function Chat({ project, defaultTask, onNav }) {
                             <div>{task.description}</div>
                         </div>
                         <div>
-                            <Button
-                                onClick={() => TaskDialog.toggle(true, task.id)}
-                                icon={<UsergroupAddOutlined />}
-                            />
-                            &nbsp;
                             <Button
                                 onClick={() => TaskDialog.toggle(true, task.id)}
                                 icon={<EditOutlined />}
