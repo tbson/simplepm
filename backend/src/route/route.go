@@ -11,7 +11,6 @@ import (
 	profile "src/module/account/usecase/profile/infra"
 	signuptenant "src/module/account/usecase/signuptenant/infra"
 	crudvariable "src/module/config/usecase/crudvariable/infra"
-	configoption "src/module/config/usecase/option/infra"
 	createdocfromlink "src/module/document/usecase/createdocfromlink/infra"
 	doc "src/module/document/usecase/doc/infra"
 	docattachment "src/module/document/usecase/docattachment/infra"
@@ -34,7 +33,6 @@ import (
 
 func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	pemMap := ctype.PemMap{}
-	e, pemMap = configoption.RegisterUrls(e, pemMap)
 	e, pemMap = crudvariable.RegisterUrls(e, pemMap)
 	e, pemMap = crudauthclient.RegisterUrls(e, pemMap)
 	e, pemMap = crudtenant.RegisterUrls(e, pemMap)
