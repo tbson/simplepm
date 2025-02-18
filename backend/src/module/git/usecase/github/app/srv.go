@@ -14,6 +14,7 @@ type Service struct {
 	gitRepoRepo    GitRepoRepo
 	gitPushRepo    GitPushRepo
 	gitCommitRepo  GitCommitRepo
+	gitRepo        GitRepo
 }
 
 func New(
@@ -22,6 +23,7 @@ func New(
 	gitRepoRepo GitRepoRepo,
 	gitPushRepo GitPushRepo,
 	gitCommitRepo GitCommitRepo,
+	gitRepo GitRepo,
 ) Service {
 	return Service{
 		tenantRepo,
@@ -29,6 +31,7 @@ func New(
 		gitRepoRepo,
 		gitPushRepo,
 		gitCommitRepo,
+		gitRepo,
 	}
 }
 
@@ -137,18 +140,26 @@ func getBranchFromRef(ref string) string {
 func (srv Service) HandlePushWebhook(
 	ref string,
 	installationID string,
-	repoUid string,
+	gitRepo string,
 	commits []GithubCommit,
 ) (ctype.Dict, error) {
 	fmt.Println("HandlePushWebhook............")
-	branch := getBranchFromRef(ref)
-	fmt.Println(branch)
+	gitBranch := getBranchFromRef(ref)
+
+	taskUser, err := srv.gitRepo.GetTaskUser(gitRepo, gitBranch)
+	if err != nil {
+		fmt.Println("srv.gitRepo.GetTaskUser")
+		fmt.Println(err)
+		// return nil, err
+	}
 
 	gitPushData := ctype.Dict{
+		"TaskID":        taskUser.TaskID,
+		"UserID":        taskUser.UserID,
 		"GitAccountUid": installationID,
-		"GitRepoUid":    repoUid,
+		"GitRepoUid":    gitRepo,
 		"GitHost":       pm.PROJECT_REPO_TYPE_GITHUB,
-		"GitBranch":     branch,
+		"GitBranch":     gitBranch,
 	}
 
 	gitPush, err := srv.gitPushRepo.Create(gitPushData)

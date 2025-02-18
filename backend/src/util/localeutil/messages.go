@@ -253,4 +253,8 @@ var (
 		ID:    "FailToParsRSAPrivateKey",
 		Other: "failed to parse RSA private key",
 	}
+	TaskUserNotFound = &i18n.Message{
+		ID:    "TaskUserNotFound",
+		Other: "Task user not found",
+	}
 )

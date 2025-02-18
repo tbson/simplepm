@@ -45,6 +45,11 @@ type GithubWebhook struct {
 	Commits []GithubCommit `json:"commits"`
 }
 
+type TaskUser struct {
+	TaskID *uint
+	UserID *uint
+}
+
 type TenantRepo interface {
 	Retrieve(queryOptions ctype.QueryOptions) (*account.Tenant, error)
 }
@@ -68,4 +73,8 @@ type GitPushRepo interface {
 
 type GitCommitRepo interface {
 	Create(data ctype.Dict) (*pm.GitCommit, error)
+}
+
+type GitRepo interface {
+	GetTaskUser(gitRepo string, gitBranch string) (TaskUser, error)
 }

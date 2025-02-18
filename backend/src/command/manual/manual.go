@@ -2,17 +2,22 @@ package main
 
 import (
 	"fmt"
-	"src/module/git/repo/github"
+	"src/module/git/usecase/github/infra"
+	"src/util/dbutil"
 	"src/util/localeutil"
 )
 
 func main() {
+	dbutil.InitDb()
 	localeutil.Init("en")
-	installationIDs := []string{"61038391"}
-	repo := github.New()
-	result, err := repo.GetRepoList(installationIDs)
+	repo := infra.New(dbutil.Db())
+	gitRepo := "nghiencode/integrate-simplepm"
+	gitBranch := "son/test-branch1"
+	result, err := repo.GetTaskUser(gitRepo, gitBranch)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
+
 	fmt.Println(result)
 }

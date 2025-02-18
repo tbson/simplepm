@@ -38,8 +38,16 @@ func Callback(c echo.Context) error {
 	gitRepoRepo := gitrepo.New(dbutil.Db())
 	gitPushRepo := gitpush.New(dbutil.Db())
 	gitCommitRepo := gitcommit.New(dbutil.Db())
+	gitRepo := New(dbutil.Db())
 
-	srv := app.New(tenantRepo, gitaccountRepo, gitRepoRepo, gitPushRepo, gitCommitRepo)
+	srv := app.New(
+		tenantRepo,
+		gitaccountRepo,
+		gitRepoRepo,
+		gitPushRepo,
+		gitCommitRepo,
+		gitRepo,
+	)
 
 	setupAction := c.QueryParam("setup_action")
 	installationID := c.QueryParam("installation_id")
@@ -72,8 +80,16 @@ func Webhook(c echo.Context) error {
 	gitRepoRepo := gitrepo.New(dbutil.Db())
 	gitPushRepo := gitpush.New(dbutil.Db())
 	gitCommitRepo := gitcommit.New(dbutil.Db())
+	gitRepo := New(dbutil.Db())
 
-	srv := app.New(tenantRepo, gitaccountRepo, gitRepoRepo, gitPushRepo, gitCommitRepo)
+	srv := app.New(
+		tenantRepo,
+		gitaccountRepo,
+		gitRepoRepo,
+		gitPushRepo,
+		gitCommitRepo,
+		gitRepo,
+	)
 
 	structData, err := vldtutil.ValidatePayload(c, app.GithubWebhook{})
 	if err != nil {
