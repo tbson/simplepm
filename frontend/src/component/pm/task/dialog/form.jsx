@@ -1,10 +1,8 @@
 import * as React from 'react';
 import { useRef, useEffect } from 'react';
-import { useParams } from 'react-router';
 import { useAtomValue } from 'jotai';
 import { App, Space, Button, Form, Input, InputNumber } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import Util from 'service/helper/util';
 import DateUtil from 'service/helper/date_util';
 import FormUtil from 'service/helper/form_util';
 import SelectInput from 'component/common/form/ant/input/select_input';
@@ -15,12 +13,6 @@ import { urls, getLabels } from '../config';
 const { TextArea } = Input;
 
 const formName = 'TaskForm';
-
-const userOptions = [
-    { label: 'User 1', value: 1 },
-    { label: 'User 2', value: 2 },
-    { label: 'User 3', value: 3 }
-];
 
 /**
  * @callback FormCallback
@@ -170,7 +162,7 @@ export default function TaskForm({ projectId, data, onChange }) {
                                     <SelectInput
                                         block
                                         placeholder="User"
-                                        options={userOptions}
+                                        options={taskOption.user}
                                     />
                                 </Form.Item>
 

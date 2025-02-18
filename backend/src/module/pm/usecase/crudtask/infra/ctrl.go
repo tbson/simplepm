@@ -11,12 +11,14 @@ import (
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
+	"src/module/account/repo/user"
 	"src/module/pm/repo/feature"
 	"src/module/pm/repo/project"
 	"src/module/pm/repo/task"
 	"src/module/pm/repo/taskfield"
 	"src/module/pm/repo/taskfieldoption"
 	"src/module/pm/repo/taskfieldvalue"
+	"src/module/pm/repo/taskuser"
 	"src/module/pm/schema"
 	"src/module/pm/usecase/crudtask/app"
 
@@ -32,11 +34,13 @@ var filterableFields = []string{"feature_id"}
 var orderableFields = []string{"id", "title", "order"}
 
 func Option(c echo.Context) error {
+	tenantID := c.Get("TenantID").(uint)
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
 	projectRepo := project.New(dbutil.Db())
 	featureRepo := feature.New(dbutil.Db())
 	taskfieldRepo := taskfield.New(dbutil.Db())
 	taskfieldoptionRepo := taskfieldoption.New(dbutil.Db())
+	userRepo := user.New(dbutil.Db())
 
 	projectQueryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"ID": projectID},
@@ -112,6 +116,24 @@ func Option(c echo.Context) error {
 		})
 	}
 
+	userQueryOption := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"TenantID": tenantID,
+		},
+	}
+	users, err := userRepo.List(userQueryOption)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	userOptions := []ctype.SelectOption[uint]{}
+	for _, u := range users {
+		userOptions = append(userOptions, ctype.SelectOption[uint]{
+			Value: u.ID,
+			Label: u.Email,
+			// Label: fmt.Sprintf("%s %s", u.FirstName, u.LastName),
+		})
+	}
+
 	result := ctype.Dict{
 		"project_info": ctype.Dict{
 			"id":    project.ID,
@@ -120,6 +142,7 @@ func Option(c echo.Context) error {
 		"feature":    featureOptions,
 		"status":     statusOptions,
 		"task_field": taskFieldOptions,
+		"user":       userOptions,
 	}
 	return c.JSON(http.StatusOK, result)
 }
@@ -154,6 +177,7 @@ func Retrieve(c echo.Context) error {
 			"Project",
 			"TaskFieldValues.TaskField",
 			"TaskFieldValues.TaskFieldOption",
+			"TaskUsers",
 		},
 	}
 
@@ -180,8 +204,15 @@ func Create(c echo.Context) error {
 	taskFieldRepo := taskfield.New(tx)
 	taskFieldOptionRepo := taskfieldoption.New(tx)
 	taskFieldValueRepo := taskfieldvalue.New(tx)
+	taskUserRepo := taskuser.New(tx)
 
-	srv := app.New(taskRepo, taskFieldRepo, taskFieldOptionRepo, taskFieldValueRepo)
+	srv := app.New(
+		taskRepo,
+		taskFieldRepo,
+		taskFieldOptionRepo,
+		taskFieldValueRepo,
+		taskUserRepo,
+	)
 
 	structData, err := vldtutil.ValidatePayload(c, app.InputData{ProjectID: projectID})
 	if err != nil {
@@ -216,8 +247,15 @@ func Update(c echo.Context) error {
 	taskFieldRepo := taskfield.New(tx)
 	taskFieldOptionRepo := taskfieldoption.New(tx)
 	taskFieldValueRepo := taskfieldvalue.New(tx)
+	taskUserRepo := taskuser.New(tx)
 
-	srv := app.New(taskRepo, taskFieldRepo, taskFieldOptionRepo, taskFieldValueRepo)
+	srv := app.New(
+		taskRepo,
+		taskFieldRepo,
+		taskFieldOptionRepo,
+		taskFieldValueRepo,
+		taskUserRepo,
+	)
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(
 		c, app.InputData{ProjectID: projectID},

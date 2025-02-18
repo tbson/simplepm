@@ -37,8 +37,6 @@ type WorkspaceUser struct {
 	Workspace   Workspace    `gorm:"foreignKey:WorkspaceID" json:"workspace"`
 	UserID      uint         `gorm:"not null;uniqueIndex:idx_workspace_user" json:"user_id"`
 	User        account.User `gorm:"foreignKey:UserID" json:"user"`
-	CreatorID   uint         `gorm:"default:null" json:"creator_id"`
-	Creator     account.User `gorm:"foreignKey:CreatorID" json:"creator"`
 	CreatedAt   time.Time    `json:"created_at"`
 }
 
@@ -50,7 +48,6 @@ func NewWorkspaceUser(data ctype.Dict) *WorkspaceUser {
 	return &WorkspaceUser{
 		WorkspaceID: dictutil.GetValue[uint](data, "WorkspaceID"),
 		UserID:      dictutil.GetValue[uint](data, "UserID"),
-		CreatorID:   dictutil.GetValue[uint](data, "CreatorID"),
 	}
 }
 
@@ -98,8 +95,6 @@ type ProjectUser struct {
 	Project   Project      `gorm:"foreignKey:ProjectID" json:"project"`
 	UserID    uint         `gorm:"not null;uniqueIndex:idx_project_user" json:"user_id"`
 	User      account.User `gorm:"foreignKey:UserID" json:"user"`
-	CreatorID uint         `gorm:"default:null" json:"creator_id"`
-	Creator   account.User `gorm:"foreignKey:CreatorID" json:"creator"`
 	CreatedAt time.Time    `json:"created_at"`
 }
 
@@ -111,7 +106,6 @@ func NewProjectUser(data ctype.Dict) *ProjectUser {
 	return &ProjectUser{
 		ProjectID: dictutil.GetValue[uint](data, "ProjectID"),
 		UserID:    dictutil.GetValue[uint](data, "UserID"),
-		CreatorID: dictutil.GetValue[uint](data, "CreatorID"),
 	}
 }
 
@@ -198,8 +192,6 @@ type FeatureUser struct {
 	Feature   Feature      `gorm:"foreignKey:FeatureID" json:"feature"`
 	UserID    uint         `gorm:"not null;uniqueIndex:idx_feature_user" json:"user_id"`
 	User      account.User `gorm:"foreignKey:UserID" json:"user"`
-	CreatorID uint         `gorm:"default:null" json:"creator_id"`
-	Creator   account.User `gorm:"foreignKey:CreatorID" json:"creator"`
 	CreatedAt time.Time    `json:"created_at"`
 }
 
@@ -211,7 +203,6 @@ func NewFeatureUser(data ctype.Dict) *FeatureUser {
 	return &FeatureUser{
 		FeatureID: dictutil.GetValue[uint](data, "FeatureID"),
 		UserID:    dictutil.GetValue[uint](data, "UserID"),
-		CreatorID: dictutil.GetValue[uint](data, "CreatorID"),
 	}
 }
 
@@ -289,8 +280,6 @@ func NewGitCommit(data ctype.Dict) *GitCommit {
 
 type TaskUser struct {
 	ID        uint         `gorm:"primaryKey" json:"id"`
-	CreatorID uint         `gorm:"default:null" json:"creator_id"`
-	Creator   account.User `gorm:"foreignKey:CreatorID" json:"creator"`
 	TaskID    uint         `gorm:"not null;uniqueIndex:idx_task_user_branch" json:"task_id"`
 	Task      Task         `gorm:"foreignKey:TaskID" json:"task"`
 	UserID    uint         `gorm:"not null;uniqueIndex:idx_task_user_branch" json:"user_id"`
@@ -306,7 +295,6 @@ func (TaskUser) TableName() string {
 
 func NewTaskUser(data ctype.Dict) *TaskUser {
 	return &TaskUser{
-		CreatorID: dictutil.GetValue[uint](data, "CreatorID"),
 		TaskID:    dictutil.GetValue[uint](data, "TaskID"),
 		UserID:    dictutil.GetValue[uint](data, "UserID"),
 		GitBranch: dictutil.GetValue[*string](data, "GitBranch"),

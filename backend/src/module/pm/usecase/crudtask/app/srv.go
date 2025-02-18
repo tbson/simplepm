@@ -15,6 +15,7 @@ type Service struct {
 	taskFieldRepo       TaskFieldRepo
 	taskFieldOptionRepo TaskFieldOptionRepo
 	taskFieldValueRepo  TaskFieldValueRepo
+	taskUserRepo        TaskUserRepo
 }
 
 func New(
@@ -22,12 +23,14 @@ func New(
 	taskFieldRepo TaskFieldRepo,
 	taskFieldOptionRepo TaskFieldOptionRepo,
 	taskFieldValueRepo TaskFieldValueRepo,
+	taskUserRepo TaskUserRepo,
 ) Service {
 	return Service{
 		taskRepo,
 		taskFieldRepo,
 		taskFieldOptionRepo,
 		taskFieldValueRepo,
+		taskUserRepo,
 	}
 }
 
@@ -213,7 +216,7 @@ func (srv Service) cleanUpMultipleSelectTaskFieldValues(taskID uint) error {
 	return nil
 }
 
-func (srv Service) upsertTaskFieldValues(
+func (srv Service) syncTaskFieldValues(
 	taskID uint,
 	taskFields []TaskFieldData,
 ) error {
@@ -266,16 +269,53 @@ func (srv Service) upsertTaskFieldValues(
 	return nil
 }
 
+func (srv Service) syncTaskUsers(
+	taskID uint,
+	taskUsers []TaskUserData,
+) error {
+	queryOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{
+			"TaskID": taskID,
+		},
+	}
+	_, err := srv.taskUserRepo.DeleteBy(queryOptions)
+	if err != nil {
+		return err
+	}
+
+	for _, taskUserData := range taskUsers {
+		data := ctype.Dict{
+			"TaskID": taskID,
+			"UserID": taskUserData.UserID,
+		}
+		if taskUserData.GitBranch != nil {
+			data["GitBranch"] = taskUserData.GitBranch
+		}
+		_, err := srv.taskUserRepo.Create(data)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (srv Service) Create(structData InputData) (*schema.Task, error) {
 	TaskFields := structData.TaskFields
+	TaskUsers := structData.TaskUsers
 	data := dictutil.StructToDict(structData)
 	data["Order"] = srv.GetNextTaskOrder(structData.ProjectID)
 	delete(data, "TaskFields")
+	delete(data, "TaskUsers")
 	task, err := srv.taskRepo.Create(data)
 	if err != nil {
 		return nil, err
 	}
-	err = srv.upsertTaskFieldValues(task.ID, TaskFields)
+	err = srv.syncTaskFieldValues(task.ID, TaskFields)
+	if err != nil {
+		return nil, err
+	}
+
+	err = srv.syncTaskUsers(task.ID, TaskUsers)
 	if err != nil {
 		return nil, err
 	}
@@ -289,12 +329,21 @@ func (srv Service) Update(
 	data ctype.Dict,
 ) (*schema.Task, error) {
 	TaskFields := structData.TaskFields
+	TaskUsers := structData.TaskUsers
 	delete(data, "TaskFields")
+	delete(data, "TaskUsers")
+
 	task, err := srv.taskRepo.Update(updateOptions, data)
 	if err != nil {
 		return nil, err
 	}
-	err = srv.upsertTaskFieldValues(task.ID, TaskFields)
+
+	err = srv.syncTaskFieldValues(task.ID, TaskFields)
+	if err != nil {
+		return nil, err
+	}
+
+	err = srv.syncTaskUsers(task.ID, TaskUsers)
 	if err != nil {
 		return nil, err
 	}

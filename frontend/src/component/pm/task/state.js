@@ -6,4 +6,5 @@ export const taskOptionSt = atom({
     feature: [],
     status: [],
     task_field: [],
+    user: [],
 });
