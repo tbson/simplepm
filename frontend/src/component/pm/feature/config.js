@@ -13,7 +13,7 @@ const urlMap = {
 };
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_FEATURE_DIALOG';
-export const PEM_GROUP = 'crudfeature';
+export const PEM_GROUP = 'feature';
 const headingTxt = t`Feature`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({

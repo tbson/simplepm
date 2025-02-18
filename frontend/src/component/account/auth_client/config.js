@@ -11,7 +11,7 @@ const urlMap = {
 };
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_AUTH_CLIENT_DIALOG';
-export const PEM_GROUP = 'crudauthclient';
+export const PEM_GROUP = 'authclient';
 const headingTxt = t`Authentication client`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({

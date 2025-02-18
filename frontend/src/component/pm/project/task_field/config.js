@@ -13,7 +13,7 @@ const urlMap = {
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const TOGGLE_EVENT = 'TOGGLE_TASK_FIELD';
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_TASK_FIELD_DIALOG';
-export const PEM_GROUP = 'crudtaskfield';
+export const PEM_GROUP = 'taskfield';
 const headingTxt = t`Task Field`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({

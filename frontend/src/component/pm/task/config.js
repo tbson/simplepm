@@ -14,7 +14,7 @@ const urlMap = {
 };
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_TASK_DIALOG';
-export const PEM_GROUP = 'crudtask';
+export const PEM_GROUP = 'task';
 const headingTxt = t`Task`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({

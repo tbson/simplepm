@@ -19,7 +19,7 @@ const urlMap = {
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const githubUrls = RequestUtil.prefixMapValues(urlMap.github);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_TENANT_DIALOG';
-export const PEM_GROUP = 'crudtenant';
+export const PEM_GROUP = 'tenant';
 const headingTxt = t`Tenant`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({

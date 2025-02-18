@@ -22,7 +22,7 @@ var folder = "docattachment"
 func Create(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
 	taskID := numberutil.StrToUint(c.QueryParam("task_id"), 0)
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 	structData := InputData{
 		UserID: userID, TaskID: taskID,
 	}
@@ -43,7 +43,7 @@ func Create(c echo.Context) error {
 	structData.FileURL = file.FileURL
 
 	data := dictutil.StructToDict(structData)
-	result, err := cruder.Create(data)
+	result, err := repo.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

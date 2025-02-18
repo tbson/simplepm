@@ -62,14 +62,14 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"id": id},
 	}
 
-	result, err := cruder.Retrieve(queryOptions)
+	result, err := repo.Retrieve(queryOptions)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
@@ -79,14 +79,14 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 	structData, err := vldtutil.ValidatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	data := dictutil.StructToDict(structData)
 
-	result, err := cruder.Create(data)
+	result, err := repo.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -96,7 +96,7 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
@@ -105,7 +105,7 @@ func Update(c echo.Context) error {
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
-	result, err := cruder.Update(updateOptions, data)
+	result, err := repo.Update(updateOptions, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -115,10 +115,10 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	ids, err := cruder.Delete(id)
+	ids, err := repo.Delete(id)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -128,10 +128,10 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
-	ids, err := cruder.DeleteList(ids)
+	ids, err := repo.DeleteList(ids)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

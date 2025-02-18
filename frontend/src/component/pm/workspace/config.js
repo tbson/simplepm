@@ -11,7 +11,7 @@ const urlMap = {
 };
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_WORKSPACE_DIALOG';
-export const PEM_GROUP = 'crudworkspace';
+export const PEM_GROUP = 'workspace';
 const headingTxt = t`Workspace`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({

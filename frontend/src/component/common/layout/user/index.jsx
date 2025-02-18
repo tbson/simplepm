@@ -88,34 +88,34 @@ export default function UserLayout() {
     const getMenuItems = () => {
         const result = [];
 
-        PemUtil.canView('cruduser') &&
+        PemUtil.canView('user') &&
             result.push({
                 label: t`User`,
                 key: `/account/user`,
                 icon: <UserOutlined />
             });
-        PemUtil.canView('crudrole') &&
+        PemUtil.canView('role') &&
             result.push({
                 label: t`Role`,
                 key: `/account/role`,
                 icon: <TeamOutlined />
             });
         /*
-        PemUtil.canView('crudworkspace') &&
+        PemUtil.canView('workspace') &&
             result.push({
                 label: t`Workspace`,
                 key: `/pm/workspace`,
                 icon: <AppstoreOutlined />
             });
         */
-        PemUtil.canView('crudproject') &&
+        PemUtil.canView('project') &&
             result.push({
                 label: t`Project`,
                 key: `/pm/project`,
                 icon: <ProjectOutlined />
             });
         /*
-        PemUtil.canView('crudproject') &&
+        PemUtil.canView('project') &&
             result.push({
                 label: t`Message`,
                 key: `/event/message`,

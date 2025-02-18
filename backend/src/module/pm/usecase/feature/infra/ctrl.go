@@ -5,29 +5,35 @@ import (
 	"src/common/ctype"
 	"src/util/dbutil"
 	"src/util/dictutil"
+	"src/util/numberutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
-	"src/module/account/repo/authclient"
-	"src/module/account/schema"
+	"src/module/pm/repo/feature"
+	"src/module/pm/repo/task"
+	"src/module/pm/schema"
 
 	"github.com/labstack/echo/v4"
+
+	"src/module/pm/usecase/feature/app"
 )
 
-type Schema = schema.AuthClient
+type Schema = schema.Feature
 
-var NewRepo = authclient.New
-
-var searchableFields = []string{"uid", "description", "partition"}
+var NewRepo = feature.New
+var searchableFields = []string{"title", "description"}
 var filterableFields = []string{}
-var orderableFields = []string{"id", "uid"}
+var orderableFields = []string{"id", "title", "order"}
 
 func List(c echo.Context) error {
+	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
-	listResult, err := pager.Paging(options, searchableFields)
+	options.Order = restlistutil.QueryOrder{Field: "order", Direction: "ASC"}
+	options.Filters["project_id"] = projectID
+	listResult, err := pager.List(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -36,14 +42,15 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"id": id},
+		Filters:  ctype.Dict{"id": id},
+		Preloads: []string{"Project"},
 	}
 
-	result, err := cruder.Retrieve(queryOptions)
+	result, err := repo.Retrieve(queryOptions)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
@@ -53,14 +60,16 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
-	structData, err := vldtutil.ValidatePayload(c, InputData{})
+	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
+	repo := NewRepo(dbutil.Db())
+
+	structData, err := vldtutil.ValidatePayload(c, InputData{ProjectID: projectID})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-
 	data := dictutil.StructToDict(structData)
-	result, err := cruder.Create(data)
+
+	result, err := repo.Create(data)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -70,9 +79,10 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
+	repo := NewRepo(dbutil.Db())
 
-	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{ProjectID: projectID})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -80,7 +90,7 @@ func Update(c echo.Context) error {
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
-	result, err := cruder.Update(updateOptions, data)
+	result, err := repo.Update(updateOptions, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -90,23 +100,13 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	featureRepo := NewRepo(dbutil.Db())
+	taskRepo := task.New(dbutil.Db())
+
+	srv := app.New(featureRepo, taskRepo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	ids, err := cruder.Delete(id)
-
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-
-	return c.JSON(http.StatusOK, ids)
-}
-
-func DeleteList(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
-
-	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
-	ids, err := cruder.DeleteList(ids)
+	ids, err := srv.Delete(id)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

@@ -5,30 +5,57 @@ import (
 	"src/common/ctype"
 	"src/util/dbutil"
 	"src/util/dictutil"
+	"src/util/errutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
-	"src/module/pm/repo/workspace"
-	"src/module/pm/schema"
+	"src/module/account/repo/authclient"
+	"src/module/account/repo/role"
+	"src/module/account/repo/tenant"
+	"src/module/account/schema"
+	"src/module/account/usecase/tenant/app"
 
 	"github.com/labstack/echo/v4"
 )
 
-type Schema = schema.Workspace
+type Schema = schema.Tenant
 
-var NewRepo = workspace.New
-var folder = "workspace/avatar"
-var searchableFields = []string{"title", "description"}
+var NewRepo = tenant.New
+var folder = "tenant/avatar"
+var searchableFields = []string{"uid", "title"}
 var filterableFields = []string{}
-var orderableFields = []string{"id", "title", "order"}
+var orderableFields = []string{"id", "uid"}
+
+func Option(c echo.Context) error {
+	authClientRepo := authclient.New(dbutil.Db())
+	authClients, err := authClientRepo.List(ctype.QueryOptions{})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+	var authClientOptions []ctype.SelectOption[uint] = make(
+		[]ctype.SelectOption[uint],
+		len(authClients),
+	)
+	for i, authClient := range authClients {
+		authClientOptions[i] = ctype.SelectOption[uint]{
+			Value:       authClient.ID,
+			Label:       authClient.Uid,
+			Description: authClient.Partition,
+		}
+	}
+
+	result := ctype.Dict{
+		"auth_client": authClientOptions,
+	}
+
+	return c.JSON(http.StatusOK, result)
+}
 
 func List(c echo.Context) error {
-	tenantId := c.Get("TenantID").(uint)
 	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
-	options.Filters["tenant_id"] = tenantId
 	listResult, err := pager.Paging(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -38,14 +65,19 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	user := c.Get("User").(*schema.User)
+	repo := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
+	if id == 0 {
+		id = user.TenantID
+	}
 	queryOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"id": id},
+		Filters:  ctype.Dict{"id": id},
+		Preloads: []string{"GitAccounts"},
 	}
 
-	result, err := cruder.Retrieve(queryOptions)
+	result, err := repo.Retrieve(queryOptions)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
@@ -55,9 +87,19 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	tenantId := c.Get("TenantID").(uint)
-	cruder := NewRepo(dbutil.Db())
-	structData, err := vldtutil.ValidatePayload(c, InputData{TenantID: tenantId})
+	db := dbutil.Db()
+	tx := db.Begin()
+	if tx.Error != nil {
+		msg := errutil.New("", []string{tx.Error.Error()})
+		return c.JSON(http.StatusBadRequest, msg)
+	}
+
+	repo := NewRepo(tx)
+	roleRepo := role.New(tx)
+
+	srv := app.New(repo, roleRepo)
+
+	structData, err := vldtutil.ValidatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -68,9 +110,16 @@ func Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	result, err := cruder.Create(data)
+	result, err := srv.Create(data)
+
 	if err != nil {
+		tx.Rollback()
 		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		msg := errutil.New("", []string{err.Error()})
+		return c.JSON(http.StatusBadRequest, msg)
 	}
 
 	return c.JSON(http.StatusCreated, result)
@@ -78,10 +127,9 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	tenantId := c.Get("TenantID").(uint)
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
-	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -94,7 +142,7 @@ func Update(c echo.Context) error {
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
-	result, err := cruder.Update(updateOptions, data)
+	result, err := repo.Update(updateOptions, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -104,10 +152,10 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	ids, err := cruder.Delete(id)
+	ids, err := repo.Delete(id)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -117,10 +165,10 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
-	ids, err := cruder.DeleteList(ids)
+	ids, err := repo.DeleteList(ids)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

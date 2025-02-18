@@ -62,26 +62,26 @@ export default function AdminLayout() {
         const result = [];
 
         result.push({ label: t`Profile`, key: '/', icon: <UserOutlined /> });
-        PemUtil.canView('crudtenant') &&
+        PemUtil.canView('tenant') &&
             result.push({
                 label: t`Tenant`,
                 key: '/account/tenant',
                 icon: <AuditOutlined />
             });
-        PemUtil.canView('crudauthclient') &&
+        PemUtil.canView('authclient') &&
             result.push({
                 label: t`Auth client`,
                 key: '/account/auth-client',
                 icon: <LockOutlined />
             });
-        PemUtil.canView('crudvariable') &&
+        PemUtil.canView('variable') &&
             result.push({
                 label: t`Variable`,
                 key: '/config/variable',
                 icon: <SettingFilled />
             });
         /*
-        PemUtil.canView('cruduser') &&
+        PemUtil.canView('user') &&
             result.push({
                 label: t`User`,
                 key: '/account/user',

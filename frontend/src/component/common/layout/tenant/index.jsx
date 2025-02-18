@@ -61,19 +61,19 @@ export default function TenantLayout() {
     const getMenuItems = () => {
         const result = [];
 
-        PemUtil.canView('crudtenant') &&
+        PemUtil.canView('tenant') &&
             result.push({
                 label: t`Tenant`,
                 key: `/account/tenant/${tenant_id}`,
                 icon: <AuditOutlined />
             });
-        PemUtil.canView('crudrole') &&
+        PemUtil.canView('role') &&
             result.push({
                 label: t`Role`,
                 key: `/account/tenant/${tenant_id}/role`,
                 icon: <TagsOutlined />
             });
-        PemUtil.canView('cruduser') &&
+        PemUtil.canView('user') &&
             result.push({
                 label: t`User`,
                 key: `/account/tenant/${tenant_id}/user`,

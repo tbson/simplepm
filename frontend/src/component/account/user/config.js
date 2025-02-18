@@ -21,7 +21,7 @@ export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const lockUrls = RequestUtil.prefixMapValues(urlMap.lock);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_USER_DIALOG';
 export const TOGGLE_LOCK_DIALOG_EVENT = 'TOGGLE_LOCK_DIALOG_EVENT';
-export const PEM_GROUP = 'cruduser';
+export const PEM_GROUP = 'user';
 const headingTxt = t`User`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({

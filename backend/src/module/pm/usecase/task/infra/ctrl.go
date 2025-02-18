@@ -20,7 +20,7 @@ import (
 	"src/module/pm/repo/taskfieldvalue"
 	"src/module/pm/repo/taskuser"
 	"src/module/pm/schema"
-	"src/module/pm/usecase/crudtask/app"
+	"src/module/pm/usecase/task/app"
 
 	"github.com/labstack/echo/v4"
 )
@@ -168,7 +168,7 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
@@ -181,7 +181,7 @@ func Retrieve(c echo.Context) error {
 		},
 	}
 
-	result, err := cruder.Retrieve(queryOptions)
+	result, err := repo.Retrieve(queryOptions)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
@@ -283,10 +283,10 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	cruder := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db())
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	ids, err := cruder.Delete(id)
+	ids, err := repo.Delete(id)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

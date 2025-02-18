@@ -3,29 +3,29 @@ package route
 import (
 	"src/common/ctype"
 	auth "src/module/account/usecase/auth/infra"
-	crudauthclient "src/module/account/usecase/crudauthclient/infra"
-	crudrole "src/module/account/usecase/crudrole/infra"
-	crudtenant "src/module/account/usecase/crudtenant/infra"
-	cruduser "src/module/account/usecase/cruduser/infra"
+	authclient "src/module/account/usecase/authclient/infra"
 	lockuser "src/module/account/usecase/lockuser/infra"
 	profile "src/module/account/usecase/profile/infra"
+	role "src/module/account/usecase/role/infra"
 	signuptenant "src/module/account/usecase/signuptenant/infra"
-	crudvariable "src/module/config/usecase/crudvariable/infra"
+	tenant "src/module/account/usecase/tenant/infra"
+	user "src/module/account/usecase/user/infra"
+	variable "src/module/config/usecase/variable/infra"
 	createdocfromlink "src/module/document/usecase/createdocfromlink/infra"
 	doc "src/module/document/usecase/doc/infra"
 	docattachment "src/module/document/usecase/docattachment/infra"
 	message "src/module/event/usecase/message/infra"
 	github "src/module/git/usecase/github/infra"
 	gitlab "src/module/git/usecase/gitlab/infra"
-	crudfeature "src/module/pm/usecase/crudfeature/infra"
-	crudproject "src/module/pm/usecase/crudproject/infra"
-	crudtask "src/module/pm/usecase/crudtask/infra"
-	crudtaskfield "src/module/pm/usecase/crudtaskfield/infra"
-	crudworkspace "src/module/pm/usecase/crudworkspace/infra"
+	feature "src/module/pm/usecase/feature/infra"
+	project "src/module/pm/usecase/project/infra"
 	reorderfeature "src/module/pm/usecase/reorderfeature/infra"
 	reorderstatus "src/module/pm/usecase/reorderstatus/infra"
 	reordertask "src/module/pm/usecase/reordertask/infra"
 	reordertaskfield "src/module/pm/usecase/reordertaskfield/infra"
+	task "src/module/pm/usecase/task/infra"
+	taskfield "src/module/pm/usecase/taskfield/infra"
+	workspace "src/module/pm/usecase/workspace/infra"
 	jwt "src/module/socket/usecase/jwt/infra"
 
 	"github.com/labstack/echo/v4"
@@ -33,21 +33,21 @@ import (
 
 func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	pemMap := ctype.PemMap{}
-	e, pemMap = crudvariable.RegisterUrls(e, pemMap)
-	e, pemMap = crudauthclient.RegisterUrls(e, pemMap)
-	e, pemMap = crudtenant.RegisterUrls(e, pemMap)
-	e, pemMap = crudrole.RegisterUrls(e, pemMap)
-	e, pemMap = cruduser.RegisterUrls(e, pemMap)
-	e, pemMap = crudworkspace.RegisterUrls(e, pemMap)
-	e, pemMap = crudproject.RegisterUrls(e, pemMap)
-	e, pemMap = crudtaskfield.RegisterUrls(e, pemMap)
+	e, pemMap = variable.RegisterUrls(e, pemMap)
+	e, pemMap = authclient.RegisterUrls(e, pemMap)
+	e, pemMap = tenant.RegisterUrls(e, pemMap)
+	e, pemMap = role.RegisterUrls(e, pemMap)
+	e, pemMap = user.RegisterUrls(e, pemMap)
+	e, pemMap = workspace.RegisterUrls(e, pemMap)
+	e, pemMap = project.RegisterUrls(e, pemMap)
+	e, pemMap = taskfield.RegisterUrls(e, pemMap)
 	e, pemMap = auth.RegisterUrls(e, pemMap)
 	e, pemMap = profile.RegisterUrls(e, pemMap)
 	e, pemMap = lockuser.RegisterUrls(e, pemMap)
 	e, pemMap = signuptenant.RegisterUrls(e, pemMap)
 	e, pemMap = reordertaskfield.RegisterUrls(e, pemMap)
-	e, pemMap = crudtask.RegisterUrls(e, pemMap)
-	e, pemMap = crudfeature.RegisterUrls(e, pemMap)
+	e, pemMap = task.RegisterUrls(e, pemMap)
+	e, pemMap = feature.RegisterUrls(e, pemMap)
 	e, pemMap = reorderfeature.RegisterUrls(e, pemMap)
 	e, pemMap = reordertask.RegisterUrls(e, pemMap)
 	e, pemMap = reorderstatus.RegisterUrls(e, pemMap)

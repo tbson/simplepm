@@ -12,7 +12,7 @@ const urlMap = {
 };
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const TOGGLE_DIALOG_EVENT = 'TOGGLE_TENANT_DIALOG';
-export const PEM_GROUP = 'crudrole';
+export const PEM_GROUP = 'role';
 const headingTxt = t`Role`;
 const name = headingTxt.toLowerCase();
 export const getMessages = () => ({
