@@ -7,11 +7,11 @@ import (
 )
 
 type Service struct {
-	crudUserRepo CrudUserRepo
+	userRepo UserRepo
 }
 
-func New(crudUserRepo CrudUserRepo) Service {
-	return Service{crudUserRepo}
+func New(userRepo UserRepo) Service {
+	return Service{userRepo}
 }
 
 func (srv Service) LockUser(id uint, locked bool, lockedReason string) (schema.User, error) {
@@ -26,7 +26,7 @@ func (srv Service) LockUser(id uint, locked bool, lockedReason string) (schema.U
 	}
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
 
-	result, err := srv.crudUserRepo.Update(updateOptions, data)
+	result, err := srv.userRepo.Update(updateOptions, data)
 	if err != nil {
 		return schema.User{}, err
 	}

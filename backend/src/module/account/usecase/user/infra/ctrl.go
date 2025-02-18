@@ -103,9 +103,9 @@ func Create(c echo.Context) error {
 func Update(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	userRepo := NewRepo(dbutil.Db())
-	crudUserRepo := New(dbutil.Db())
+	userLocalRepo := New(dbutil.Db())
 
-	srv := app.New(userRepo, crudUserRepo)
+	srv := app.New(userRepo, userLocalRepo)
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {

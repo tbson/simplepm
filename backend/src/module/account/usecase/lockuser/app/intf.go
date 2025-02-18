@@ -5,6 +5,6 @@ import (
 	"src/module/account/schema"
 )
 
-type CrudUserRepo interface {
+type UserRepo interface {
 	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
 }

@@ -6,25 +6,25 @@ import (
 )
 
 type Service struct {
-	Repo         UserRepo
-	crudUserRepo CrudUserRepo
+	UserRepo      UserRepo
+	UserLocalRepo UserLocalRepo
 }
 
-func New(Repo UserRepo, crudUserRepo CrudUserRepo) Service {
-	return Service{Repo, crudUserRepo}
+func New(UserRepo UserRepo, UserLocalRepo UserLocalRepo) Service {
+	return Service{UserRepo, UserLocalRepo}
 }
 
 func (srv Service) Create(data ctype.Dict) (schema.User, error) {
 	emptyResult := schema.User{}
 	roleIds := data["RoleIDs"].([]uint)
 	delete(data, "RoleIDs")
-	roles, err := srv.crudUserRepo.ListRoleByIds(roleIds)
+	roles, err := srv.UserLocalRepo.ListRoleByIds(roleIds)
 	if err != nil {
 		return emptyResult, err
 	}
 	data["Roles"] = roles
 
-	result, err := srv.Repo.Create(data)
+	result, err := srv.UserRepo.Create(data)
 	if err != nil {
 		return emptyResult, err
 	}
@@ -35,13 +35,13 @@ func (srv Service) Update(updateOptions ctype.QueryOptions, data ctype.Dict) (sc
 	emptyResult := schema.User{}
 	roleIds := data["RoleIDs"].([]uint)
 	delete(data, "RoleIDs")
-	roles, err := srv.crudUserRepo.ListRoleByIds(roleIds)
+	roles, err := srv.UserLocalRepo.ListRoleByIds(roleIds)
 	if err != nil {
 		return emptyResult, err
 	}
 	data["Roles"] = roles
 
-	result, err := srv.Repo.Update(updateOptions, data)
+	result, err := srv.UserRepo.Update(updateOptions, data)
 	if err != nil {
 		return emptyResult, err
 	}

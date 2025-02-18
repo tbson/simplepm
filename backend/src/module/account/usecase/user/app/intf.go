@@ -10,6 +10,6 @@ type UserRepo interface {
 	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
 }
 
-type CrudUserRepo interface {
+type UserLocalRepo interface {
 	ListRoleByIds(ids []uint) ([]schema.Role, error)
 }

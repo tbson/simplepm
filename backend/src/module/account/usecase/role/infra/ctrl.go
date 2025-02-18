@@ -88,9 +88,9 @@ func Retrieve(c echo.Context) error {
 func Create(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	roleRepo := NewRepo(dbutil.Db())
-	crudRoleRepo := New(dbutil.Db())
+	roleLocalRepo := New(dbutil.Db())
 
-	srv := app.New(roleRepo, crudRoleRepo)
+	srv := app.New(roleRepo, roleLocalRepo)
 
 	structData, err := vldtutil.ValidatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
@@ -110,9 +110,9 @@ func Create(c echo.Context) error {
 func Update(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	roleRepo := NewRepo(dbutil.Db())
-	crudRoleRepo := New(dbutil.Db())
+	roleLocalRepo := New(dbutil.Db())
 
-	srv := app.New(roleRepo, crudRoleRepo)
+	srv := app.New(roleRepo, roleLocalRepo)
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})

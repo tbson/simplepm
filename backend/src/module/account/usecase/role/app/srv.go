@@ -6,19 +6,19 @@ import (
 )
 
 type Service struct {
-	roleRepo     RoleRepo
-	crudRoleRepo CrudRoleRepo
+	roleRepo      RoleRepo
+	roleLocalRepo RoleLocalRepo
 }
 
-func New(roleRepo RoleRepo, crudRoleRepo CrudRoleRepo) Service {
-	return Service{roleRepo, crudRoleRepo}
+func New(roleRepo RoleRepo, roleLocalRepo RoleLocalRepo) Service {
+	return Service{roleRepo, roleLocalRepo}
 }
 
 func (srv Service) Create(data ctype.Dict) (schema.Role, error) {
 	emptyResult := schema.Role{}
 	pemIds := data["PemIDs"].([]uint)
 	delete(data, "PemIDs")
-	pems, err := srv.crudRoleRepo.ListPemByIds(pemIds)
+	pems, err := srv.roleLocalRepo.ListPemByIds(pemIds)
 	if err != nil {
 		return emptyResult, err
 	}
@@ -35,7 +35,7 @@ func (srv Service) Update(updateOptions ctype.QueryOptions, data ctype.Dict) (sc
 	emptyResult := schema.Role{}
 	pemIds := data["PemIDs"].([]uint)
 	delete(data, "PemIDs")
-	pems, err := srv.crudRoleRepo.ListPemByIds(pemIds)
+	pems, err := srv.roleLocalRepo.ListPemByIds(pemIds)
 	if err != nil {
 		return emptyResult, err
 	}
