@@ -2,6 +2,7 @@ package schema
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"src/common/ctype"
@@ -77,6 +78,11 @@ type User struct {
 	LockedReason string         `gorm:"type:text;not null;default:''" json:"locked_reason"`
 	CreatedAt    time.Time      `json:"created_at"`
 	UpdatedAt    time.Time      `json:"updated_at"`
+}
+
+func (u *User) FullName() string {
+	result := u.FirstName + " " + u.LastName
+	return strings.TrimSpace(result)
 }
 
 func NewUser(data ctype.Dict) *User {
