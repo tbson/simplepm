@@ -16,7 +16,7 @@ import (
 func main() {
 	localeutil.Init("en")
 	dbutil.InitDb()
-	db := dbutil.Db()
+	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
 		panic(tx.Error.Error())

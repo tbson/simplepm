@@ -33,12 +33,12 @@ func GetInstallUrl(c echo.Context) error {
 }
 
 func Callback(c echo.Context) error {
-	tenantRepo := tenant.New(dbutil.Db())
-	gitaccountRepo := gitaccount.New(dbutil.Db())
-	gitRepoRepo := gitrepo.New(dbutil.Db())
-	gitPushRepo := gitpush.New(dbutil.Db())
-	gitCommitRepo := gitcommit.New(dbutil.Db())
-	gitRepo := New(dbutil.Db())
+	tenantRepo := tenant.New(dbutil.Db(nil))
+	gitaccountRepo := gitaccount.New(dbutil.Db(nil))
+	gitRepoRepo := gitrepo.New(dbutil.Db(nil))
+	gitPushRepo := gitpush.New(dbutil.Db(nil))
+	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
+	gitRepo := New(dbutil.Db(nil))
 
 	srv := app.New(
 		tenantRepo,
@@ -75,12 +75,12 @@ func Webhook1(c echo.Context) error {
 }
 
 func Webhook(c echo.Context) error {
-	tenantRepo := tenant.New(dbutil.Db())
-	gitaccountRepo := gitaccount.New(dbutil.Db())
-	gitRepoRepo := gitrepo.New(dbutil.Db())
-	gitPushRepo := gitpush.New(dbutil.Db())
-	gitCommitRepo := gitcommit.New(dbutil.Db())
-	gitRepo := New(dbutil.Db())
+	tenantRepo := tenant.New(dbutil.Db(nil))
+	gitaccountRepo := gitaccount.New(dbutil.Db(nil))
+	gitRepoRepo := gitrepo.New(dbutil.Db(nil))
+	gitPushRepo := gitpush.New(dbutil.Db(nil))
+	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
+	gitRepo := New(dbutil.Db(nil))
 
 	srv := app.New(
 		tenantRepo,

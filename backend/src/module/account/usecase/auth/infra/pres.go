@@ -12,7 +12,7 @@ import (
 )
 
 func CallbackPres(c echo.Context, r authtype.AuthCallbackResult) error {
-	authRepo := New(dbutil.Db())
+	authRepo := New(dbutil.Db(nil))
 
 	realmCookie := cookieutil.NewRealmCookie(r.Realm)
 	accessTokenCookie := cookieutil.NewAccessTokenCookie(r.AccessToken)

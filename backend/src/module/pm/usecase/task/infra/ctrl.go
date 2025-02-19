@@ -36,11 +36,11 @@ var orderableFields = []string{"id", "title", "order"}
 func Option(c echo.Context) error {
 	tenantID := c.Get("TenantID").(uint)
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
-	projectRepo := project.New(dbutil.Db())
-	featureRepo := feature.New(dbutil.Db())
-	taskfieldRepo := taskfield.New(dbutil.Db())
-	taskfieldoptionRepo := taskfieldoption.New(dbutil.Db())
-	userRepo := user.New(dbutil.Db())
+	projectRepo := project.New(dbutil.Db(nil))
+	featureRepo := feature.New(dbutil.Db(nil))
+	taskfieldRepo := taskfield.New(dbutil.Db(nil))
+	taskfieldoptionRepo := taskfieldoption.New(dbutil.Db(nil))
+	userRepo := user.New(dbutil.Db(nil))
 
 	projectQueryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"ID": projectID},
@@ -149,7 +149,7 @@ func Option(c echo.Context) error {
 
 func List(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
-	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
+	pager := paging.New[Schema, ListOutput](dbutil.Db(nil), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	options.Filters["project_id"] = projectID
@@ -168,7 +168,7 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
@@ -193,7 +193,7 @@ func Retrieve(c echo.Context) error {
 func Create(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
 
-	db := dbutil.Db()
+	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
 		msg := errutil.New("", []string{tx.Error.Error()})
@@ -237,7 +237,7 @@ func Create(c echo.Context) error {
 func Update(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
 
-	db := dbutil.Db()
+	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
 		msg := errutil.New("", []string{tx.Error.Error()})
@@ -283,7 +283,7 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, err := repo.Delete(id)

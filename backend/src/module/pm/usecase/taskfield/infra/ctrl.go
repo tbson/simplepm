@@ -30,7 +30,7 @@ func List(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
+	pager := paging.New[Schema, ListOutput](dbutil.Db(nil), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	options.Order = restlistutil.QueryOrder{Field: "order", Direction: "ASC"}
@@ -44,7 +44,7 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
@@ -62,8 +62,8 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	taskFieldRepo := taskfield.New(dbutil.Db())
-	taskFieldOptionRepo := taskfieldoption.New(dbutil.Db())
+	taskFieldRepo := taskfield.New(dbutil.Db(nil))
+	taskFieldOptionRepo := taskfieldoption.New(dbutil.Db(nil))
 	srv := app.New(taskFieldRepo, taskFieldOptionRepo)
 
 	structData, err := vldtutil.ValidatePayload(c, app.InputData{})
@@ -81,8 +81,8 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	taskFieldRepo := taskfield.New(dbutil.Db())
-	taskFieldOptionRepo := taskfieldoption.New(dbutil.Db())
+	taskFieldRepo := taskfield.New(dbutil.Db(nil))
+	taskFieldOptionRepo := taskfieldoption.New(dbutil.Db(nil))
 	srv := app.New(taskFieldRepo, taskFieldOptionRepo)
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, app.InputData{})
@@ -107,7 +107,7 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, err := repo.Delete(id)
@@ -120,7 +120,7 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 	ids, err := repo.DeleteList(ids)

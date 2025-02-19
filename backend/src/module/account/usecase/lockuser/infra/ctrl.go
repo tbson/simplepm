@@ -19,7 +19,7 @@ func LockUser(c echo.Context) error {
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
 
-	userRepo := user.New(dbutil.Db())
+	userRepo := user.New(dbutil.Db(nil))
 	srv := app.New(userRepo)
 
 	locked := data["Locked"].(bool)

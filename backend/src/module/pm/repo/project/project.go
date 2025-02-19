@@ -1,6 +1,8 @@
 package project
 
 import (
+	"context"
+	"fmt"
 	"src/common/ctype"
 	"src/module/pm/schema"
 	"src/util/dictutil"
@@ -19,11 +21,17 @@ type Repo struct {
 	client *gorm.DB
 }
 
+var callbacksRegistered bool
+
 func New(client *gorm.DB) Repo {
+	registerAuditCallbacks(client)
 	return Repo{client: client}
 }
 
 func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
+	// ctx := r.client.Statement.Context
+	// userID := ctx.Value("UserID").(uint)
+	// tenantID := ctx.Value("TenantID").(uint)
 	db := r.client
 	if queryOptions.Order == "" {
 		db = db.Order("id DESC")
@@ -151,4 +159,68 @@ func (r Repo) DeleteList(ids []uint) ([]uint, error) {
 		return ids, errutil.NewGormError(err)
 	}
 	return ids, err
+}
+
+func registerAuditCallbacks(db *gorm.DB) {
+	if callbacksRegistered {
+		return
+	}
+	db.Callback().Create().After("gorm:create").Register(
+		"audit_after_create_project",
+		afterCreateCallback,
+	)
+	db.Callback().Update().After("gorm:update").Register(
+		"audit_after_update_project",
+		afterUpdateCallback,
+	)
+	db.Callback().Delete().After("gorm:delete").Register(
+		"audit_after_delete_project",
+		afterDeleteCallback,
+	)
+
+	callbacksRegistered = true
+}
+
+func getUserIDFromContext(ctx context.Context) uint {
+	return ctx.Value("UserID").(uint)
+}
+
+func afterCreateCallback(db *gorm.DB) {
+	fmt.Println("afterCreateCallback")
+	if db.Error != nil {
+		fmt.Println("db.Error", db.Error)
+		return
+	}
+	if v, ok := db.Statement.Dest.(*schema.Project); ok {
+		userID := getUserIDFromContext(db.Statement.Context)
+		fmt.Println("userID", userID)
+		fmt.Println("v", v)
+	}
+}
+
+func afterUpdateCallback(db *gorm.DB) {
+	fmt.Println("afterUpdateCallback")
+	if db.Error != nil {
+		fmt.Println("db.Error", db.Error)
+		return
+	}
+	if v, ok := db.Statement.Dest.(*schema.Project); ok {
+		userID := getUserIDFromContext(db.Statement.Context)
+		fmt.Println("userID", userID)
+		fmt.Println("v", v)
+	}
+}
+
+func afterDeleteCallback(db *gorm.DB) {
+	fmt.Println("afterDeleteCallback")
+	if db.Error != nil {
+		fmt.Println("db.Error", db.Error)
+		return
+	}
+	// Note: For hard deletes, db.Statement.Dest may be nil.
+	if v, ok := db.Statement.Dest.(*schema.Project); ok {
+		userID := getUserIDFromContext(db.Statement.Context)
+		fmt.Println("userID", userID)
+		fmt.Println("v", v)
+	}
 }

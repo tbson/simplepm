@@ -21,9 +21,9 @@ func main() {
 	apiGroup := e.Group("/api/v1")
 	_, pemMap := route.CollectRoutes(apiGroup)
 
-	repo := infra.New(dbutil.Db())
-	tenantRepo := tenant.New(dbutil.Db())
-	roleRepo := role.New(dbutil.Db())
+	repo := infra.New(dbutil.Db(nil))
+	tenantRepo := tenant.New(dbutil.Db(nil))
+	roleRepo := role.New(dbutil.Db(nil))
 
 	srv := app.New(repo, roleRepo, tenantRepo)
 

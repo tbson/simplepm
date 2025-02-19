@@ -39,7 +39,7 @@ func SignupTenant(c echo.Context) error {
 	password := data.Password
 	admin := true
 
-	db := dbutil.Db()
+	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
 		msg := errutil.New("", []string{tx.Error.Error()})

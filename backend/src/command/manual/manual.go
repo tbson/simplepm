@@ -10,7 +10,7 @@ import (
 func main() {
 	dbutil.InitDb()
 	localeutil.Init("en")
-	repo := infra.New(dbutil.Db())
+	repo := infra.New(dbutil.Db(nil))
 	gitRepo := "nghiencode/integrate-simplepm"
 	gitBranch := "son/test-branch1"
 	result, err := repo.GetTaskUser(gitRepo, gitBranch)

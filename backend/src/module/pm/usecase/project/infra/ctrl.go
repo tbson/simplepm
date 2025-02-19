@@ -35,8 +35,8 @@ var orderableFields = []string{"id", "title", "order"}
 
 func Option(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
-	workspaceRepo := workspace.New(dbutil.Db())
-	gitRepoRepo := gitrepo.New(dbutil.Db())
+	workspaceRepo := workspace.New(dbutil.Db(nil))
+	gitRepoRepo := gitrepo.New(dbutil.Db(nil))
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"tenant_id": tenantId},
 	}
@@ -84,7 +84,7 @@ func Option(c echo.Context) error {
 
 func Bookmark(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{"TenantID": tenantId},
@@ -98,7 +98,7 @@ func Bookmark(c echo.Context) error {
 
 func List(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
-	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
+	pager := paging.New[Schema, ListOutput](dbutil.Db(nil), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	options.Filters["tenant_id"] = tenantId
@@ -112,7 +112,7 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
@@ -129,9 +129,10 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
+	ctx := c.Request().Context()
 	tenantId := c.Get("TenantID").(uint)
 
-	db := dbutil.Db()
+	db := dbutil.Db(&ctx)
 	tx := db.Begin()
 	if tx.Error != nil {
 		msg := errutil.New("", []string{tx.Error.Error()})
@@ -172,9 +173,10 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
+	ctx := c.Request().Context()
 	tenantId := c.Get("TenantID").(uint)
 
-	db := dbutil.Db()
+	db := dbutil.Db(&ctx)
 	tx := db.Begin()
 	if tx.Error != nil {
 		msg := errutil.New("", []string{tx.Error.Error()})
@@ -220,7 +222,8 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	ctx := c.Request().Context()
+	repo := NewRepo(dbutil.Db(&ctx))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, err := repo.Delete(id)
@@ -233,7 +236,8 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	ctx := c.Request().Context()
+	repo := NewRepo(dbutil.Db(&ctx))
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 	ids, err := repo.DeleteList(ids)

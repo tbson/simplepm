@@ -16,7 +16,7 @@ import (
 )
 
 func getService() app.Service {
-	client := dbutil.Db()
+	client := dbutil.Db(nil)
 	userRepo := user.New(client)
 	roleRepo := role.New(client)
 	iamRepo := iam.New(ssoutil.Client())

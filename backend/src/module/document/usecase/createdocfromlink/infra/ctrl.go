@@ -19,7 +19,7 @@ type Schema = schema.Doc
 func Create(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
 
-	docRepo := doc.New(dbutil.Db())
+	docRepo := doc.New(dbutil.Db(nil))
 	netRepo := net.New(http.DefaultClient)
 	srv := app.New(docRepo, netRepo)
 

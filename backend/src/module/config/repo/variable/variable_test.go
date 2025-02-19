@@ -17,7 +17,7 @@ var idMap = make(map[int]uint)
 func TestMain(m *testing.M) {
 	localeutil.Init("en")
 	dbutil.InitDb()
-	repo = New(dbutil.Db())
+	repo = New(dbutil.Db(nil))
 
 	seedData()
 	m.Run()

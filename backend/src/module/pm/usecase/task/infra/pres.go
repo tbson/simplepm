@@ -133,7 +133,7 @@ func DetailPres(item schema.Task) ListOutput {
 }
 
 func MutatePres(item schema.Task) ListOutput {
-	taskRepo := task.New(dbutil.Db())
+	taskRepo := task.New(dbutil.Db(nil))
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
 			"id": item.ID,

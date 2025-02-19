@@ -22,7 +22,7 @@ var folder = "docattachment"
 func Create(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
 	taskID := numberutil.StrToUint(c.QueryParam("task_id"), 0)
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 	structData := InputData{
 		UserID: userID, TaskID: taskID,
 	}

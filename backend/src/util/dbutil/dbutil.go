@@ -1,6 +1,7 @@
 package dbutil
 
 import (
+	"context"
 	"fmt"
 	"src/common/setting"
 	"src/util/testutil"
@@ -66,6 +67,9 @@ func InitDb() {
 	}
 }
 
-func Db() *gorm.DB {
-	return db
+func Db(ctx *context.Context) *gorm.DB {
+	if ctx == nil {
+		return db
+	}
+	return db.WithContext(*ctx)
 }

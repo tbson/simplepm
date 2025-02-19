@@ -15,7 +15,7 @@ import (
 )
 
 func Reorder(c echo.Context) error {
-	db := dbutil.Db()
+	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
 		msg := errutil.New("", []string{tx.Error.Error()})

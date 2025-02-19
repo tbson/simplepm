@@ -1,9 +1,11 @@
 package middleware
 
 import (
+	"context"
 	"src/common/ctype"
 	"src/module/account/repo/iam"
 	"src/module/account/repo/user"
+	"src/module/account/schema"
 	"src/util/cookieutil"
 	"src/util/dbutil"
 	"src/util/errutil"
@@ -40,7 +42,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			})
 			// check access_token cookie
 			iamRepo := iam.New(ssoutil.Client())
-			userRepo := user.New(dbutil.Db())
+			userRepo := user.New(dbutil.Db(nil))
 
 			accessToken := cookieutil.GetValue(c, "access_token")
 			realm := cookieutil.GetValue(c, "realm")
@@ -86,23 +88,28 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 				tenantID = specificTenantID
 			}
 
-			if !isRbac {
+			var setContext = func(c echo.Context, user *schema.User, tenantID uint) {
 				c.Set("User", user)
 				c.Set("UserID", user.ID)
 				c.Set("Admin", user.Admin)
 				c.Set("TenantID", tenantID)
 				c.Set("TenantUid", user.Tenant.Uid)
+
+				ctx := c.Request().Context()
+				ctx = context.WithValue(ctx, "UserID", user.ID)
+				ctx = context.WithValue(ctx, "TenantID", tenantID)
+				c.SetRequest(c.Request().WithContext(ctx))
+			}
+
+			if !isRbac {
+				setContext(c, user, tenantID)
 				return next(c)
 			}
 
 			for _, role := range user.Roles {
 				for _, pem := range role.Pems {
 					if pem.Module == module && pem.Action == action {
-						c.Set("User", user)
-						c.Set("UserID", user.ID)
-						c.Set("Admin", user.Admin)
-						c.Set("TenantID", tenantID)
-						c.Set("TenantUid", user.Tenant.Uid)
+						setContext(c, user, tenantID)
 						return next(c)
 					}
 				}

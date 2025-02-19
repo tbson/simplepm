@@ -28,7 +28,7 @@ var orderableFields = []string{"id", "title", "order"}
 
 func List(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
-	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
+	pager := paging.New[Schema, ListOutput](dbutil.Db(nil), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	options.Order = restlistutil.QueryOrder{Field: "order", Direction: "ASC"}
@@ -42,7 +42,7 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
@@ -61,7 +61,7 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	structData, err := vldtutil.ValidatePayload(c, InputData{ProjectID: projectID})
 	if err != nil {
@@ -80,7 +80,7 @@ func Create(c echo.Context) error {
 
 func Update(c echo.Context) error {
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{ProjectID: projectID})
 	if err != nil {
@@ -100,8 +100,8 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	featureRepo := NewRepo(dbutil.Db())
-	taskRepo := task.New(dbutil.Db())
+	featureRepo := NewRepo(dbutil.Db(nil))
+	taskRepo := task.New(dbutil.Db(nil))
 
 	srv := app.New(featureRepo, taskRepo)
 

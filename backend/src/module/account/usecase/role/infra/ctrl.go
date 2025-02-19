@@ -27,7 +27,7 @@ var orderableFields = []string{"id", "uid"}
 
 func Option(c echo.Context) error {
 	admin := c.Get("Admin").(bool)
-	pemRepo := pem.New(dbutil.Db())
+	pemRepo := pem.New(dbutil.Db(nil))
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{},
 		Order:   "module ASC",
@@ -55,7 +55,7 @@ func Option(c echo.Context) error {
 
 func List(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
-	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
+	pager := paging.New[Schema, ListOutput](dbutil.Db(nil), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	options.Filters["tenant_id"] = tenantId
@@ -68,7 +68,7 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
@@ -87,8 +87,8 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
-	roleRepo := NewRepo(dbutil.Db())
-	roleLocalRepo := New(dbutil.Db())
+	roleRepo := NewRepo(dbutil.Db(nil))
+	roleLocalRepo := New(dbutil.Db(nil))
 
 	srv := app.New(roleRepo, roleLocalRepo)
 
@@ -109,8 +109,8 @@ func Create(c echo.Context) error {
 
 func Update(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
-	roleRepo := NewRepo(dbutil.Db())
-	roleLocalRepo := New(dbutil.Db())
+	roleRepo := NewRepo(dbutil.Db(nil))
+	roleLocalRepo := New(dbutil.Db(nil))
 
 	srv := app.New(roleRepo, roleLocalRepo)
 
@@ -131,7 +131,7 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, err := repo.Delete(id)
@@ -144,7 +144,7 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 	ids, err := repo.DeleteList(ids)

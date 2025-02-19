@@ -25,7 +25,7 @@ var orderableFields = []string{"id", "title", "order"}
 
 func List(c echo.Context) error {
 	taskID := vldtutil.ValidateId(c.QueryParam("task_id"))
-	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
+	pager := paging.New[Schema, ListOutput](dbutil.Db(nil), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	options.Filters["task_id"] = taskID
@@ -38,7 +38,7 @@ func List(c echo.Context) error {
 }
 
 func Retrieve(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	queryOptions := ctype.QueryOptions{
@@ -56,7 +56,7 @@ func Retrieve(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 	structData, err := vldtutil.ValidatePayload(c, InputData{UserID: userID})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -78,7 +78,7 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
@@ -103,7 +103,7 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, err := repo.Delete(id)

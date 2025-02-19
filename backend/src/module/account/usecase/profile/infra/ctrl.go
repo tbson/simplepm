@@ -15,7 +15,7 @@ import (
 
 func GetProfile(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
-	client := dbutil.Db()
+	client := dbutil.Db(nil)
 	userRepo := user.New(client)
 	user, err := userRepo.Retrieve(ctype.QueryOptions{
 		Filters:  ctype.Dict{"id": userID},
@@ -33,7 +33,7 @@ func UpdateProfile(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
 
 	iamRepo := iam.New(ssoutil.Client())
-	userRepo := user.New(dbutil.Db())
+	userRepo := user.New(dbutil.Db(nil))
 
 	srv := app.New(userRepo, iamRepo)
 
@@ -60,7 +60,7 @@ func ChangePassword(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
 
 	iamRepo := iam.New(ssoutil.Client())
-	userRepo := user.New(dbutil.Db())
+	userRepo := user.New(dbutil.Db(nil))
 
 	srv := app.New(userRepo, iamRepo)
 

@@ -28,7 +28,7 @@ var filterableFields = []string{}
 var orderableFields = []string{"id", "uid"}
 
 func Option(c echo.Context) error {
-	authClientRepo := authclient.New(dbutil.Db())
+	authClientRepo := authclient.New(dbutil.Db(nil))
 	authClients, err := authClientRepo.List(ctype.QueryOptions{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
@@ -53,7 +53,7 @@ func Option(c echo.Context) error {
 }
 
 func List(c echo.Context) error {
-	pager := paging.New[Schema, ListOutput](dbutil.Db(), ListPres)
+	pager := paging.New[Schema, ListOutput](dbutil.Db(nil), ListPres)
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, err := pager.Paging(options, searchableFields)
@@ -66,7 +66,7 @@ func List(c echo.Context) error {
 
 func Retrieve(c echo.Context) error {
 	user := c.Get("User").(*schema.User)
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	if id == 0 {
@@ -87,7 +87,7 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	db := dbutil.Db()
+	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
 		msg := errutil.New("", []string{tx.Error.Error()})
@@ -127,7 +127,7 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
@@ -152,7 +152,7 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	ids, err := repo.Delete(id)
@@ -165,7 +165,7 @@ func Delete(c echo.Context) error {
 }
 
 func DeleteList(c echo.Context) error {
-	repo := NewRepo(dbutil.Db())
+	repo := NewRepo(dbutil.Db(nil))
 
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 	ids, err := repo.DeleteList(ids)
