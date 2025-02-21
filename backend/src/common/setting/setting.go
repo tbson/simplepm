@@ -66,6 +66,8 @@ var CENTRIFUGO_JWT_LIFE_SPAN int = numberutil.StrToInt(
 	frameworkutil.GetEnv("CENTRIFUGO_JWT_LIFE_SPAN", "1200"), 1200,
 )
 
+var KAFKA_HOST string = frameworkutil.GetEnv("KAFKA_HOST", "localhost")
+
 var GITHUB_APP_PUBLIC_LINK string = frameworkutil.GetEnv("GITHUB_APP_PUBLIC_LINK", "")
 var GITHUB_CLIENT_ID string = frameworkutil.GetEnv("GITHUB_CLIENT_ID", "")
 var GITHUB_CLIENT_SECRET string = frameworkutil.GetEnv("GITHUB_CLIENT_SECRET", "")
