@@ -7,10 +7,11 @@ toolchain go1.23.1
 require (
 	ariga.io/atlas-provider-gorm v0.5.0
 	github.com/Nerzal/gocloak/v13 v13.9.0
-	github.com/aws/aws-sdk-go-v2 v1.36.1
-	github.com/aws/aws-sdk-go-v2/config v1.29.6
-	github.com/aws/aws-sdk-go-v2/credentials v1.17.59
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.77.0
+	github.com/aws/aws-sdk-go-v2 v1.36.2
+	github.com/aws/aws-sdk-go-v2/config v1.29.7
+	github.com/aws/aws-sdk-go-v2/credentials v1.17.60
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.77.1
+	github.com/confluentinc/confluent-kafka-go/v2 v2.8.0
 	github.com/getsentry/sentry-go v0.31.1
 	github.com/getsentry/sentry-go/echo v0.31.1
 	github.com/go-playground/validator/v10 v10.25.0
@@ -34,22 +35,22 @@ require (
 	ariga.io/atlas-go-sdk v0.2.3 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.9 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.28 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.32 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.32 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.2 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.32 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.2 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.6.0 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.18.13 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.24.15 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.14 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.33.14 // indirect
-	github.com/aws/smithy-go v1.22.2 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.10 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.29 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.33 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.33 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.33 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.6.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.14 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.18.14 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.24.16 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.28.15 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.33.15 // indirect
+	github.com/aws/smithy-go v1.22.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.3.0 // indirect
+	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
@@ -59,7 +60,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-resty/resty/v2 v2.16.5 // indirect
-	github.com/go-sql-driver/mysql v1.8.1 // indirect
+	github.com/go-sql-driver/mysql v1.9.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
