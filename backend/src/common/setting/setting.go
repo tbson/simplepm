@@ -66,7 +66,10 @@ var CENTRIFUGO_JWT_LIFE_SPAN int = numberutil.StrToInt(
 	frameworkutil.GetEnv("CENTRIFUGO_JWT_LIFE_SPAN", "1200"), 1200,
 )
 
-var KAFKA_HOST string = frameworkutil.GetEnv("KAFKA_HOST", "localhost")
+var RABBITMQ_HOST string = frameworkutil.GetEnv("RABBITMQ_HOST", "localhost")
+var RABBITMQ_PORT int = numberutil.StrToInt(frameworkutil.GetEnv("RABBITMQ_PORT", "5672"), 9092)
+var RABBITMQ_USER string = frameworkutil.GetEnv("RABBITMQ_USER", "guest")
+var RABBITMQ_PASSWORD string = frameworkutil.GetEnv("RABBITMQ_PASSWORD", "guest")
 
 var GITHUB_APP_PUBLIC_LINK string = frameworkutil.GetEnv("GITHUB_APP_PUBLIC_LINK", "")
 var GITHUB_CLIENT_ID string = frameworkutil.GetEnv("GITHUB_CLIENT_ID", "")

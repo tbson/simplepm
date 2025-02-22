@@ -255,6 +255,14 @@ var (
 	}
 	TaskUserNotFound = &i18n.Message{
 		ID:    "TaskUserNotFound",
-		Other: "Task user not found",
+		Other: "task user not found",
+	}
+	FailedToCreateKafkaProducer = &i18n.Message{
+		ID:    "FailedToCreateKafkaProducer",
+		Other: "failed to create Kafka producer",
+	}
+	FailedToCreateKafkaConsumer = &i18n.Message{
+		ID:    "FailedToCreateKafkaConsumer",
+		Other: "failed to create Kafka consumer",
 	}
 )
