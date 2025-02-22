@@ -44,6 +44,7 @@ func RegisterModels() []interface{} {
 		&pm.GitCommit{},
 		&document.Doc{},
 		&document.DocAttachment{},
+		&document.Change{},
 	}
 }
 
