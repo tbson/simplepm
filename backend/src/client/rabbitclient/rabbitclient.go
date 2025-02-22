@@ -10,15 +10,6 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Panicf("%s: %s", msg, err)
-	}
-}
-
-const AUDIT_LOG_QUEUE = "AUDIT_LOG"
-const BROADCAST_MESSAGE_QUEUE = "BROADCAST_MESSAGE"
-
 type RabbitClient struct {
 	Conn *amqp.Connection
 }
@@ -30,7 +21,7 @@ var client = RabbitClient{
 }
 
 // InitClient connects to RabbitMQ and returns a RabbitClient instance.
-func InitClient() RabbitClient {
+func NewClient() RabbitClient {
 	if client.Conn != nil {
 		return client
 	}
@@ -47,30 +38,13 @@ func InitClient() RabbitClient {
 	return client
 }
 
-func GetClient() RabbitClient {
-	return client
-}
-
-func (rc RabbitClient) GetQueue(ch *amqp.Channel, queueName string) amqp.Queue {
-	q, err := ch.QueueDeclare(
-		queueName, // name
-		false,     // durable
-		false,     // delete when unused
-		false,     // exclusive
-		false,     // no-wait
-		nil,       // arguments
-	)
-	failOnError(err, "Failed to declare a queue")
-	return q
-}
-
 // Publish opens a channel, declares the queue, serializes the body to JSON, and publishes it.
 func (rc RabbitClient) Publish(queueName string, body ctype.Dict) {
 	ch, err := rc.Conn.Channel()
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	q := rc.GetQueue(ch, queueName)
+	q := getQueue(ch, queueName)
 
 	// Serialize the message body to JSON
 	jsonBody, err := json.Marshal(body)
@@ -86,7 +60,6 @@ func (rc RabbitClient) Publish(queueName string, body ctype.Dict) {
 			Body:        jsonBody,
 		})
 	failOnError(err, "Failed to publish a message")
-	log.Printf(" [x] Sent %s to queue %s\n", jsonBody, queueName)
 }
 
 // Consume opens a new channel, declares the queue, and returns a channel of deliveries.
@@ -94,7 +67,7 @@ func (rc RabbitClient) Consume(queueName string) <-chan amqp.Delivery {
 	ch, err := rc.Conn.Channel()
 	failOnError(err, "Failed to open a channel for consuming")
 
-	q := rc.GetQueue(ch, queueName)
+	q := getQueue(ch, queueName)
 
 	msgs, err := ch.Consume(
 		q.Name, // queue
@@ -107,4 +80,37 @@ func (rc RabbitClient) Consume(queueName string) <-chan amqp.Delivery {
 	)
 	failOnError(err, "Failed to register a consumer")
 	return msgs
+}
+
+func (rc RabbitClient) Consumes(queues map[string]func([]byte)) {
+	// For each queue, start a consumer in a separate goroutine.
+	for queueName, handler := range queues {
+		msgs := client.Consume(queueName)
+		go func(q string, msgs <-chan amqp.Delivery, handler func([]byte)) {
+			for d := range msgs {
+				handler(d.Body)
+			}
+		}(queueName, msgs, handler)
+	}
+	// Block forever.
+	select {}
+}
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Panicf("%s: %s", msg, err)
+	}
+}
+
+func getQueue(ch *amqp.Channel, queueName string) amqp.Queue {
+	q, err := ch.QueueDeclare(
+		queueName, // name
+		false,     // durable
+		false,     // delete when unused
+		false,     // exclusive
+		false,     // no-wait
+		nil,       // arguments
+	)
+	failOnError(err, "Failed to declare a queue")
+	return q
 }

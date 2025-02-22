@@ -23,6 +23,17 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
+func BytesToStruct[T any](data []byte, target T) (T, error) {
+	localizer := localeutil.Get()
+	if err := json.Unmarshal(data, &target); err != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.CannotReadRequestBody,
+		})
+		return target, errutil.New("", []string{msg})
+	}
+	return target, nil
+}
+
 func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 	// result := ctype.Dict{}
 	result := target

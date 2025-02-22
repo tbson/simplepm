@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"src/client/rabbitclient"
 	"src/common/setting"
 	custommw "src/middleware"
 	"src/route"
@@ -56,7 +55,6 @@ func (cv *customValidator) Validate(i interface{}) error {
 // @BasePath	/api/v1
 func main() {
 	dbutil.InitDb()
-	rabbitclient.InitClient()
 	e := echo.New()
 	e.Debug = true
 	e.Validator = &customValidator{Validator: validator.New()}
