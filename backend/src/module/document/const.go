@@ -3,3 +3,8 @@ package document
 const DOC_TYPE_DOC = "DOC"
 const DOC_TYPE_FILE = "FILE"
 const DOC_TYPE_LINK = "LINK"
+
+const CHANGE_SOURCE_PROJECT = "PROJECT"
+const CHANGE_SOURCE_TASK = "TASK"
+const CHANGE_SOURCE_GIT = "GIT"
+const CHANGE_SOURCE_DOC = "DOC"

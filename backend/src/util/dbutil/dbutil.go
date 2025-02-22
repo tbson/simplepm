@@ -12,6 +12,7 @@ import (
 	account "src/module/account/schema"
 	config "src/module/config/schema"
 	document "src/module/document/schema"
+	event "src/module/event/schema"
 	pm "src/module/pm/schema"
 )
 
@@ -44,7 +45,7 @@ func RegisterModels() []interface{} {
 		&pm.GitCommit{},
 		&document.Doc{},
 		&document.DocAttachment{},
-		&document.Change{},
+		&event.Change{},
 	}
 }
 

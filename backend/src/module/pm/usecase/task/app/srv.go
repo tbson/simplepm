@@ -34,7 +34,59 @@ func New(
 	}
 }
 
-func (srv Service) GetNextTaskOrder(ProjectID uint) int {
+func (srv Service) Create(structData InputData) (*schema.Task, error) {
+	TaskFields := structData.TaskFields
+	TaskUsers := structData.TaskUsers
+	data := dictutil.StructToDict(structData)
+	data["Order"] = srv.getNextTaskOrder(structData.ProjectID)
+	delete(data, "TaskFields")
+	delete(data, "TaskUsers")
+	task, err := srv.taskRepo.Create(data)
+	if err != nil {
+		return nil, err
+	}
+	err = srv.syncTaskFieldValues(task.ID, TaskFields)
+	if err != nil {
+		return nil, err
+	}
+
+	err = srv.syncTaskUsers(task.ID, TaskUsers)
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
+}
+
+func (srv Service) Update(
+	updateOptions ctype.QueryOptions,
+	structData InputData,
+	data ctype.Dict,
+) (*schema.Task, error) {
+	TaskFields := structData.TaskFields
+	TaskUsers := structData.TaskUsers
+	delete(data, "TaskFields")
+	delete(data, "TaskUsers")
+
+	task, err := srv.taskRepo.Update(updateOptions, data)
+	if err != nil {
+		return nil, err
+	}
+
+	err = srv.syncTaskFieldValues(task.ID, TaskFields)
+	if err != nil {
+		return nil, err
+	}
+
+	err = srv.syncTaskUsers(task.ID, TaskUsers)
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
+}
+
+func (srv Service) getNextTaskOrder(ProjectID uint) int {
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
 			"ProjectID": ProjectID,
@@ -297,56 +349,4 @@ func (srv Service) syncTaskUsers(
 		}
 	}
 	return nil
-}
-
-func (srv Service) Create(structData InputData) (*schema.Task, error) {
-	TaskFields := structData.TaskFields
-	TaskUsers := structData.TaskUsers
-	data := dictutil.StructToDict(structData)
-	data["Order"] = srv.GetNextTaskOrder(structData.ProjectID)
-	delete(data, "TaskFields")
-	delete(data, "TaskUsers")
-	task, err := srv.taskRepo.Create(data)
-	if err != nil {
-		return nil, err
-	}
-	err = srv.syncTaskFieldValues(task.ID, TaskFields)
-	if err != nil {
-		return nil, err
-	}
-
-	err = srv.syncTaskUsers(task.ID, TaskUsers)
-	if err != nil {
-		return nil, err
-	}
-
-	return task, nil
-}
-
-func (srv Service) Update(
-	updateOptions ctype.QueryOptions,
-	structData InputData,
-	data ctype.Dict,
-) (*schema.Task, error) {
-	TaskFields := structData.TaskFields
-	TaskUsers := structData.TaskUsers
-	delete(data, "TaskFields")
-	delete(data, "TaskUsers")
-
-	task, err := srv.taskRepo.Update(updateOptions, data)
-	if err != nil {
-		return nil, err
-	}
-
-	err = srv.syncTaskFieldValues(task.ID, TaskFields)
-	if err != nil {
-		return nil, err
-	}
-
-	err = srv.syncTaskUsers(task.ID, TaskUsers)
-	if err != nil {
-		return nil, err
-	}
-
-	return task, nil
 }
