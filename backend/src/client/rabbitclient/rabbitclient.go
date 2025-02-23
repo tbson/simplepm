@@ -63,7 +63,21 @@ func (rc RabbitClient) Publish(queueName string, body ctype.Dict) {
 }
 
 // Consume opens a new channel, declares the queue, and returns a channel of deliveries.
-func (rc RabbitClient) Consume(queueName string) <-chan amqp.Delivery {
+func (rc RabbitClient) Consumes(queues map[string]func([]byte)) {
+	// For each queue, start a consumer in a separate goroutine.
+	for queueName, handler := range queues {
+		msgs := client.consume(queueName)
+		go func(q string, msgs <-chan amqp.Delivery, handler func([]byte)) {
+			for d := range msgs {
+				handler(d.Body)
+			}
+		}(queueName, msgs, handler)
+	}
+	// Block forever.
+	select {}
+}
+
+func (rc RabbitClient) consume(queueName string) <-chan amqp.Delivery {
 	ch, err := rc.Conn.Channel()
 	failOnError(err, "Failed to open a channel for consuming")
 
@@ -80,20 +94,6 @@ func (rc RabbitClient) Consume(queueName string) <-chan amqp.Delivery {
 	)
 	failOnError(err, "Failed to register a consumer")
 	return msgs
-}
-
-func (rc RabbitClient) Consumes(queues map[string]func([]byte)) {
-	// For each queue, start a consumer in a separate goroutine.
-	for queueName, handler := range queues {
-		msgs := client.Consume(queueName)
-		go func(q string, msgs <-chan amqp.Delivery, handler func([]byte)) {
-			for d := range msgs {
-				handler(d.Body)
-			}
-		}(queueName, msgs, handler)
-	}
-	// Block forever.
-	select {}
 }
 
 func failOnError(err error, msg string) {

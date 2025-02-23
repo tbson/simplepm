@@ -77,6 +77,8 @@ var GITHUB_CLIENT_SECRET string = frameworkutil.GetEnv("GITHUB_CLIENT_SECRET", "
 var GITHUB_PRIVATE_KEY string = frameworkutil.GetEnv("GITHUB_PRIVATE_KEY", "")
 var GITHUB_PRIVATE_KEY_PATH string = "config/" + GITHUB_PRIVATE_KEY
 
+var QUEUE_BACKEND string = frameworkutil.GetEnv("QUEUE_BACKEND", "rabbitmq")
+
 var MSG_PAGE_SIZE int = numberutil.StrToInt(
 	frameworkutil.GetEnv("MSG_PAGE_SIZE", "25"), 25,
 )

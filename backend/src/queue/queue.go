@@ -1,0 +1,30 @@
+package queue
+
+import (
+	"log"
+
+	logcreatetask "src/module/event/usecase/logcreatetask/infra"
+	"src/util/vldtutil"
+)
+
+const TEST_MESSAGE = "TEST_MESSAGE"
+const LOG_CREATE_TASK = "LOG_CREATE_TASK"
+
+type TestMessage struct {
+	UserID uint   `json:"user_id"`
+	Action string `json:"action"`
+}
+
+// Handler for audit log messages.
+func handleTestMessage(msg []byte) {
+	data, err := vldtutil.BytesToStruct(msg, &TestMessage{})
+	if err != nil {
+		return
+	}
+	log.Printf("[AuditLog] User ID: %d, Action: %s", data.UserID, data.Action)
+}
+
+var Handlers map[string]func([]byte) = map[string]func([]byte){
+	TEST_MESSAGE:    handleTestMessage,
+	LOG_CREATE_TASK: logcreatetask.LogCreateTask,
+}
