@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"encoding/json"
 	"src/common/ctype"
 	"src/util/dictutil"
 	"time"
@@ -54,6 +55,10 @@ type Change struct {
 }
 
 func NewChange(data ctype.Dict) *Change {
+	valueJSON, err := json.Marshal(data["Value"])
+	if err != nil {
+		panic("Failed to marshal Value")
+	}
 	return &Change{
 		TenantID:     dictutil.GetValue[uint](data, "TenantID"),
 		ProjectID:    dictutil.GetValue[uint](data, "ProjectID"),
@@ -64,6 +69,6 @@ func NewChange(data ctype.Dict) *Change {
 		SourceID:     dictutil.GetValue[uint](data, "SourceID"),
 		SourceTitle:  dictutil.GetValue[string](data, "SourceTitle"),
 		Action:       dictutil.GetValue[string](data, "Action"),
-		Value:        dictutil.GetValue[datatypes.JSON](data, "Value"),
+		Value:        datatypes.JSON(valueJSON),
 	}
 }

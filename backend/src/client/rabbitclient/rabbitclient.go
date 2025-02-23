@@ -39,7 +39,7 @@ func NewClient() RabbitClient {
 }
 
 // Publish opens a channel, declares the queue, serializes the body to JSON, and publishes it.
-func (rc RabbitClient) Publish(queueName string, body ctype.Dict) {
+func (rc RabbitClient) PublishSync(queueName string, body ctype.Dict) {
 	ch, err := rc.Conn.Channel()
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
@@ -60,6 +60,10 @@ func (rc RabbitClient) Publish(queueName string, body ctype.Dict) {
 			Body:        jsonBody,
 		})
 	failOnError(err, "Failed to publish a message")
+}
+
+func (rc RabbitClient) Publish(queueName string, body ctype.Dict) {
+	go rc.PublishSync(queueName, body)
 }
 
 // Consume opens a new channel, declares the queue, and returns a channel of deliveries.

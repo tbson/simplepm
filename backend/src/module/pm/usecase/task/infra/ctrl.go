@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/dictutil"
 	"src/util/errutil"
 	"src/util/numberutil"
 	"src/util/restlistutil"
@@ -12,6 +13,7 @@ import (
 
 	"src/module/abstract/repo/paging"
 	"src/module/account/repo/user"
+	account "src/module/account/schema"
 	"src/module/pm/repo/feature"
 	"src/module/pm/repo/project"
 	"src/module/pm/repo/task"
@@ -21,6 +23,9 @@ import (
 	"src/module/pm/repo/taskuser"
 	"src/module/pm/schema"
 	"src/module/pm/usecase/task/app"
+
+	"src/client/queueclient"
+	"src/queue"
 
 	"github.com/labstack/echo/v4"
 )
@@ -191,7 +196,9 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
+	userID := c.Get("UserID").(uint)
+	user := c.Get("User").(*account.User)
+	tenantID := c.Get("TenantID").(uint)
 
 	db := dbutil.Db(nil)
 	tx := db.Begin()
@@ -214,7 +221,7 @@ func Create(c echo.Context) error {
 		taskUserRepo,
 	)
 
-	structData, err := vldtutil.ValidatePayload(c, app.InputData{ProjectID: projectID})
+	structData, err := vldtutil.ValidatePayload(c, app.InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -229,6 +236,21 @@ func Create(c echo.Context) error {
 		msg := errutil.New("", []string{err.Error()})
 		return c.JSON(http.StatusBadRequest, msg)
 	}
+
+	// Publish to queue
+	client := queueclient.NewClient()
+	client.Publish(queue.LOG_CREATE_TASK, ctype.Dict{
+		"tenant_id":      tenantID,
+		"project_id":     structData.ProjectID,
+		"task_id":        result.ID,
+		"user_id":        userID,
+		"user_full_name": user.FullName(),
+		"source_type":    "TASK",
+		"source_id":      result.ID,
+		"source_title":   result.Title,
+		"action":         "CREATE_TASK",
+		"value":          dictutil.StructToDict(structData),
+	})
 
 	return c.JSON(http.StatusCreated, MutatePres(*result))
 
