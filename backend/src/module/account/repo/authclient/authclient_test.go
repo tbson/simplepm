@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"src/common/ctype"
 	"src/util/dbutil"
-	"src/util/localeutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,7 +14,6 @@ var repo Repo
 var idMap = make(map[int]uint)
 
 func TestMain(m *testing.M) {
-	localeutil.Init("en")
 	dbutil.InitDb()
 	repo = New(dbutil.Db(nil))
 

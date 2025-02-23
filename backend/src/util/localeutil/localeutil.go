@@ -43,6 +43,9 @@ func Init(lang string) *i18n.Localizer {
 }
 
 func Get() *i18n.Localizer {
+	if bundle == nil {
+		initBundle()
+	}
 	if currentLang == "" {
 		currentLang = setting.DEFAULT_LANG
 	}

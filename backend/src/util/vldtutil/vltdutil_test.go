@@ -3,7 +3,6 @@ package vldtutil
 import (
 	"net/http"
 	"net/http/httptest"
-	"src/util/localeutil"
 	"strings"
 	"testing"
 
@@ -30,7 +29,6 @@ var e *echo.Echo
 func TestMain(m *testing.M) {
 	e = echo.New()
 	e.Validator = &customValidator{Validator: validator.New()}
-	localeutil.Init("en")
 	m.Run()
 }
 

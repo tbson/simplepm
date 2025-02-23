@@ -4,11 +4,9 @@ import (
 	"src/client/rabbitclient"
 	"src/common/ctype"
 	"src/module/queue"
-	"src/util/localeutil"
 )
 
 func main() {
-	localeutil.Init("en")
 	client := rabbitclient.NewClient()
 
 	auditPayload := ctype.Dict{

@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"src/module/git/usecase/github/infra"
 	"src/util/dbutil"
-	"src/util/localeutil"
 )
 
 func main() {
 	dbutil.InitDb()
-	localeutil.Init("en")
 	repo := infra.New(dbutil.Db(nil))
 	gitRepo := "nghiencode/integrate-simplepm"
 	gitBranch := "son/test-branch1"

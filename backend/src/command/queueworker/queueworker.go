@@ -5,7 +5,6 @@ import (
 
 	"src/client/rabbitclient"
 	"src/module/queue"
-	"src/util/localeutil"
 	"src/util/vldtutil"
 )
 
@@ -38,7 +37,6 @@ func handleBroadcast(msg []byte) {
 }
 
 func main() {
-	localeutil.Init("en")
 	client := rabbitclient.NewClient()
 
 	queues := map[string]func([]byte){
