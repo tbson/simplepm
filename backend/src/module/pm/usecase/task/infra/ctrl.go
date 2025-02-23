@@ -196,7 +196,6 @@ func Retrieve(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	userID := c.Get("UserID").(uint)
 	user := c.Get("User").(*account.User)
 	tenantID := c.Get("TenantID").(uint)
 
@@ -241,14 +240,12 @@ func Create(c echo.Context) error {
 	client := queueclient.NewClient()
 	client.Publish(queue.LOG_CREATE_TASK, ctype.Dict{
 		"tenant_id":      tenantID,
-		"project_id":     structData.ProjectID,
+		"project_id":     result.ProjectID,
 		"task_id":        result.ID,
-		"user_id":        userID,
+		"user_id":        user.ID,
 		"user_full_name": user.FullName(),
-		"source_type":    "TASK",
 		"source_id":      result.ID,
 		"source_title":   result.Title,
-		"action":         "CREATE_TASK",
 		"value":          dictutil.StructToDict(structData),
 	})
 
@@ -257,6 +254,9 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
+	user := c.Get("User").(*account.User)
+	tenantID := c.Get("TenantID").(uint)
+
 	projectID := numberutil.StrToUint(c.QueryParam("project_id"), 0)
 
 	db := dbutil.Db(nil)
@@ -301,18 +301,53 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
+	// Publish to queue
+	client := queueclient.NewClient()
+	client.Publish(queue.LOG_EDIT_TASK, ctype.Dict{
+		"tenant_id":      tenantID,
+		"project_id":     result.ProjectID,
+		"task_id":        result.ID,
+		"user_id":        user.ID,
+		"user_full_name": user.FullName(),
+		"source_id":      result.ID,
+		"source_title":   result.Title,
+		"value":          dictutil.StructToDict(structData),
+	})
+
 	return c.JSON(http.StatusOK, MutatePres(*result))
 }
 
 func Delete(c echo.Context) error {
+	user := c.Get("User").(*account.User)
+	tenantID := c.Get("TenantID").(uint)
+
 	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
+
+	result, err := repo.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"id": id}})
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
 	ids, err := repo.Delete(id)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
+
+	// Publish to queue
+	client := queueclient.NewClient()
+	client.Publish(queue.LOG_DELETE_TASK, ctype.Dict{
+		"tenant_id":      tenantID,
+		"project_id":     result.ProjectID,
+		"task_id":        result.ID,
+		"user_id":        user.ID,
+		"user_full_name": user.FullName(),
+		"source_id":      result.ID,
+		"source_title":   result.Title,
+		"value":          ctype.Dict{},
+	})
 
 	return c.JSON(http.StatusOK, ids)
 }
