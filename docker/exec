@@ -101,8 +101,8 @@ elif [ "$FIRST_ARG" == "fupgrade" ]; then
     docker compose exec "$NAME"_frontend yarn upgrade-interactive --latest
 elif [ "$FIRST_ARG" == "go" ]; then
     docker compose exec "$NAME"_backend go $ARGS
-elif [ "$FIRST_ARG" == "startqueue" ]; then
-    docker compose exec "$NAME"_backend go run ./command/queueworker
+elif [ "$FIRST_ARG" == "startworker" ]; then
+    docker compose exec "$NAME"_backend go run ./command/startworker
 elif [ "$FIRST_ARG" == "atlas" ]; then
     docker compose exec "$NAME"_backend atlas $ARGS --env gorm
 elif [ "$FIRST_ARG" == "command" ]; then
