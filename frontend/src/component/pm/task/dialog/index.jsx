@@ -21,7 +21,6 @@ const emptyData = {
     id: 0,
     title: '',
     description: '',
-    feature_id: null,
     task_fields: [],
     task_users: [],
 };
