@@ -37,6 +37,7 @@ export const getLabels = () => ({
     mobile: t`Mobile`,
     first_name: t`First name`,
     last_name: t`Last name`,
+    github_username: t`Github username`,
     avatar: t`Avatar`,
     admin: t`Admin`,
     locked: t`Locked`,

@@ -59,25 +59,26 @@ func NewTenant(data ctype.Dict) *Tenant {
 }
 
 type User struct {
-	ID           uint           `gorm:"primaryKey" json:"id"`
-	TenantID     uint           `gorm:"not null;uniqueIndex:idx_users_tenant_external;uniqueIndex:idx_users_tenant_email" json:"tenant_id"`
-	Tenant       Tenant         `gorm:"constraint:OnDelete:CASCADE;" json:"tenant"`
-	TenantTmpID  *uint          `json:"tenant_tmp_id"`
-	Sub          *string        `gorm:"type:text;default:null;unique" json:"sub"`
-	Roles        []Role         `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"roles"`
-	ExternalID   string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_external" json:"uid"`
-	Email        string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email" json:"email"`
-	Mobile       *string        `gorm:"type:text" json:"mobile"`
-	FirstName    string         `gorm:"type:text;not null;default:''" json:"first_name"`
-	LastName     string         `gorm:"type:text;not null;default:''" json:"last_name"`
-	Avatar       string         `gorm:"type:text;not null;default:''" json:"avatar"`
-	Color        string         `gorm:"type:text;not null;default:''" json:"color"`
-	ExtraInfo    datatypes.JSON `gorm:"type:json;not null;default:'{}'" json:"extra_info"`
-	Admin        bool           `gorm:"type:boolean;not null;default:false" json:"admin"`
-	LockedAt     *time.Time     `gorm:"type:timestamp;default:null" json:"locked_at"`
-	LockedReason string         `gorm:"type:text;not null;default:''" json:"locked_reason"`
-	CreatedAt    time.Time      `json:"created_at"`
-	UpdatedAt    time.Time      `json:"updated_at"`
+	ID             uint           `gorm:"primaryKey" json:"id"`
+	TenantID       uint           `gorm:"not null;uniqueIndex:idx_users_tenant_external;uniqueIndex:idx_users_tenant_email" json:"tenant_id"`
+	Tenant         Tenant         `gorm:"constraint:OnDelete:CASCADE;" json:"tenant"`
+	TenantTmpID    *uint          `json:"tenant_tmp_id"`
+	Sub            *string        `gorm:"type:text;default:null;unique" json:"sub"`
+	Roles          []Role         `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"roles"`
+	ExternalID     string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_external" json:"uid"`
+	Email          string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email" json:"email"`
+	Mobile         *string        `gorm:"type:text" json:"mobile"`
+	FirstName      string         `gorm:"type:text;not null;default:''" json:"first_name"`
+	LastName       string         `gorm:"type:text;not null;default:''" json:"last_name"`
+	Avatar         string         `gorm:"type:text;not null;default:''" json:"avatar"`
+	GithubUsername string         `gorm:"type:text;not null;default:''" json:"github_username"`
+	Color          string         `gorm:"type:text;not null;default:''" json:"color"`
+	ExtraInfo      datatypes.JSON `gorm:"type:json;not null;default:'{}'" json:"extra_info"`
+	Admin          bool           `gorm:"type:boolean;not null;default:false" json:"admin"`
+	LockedAt       *time.Time     `gorm:"type:timestamp;default:null" json:"locked_at"`
+	LockedReason   string         `gorm:"type:text;not null;default:''" json:"locked_reason"`
+	CreatedAt      time.Time      `json:"created_at"`
+	UpdatedAt      time.Time      `json:"updated_at"`
 }
 
 func (u *User) FullName() string {

@@ -19,15 +19,16 @@ type ListOutput struct {
 }
 
 type DetailOutput struct {
-	ID           uint    `json:"id"`
-	Email        string  `json:"email"`
-	Mobile       *string `json:"mobile"`
-	FirstName    string  `json:"first_name"`
-	LastName     string  `json:"last_name"`
-	Admin        bool    `json:"admin"`
-	Locked       bool    `json:"locked"`
-	LockedReason string  `json:"locked_reason"`
-	RoleIDs      []uint  `json:"role_ids"`
+	ID             uint    `json:"id"`
+	Email          string  `json:"email"`
+	Mobile         *string `json:"mobile"`
+	FirstName      string  `json:"first_name"`
+	LastName       string  `json:"last_name"`
+	GithubUsername string  `json:"github_username"`
+	Admin          bool    `json:"admin"`
+	Locked         bool    `json:"locked"`
+	LockedReason   string  `json:"locked_reason"`
+	RoleIDs        []uint  `json:"role_ids"`
 }
 
 func ListPres(items []schema.User) []ListOutput {
@@ -66,15 +67,16 @@ func DetailPres(item schema.User) DetailOutput {
 		locked = true
 	}
 	return DetailOutput{
-		ID:           item.ID,
-		Email:        item.Email,
-		Mobile:       item.Mobile,
-		FirstName:    item.FirstName,
-		LastName:     item.LastName,
-		Admin:        item.Admin,
-		Locked:       locked,
-		LockedReason: item.LockedReason,
-		RoleIDs:      roleIDs,
+		ID:             item.ID,
+		Email:          item.Email,
+		Mobile:         item.Mobile,
+		FirstName:      item.FirstName,
+		LastName:       item.LastName,
+		GithubUsername: item.GithubUsername,
+		Admin:          item.Admin,
+		Locked:         locked,
+		LockedReason:   item.LockedReason,
+		RoleIDs:        roleIDs,
 	}
 }
 

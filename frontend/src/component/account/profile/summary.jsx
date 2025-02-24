@@ -39,6 +39,12 @@ export default function ProfileSummary(data) {
                     </td>
                     <td span={18}>{data.last_name}</td>
                 </tr>
+                <tr>
+                    <td span={6}>
+                        <strong>{t`Github username`}</strong>
+                    </td>
+                    <td span={18}>{data.github_username}</td>
+                </tr>
             </tbody>
         </table>
     );

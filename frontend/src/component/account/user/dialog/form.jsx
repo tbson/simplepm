@@ -18,6 +18,7 @@ const emptyRecord = {
     mobile: '',
     first_name: '',
     last_name: '',
+    github_username: '',
     locked: false,
     locked_reason: '',
     roles: []
@@ -60,8 +61,8 @@ export default function UserForm({ data, onChange }) {
             name={formName}
             colon={false}
             labelWrap
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 18 }}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
             initialValues={{ ...initialValues }}
             onFinish={(payload) =>
                 FormUtil.submit(endPoint, payload, method)
@@ -83,6 +84,10 @@ export default function UserForm({ data, onChange }) {
 
             <Form.Item name="last_name" label={labels.last_name}>
                 <Input disabled />
+            </Form.Item>
+
+            <Form.Item name="github_username" label={labels.github_username}>
+                <Input />
             </Form.Item>
 
             <Form.Item name="locked" label={labels.locked}>
