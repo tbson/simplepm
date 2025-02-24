@@ -8,14 +8,30 @@ import (
 
 func StructToDict(obj interface{}) ctype.Dict {
 	result := make(ctype.Dict)
+	if obj == nil {
+		return result
+	}
 	val := reflect.ValueOf(obj)
+	// If obj is a nil pointer, return an empty dict.
+	if val.Kind() == reflect.Ptr {
+		if val.IsNil() {
+			return result
+		}
+		val = val.Elem()
+	}
+	// Return empty dict if not a struct
+	if val.Kind() != reflect.Struct {
+		return result
+	}
 
+	typ := val.Type()
 	// Iterate through the struct fields
-	for i := 0; i < val.NumField(); i++ {
-		// Get the struct field name and value
-		fieldName := reflect.TypeOf(obj).Field(i).Name
-		fieldValue := val.Field(i).Interface()
-		result[fieldName] = fieldValue
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		if field.PkgPath != "" {
+			continue
+		}
+		result[field.Name] = val.Field(i).Interface()
 	}
 
 	return result
@@ -30,9 +46,21 @@ func DictCamelToSnake(data ctype.Dict) ctype.Dict {
 }
 
 func GetValue[T any](data ctype.Dict, key string) T {
-	var defaultValue T
 	if val, ok := data[key]; ok {
-		return val.(T)
+		if converted, ok := val.(T); ok {
+			return converted
+		}
 	}
+	var defaultValue T
 	return defaultValue
+}
+
+func DiffDict(m1, m2 ctype.Dict) ctype.Dict {
+	differences := make(ctype.Dict)
+	for key, v1 := range m1 {
+		if v2, ok := m2[key]; !ok || !reflect.DeepEqual(v1, v2) {
+			differences[key] = v1
+		}
+	}
+	return differences
 }
