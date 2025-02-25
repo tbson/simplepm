@@ -8,14 +8,14 @@ import (
 )
 
 type ListOutput struct {
-	ID         uint     `json:"id"`
-	Email      string   `json:"email"`
-	Mobile     *string  `json:"mobile"`
-	FirstName  string   `json:"first_name"`
-	LastName   string   `json:"last_name"`
-	Admin      bool     `json:"admin"`
-	Locked     bool     `json:"locked"`
-	RoleLabels []string `json:"role_labels"`
+	ID             uint     `json:"id"`
+	Email          string   `json:"email"`
+	Mobile         *string  `json:"mobile"`
+	FullName       string   `json:"full_name"`
+	GithubUsername string   `json:"github_username"`
+	Admin          bool     `json:"admin"`
+	Locked         bool     `json:"locked"`
+	RoleLabels     []string `json:"role_labels"`
 }
 
 type DetailOutput struct {
@@ -43,14 +43,14 @@ func ListPres(items []schema.User) []ListOutput {
 			locked = true
 		}
 		result = append(result, ListOutput{
-			ID:         item.ID,
-			Email:      item.Email,
-			Mobile:     item.Mobile,
-			FirstName:  item.FirstName,
-			LastName:   item.LastName,
-			Admin:      item.Admin,
-			Locked:     locked,
-			RoleLabels: roleLabels,
+			ID:             item.ID,
+			Email:          item.Email,
+			Mobile:         item.Mobile,
+			FullName:       item.FullName(),
+			GithubUsername: item.GithubUsername,
+			Admin:          item.Admin,
+			Locked:         locked,
+			RoleLabels:     roleLabels,
 		})
 	}
 	return result
@@ -100,13 +100,13 @@ func MutatePres(item schema.User) ListOutput {
 	}
 
 	return ListOutput{
-		ID:         presItem.ID,
-		Email:      presItem.Email,
-		Mobile:     presItem.Mobile,
-		FirstName:  presItem.FirstName,
-		LastName:   presItem.LastName,
-		Admin:      presItem.Admin,
-		Locked:     locked,
-		RoleLabels: roleLabels,
+		ID:             presItem.ID,
+		Email:          presItem.Email,
+		Mobile:         presItem.Mobile,
+		FullName:       presItem.FullName(),
+		GithubUsername: presItem.GithubUsername,
+		Admin:          presItem.Admin,
+		Locked:         locked,
+		RoleLabels:     roleLabels,
 	}
 }

@@ -64,7 +64,7 @@ func Callback(c echo.Context) error {
 	return c.JSON(http.StatusOK, ctype.Dict{})
 }
 
-func Webhook1(c echo.Context) error {
+func WebhookTest(c echo.Context) error {
 	bodyBytes, err := io.ReadAll(c.Request().Body)
 
 	if err != nil {

@@ -9,6 +9,8 @@ import (
 const GITHUB_CALLBACK_ACTION_INSTALL = "install"
 const GITHUB_WEBHOOK_ACTION_CREATED = "created"
 const GITHUB_WEBHOOK_ACTION_DELETED = "deleted"
+const GITHUB_WEBHOOK_PR_OPENED = "opened"
+const GITHUB_WEBHOOK_PR_CLOSED = "closed"
 
 type GithubRepo struct {
 	ID       uint   `json:"id"`
@@ -42,7 +44,12 @@ type GithubWebhook struct {
 	Pusher struct {
 		Name string `json:"name"`
 	}
-	Commits []GithubCommit `json:"commits"`
+	Commits     []GithubCommit `json:"commits"`
+	PullRequest struct {
+		Head struct {
+			Ref string `json:"ref"`
+		} `json:"head"`
+	} `json:"pull_request"`
 }
 
 type TaskUser struct {

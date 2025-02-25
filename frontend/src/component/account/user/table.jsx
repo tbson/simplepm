@@ -3,7 +3,7 @@ import { t } from 'ttag';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { App, Row, Col, Table, Button, Flex, Tooltip } from 'antd';
-import { LockOutlined, UnlockOutlined } from '@ant-design/icons';
+import { LockOutlined, UnlockOutlined, GithubOutlined } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
 import { RemoveSelectedBtn, EditBtn, RemoveBtn } from 'component/common/table/buttons';
@@ -157,14 +157,30 @@ export default function UserTable() {
             dataIndex: 'mobile'
         },
         {
-            key: 'first_name',
-            title: labels.first_name,
-            dataIndex: 'first_name'
+            key: 'full_name',
+            title: labels.full_name,
+            dataIndex: 'full_name'
         },
         {
-            key: 'last_name',
-            title: labels.last_name,
-            dataIndex: 'last_name'
+            key: 'git_account',
+            title: labels.git_account,
+            render: (_text, record) => {
+                return (
+                    <div>
+                        {record.github_username ? (
+                            <div>
+                                <GithubOutlined /> &nbsp;
+                                <a
+                                    href={`https://github.com/${record.github_username}`}
+                                    target="_blank"
+                                >
+                                    {record.github_username}
+                                </a>
+                            </div>
+                        ) : null}
+                    </div>
+                );
+            }
         },
         {
             key: 'role_labels',
@@ -198,7 +214,13 @@ export default function UserTable() {
                             <Button
                                 danger={record.locked}
                                 htmlType="button"
-                                icon={record.locked ? <LockOutlined /> : <UnlockOutlined />}
+                                icon={
+                                    record.locked ? (
+                                        <LockOutlined />
+                                    ) : (
+                                        <UnlockOutlined />
+                                    )
+                                }
                                 size="small"
                                 onClick={() => LockUserDialog.toggle(true, record.id)}
                             />
