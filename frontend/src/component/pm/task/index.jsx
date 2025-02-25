@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { useParams, Link } from 'react-router';
+import { useParams } from 'react-router';
 import { useAtom } from 'jotai';
-import { Breadcrumb, Skeleton } from 'antd';
-import PageHeading from 'component/common/page_heading';
+import { Skeleton } from 'antd';
 import RequestUtil from 'service/helper/request_util';
 import { taskOptionSt } from './state';
 import { urls } from './config';
 import TaskKanban from './kanban';
-import FeatureTable from 'component/pm/feature/table';
 
 export default function Task() {
     const projectId = parseInt(useParams().projectId, 10);
@@ -32,20 +30,9 @@ export default function Task() {
     }
     return (
         <div key={projectId}>
-            <PageHeading>
-                <Breadcrumb
-                    items={[
-                        {
-                            title: taskOption.project_info.title
-                        }
-                    ]}
-                />
-            </PageHeading>
-            {/*
-            <FeatureTable projectId={projectId} />
-            <br />
-            */}
-            <TaskKanban projectId={projectId} />
+            <TaskKanban
+                project={{ id: projectId, title: taskOption.project_info.title }}
+            />
         </div>
     );
 }

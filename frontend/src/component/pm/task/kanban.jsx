@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { App } from 'antd';
+import { App, Row, Col, Button } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { useNavigate } from 'react-router';
 import PemCheck from 'component/common/pem_check';
@@ -10,15 +11,18 @@ import NavUtil from 'service/helper/nav_util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
 import TaskDialog from './dialog';
+import ProjectDialog from 'component/pm/project/dialog';
 import { taskOptionSt } from 'component/pm/task/state';
 // import { featureColorSt } from 'component/pm/feature/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
-export default function TaskKanban({ projectId }) {
+export default function TaskKanban({ project }) {
+    const projectId = project.id
     const { notification } = App.useApp();
     const navigate = useNavigate();
     const taskOption = useAtomValue(taskOptionSt);
     // const featureColor = useAtomValue(featureColorSt);
+    const [projectTitle, setProjectTitle] = useState(project.title);
     const [statusList, setStatusList] = useState([]);
     const [filterParam, setFilterParam] = useState({});
     const [sortParam, setSortParam] = useState({});
@@ -161,8 +165,28 @@ export default function TaskKanban({ projectId }) {
         );
     };
 
+    const onChangeProject = (data, _id) => {
+        setProjectTitle(data.title)
+        Util.event.dispatch('FETCH_BOOKMARK', {});
+    };
+
     return (
         <div>
+            <div className="zone-heading">
+                <div className="flex-item-remaining">
+                    <div>
+                        <strong>{projectTitle}</strong>
+                    </div>
+                </div>
+                <div>
+                    <Button
+                        icon={<SettingOutlined />}
+                        onClick={() => {
+                            ProjectDialog.toggle(true, projectId);
+                        }}
+                    />
+                </div>
+            </div>
             <Kanban
                 tasks={list}
                 statusList={statusList}
@@ -175,6 +199,7 @@ export default function TaskKanban({ projectId }) {
                 onChange={handleChange}
                 onDelete={handleDelete}
             />
+            <ProjectDialog onChange={onChangeProject} />
         </div>
     );
 }

@@ -20,7 +20,7 @@ import Img from 'component/common/display/img';
 import Util from 'service/helper/util';
 import DictUtil from 'service/helper/dict_util';
 import RequestUtil from 'service/helper/request_util';
-import Dialog from './dialog';
+import ProjectDialog from './dialog';
 import TaskField from './task_field';
 import { projectFilterSt } from 'component/pm/project/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
@@ -149,7 +149,7 @@ export default function ProjectTable() {
                     label: t`Setting`,
                     icon: <SettingOutlined />,
                     onClick: () => {
-                        Dialog.toggle(true, item.id);
+                        ProjectDialog.toggle(true, item.id);
                     }
                 },
                 {
@@ -216,7 +216,7 @@ export default function ProjectTable() {
             <Row>
                 <Col span={24} className="right">
                     <PemCheck pem_group={PEM_GROUP} pem="create">
-                        <AddNewBtn onClick={() => Dialog.toggle()} />
+                        <AddNewBtn onClick={() => ProjectDialog.toggle()} />
                     </PemCheck>
                 </Col>
             </Row>
@@ -232,7 +232,7 @@ export default function ProjectTable() {
                 pagination={false}
             />
             <Pagination next={pages.next} prev={pages.prev} onChange={handlePaging} />
-            <Dialog onChange={onChange} />
+            <ProjectDialog onChange={onChange} />
             <TaskField />
         </div>
     );

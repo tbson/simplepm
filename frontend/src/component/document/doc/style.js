@@ -1,5 +1,7 @@
 export function getStyles(createStyles) {
     return createStyles(({ token, css }) => {
+        console.log("background", token.colorBgLayout);
+        console.log("border-bottom", token.colorBorder);
         return {
             layout: css`
                 width: 100%;
