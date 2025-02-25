@@ -161,7 +161,7 @@ func List(c echo.Context) error {
 	options.Preloads = []string{
 		"TaskFieldValues.TaskField",
 		"TaskFieldValues.TaskFieldOption",
-		"TaskUsers",
+		"TaskUsers.User",
 	}
 	options.Order = restlistutil.QueryOrder{Field: "order", Direction: "ASC"}
 	listResult, err := pager.List(options, searchableFields)

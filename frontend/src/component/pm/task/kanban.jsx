@@ -61,6 +61,7 @@ export default function TaskKanban({ projectId }) {
                         id: item.id,
                         title: item.title,
                         status: item.status.id,
+                        task_users: item.task_users,
                         // featureId: item.feature.id,
                         // color: item.feature.color,
                         order: item.order

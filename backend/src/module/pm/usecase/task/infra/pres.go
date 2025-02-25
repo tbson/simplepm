@@ -26,12 +26,22 @@ type TaskField struct {
 type TaskUser struct {
 	ID        uint    `json:"id"`
 	UserID    uint    `json:"user_id"`
+	Avatar    string  `json:"avatar"`
 	GitBranch *string `json:"git_branch"`
 }
 
 type Status struct {
 	ID    uint   `json:"id"`
 	Title string `json:"title"`
+}
+
+type TaskFieldOption struct {
+	Value       uint                             `json:"value"`
+	Label       string                           `json:"label"`
+	Description string                           `json:"description"`
+	Type        string                           `json:"type"`
+	IsStatus    bool                             `json:"is_status"`
+	Options     []ctype.SimpleSelectOption[uint] `json:"options"`
 }
 
 type ListOutput struct {
@@ -43,15 +53,6 @@ type ListOutput struct {
 	Project     Project     `json:"project"`
 	TaskFields  []TaskField `json:"task_fields"`
 	TaskUsers   []TaskUser  `json:"task_users"`
-}
-
-type TaskFieldOption struct {
-	Value       uint                             `json:"value"`
-	Label       string                           `json:"label"`
-	Description string                           `json:"description"`
-	Type        string                           `json:"type"`
-	IsStatus    bool                             `json:"is_status"`
-	Options     []ctype.SimpleSelectOption[uint] `json:"options"`
 }
 
 type DetailOutput = schema.Task
@@ -113,6 +114,7 @@ func presItem(item schema.Task) ListOutput {
 			ID:        taskUser.ID,
 			UserID:    taskUser.UserID,
 			GitBranch: taskUser.GitBranch,
+			Avatar:    taskUser.User.Avatar,
 		})
 	}
 	result.TaskUsers = taskUsers

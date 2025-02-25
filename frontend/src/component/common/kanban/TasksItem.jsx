@@ -5,8 +5,8 @@ import {
     verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Row, Col, Button, Badge } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Row, Col, Button, Badge, Space, Avatar } from 'antd';
+import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 
 // Column
 export const SectionItem = (props) => {
@@ -199,6 +199,32 @@ export const FieldItem = ({ id, item, dragOverlay, disabled, onView }) => {
                         <Badge size="small" count={0} offset={[9, -14]}>
                             <span>{item.title}</span>
                         </Badge>
+                    </Col>
+                </Row>
+
+                <Row
+                    justify="space-between"
+                    style={{
+                        marginTop: '10px',
+                        color: '#777'
+                    }}
+                >
+                    <Col>
+                        <Space align="center">
+                            {item.task_users.length > 0 && (
+                                <Avatar.Group max={{ count: 2 }} size="small">
+                                    {item.task_users.map((user) => {
+                                        return (
+                                            <Avatar
+                                                icon={<UserOutlined />}
+                                                src={user.avatar}
+                                                key={user.id}
+                                            />
+                                        );
+                                    })}
+                                </Avatar.Group>
+                            )}
+                        </Space>
                     </Col>
                 </Row>
             </div>
