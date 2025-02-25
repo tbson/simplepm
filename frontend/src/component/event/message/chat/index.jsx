@@ -534,6 +534,12 @@ export default function Chat({ project, defaultTask, onNav }) {
                         </div>
                         <div>
                             <Button
+                                danger
+                                onClick={() => handleDelete(task.id)}
+                                icon={<DeleteOutlined />}
+                            />
+                            &nbsp;
+                            <Button
                                 onClick={() => TaskDialog.toggle(true, task.id)}
                                 icon={<EditOutlined />}
                             />
@@ -638,7 +644,6 @@ export default function Chat({ project, defaultTask, onNav }) {
             <TaskDialog
                 projectId={projectId}
                 onChange={handleChange}
-                onDelete={handleDelete}
             />
         </>
     );

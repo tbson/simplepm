@@ -31,7 +31,7 @@ const emptyData = {
  * @param {Object} props
  * @param {function} props.onChange - (data: Dict, id: number) => void
  */
-export default function TaskDialog({ projectId, onChange, onDelete }) {
+export default function TaskDialog({ projectId, onChange }) {
     const { notification } = App.useApp();
     const [data, setData] = useState(emptyData);
     const [open, setOpen] = useState(false);
@@ -66,10 +66,6 @@ export default function TaskDialog({ projectId, onChange, onDelete }) {
         };
     }, []);
 
-    const handleDelete = (id) => {
-        console.log('delete', id);
-    };
-
     return (
         <Modal
             keyboard={false}
@@ -91,13 +87,6 @@ export default function TaskDialog({ projectId, onChange, onDelete }) {
                         <Button onClick={() => Service.toggle(false)}>Cancel</Button>
                     </div>
                     <div style={{ flex: 1 }} className="right">
-                        {id ? (
-                            <Button
-                                danger
-                                onClick={() => onDelete(id)}
-                            >{t`Delete`}</Button>
-                        ) : null}
-                        &nbsp; &nbsp;
                         <Button
                             type="primary"
                             form={TaskForm.formName}
