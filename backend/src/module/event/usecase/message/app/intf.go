@@ -4,6 +4,13 @@ import (
 	"src/module/event/schema"
 )
 
+type InputData struct {
+	Channel   string `json:"channel" form:"channel" validate:"required"`
+	TaskID    uint   `json:"task_id" form:"task_id" validate:"required"`
+	ProjectID uint   `json:"project_id" form:"project_id" validate:"required"`
+	Content   string `json:"content" form:"content" validate:"required"`
+}
+
 type SocketAttachment struct {
 	FileName string `json:"file_name" form:"file_name"`
 	FileType string `json:"file_type" form:"file_type"`

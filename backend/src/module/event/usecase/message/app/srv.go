@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"src/module/aws/repo/s3"
+	"src/module/event"
 	"src/module/event/schema"
 )
 
@@ -27,18 +28,20 @@ func (srv Service) List(
 }
 
 func (srv Service) Create(
-	socketMessage SocketMessage,
+	data InputData,
 	files []s3.FileInfo,
+	socketUser SocketUser,
+	channel string,
 ) (string, error) {
 	socketAttachments := []SocketAttachment{}
 	messageData := schema.Message{
-		UserID:     socketMessage.Data.User.ID,
-		TaskID:     socketMessage.Data.TaskID,
-		ProjectID:  socketMessage.Data.ProjectID,
-		Content:    socketMessage.Data.Content,
-		UserName:   socketMessage.Data.User.Name,
-		UserAvatar: socketMessage.Data.User.Avatar,
-		UserColor:  socketMessage.Data.User.Color,
+		TaskID:     data.TaskID,
+		ProjectID:  data.ProjectID,
+		Content:    data.Content,
+		UserID:     socketUser.ID,
+		UserName:   socketUser.Name,
+		UserAvatar: socketUser.Avatar,
+		UserColor:  socketUser.Color,
 	}
 	message, err := srv.messageRepo.Create(messageData)
 	if err != nil {
@@ -64,8 +67,20 @@ func (srv Service) Create(
 		}
 		socketAttachments = append(socketAttachments, socketAttachment)
 	}
-	socketMessage.Data.ID = message.ID
-	socketMessage.Data.Attachments = socketAttachments
+
+	socketMessage := SocketMessage{
+		Channel: data.Channel,
+		Data: SocketData{
+			ID:          message.ID,
+			Type:        event.CREATE_MESSAGE,
+			User:        socketUser,
+			TaskID:      data.TaskID,
+			ProjectID:   data.ProjectID,
+			Content:     data.Content,
+			Attachments: socketAttachments,
+		},
+	}
+
 	err = srv.centrifugoRepo.Publish(socketMessage)
 	if err != nil {
 		return "", err
@@ -77,13 +92,24 @@ func (srv Service) Create(
 func (srv Service) Update(
 	id string,
 	taskID uint,
-	socketMessage SocketMessage,
+	data InputData,
 ) (string, error) {
+	fmt.Println("Update.........")
+	socketMessage := SocketMessage{
+		Channel: data.Channel,
+		Data: SocketData{
+			ID:      id,
+			Type:    event.UPDATE_MESSAGE,
+			Content: data.Content,
+		},
+	}
+
 	messageData := schema.Message{
 		Content: socketMessage.Data.Content,
 	}
 	message, err := srv.messageRepo.Update(id, taskID, messageData)
 	if err != nil {
+		fmt.Println(err)
 		fmt.Println("case 1")
 		return "", err
 	}
@@ -96,10 +122,20 @@ func (srv Service) Update(
 	return message.ID, nil
 }
 
-func (srv Service) Delete(id string, taskID uint, socketMessage SocketMessage) error {
+func (srv Service) Delete(id string, taskID uint, data InputData) error {
+	fmt.Println("Delete.........")
+	socketMessage := SocketMessage{
+		Channel: data.Channel,
+		Data: SocketData{
+			ID:   id,
+			Type: event.DELETE_MESSAGE,
+		},
+	}
+
 	err := srv.messageRepo.Delete(id, taskID)
 	if err != nil {
-		fmt.Println("case 1")
+		fmt.Println(err)
+		fmt.Println("case 2")
 		return err
 	}
 	err = srv.centrifugoRepo.Publish(socketMessage)
