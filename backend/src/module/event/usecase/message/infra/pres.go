@@ -20,11 +20,13 @@ type Attachment struct {
 }
 
 type ListOutput struct {
-	ID          string       `json:"id"`
-	Content     string       `json:"content"`
-	Editable    bool         `json:"editable"`
-	User        UserInfo     `json:"user"`
-	Attachments []Attachment `json:"attachments"`
+	ID          string                 `json:"id"`
+	Content     string                 `json:"content"`
+	Editable    bool                   `json:"editable"`
+	Type        string                 `json:"type"`
+	GitData     map[string]interface{} `json:"git_data"`
+	User        UserInfo               `json:"user"`
+	Attachments []Attachment           `json:"attachments"`
 }
 
 type ListResult struct {
@@ -58,10 +60,13 @@ func presItem(
 		}
 		attachments = append(attachments, attachment)
 	}
+
 	result := ListOutput{
 		ID:          item.ID,
 		Content:     item.Content,
 		Editable:    editable,
+		Type:        item.Type,
+		GitData:     item.GitPush,
 		User:        userInfo,
 		Attachments: attachments,
 	}

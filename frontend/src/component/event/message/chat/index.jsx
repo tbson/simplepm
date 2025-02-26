@@ -511,6 +511,30 @@ export default function Chat({ project, defaultTask, onNav }) {
         getMessage();
     };
 
+    const renderMessage = (item) => {
+        return <Markdown>{item.content}</Markdown>;
+    };
+
+    const renderGitPushed = (item) => {
+        console.log(item);
+        return (
+            <div>
+                <em>
+                    Git pushed: to branch: <strong>{item.git_data.git_branch}</strong>
+                </em>
+                <ul>
+                    {item.git_data.git_commits.map((commit, index) => (
+                        <li key={index}>
+                            <a href={commit.commit_url} target="_blank">
+                                {commit.commit_message}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        );
+    };
+
     // ==================== Render =================
     return (
         <>
@@ -569,10 +593,16 @@ export default function Chat({ project, defaultTask, onNav }) {
                             return (
                                 <Bubble
                                     key={item.id}
-                                    content={item.content}
-                                    messageRender={(content) => (
-                                        <Markdown>{content}</Markdown>
-                                    )}
+                                    content={item}
+                                    messageRender={(item) => {
+                                        if (item.type === 'MESSAGE_CREATED') {
+                                            return renderMessage(item);
+                                        }
+                                        if (item.type === 'GIT_PUSHED') {
+                                            return renderGitPushed(item);
+                                        }
+                                        return <div>...</div>;
+                                    }}
                                     className={styles.messages}
                                     header={item.user.name}
                                     avatar={
@@ -641,10 +671,7 @@ export default function Chat({ project, defaultTask, onNav }) {
                 </div>
                 {showDocList ? <DocTable taskId={taskId} showControl /> : null}
             </div>
-            <TaskDialog
-                projectId={projectId}
-                onChange={handleChange}
-            />
+            <TaskDialog projectId={projectId} onChange={handleChange} />
         </>
     );
 }

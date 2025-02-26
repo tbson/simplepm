@@ -50,6 +50,7 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 			UserName:   rowData["user_name"].(string),
 			UserAvatar: rowData["user_avatar"].(string),
 			UserColor:  rowData["user_color"].(string),
+			GitPush:    rowData["git_push"].(map[string]interface{}),
 			CreatedAt:  dateutil.TimeToStr(rowData["created_at"].(time.Time)),
 			UpdatedAt:  dateutil.TimeToStr(rowData["updated_at"].(time.Time)),
 		}
