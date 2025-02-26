@@ -29,9 +29,9 @@ import { roles } from './role';
 import { urls, taskUrls } from '../config';
 
 const START_INDEX = 100000;
-const CREATE_MESSAGE = 'CREATE_MESSAGE';
-const UPDATE_MESSAGE = 'UPDATE_MESSAGE';
-const DELETE_MESSAGE = 'DELETE_MESSAGE';
+const MESSAGE_CREATED = 'MESSAGE_CREATED';
+const MESSAGE_UPDATED = 'MESSAGE_UPDATED';
+const MESSAGE_DELETED = 'MESSAGE_DELETED';
 
 const useStyle = getStyles(createStyles);
 
@@ -201,13 +201,13 @@ export default function Chat({ project, defaultTask, onNav }) {
             const { data } = ctx;
             console.log('publication', data);
             data.editable = data.user_id === userId;
-            if (data.type === CREATE_MESSAGE) {
+            if (data.type === MESSAGE_CREATED) {
                 handleAddMessage(data);
             }
-            if (data.type === UPDATE_MESSAGE) {
+            if (data.type === MESSAGE_UPDATED) {
                 handleUpdateMessage(data);
             }
-            if (data.type === DELETE_MESSAGE) {
+            if (data.type === MESSAGE_DELETED) {
                 handleDeleteMessage(data);
             }
         });

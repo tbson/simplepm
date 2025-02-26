@@ -115,9 +115,6 @@ func Delete(c echo.Context) error {
 	id := c.Param("id")
 	taskID := vldtutil.ValidateId(c.Param("task_id"))
 
-	fmt.Println("id", id)
-	fmt.Println("task_id", taskID)
-
 	data, _, err := vldtutil.ValidateUpdatePayload(c, app.InputData{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

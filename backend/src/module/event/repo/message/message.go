@@ -1,9 +1,12 @@
 package message
 
 import (
+	"encoding/json"
 	"fmt"
 	"src/client/scyllaclient"
 	"src/util/dateutil"
+	"src/util/errutil"
+	"strings"
 	"time"
 
 	"src/common/setting"
@@ -45,6 +48,7 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 			TaskID:     uint(rowData["task_id"].(int)),
 			ProjectID:  uint(rowData["project_id"].(int)),
 			Content:    rowData["content"].(string),
+			Type:       rowData["type"].(string),
 			UserName:   rowData["user_name"].(string),
 			UserAvatar: rowData["user_avatar"].(string),
 			UserColor:  rowData["user_color"].(string),
@@ -61,7 +65,7 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 	nextPageState := iter.PageState()
 
 	if err := iter.Close(); err != nil {
-		return nil, nil, err
+		return nil, nil, errutil.NewGormError(err)
 	}
 	// check messages length to return empty page state
 	if len(messages) < pageSize {
@@ -79,12 +83,51 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 	client := scyllaclient.NewClient()
 	// defer client.Close()
 	id := scyllaclient.GenerateID()
-	err := client.Exec(
-		"INSERT INTO event.messages (id, user_id, task_id, project_id, content, user_name, user_avatar, user_color, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, toTimestamp(now()), toTimestamp(now()))",
-		id, message.UserID, message.TaskID, message.ProjectID, message.Content, message.UserName, message.UserAvatar, message.UserColor,
-	)
+
+	gitPush, _ := json.Marshal(message.GitPush)
+
+	queryStr := `
+		INSERT INTO event.messages (
+			id,
+			user_id,
+			task_id,
+			project_id,
+			content,
+			type,
+			user_name,
+			user_avatar,
+			user_color,
+			OPTIONAL_FIELD
+			created_at, updated_at
+		) VALUES (
+			?, ?, ?, ?, ?, ?, ?, ?, ?, OPTIONAL_VALUE
+			toTimestamp(now()), toTimestamp(now())
+		)
+	`
+	if message.GitPush.ID == 0 {
+		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_FIELD", "")
+		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_VALUE", "")
+	} else {
+		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_FIELD", "git_push, ")
+		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_VALUE", "?, ")
+	}
+	execParams := []interface{}{
+		id,
+		message.UserID,
+		message.TaskID,
+		message.ProjectID,
+		message.Content,
+		message.Type,
+		message.UserName,
+		message.UserAvatar,
+		message.UserColor,
+	}
+	if message.GitPush.ID != 0 {
+		execParams = append(execParams, gitPush)
+	}
+	err := client.Exec(queryStr, execParams...)
 	if err != nil {
-		return defaultResult, err
+		return defaultResult, errutil.NewGormError(err)
 	}
 	result := schema.Message{
 		ID:         id.String(),
@@ -92,6 +135,7 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 		TaskID:     message.TaskID,
 		ProjectID:  message.ProjectID,
 		Content:    message.Content,
+		Type:       message.Type,
 		UserName:   message.UserName,
 		UserAvatar: message.UserAvatar,
 		UserColor:  message.UserColor,
@@ -106,11 +150,18 @@ func (r Repo) Update(id string, taskId uint, message schema.Message) (schema.Mes
 	client := scyllaclient.NewClient()
 	// defer client.Close()
 	err := client.Exec(
-		"UPDATE event.messages SET content = ?, updated_at = toTimestamp(now()) WHERE id = ? AND task_id = ?",
+		`UPDATE
+			event.messages
+		SET
+			content = ?,
+			updated_at = toTimestamp(now())
+		WHERE
+			id = ? AND 
+			task_id = ?`,
 		message.Content, id, taskId,
 	)
 	if err != nil {
-		return defaultResult, err
+		return defaultResult, errutil.NewGormError(err)
 	}
 	result := schema.Message{
 		ID:        id,
@@ -126,7 +177,7 @@ func (r Repo) Delete(id string, task_id uint) error {
 	err := client.Exec("DELETE FROM event.messages WHERE id = ? AND task_id = ?", id, task_id)
 	if err != nil {
 		fmt.Println("error deleting message", err)
-		return err
+		return errutil.NewGormError(err)
 	}
 	return nil
 }
@@ -143,11 +194,22 @@ func (r Repo) CreateAttachment(
 	// defer client.Close()
 	id := scyllaclient.GenerateID()
 	err := client.Exec(
-		"INSERT INTO event.attachments (id, message_id, file_name, file_type, file_url, file_size, created_at) VALUES (?, ?, ?, ?, ?, ?, toTimestamp(now()))",
+		`INSERT INTO event.attachments (
+			id,
+			message_id,
+			file_name,
+			file_type,
+			file_url,
+			file_size,
+			created_at
+		) VALUES (
+			?, ?, ?, ?, ?, ?,
+			toTimestamp(now())
+		)`,
 		id, messageID, fileName, fileType, fileURL, fileSize,
 	)
 	if err != nil {
-		return emptyResult, err
+		return emptyResult, errutil.NewGormError(err)
 	}
 	result := schema.Attachment{
 		ID:        id.String(),
@@ -174,7 +236,7 @@ func (r Repo) GetAttachmentMap(
 		messageIDs,
 	)
 	if err != nil {
-		return nil, err
+		return nil, errutil.NewGormError(err)
 	}
 	attachments := make(map[string][]schema.Attachment)
 	for _, row := range rows {
