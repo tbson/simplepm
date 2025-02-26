@@ -10,11 +10,11 @@ import (
 )
 
 type GitCommit struct {
-	ID            uint   `json:"id"`
-	CommitID      string `json:"commit_id"`
-	CommitURL     string `json:"commit_url"`
-	CommitMessage string `json:"commit_message"`
-	CreatedAt     string `json:"created_at"`
+	ID            uint      `json:"id"`
+	CommitID      string    `json:"commit_id"`
+	CommitURL     string    `json:"commit_url"`
+	CommitMessage string    `json:"commit_message"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 type GitPush struct {
@@ -24,18 +24,18 @@ type GitPush struct {
 }
 
 type Message struct {
-	ID         string  `json:"id"`
-	UserID     uint    `json:"user_id"`
-	TaskID     uint    `json:"task_id"`
-	ProjectID  uint    `json:"project_id"`
-	Content    string  `json:"content"`
-	Type       string  `json:"type"`
-	GitPush    GitPush `json:"git_push"`
-	UserName   string  `json:"user_name"`
-	UserAvatar string  `json:"user_avatar"`
-	UserColor  string  `json:"user_color"`
-	CreatedAt  string  `json:"created_at"`
-	UpdatedAt  string  `json:"update_at"`
+	ID         string                 `json:"id"`
+	UserID     uint                   `json:"user_id"`
+	TaskID     uint                   `json:"task_id"`
+	ProjectID  uint                   `json:"project_id"`
+	Content    string                 `json:"content"`
+	Type       string                 `json:"type"`
+	GitPush    map[string]interface{} `json:"git_push"`
+	UserName   string                 `json:"user_name"`
+	UserAvatar string                 `json:"user_avatar"`
+	UserColor  string                 `json:"user_color"`
+	CreatedAt  string                 `json:"created_at"`
+	UpdatedAt  string                 `json:"update_at"`
 }
 
 type Attachment struct {

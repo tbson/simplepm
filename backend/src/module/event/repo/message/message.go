@@ -1,8 +1,6 @@
 package message
 
 import (
-	"encoding/json"
-	"fmt"
 	"src/client/scyllaclient"
 	"src/util/dateutil"
 	"src/util/errutil"
@@ -84,8 +82,6 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 	// defer client.Close()
 	id := scyllaclient.GenerateID()
 
-	gitPush, _ := json.Marshal(message.GitPush)
-
 	queryStr := `
 		INSERT INTO event.messages (
 			id,
@@ -104,13 +100,6 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 			toTimestamp(now()), toTimestamp(now())
 		)
 	`
-	if message.GitPush.ID == 0 {
-		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_FIELD", "")
-		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_VALUE", "")
-	} else {
-		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_FIELD", "git_push, ")
-		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_VALUE", "?, ")
-	}
 	execParams := []interface{}{
 		id,
 		message.UserID,
@@ -122,13 +111,22 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 		message.UserAvatar,
 		message.UserColor,
 	}
-	if message.GitPush.ID != 0 {
-		execParams = append(execParams, gitPush)
+	_, exist := message.GitPush["id"]
+
+	if exist == false {
+		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_FIELD", "")
+		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_VALUE", "")
+	} else {
+		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_FIELD", "git_push, ")
+		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_VALUE", "?, ")
+		execParams = append(execParams, message.GitPush)
 	}
+
 	err := client.Exec(queryStr, execParams...)
 	if err != nil {
 		return defaultResult, errutil.NewGormError(err)
 	}
+
 	result := schema.Message{
 		ID:         id.String(),
 		UserID:     message.UserID,
@@ -176,7 +174,6 @@ func (r Repo) Delete(id string, task_id uint) error {
 	// defer client.Close()
 	err := client.Exec("DELETE FROM event.messages WHERE id = ? AND task_id = ?", id, task_id)
 	if err != nil {
-		fmt.Println("error deleting message", err)
 		return errutil.NewGormError(err)
 	}
 	return nil

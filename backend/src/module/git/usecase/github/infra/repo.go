@@ -24,14 +24,22 @@ func (r Repo) GetTaskUser(gitRepo string, gitBranch string) (app.TaskUser, error
 	gitHost := pm.PROJECT_REPO_TYPE_GITHUB
 	sql := `
 		SELECT
-			tu.user_id,
-			tu.task_id
+			u.id AS user_id,
+			u.avatar AS user_avatar,
+			u.color AS user_color,
+			TRIM(CONCAT(u.first_name, ' ', u.last_name)) AS user_name,
+			tu.task_id AS task_id,
+			p.id AS project_id
 		FROM
 			tasks_users AS tu
 		JOIN
 			tasks AS t
 		ON
 			tu.task_id = t.id
+		JOIN
+			users AS u
+		ON
+			tu.user_id = u.id
 		JOIN
 			projects AS p
 		ON

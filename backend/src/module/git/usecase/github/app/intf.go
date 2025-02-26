@@ -3,6 +3,7 @@ package app
 import (
 	"src/common/ctype"
 	account "src/module/account/schema"
+	event "src/module/event/schema"
 	pm "src/module/pm/schema"
 )
 
@@ -53,8 +54,12 @@ type GithubWebhook struct {
 }
 
 type TaskUser struct {
-	TaskID *uint
-	UserID *uint
+	TaskID     *uint
+	ProjectID  *uint
+	UserID     *uint
+	UserAvatar *string
+	UserName   *string
+	UserColor  *string
 }
 
 type TenantRepo interface {
@@ -84,4 +89,8 @@ type GitCommitRepo interface {
 
 type GitRepo interface {
 	GetTaskUser(gitRepo string, gitBranch string) (TaskUser, error)
+}
+
+type MessageRepo interface {
+	Create(message event.Message) (event.Message, error)
 }

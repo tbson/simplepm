@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"src/client/scyllaclient"
 	"src/common/ctype"
 	"src/util/dbutil"
 	"src/util/numberutil"
@@ -14,6 +15,7 @@ import (
 	"src/module/account/repo/gitaccount"
 	"src/module/account/repo/gitrepo"
 	"src/module/account/repo/tenant"
+	"src/module/event/repo/message"
 	"src/module/pm/repo/gitcommit"
 	"src/module/pm/repo/gitpush"
 
@@ -38,6 +40,7 @@ func Callback(c echo.Context) error {
 	gitRepoRepo := gitrepo.New(dbutil.Db(nil))
 	gitPushRepo := gitpush.New(dbutil.Db(nil))
 	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
+	messageRepo := message.New(scyllaclient.NewClient())
 	gitRepo := New(dbutil.Db(nil))
 
 	srv := app.New(
@@ -47,6 +50,7 @@ func Callback(c echo.Context) error {
 		gitPushRepo,
 		gitCommitRepo,
 		gitRepo,
+		messageRepo,
 	)
 
 	setupAction := c.QueryParam("setup_action")
@@ -80,6 +84,7 @@ func Webhook(c echo.Context) error {
 	gitRepoRepo := gitrepo.New(dbutil.Db(nil))
 	gitPushRepo := gitpush.New(dbutil.Db(nil))
 	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
+	messageRepo := message.New(scyllaclient.NewClient())
 	gitRepo := New(dbutil.Db(nil))
 
 	srv := app.New(
@@ -89,6 +94,7 @@ func Webhook(c echo.Context) error {
 		gitPushRepo,
 		gitCommitRepo,
 		gitRepo,
+		messageRepo,
 	)
 
 	structData, err := vldtutil.ValidatePayload(c, app.GithubWebhook{})

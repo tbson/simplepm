@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"src/common/ctype"
 	"src/module/account/schema"
+	"src/module/event"
+	eventSchema "src/module/event/schema"
 	"src/module/pm"
 	"src/util/numberutil"
 )
@@ -15,6 +17,7 @@ type Service struct {
 	gitPushRepo    GitPushRepo
 	gitCommitRepo  GitCommitRepo
 	gitRepo        GitRepo
+	messageRepo    MessageRepo
 }
 
 func New(
@@ -24,6 +27,7 @@ func New(
 	gitPushRepo GitPushRepo,
 	gitCommitRepo GitCommitRepo,
 	gitRepo GitRepo,
+	messageRepo MessageRepo,
 ) Service {
 	return Service{
 		tenantRepo,
@@ -32,6 +36,7 @@ func New(
 		gitPushRepo,
 		gitCommitRepo,
 		gitRepo,
+		messageRepo,
 	}
 }
 
@@ -144,6 +149,7 @@ func (srv Service) HandlePushWebhook(
 	commits []GithubCommit,
 ) (ctype.Dict, error) {
 	fmt.Println("HandlePushWebhook............")
+	messageType := event.GIT_PUSHED
 	gitBranch := getBranchFromRef(ref)
 
 	taskUser, err := srv.gitRepo.GetTaskUser(gitRepo, gitBranch)
@@ -169,6 +175,7 @@ func (srv Service) HandlePushWebhook(
 		return nil, err
 	}
 
+	var gitCommits []map[string]interface{}
 	for _, commit := range commits {
 		gitCommitData := ctype.Dict{
 			"GitPushID":     gitPush.ID,
@@ -177,9 +184,42 @@ func (srv Service) HandlePushWebhook(
 			"CommitMessage": commit.Message,
 		}
 
-		_, err = srv.gitCommitRepo.Create(gitCommitData)
+		result, err := srv.gitCommitRepo.Create(gitCommitData)
 		if err != nil {
 			fmt.Println("srv.gitCommitRepo.Create")
+			fmt.Println(err)
+			return nil, err
+		}
+
+		gitCommit := map[string]interface{}{
+			"id":             result.ID,
+			"commit_id":      commit.ID,
+			"commit_url":     commit.URL,
+			"commit_message": commit.Message,
+			"created_at":     result.CreatedAt,
+		}
+		gitCommits = append(gitCommits, gitCommit)
+	}
+
+	if taskUser.UserID != nil {
+		messageData := eventSchema.Message{
+			TaskID:     *taskUser.TaskID,
+			ProjectID:  *taskUser.ProjectID,
+			Content:    "",
+			Type:       messageType,
+			UserID:     *taskUser.UserID,
+			UserName:   *taskUser.UserName,
+			UserAvatar: *taskUser.UserAvatar,
+			UserColor:  *taskUser.UserColor,
+			GitPush: map[string]interface{}{
+				"id":          gitPush.ID,
+				"git_branch":  gitBranch,
+				"git_commits": gitCommits,
+			},
+		}
+		_, err = srv.messageRepo.Create(messageData)
+		if err != nil {
+			fmt.Println("srv.messageRepo.Create")
 			fmt.Println(err)
 			return nil, err
 		}

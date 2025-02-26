@@ -23,7 +23,7 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 		"GET", "/callback", Callback,
 	)
 	rr.Public(
-		"POST", "/webhook", WebhookTest,
+		"POST", "/webhook", Webhook,
 	)
 	return e, pemMap
 }
