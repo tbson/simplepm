@@ -138,6 +138,7 @@ func (r Repo) Create(message schema.Message) (schema.Message, error) {
 		UserName:   message.UserName,
 		UserAvatar: message.UserAvatar,
 		UserColor:  message.UserColor,
+		GitPush:    message.GitPush,
 		CreatedAt:  dateutil.TimeToStr(time.Now()),
 		UpdatedAt:  dateutil.TimeToStr(time.Now()),
 	}

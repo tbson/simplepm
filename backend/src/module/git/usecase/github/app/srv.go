@@ -18,6 +18,7 @@ type Service struct {
 	gitCommitRepo  GitCommitRepo
 	gitRepo        GitRepo
 	messageRepo    MessageRepo
+	centrifugoRepo CentrifugoRepo
 }
 
 func New(
@@ -28,6 +29,7 @@ func New(
 	gitCommitRepo GitCommitRepo,
 	gitRepo GitRepo,
 	messageRepo MessageRepo,
+	centrifugoRepo CentrifugoRepo,
 ) Service {
 	return Service{
 		tenantRepo,
@@ -37,6 +39,7 @@ func New(
 		gitCommitRepo,
 		gitRepo,
 		messageRepo,
+		centrifugoRepo,
 	}
 }
 
@@ -217,12 +220,38 @@ func (srv Service) HandlePushWebhook(
 				"git_commits": gitCommits,
 			},
 		}
-		_, err = srv.messageRepo.Create(messageData)
+		message, err := srv.messageRepo.Create(messageData)
 		if err != nil {
-			fmt.Println("srv.messageRepo.Create")
-			fmt.Println(err)
 			return nil, err
 		}
+
+		projectID := *taskUser.ProjectID
+		taskID := *taskUser.TaskID
+		channel := fmt.Sprintf("%d/%d", projectID, taskID)
+		socketUser := SocketUser{
+			ID:     *taskUser.UserID,
+			Name:   *taskUser.UserName,
+			Avatar: *taskUser.UserAvatar,
+			Color:  *taskUser.UserColor,
+		}
+
+		socketMessage := SocketMessage{
+			Channel: channel,
+			Data: SocketData{
+				ID:        message.ID,
+				Type:      messageType,
+				User:      socketUser,
+				TaskID:    taskID,
+				ProjectID: projectID,
+				Content:   messageType,
+				GitData:   message.GitPush,
+			},
+		}
+		err = srv.centrifugoRepo.Publish(socketMessage)
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
 	return ctype.Dict{}, nil

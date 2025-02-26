@@ -15,6 +15,7 @@ import (
 	"src/module/account/repo/gitaccount"
 	"src/module/account/repo/gitrepo"
 	"src/module/account/repo/tenant"
+	"src/module/event/repo/centrifugo"
 	"src/module/event/repo/message"
 	"src/module/pm/repo/gitcommit"
 	"src/module/pm/repo/gitpush"
@@ -41,6 +42,7 @@ func Callback(c echo.Context) error {
 	gitPushRepo := gitpush.New(dbutil.Db(nil))
 	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
 	messageRepo := message.New(scyllaclient.NewClient())
+	centrifugoRepo := centrifugo.New()
 	gitRepo := New(dbutil.Db(nil))
 
 	srv := app.New(
@@ -51,6 +53,7 @@ func Callback(c echo.Context) error {
 		gitCommitRepo,
 		gitRepo,
 		messageRepo,
+		centrifugoRepo,
 	)
 
 	setupAction := c.QueryParam("setup_action")
@@ -85,6 +88,7 @@ func Webhook(c echo.Context) error {
 	gitPushRepo := gitpush.New(dbutil.Db(nil))
 	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
 	messageRepo := message.New(scyllaclient.NewClient())
+	centrifugoRepo := centrifugo.New()
 	gitRepo := New(dbutil.Db(nil))
 
 	srv := app.New(
@@ -95,6 +99,7 @@ func Webhook(c echo.Context) error {
 		gitCommitRepo,
 		gitRepo,
 		messageRepo,
+		centrifugoRepo,
 	)
 
 	structData, err := vldtutil.ValidatePayload(c, app.GithubWebhook{})
@@ -121,7 +126,6 @@ func Webhook(c echo.Context) error {
 		}
 	}
 
-	fmt.Println("structData.Ref", structData.Ref)
 	if structData.Ref != "" {
 		ref := structData.Ref
 		installationID := structData.Installation.ID

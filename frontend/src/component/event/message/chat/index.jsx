@@ -32,6 +32,7 @@ const START_INDEX = 100000;
 const MESSAGE_CREATED = 'MESSAGE_CREATED';
 const MESSAGE_UPDATED = 'MESSAGE_UPDATED';
 const MESSAGE_DELETED = 'MESSAGE_DELETED';
+const GIT_PUSHED = 'GIT_PUSHED';
 
 const useStyle = getStyles(createStyles);
 
@@ -201,7 +202,7 @@ export default function Chat({ project, defaultTask, onNav }) {
             const { data } = ctx;
             console.log('publication', data);
             data.editable = data.user_id === userId;
-            if (data.type === MESSAGE_CREATED) {
+            if ([MESSAGE_CREATED, GIT_PUSHED].includes(data.type)) {
                 handleAddMessage(data);
             }
             if (data.type === MESSAGE_UPDATED) {
@@ -456,7 +457,7 @@ export default function Chat({ project, defaultTask, onNav }) {
     );
 
     const renderFooter = (item) => {
-        return renderAttachments(item.attachments);
+        return renderAttachments(item.attachments || []);
     };
 
     const renderAttachments = (files) => {
@@ -516,7 +517,6 @@ export default function Chat({ project, defaultTask, onNav }) {
     };
 
     const renderGitPushed = (item) => {
-        console.log(item);
         return (
             <div>
                 <em>
