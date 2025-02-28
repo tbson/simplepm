@@ -1548,10 +1548,10 @@
     "@babel/runtime" "^7.10.2"
     "@codexteam/icons" "^0.0.4"
 
-"@editorjs/list@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@editorjs/list/-/list-2.0.4.tgz#e25cfee0c31f570b35e961d2a7683bf88c3da463"
-  integrity sha512-KLrm/oti5DSx8coNvbgYOwpog3gsCVALoXquNKMvW7BLHeKTMAtg/tO/v7BipgV/EKk5CT+ocoofPtufDU9Irg==
+"@editorjs/list@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@editorjs/list/-/list-2.0.5.tgz#622d47f8a016af37733829f8ef4929ddce58449c"
+  integrity sha512-pxDyIi/BpESN/lv7xAoPEzq9WtcbcGn/jc3Rpf0vmA/QLgB9a9Szk5lvyuzKk0bCcVfJ072ijDzExQslraDysQ==
   dependencies:
     "@codexteam/icons" "^0.3.2"
 
