@@ -1,6 +1,7 @@
 package app
 
 import (
+	"src/common/ctype"
 	"src/module/aws/repo/s3"
 	"src/module/event"
 	"src/module/event/schema"
@@ -34,15 +35,15 @@ func (srv Service) Create(
 ) (string, error) {
 	messageType := event.MESSAGE_CREATED
 	socketAttachments := []SocketAttachment{}
-	messageData := schema.Message{
-		TaskID:     data.TaskID,
-		ProjectID:  data.ProjectID,
-		Content:    data.Content,
-		Type:       messageType,
-		UserID:     socketUser.ID,
-		UserName:   socketUser.Name,
-		UserAvatar: socketUser.Avatar,
-		UserColor:  socketUser.Color,
+	messageData := ctype.Dict{
+		"task_id":     data.TaskID,
+		"project_id":  data.ProjectID,
+		"content":     data.Content,
+		"type":        messageType,
+		"user_id":     socketUser.ID,
+		"user_name":   socketUser.Name,
+		"user_avatar": socketUser.Avatar,
+		"user_color":  socketUser.Color,
 	}
 	message, err := srv.messageRepo.Create(messageData)
 	if err != nil {

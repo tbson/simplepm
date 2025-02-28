@@ -102,40 +102,56 @@ func Webhook(c echo.Context) error {
 		centrifugoRepo,
 	)
 
-	structData, err := vldtutil.ValidatePayload(c, app.GithubWebhook{})
+	data, err := vldtutil.ValidatePayload(c, app.GithubWebhook{})
 	if err != nil {
+		fmt.Println("error")
+		fmt.Println(err)
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	uid := numberutil.UintToStr(structData.Installation.ID)
-	title := structData.Sender.Login
-	avatar := structData.Sender.AvatarURL
-	repos := structData.Repositories
+	uid := numberutil.UintToStr(data.Installation.ID)
+	title := data.Sender.Login
+	avatar := data.Sender.AvatarURL
+	repos := data.Repositories
 
-	if structData.Action == app.GITHUB_WEBHOOK_ACTION_CREATED {
+	if data.Action == app.GITHUB_WEBHOOK_ACTION_CREATED {
 		_, err = srv.HandleInstallWebhook(uid, title, avatar, repos)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
 		}
 	}
 
-	if structData.Action == app.GITHUB_WEBHOOK_ACTION_DELETED {
+	if data.Action == app.GITHUB_WEBHOOK_ACTION_DELETED {
 		err = srv.HandleUninstallWebhook(uid)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
 		}
 	}
 
-	if structData.Ref != "" {
-		ref := structData.Ref
-		installationID := structData.Installation.ID
-		repoUid := structData.Repository.FullName
-		commits := structData.Commits
+	if data.Ref != "" {
+		ref := data.Ref
+		installationID := data.Installation.ID
+		repoUid := data.Repository.FullName
+		commits := data.Commits
 		_, err = srv.HandlePushWebhook(
 			ref,
 			numberutil.UintToStr(installationID),
 			repoUid,
 			commits,
+		)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+	}
+
+	if data.PullRequest.ID != "" && data.Action == app.GITHUB_WEBHOOK_PR_OPENED {
+		installationID := data.Installation.ID
+		pullRequest := data.PullRequest
+		repoUid := data.Repository.FullName
+		_, err = srv.HandleOpenPrWebhook(
+			numberutil.UintToStr(installationID),
+			repoUid,
+			pullRequest,
 		)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)

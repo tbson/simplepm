@@ -1,6 +1,7 @@
 package app
 
 import (
+	"src/common/ctype"
 	"src/module/event/schema"
 )
 
@@ -47,7 +48,7 @@ type CentrifugoRepo interface {
 type MessageRepo interface {
 	List(taskID uint, pageState []byte) ([]schema.Message, []byte, error)
 	GetAttachmentMap(messages []schema.Message) (map[string][]schema.Attachment, error)
-	Create(message schema.Message) (schema.Message, error)
+	Create(message ctype.Dict) (schema.Message, error)
 	Update(id string, taskID uint, message schema.Message) (schema.Message, error)
 	Delete(id string, taskID uint) error
 	CreateAttachment(

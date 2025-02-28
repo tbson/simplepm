@@ -5,9 +5,10 @@ import (
 	"src/common/ctype"
 	"src/module/account/schema"
 	"src/module/event"
-	eventSchema "src/module/event/schema"
 	"src/module/pm"
+	"src/util/dictutil"
 	"src/util/numberutil"
+	"strings"
 )
 
 type Service struct {
@@ -78,7 +79,7 @@ func (srv Service) HandleInstallWebhook(
 	uid string,
 	title string,
 	avatar string,
-	repos []GithubRepo,
+	repos []RepoInput,
 ) (*schema.GitAccount, error) {
 	data := ctype.Dict{
 		"Uid":    &uid,
@@ -142,14 +143,16 @@ func (srv Service) HandleUninstallWebhook(
 }
 
 func getBranchFromRef(ref string) string {
-	return ref[11:]
+	result := strings.Replace(ref, "refs/", "", 1)
+	result = strings.Replace(result, "heads/", "", 1)
+	return result
 }
 
 func (srv Service) HandlePushWebhook(
 	ref string,
 	installationID string,
 	gitRepo string,
-	commits []GithubCommit,
+	commits []CommitInput,
 ) (ctype.Dict, error) {
 	fmt.Println("HandlePushWebhook............")
 	messageType := event.GIT_PUSHED
@@ -205,16 +208,16 @@ func (srv Service) HandlePushWebhook(
 	}
 
 	if taskUser.UserID != nil {
-		messageData := eventSchema.Message{
-			TaskID:     *taskUser.TaskID,
-			ProjectID:  *taskUser.ProjectID,
-			Content:    "",
-			Type:       messageType,
-			UserID:     *taskUser.UserID,
-			UserName:   *taskUser.UserName,
-			UserAvatar: *taskUser.UserAvatar,
-			UserColor:  *taskUser.UserColor,
-			GitPush: map[string]interface{}{
+		messageData := ctype.Dict{
+			"task_id":     *taskUser.TaskID,
+			"project_id":  *taskUser.ProjectID,
+			"content":     "",
+			"type":        messageType,
+			"user_id":     *taskUser.UserID,
+			"user_name":   *taskUser.UserName,
+			"user_avatar": *taskUser.UserAvatar,
+			"user_color":  *taskUser.UserColor,
+			"git_push": ctype.Dict{
 				"id":          gitPush.ID,
 				"git_branch":  gitBranch,
 				"git_commits": gitCommits,
@@ -244,7 +247,7 @@ func (srv Service) HandlePushWebhook(
 				TaskID:    taskID,
 				ProjectID: projectID,
 				Content:   messageType,
-				GitData:   message.GitPush,
+				GitData:   dictutil.StructToDict(message.GitPush),
 			},
 		}
 		err = srv.centrifugoRepo.Publish(socketMessage)
@@ -252,6 +255,82 @@ func (srv Service) HandlePushWebhook(
 			return nil, err
 		}
 
+	}
+
+	return ctype.Dict{}, nil
+}
+
+func (srv Service) HandleOpenPrWebhook(
+	installationID string,
+	gitRepo string,
+	pullRequest PullRequestInput,
+) (ctype.Dict, error) {
+	fmt.Println("HandleOpenPrWebhook............")
+	messageType := event.GIT_PR_CREATED
+	gitBranch := getBranchFromRef(pullRequest.Head.Ref)
+	fmt.Println("gitBranch", gitBranch)
+	fmt.Println("gitRepo", gitRepo)
+	fmt.Println("pullRequest.ID", pullRequest.ID)
+	//print type of pullRequest.ID
+	fmt.Printf("Type of pullRequest.ID: %T\n", pullRequest.ID)
+	taskUser, err := srv.gitRepo.GetTaskUser(gitRepo, gitBranch)
+	if err != nil {
+		fmt.Println("srv.gitRepo.GetTaskUser")
+		fmt.Println(err)
+		return nil, err
+	}
+
+	messageData := ctype.Dict{
+		"task_id":     *taskUser.TaskID,
+		"project_id":  *taskUser.ProjectID,
+		"content":     "",
+		"type":        messageType,
+		"user_id":     *taskUser.UserID,
+		"user_name":   *taskUser.UserName,
+		"user_avatar": *taskUser.UserAvatar,
+		"user_color":  *taskUser.UserColor,
+		"git_pr": ctype.Dict{
+			"id":        pullRequest.ID.String(),
+			"title":     pullRequest.Title,
+			"url":       pullRequest.URL,
+			"merged_at": pullRequest.MergedAt,
+			"state":     pullRequest.State,
+		},
+	}
+	message, err := srv.messageRepo.Create(messageData)
+	if err != nil {
+		fmt.Println("srv.messageRepo.Create")
+		fmt.Println(err)
+		return nil, err
+	}
+
+	projectID := *taskUser.ProjectID
+	taskID := *taskUser.TaskID
+	channel := fmt.Sprintf("%d/%d", projectID, taskID)
+	socketUser := SocketUser{
+		ID:     *taskUser.UserID,
+		Name:   *taskUser.UserName,
+		Avatar: *taskUser.UserAvatar,
+		Color:  *taskUser.UserColor,
+	}
+
+	socketMessage := SocketMessage{
+		Channel: channel,
+		Data: SocketData{
+			ID:        message.ID,
+			Type:      messageType,
+			User:      socketUser,
+			TaskID:    taskID,
+			ProjectID: projectID,
+			Content:   messageType,
+			GitData:   dictutil.StructToDict(message.GitPR),
+		},
+	}
+	err = srv.centrifugoRepo.Publish(socketMessage)
+	if err != nil {
+		fmt.Println("srv.centrifugoRepo.Publish")
+		fmt.Println(err)
+		return nil, err
 	}
 
 	return ctype.Dict{}, nil

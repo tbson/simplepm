@@ -10,32 +10,41 @@ import (
 )
 
 type GitCommit struct {
-	ID            uint      `json:"id"`
-	CommitID      string    `json:"commit_id"`
-	CommitURL     string    `json:"commit_url"`
-	CommitMessage string    `json:"commit_message"`
-	CreatedAt     time.Time `json:"created_at"`
+	ID            string    `json:"id" cql:"id"`
+	CommitID      string    `json:"commit_id" cql:"commit_id"`
+	CommitURL     string    `json:"commit_url" cql:"commit_url"`
+	CommitMessage string    `json:"commit_message" cql:"commit_message"`
+	CreatedAt     time.Time `json:"created_at" cql:"created_at"`
 }
 
 type GitPush struct {
-	ID         uint        `json:"id"`
-	GitBranch  string      `json:"git_branch"`
-	GitCommits []GitCommit `json:"git_commits"`
+	ID         string      `json:"id" cql:"id"`
+	GitBranch  string      `json:"git_branch" cql:"git_branch"`
+	GitCommits []GitCommit `json:"git_commits" cql:"git_commits"`
+}
+
+type GitPR struct {
+	ID       string  `json:"id" cql:"id"`
+	Title    string  `json:"title" cql:"title"`
+	URL      string  `json:"url" cql:"url"`
+	MergedAt *string `json:"merged_at" cql:"merged_at"`
+	State    string  `json:"state" cql:"state"`
 }
 
 type Message struct {
-	ID         string                 `json:"id"`
-	UserID     uint                   `json:"user_id"`
-	TaskID     uint                   `json:"task_id"`
-	ProjectID  uint                   `json:"project_id"`
-	Content    string                 `json:"content"`
-	Type       string                 `json:"type"`
-	GitPush    map[string]interface{} `json:"git_push"`
-	UserName   string                 `json:"user_name"`
-	UserAvatar string                 `json:"user_avatar"`
-	UserColor  string                 `json:"user_color"`
-	CreatedAt  string                 `json:"created_at"`
-	UpdatedAt  string                 `json:"update_at"`
+	ID         string  `json:"id"`
+	UserID     uint    `json:"user_id"`
+	TaskID     uint    `json:"task_id"`
+	ProjectID  uint    `json:"project_id"`
+	Content    string  `json:"content"`
+	Type       string  `json:"type"`
+	GitPush    GitPush `json:"git_push"`
+	GitPR      GitPR   `json:"git_pr"`
+	UserName   string  `json:"user_name"`
+	UserAvatar string  `json:"user_avatar"`
+	UserColor  string  `json:"user_color"`
+	CreatedAt  string  `json:"created_at"`
+	UpdatedAt  string  `json:"update_at"`
 }
 
 type Attachment struct {

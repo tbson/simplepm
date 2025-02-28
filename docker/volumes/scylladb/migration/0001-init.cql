@@ -1,7 +1,8 @@
-DROP TYPE IF EXISTS event.git_commit;
-DROP TYPE IF EXISTS event.git_push;
-DROP TABLE IF EXISTS event.attachments;
 DROP TABLE IF EXISTS event.messages;
+DROP TABLE IF EXISTS event.attachments;
+DROP TYPE IF EXISTS event.git_push;
+DROP TYPE IF EXISTS event.git_commit;
+DROP TYPE IF EXISTS event.git_pr;
 
 CREATE KEYSPACE IF NOT EXISTS event WITH replication = {
     'class': 'SimpleStrategy', 
@@ -9,7 +10,7 @@ CREATE KEYSPACE IF NOT EXISTS event WITH replication = {
 };
 
 CREATE TYPE IF NOT EXISTS event.git_commit (
-    id int,
+    id text,
     commit_id text,
     commit_url text,
     commit_message text,
@@ -17,20 +18,30 @@ CREATE TYPE IF NOT EXISTS event.git_commit (
 );
 
 CREATE TYPE IF NOT EXISTS event.git_push (
-    id int,
+    id text,
     git_branch text,
     git_commits list<frozen<git_commit>>,
 );
 
+
+CREATE TYPE IF NOT EXISTS event.git_pr (
+    id text,
+    title text,
+    url text,
+    merged_at timestamp,
+    state text,
+);
+
+
 CREATE TABLE IF NOT EXISTS event.messages (
     id timeuuid,
-    user_id int,
-    task_id int,
-    project_id int,
+    user_id bigint,
+    task_id bigint,
+    project_id bigint,
     content text,
-    hash_tags list<text>,
     type text,
     git_push frozen<git_push>,
+    git_pr frozen<git_pr>,
     user_name text,
     user_avatar text,
     user_color text,

@@ -3,6 +3,7 @@ package infra
 import (
 	accountSchema "src/module/account/schema"
 	pmSchema "src/module/event/schema"
+	"src/util/dictutil"
 )
 
 type UserInfo struct {
@@ -66,7 +67,7 @@ func presItem(
 		Content:     item.Content,
 		Editable:    editable,
 		Type:        item.Type,
-		GitData:     item.GitPush,
+		GitData:     dictutil.StructToDict(item.GitPush),
 		User:        userInfo,
 		Attachments: attachments,
 	}

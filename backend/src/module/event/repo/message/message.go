@@ -1,12 +1,14 @@
 package message
 
 import (
+	"fmt"
 	"src/client/scyllaclient"
 	"src/util/dateutil"
 	"src/util/errutil"
 	"strings"
 	"time"
 
+	"src/common/ctype"
 	"src/common/setting"
 	"src/module/event/schema"
 
@@ -42,15 +44,16 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 	for count < pageSize && iter.MapScan(rowData) {
 		msg := schema.Message{
 			ID:         rowData["id"].(gocql.UUID).String(),
-			UserID:     uint(rowData["user_id"].(int)),
-			TaskID:     uint(rowData["task_id"].(int)),
-			ProjectID:  uint(rowData["project_id"].(int)),
+			UserID:     uint(rowData["user_id"].(int64)),
+			TaskID:     uint(rowData["task_id"].(int64)),
+			ProjectID:  uint(rowData["project_id"].(int64)),
 			Content:    rowData["content"].(string),
 			Type:       rowData["type"].(string),
 			UserName:   rowData["user_name"].(string),
 			UserAvatar: rowData["user_avatar"].(string),
 			UserColor:  rowData["user_color"].(string),
-			GitPush:    rowData["git_push"].(map[string]interface{}),
+			GitPush:    rowData["git_push"].(schema.GitPush),
+			GitPR:      rowData["git_pr"].(schema.GitPR),
 			CreatedAt:  dateutil.TimeToStr(rowData["created_at"].(time.Time)),
 			UpdatedAt:  dateutil.TimeToStr(rowData["updated_at"].(time.Time)),
 		}
@@ -77,70 +80,71 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 	return messages, nextPageState, nil
 }
 
-func (r Repo) Create(message schema.Message) (schema.Message, error) {
+func (r Repo) Create(data ctype.Dict) (schema.Message, error) {
 	defaultResult := schema.Message{}
 	client := scyllaclient.NewClient()
 	// defer client.Close()
 	id := scyllaclient.GenerateID()
+	taskID := data["task_id"].(uint64)
+	data["id"] = id
+	data["created_at"] = "toTimestamp(now())"
+	data["updated_at"] = "toTimestamp(now())"
 
-	queryStr := `
-		INSERT INTO event.messages (
-			id,
-			user_id,
-			task_id,
-			project_id,
-			content,
-			type,
-			user_name,
-			user_avatar,
-			user_color,
-			OPTIONAL_FIELD
-			created_at, updated_at
-		) VALUES (
-			?, ?, ?, ?, ?, ?, ?, ?, ?, OPTIONAL_VALUE
-			toTimestamp(now()), toTimestamp(now())
-		)
-	`
-	execParams := []interface{}{
-		id,
-		message.UserID,
-		message.TaskID,
-		message.ProjectID,
-		message.Content,
-		message.Type,
-		message.UserName,
-		message.UserAvatar,
-		message.UserColor,
-	}
-	_, exist := message.GitPush["id"]
-
-	if exist == false {
-		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_FIELD", "")
-		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_VALUE", "")
-	} else {
-		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_FIELD", "git_push, ")
-		queryStr = strings.ReplaceAll(queryStr, "OPTIONAL_VALUE", "?, ")
-		execParams = append(execParams, message.GitPush)
+	// extract fields from message
+	fields := []string{}
+	values := []string{}
+	params := []interface{}{}
+	for key, value := range data {
+		fields = append(fields, key)
+		values = append(values, "?")
+		params = append(params, value)
 	}
 
-	err := client.Exec(queryStr, execParams...)
+	queryStr := fmt.Sprintf(
+		"INSERT INTO event.messages (%s) VALUES (%s)",
+		strings.Join(fields, ", "),
+		strings.Join(values, ", "),
+	)
+
+	err := client.Exec(queryStr, params...)
 	if err != nil {
 		return defaultResult, errutil.NewGormError(err)
 	}
 
+	message, err := r.Retrieve(id.String(), uint(taskID))
+	if err != nil {
+		return defaultResult, errutil.NewGormError(err)
+	}
+	return message, nil
+}
+
+func (r Repo) Retrieve(id string, taskID uint) (schema.Message, error) {
+	client := scyllaclient.NewClient()
+	// defer client.Close()
+	row, err := client.Query(
+		"SELECT * FROM event.messages WHERE id = ? AND task_id = ?",
+		id, taskID,
+	)
+	if err != nil {
+		return schema.Message{}, errutil.NewGormError(err)
+	}
+	if len(row) == 0 {
+		return schema.Message{}, errutil.NewGormError(fmt.Errorf("Message not found"))
+	}
 	result := schema.Message{
-		ID:         id.String(),
-		UserID:     message.UserID,
-		TaskID:     message.TaskID,
-		ProjectID:  message.ProjectID,
-		Content:    message.Content,
-		Type:       message.Type,
-		UserName:   message.UserName,
-		UserAvatar: message.UserAvatar,
-		UserColor:  message.UserColor,
-		GitPush:    message.GitPush,
-		CreatedAt:  dateutil.TimeToStr(time.Now()),
-		UpdatedAt:  dateutil.TimeToStr(time.Now()),
+		ID:         id,
+		UserID:     uint(row[0]["user_id"].(int64)),
+		TaskID:     uint(row[0]["task_id"].(int64)),
+		ProjectID:  uint(row[0]["project_id"].(int64)),
+		Content:    row[0]["content"].(string),
+		Type:       row[0]["type"].(string),
+		UserName:   row[0]["user_name"].(string),
+		UserAvatar: row[0]["user_avatar"].(string),
+		UserColor:  row[0]["user_color"].(string),
+		GitPush:    row[0]["git_push"].(schema.GitPush),
+		GitPR:      row[0]["git_pr"].(schema.GitPR),
+		CreatedAt:  dateutil.TimeToStr(row[0]["created_at"].(time.Time)),
+		UpdatedAt:  dateutil.TimeToStr(row[0]["updated_at"].(time.Time)),
 	}
 	return result, nil
 }
