@@ -26,7 +26,7 @@ type GitPush struct {
 func (g *GitPush) New(data ctype.Dict) {
 	g.ID = dictutil.GetValue[string](data, "id")
 	g.GitBranch = dictutil.GetValue[string](data, "git_branch")
-	commits := dictutil.GetValue[[]ctype.Dict](data, "git_commits")
+	commits := dictutil.GetValue[[]map[string]interface{}](data, "git_commits")
 	for _, commit := range commits {
 		g.GitCommits = append(g.GitCommits, GitCommit{
 			ID:            dictutil.GetValue[string](commit, "id"),
@@ -35,6 +35,24 @@ func (g *GitPush) New(data ctype.Dict) {
 			CommitMessage: dictutil.GetValue[string](commit, "commit_message"),
 			CreatedAt:     dictutil.GetValue[time.Time](commit, "created_at"),
 		})
+	}
+}
+
+func (g *GitPush) ToDict() ctype.Dict {
+	commits := []ctype.Dict{}
+	for _, commit := range g.GitCommits {
+		commits = append(commits, ctype.Dict{
+			"id":             commit.ID,
+			"commit_id":      commit.CommitID,
+			"commit_url":     commit.CommitURL,
+			"commit_message": commit.CommitMessage,
+			"created_at":     commit.CreatedAt,
+		})
+	}
+	return ctype.Dict{
+		"id":          g.ID,
+		"git_branch":  g.GitBranch,
+		"git_commits": commits,
 	}
 }
 
@@ -56,6 +74,18 @@ func (g *GitPR) New(data ctype.Dict) {
 	g.URL = dictutil.GetValue[string](data, "url")
 	g.MergedAt = dictutil.GetValue[*time.Time](data, "merged_at")
 	g.State = dictutil.GetValue[string](data, "state")
+}
+
+func (g *GitPR) ToDict() ctype.Dict {
+	return ctype.Dict{
+		"id":          g.ID,
+		"title":       g.Title,
+		"from_branch": g.FromBranch,
+		"to_branch":   g.ToBranch,
+		"url":         g.URL,
+		"merged_at":   g.MergedAt,
+		"state":       g.State,
+	}
 }
 
 type Message struct {

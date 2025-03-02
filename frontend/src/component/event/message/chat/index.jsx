@@ -14,7 +14,9 @@ import {
     DeleteOutlined,
     MoreOutlined,
     ArrowUpOutlined,
-    MenuOutlined
+    MenuOutlined,
+    PullRequestOutlined,
+    MergeOutlined
 } from '@ant-design/icons';
 import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
@@ -535,22 +537,83 @@ export default function Chat({ project, defaultTask, onNav }) {
         );
     };
 
-    const renderGitPr = (item) => {
-        return "PR...";
+    const renderGitPrCreated = (item) => {
         return (
             <div>
-                <em>
-                    Git pushed: to branch: <strong>{item.git_data.git_branch}</strong>
-                </em>
-                <ul>
-                    {item.git_data.git_commits.map((commit, index) => (
-                        <li key={index}>
-                            <a href={commit.commit_url} target="_blank">
-                                {commit.commit_message}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
+                <div>
+                    <Button
+                        shape="round"
+                        color="green"
+                        variant="solid"
+                        size="small"
+                        icon={<PullRequestOutlined />}
+                    >
+                        Open
+                    </Button>
+                    &nbsp;&nbsp;
+                    <a href={item.git_data.url} target="_blank">
+                        {item.git_data.title}
+                    </a>
+                </div>
+                <div>
+                    <em>
+                        {item.git_data.from_branch} &rarr; {item.git_data.to_branch}
+                    </em>
+                </div>
+            </div>
+        );
+    };
+
+    const renderGitPrClosed = (item) => {
+        return (
+            <div>
+                <div>
+                    <Button
+                        shape="round"
+                        color="danger"
+                        variant="solid"
+                        size="small"
+                        icon={<PullRequestOutlined />}
+                    >
+                        Closed
+                    </Button>
+                    &nbsp;&nbsp;
+                    <a href={item.git_data.url} target="_blank">
+                        {item.git_data.title}
+                    </a>
+                </div>
+                <div>
+                    <em>
+                        {item.git_data.from_branch} &rarr; {item.git_data.to_branch}
+                    </em>
+                </div>
+            </div>
+        );
+    };
+
+    const renderGitPrMerged = (item) => {
+        return (
+            <div>
+                <div>
+                    <Button
+                        shape="round"
+                        color="purple"
+                        variant="solid"
+                        size="small"
+                        icon={<MergeOutlined />}
+                    >
+                        Merged
+                    </Button>
+                    &nbsp;&nbsp;
+                    <a href={item.git_data.url} target="_blank">
+                        {item.git_data.title}
+                    </a>
+                </div>
+                <div>
+                    <em>
+                        {item.git_data.from_branch} &rarr; {item.git_data.to_branch}
+                    </em>
+                </div>
             </div>
         );
     };
@@ -622,7 +685,13 @@ export default function Chat({ project, defaultTask, onNav }) {
                                             return renderGitPushed(item);
                                         }
                                         if (item.type === 'GIT_PR_CREATED') {
-                                            return renderGitPr(item);
+                                            return renderGitPrCreated(item);
+                                        }
+                                        if (item.type === 'GIT_PR_CLOSED') {
+                                            return renderGitPrClosed(item);
+                                        }
+                                        if (item.type === 'GIT_PR_MERGED') {
+                                            return renderGitPrMerged(item);
                                         }
                                         return <div>---INVALID TYPE---</div>;
                                     }}

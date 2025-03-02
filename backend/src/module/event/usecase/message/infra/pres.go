@@ -4,7 +4,6 @@ import (
 	accountSchema "src/module/account/schema"
 	"src/module/event"
 	pmSchema "src/module/event/schema"
-	"src/util/dictutil"
 )
 
 type UserInfo struct {
@@ -38,10 +37,10 @@ type ListResult struct {
 
 func getGitData(item pmSchema.Message) map[string]interface{} {
 	if item.Type == event.GIT_PUSHED {
-		return dictutil.StructToDict(item.GitPush)
+		return item.GitPush.ToDict()
 	}
-	if item.Type == event.GIT_PR_CREATED {
-		return dictutil.StructToDict(item.GitPR)
+	if item.Type == event.GIT_PR_CREATED || item.Type == event.GIT_PR_CLOSED || item.Type == event.GIT_PR_MERGED {
+		return item.GitPR.ToDict()
 	}
 	return map[string]interface{}{}
 }
