@@ -27,6 +27,8 @@ CREATE TYPE IF NOT EXISTS event.git_push (
 CREATE TYPE IF NOT EXISTS event.git_pr (
     id text,
     title text,
+    from_branch text,
+    to_branch text,
     url text,
     merged_at timestamp,
     state text,
