@@ -181,7 +181,7 @@ func (srv Service) HandlePushWebhook(
 		return nil, err
 	}
 
-	var gitCommits []map[string]interface{}
+	var gitCommits []ctype.Dict
 	for _, commit := range commits {
 		gitCommitData := ctype.Dict{
 			"GitPushID":     gitPush.ID,
@@ -197,8 +197,8 @@ func (srv Service) HandlePushWebhook(
 			return nil, err
 		}
 
-		gitCommit := map[string]interface{}{
-			"id":             result.ID,
+		gitCommit := ctype.Dict{
+			"id":             numberutil.UintToStr(result.ID),
 			"commit_id":      commit.ID,
 			"commit_url":     commit.URL,
 			"commit_message": commit.Message,
@@ -218,7 +218,7 @@ func (srv Service) HandlePushWebhook(
 			"user_avatar": *taskUser.UserAvatar,
 			"user_color":  *taskUser.UserColor,
 			"git_push": ctype.Dict{
-				"id":          gitPush.ID,
+				"id":          numberutil.UintToStr(gitPush.ID),
 				"git_branch":  gitBranch,
 				"git_commits": gitCommits,
 			},
@@ -260,15 +260,28 @@ func (srv Service) HandlePushWebhook(
 	return ctype.Dict{}, nil
 }
 
-func (srv Service) HandleOpenPrWebhook(
+func (srv Service) HandlePrWebhook(
 	installationID string,
 	gitRepo string,
 	pullRequest PullRequestInput,
+	action string,
 ) (ctype.Dict, error) {
-	fmt.Println("HandleOpenPrWebhook............")
-	messageType := event.GIT_PR_CREATED
+	fmt.Println("HandlePrWebhook............")
+
 	gitBranch := getBranchFromRef(pullRequest.Head.Ref)
 	toBranch := getBranchFromRef(pullRequest.Base.Ref)
+	mergedAt := pullRequest.MergedAt.TimePtr()
+
+	messageType := event.GIT_PR_CREATED
+
+	if action == GITHUB_WEBHOOK_PR_CLOSED {
+		if mergedAt == nil {
+			messageType = event.GIT_PR_CLOSED
+		} else {
+			messageType = event.GIT_PR_MERGED
+		}
+	}
+
 	taskUser, err := srv.gitRepo.GetTaskUser(gitRepo, gitBranch)
 	if err != nil {
 		return nil, err
@@ -288,7 +301,7 @@ func (srv Service) HandleOpenPrWebhook(
 			"from_branch": gitBranch,
 			"to_branch":   toBranch,
 			"url":         pullRequest.URL,
-			"merged_at":   pullRequest.MergedAt.TimePtr(),
+			"merged_at":   mergedAt,
 			"state":       pullRequest.State,
 		},
 	}

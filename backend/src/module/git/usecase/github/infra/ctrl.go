@@ -144,14 +144,15 @@ func Webhook(c echo.Context) error {
 		}
 	}
 
-	if data.PullRequest.ID != "" && data.Action == app.GITHUB_WEBHOOK_PR_OPENED {
+	if data.PullRequest.ID != "" {
 		installationID := data.Installation.ID
 		pullRequest := data.PullRequest
 		repoUid := data.Repository.FullName
-		_, err = srv.HandleOpenPrWebhook(
+		_, err = srv.HandlePrWebhook(
 			numberutil.UintToStr(installationID),
 			repoUid,
 			pullRequest,
+			data.Action,
 		)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err)
