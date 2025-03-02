@@ -2,6 +2,7 @@ package infra
 
 import (
 	accountSchema "src/module/account/schema"
+	"src/module/event"
 	pmSchema "src/module/event/schema"
 	"src/util/dictutil"
 )
@@ -33,6 +34,16 @@ type ListOutput struct {
 type ListResult struct {
 	Items     []ListOutput `json:"items"`
 	PageState []byte       `json:"page_state"`
+}
+
+func getGitData(item pmSchema.Message) map[string]interface{} {
+	if item.Type == event.GIT_PUSHED {
+		return dictutil.StructToDict(item.GitPush)
+	}
+	if item.Type == event.GIT_PR_CREATED {
+		return dictutil.StructToDict(item.GitPR)
+	}
+	return map[string]interface{}{}
 }
 
 func presItem(
@@ -67,7 +78,7 @@ func presItem(
 		Content:     item.Content,
 		Editable:    editable,
 		Type:        item.Type,
-		GitData:     dictutil.StructToDict(item.GitPush),
+		GitData:     getGitData(item),
 		User:        userInfo,
 		Attachments: attachments,
 	}

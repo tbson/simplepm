@@ -44,14 +44,19 @@ type CommitInput struct {
 }
 
 type PullRequestInput struct {
-	ID       customfield.StringDigit `json:"id"`
-	Title    string                  `json:"title"`
-	URL      string                  `json:"url"`
-	MergedAt *string                 `json:"merged_at"`
-	State    string                  `json:"state"`
-	Head     struct {
+	ID         customfield.StringDigit `json:"id"`
+	Title      string                  `json:"title"`
+	FromBranch string                  `json:"from_branch"`
+	ToBranch   string                  `json:"to_branch"`
+	URL        string                  `json:"url"`
+	MergedAt   *customfield.TimeStr    `json:"merged_at"`
+	State      string                  `json:"state"`
+	Head       struct {
 		Ref string `json:"ref"`
 	} `json:"head"`
+	Base struct {
+		Ref string `json:"ref"`
+	} `json:"base"`
 }
 
 type GithubWebhook struct {

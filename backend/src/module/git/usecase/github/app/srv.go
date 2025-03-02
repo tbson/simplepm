@@ -268,18 +268,11 @@ func (srv Service) HandleOpenPrWebhook(
 	fmt.Println("HandleOpenPrWebhook............")
 	messageType := event.GIT_PR_CREATED
 	gitBranch := getBranchFromRef(pullRequest.Head.Ref)
-	fmt.Println("gitBranch", gitBranch)
-	fmt.Println("gitRepo", gitRepo)
-	fmt.Println("pullRequest.ID", pullRequest.ID)
-	//print type of pullRequest.ID
-	fmt.Printf("Type of pullRequest.ID: %T\n", pullRequest.ID)
+	toBranch := getBranchFromRef(pullRequest.Base.Ref)
 	taskUser, err := srv.gitRepo.GetTaskUser(gitRepo, gitBranch)
 	if err != nil {
-		fmt.Println("srv.gitRepo.GetTaskUser")
-		fmt.Println(err)
 		return nil, err
 	}
-
 	messageData := ctype.Dict{
 		"task_id":     *taskUser.TaskID,
 		"project_id":  *taskUser.ProjectID,
@@ -290,17 +283,17 @@ func (srv Service) HandleOpenPrWebhook(
 		"user_avatar": *taskUser.UserAvatar,
 		"user_color":  *taskUser.UserColor,
 		"git_pr": ctype.Dict{
-			"id":        pullRequest.ID.String(),
-			"title":     pullRequest.Title,
-			"url":       pullRequest.URL,
-			"merged_at": pullRequest.MergedAt,
-			"state":     pullRequest.State,
+			"id":          pullRequest.ID.String(),
+			"title":       pullRequest.Title,
+			"from_branch": gitBranch,
+			"to_branch":   toBranch,
+			"url":         pullRequest.URL,
+			"merged_at":   pullRequest.MergedAt.TimePtr(),
+			"state":       pullRequest.State,
 		},
 	}
 	message, err := srv.messageRepo.Create(messageData)
 	if err != nil {
-		fmt.Println("srv.messageRepo.Create")
-		fmt.Println(err)
 		return nil, err
 	}
 

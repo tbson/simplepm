@@ -42,6 +42,12 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 	// Manually iterate over rows up to pageSize
 	count := 0
 	for count < pageSize && iter.MapScan(rowData) {
+		gitPush := schema.GitPush{}
+		gitPush.New(rowData["git_push"].(map[string]interface{}))
+
+		gitPr := schema.GitPR{}
+		gitPr.New(rowData["git_pr"].(map[string]interface{}))
+
 		msg := schema.Message{
 			ID:         rowData["id"].(gocql.UUID).String(),
 			UserID:     uint(rowData["user_id"].(int64)),
@@ -52,8 +58,8 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 			UserName:   rowData["user_name"].(string),
 			UserAvatar: rowData["user_avatar"].(string),
 			UserColor:  rowData["user_color"].(string),
-			GitPush:    rowData["git_push"].(schema.GitPush),
-			GitPR:      rowData["git_pr"].(schema.GitPR),
+			GitPush:    gitPush,
+			GitPR:      gitPr,
 			CreatedAt:  dateutil.TimeToStr(rowData["created_at"].(time.Time)),
 			UpdatedAt:  dateutil.TimeToStr(rowData["updated_at"].(time.Time)),
 		}
@@ -85,10 +91,24 @@ func (r Repo) Create(data ctype.Dict) (schema.Message, error) {
 	client := scyllaclient.NewClient()
 	// defer client.Close()
 	id := scyllaclient.GenerateID()
-	taskID := data["task_id"].(uint64)
+	taskID := data["task_id"].(uint)
 	data["id"] = id
-	data["created_at"] = "toTimestamp(now())"
-	data["updated_at"] = "toTimestamp(now())"
+
+	// check git_push key exist
+	if pushData, ok := data["git_push"]; ok {
+		dictData := pushData.(ctype.Dict)
+		gitPush := schema.GitPush{}
+		gitPush.New(dictData)
+		data["git_push"] = gitPush
+	}
+
+	// check git_pr key exist
+	if prData, ok := data["git_pr"]; ok {
+		dictData := prData.(ctype.Dict)
+		gitPR := schema.GitPR{}
+		gitPR.New(dictData)
+		data["git_pr"] = gitPR
+	}
 
 	// extract fields from message
 	fields := []string{}
@@ -101,11 +121,10 @@ func (r Repo) Create(data ctype.Dict) (schema.Message, error) {
 	}
 
 	queryStr := fmt.Sprintf(
-		"INSERT INTO event.messages (%s) VALUES (%s)",
+		"INSERT INTO event.messages (%s, created_at, updated_at) VALUES (%s, toTimestamp(now()), toTimestamp(now()))",
 		strings.Join(fields, ", "),
 		strings.Join(values, ", "),
 	)
-
 	err := client.Exec(queryStr, params...)
 	if err != nil {
 		return defaultResult, errutil.NewGormError(err)
@@ -131,6 +150,10 @@ func (r Repo) Retrieve(id string, taskID uint) (schema.Message, error) {
 	if len(row) == 0 {
 		return schema.Message{}, errutil.NewGormError(fmt.Errorf("Message not found"))
 	}
+	gitPush := schema.GitPush{}
+	gitPush.New(row[0]["git_push"].(map[string]interface{}))
+	gitPR := schema.GitPR{}
+	gitPR.New(row[0]["git_pr"].(map[string]interface{}))
 	result := schema.Message{
 		ID:         id,
 		UserID:     uint(row[0]["user_id"].(int64)),
@@ -141,8 +164,8 @@ func (r Repo) Retrieve(id string, taskID uint) (schema.Message, error) {
 		UserName:   row[0]["user_name"].(string),
 		UserAvatar: row[0]["user_avatar"].(string),
 		UserColor:  row[0]["user_color"].(string),
-		GitPush:    row[0]["git_push"].(schema.GitPush),
-		GitPR:      row[0]["git_pr"].(schema.GitPR),
+		GitPush:    gitPush,
+		GitPR:      gitPR,
 		CreatedAt:  dateutil.TimeToStr(row[0]["created_at"].(time.Time)),
 		UpdatedAt:  dateutil.TimeToStr(row[0]["updated_at"].(time.Time)),
 	}

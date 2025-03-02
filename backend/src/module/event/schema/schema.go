@@ -23,12 +23,39 @@ type GitPush struct {
 	GitCommits []GitCommit `json:"git_commits" cql:"git_commits"`
 }
 
+func (g *GitPush) New(data ctype.Dict) {
+	g.ID = dictutil.GetValue[string](data, "id")
+	g.GitBranch = dictutil.GetValue[string](data, "git_branch")
+	commits := dictutil.GetValue[[]ctype.Dict](data, "git_commits")
+	for _, commit := range commits {
+		g.GitCommits = append(g.GitCommits, GitCommit{
+			ID:            dictutil.GetValue[string](commit, "id"),
+			CommitID:      dictutil.GetValue[string](commit, "commit_id"),
+			CommitURL:     dictutil.GetValue[string](commit, "commit_url"),
+			CommitMessage: dictutil.GetValue[string](commit, "commit_message"),
+			CreatedAt:     dictutil.GetValue[time.Time](commit, "created_at"),
+		})
+	}
+}
+
 type GitPR struct {
-	ID       string  `json:"id" cql:"id"`
-	Title    string  `json:"title" cql:"title"`
-	URL      string  `json:"url" cql:"url"`
-	MergedAt *string `json:"merged_at" cql:"merged_at"`
-	State    string  `json:"state" cql:"state"`
+	ID         string     `json:"id" cql:"id"`
+	Title      string     `json:"title" cql:"title"`
+	FromBranch string     `json:"from_branch" cql:"from_branch"`
+	ToBranch   string     `json:"to_branch" cql:"to_branch"`
+	URL        string     `json:"url" cql:"url"`
+	MergedAt   *time.Time `json:"merged_at" cql:"merged_at"`
+	State      string     `json:"state" cql:"state"`
+}
+
+func (g *GitPR) New(data ctype.Dict) {
+	g.ID = dictutil.GetValue[string](data, "id")
+	g.Title = dictutil.GetValue[string](data, "title")
+	g.FromBranch = dictutil.GetValue[string](data, "from_branch")
+	g.ToBranch = dictutil.GetValue[string](data, "to_branch")
+	g.URL = dictutil.GetValue[string](data, "url")
+	g.MergedAt = dictutil.GetValue[*time.Time](data, "merged_at")
+	g.State = dictutil.GetValue[string](data, "state")
 }
 
 type Message struct {
