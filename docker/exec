@@ -62,7 +62,7 @@ help () {
     echo "restart           :  down then up docker instance"
     echo "bserver           :  run phoenix dev server"
     echo "fserver           :  run frontendpack dev server"
-    echo "yarn              :  run yarn on frontend"
+    echo "bun               :  run bun on frontend"
     echo "npx               :  run npx on frontend"
     echo "command <args>    :   run spefic command on backend/src/command"
     echo "backend <args>    :  execute random command on backend, ex: ./exec backend ls"
@@ -85,12 +85,12 @@ elif [ "$FIRST_ARG" == "dumpmessages" ]; then
     docker compose exec "$NAME"_backend bash -c 'echo {} > util/localeutil/locales/translate.vi.json'
 elif [ "$FIRST_ARG" == "goi18n" ]; then
     docker compose exec "$NAME"_backend goi18n $ARGS
-elif [ "$FIRST_ARG" == "yarn" ]; then
-    docker compose exec "$NAME"_frontend yarn $ARGS
+elif [ "$FIRST_ARG" == "bun" ]; then
+    docker compose exec "$NAME"_frontend bun $ARGS
 elif [ "$FIRST_ARG" == "npx" ]; then
     docker compose exec "$NAME"_frontend npx $ARGS
 elif [ "$FIRST_ARG" == "fserver" ]; then
-    docker compose exec "$NAME"_frontend yarn dev
+    docker compose exec "$NAME"_frontend bun run dev
 elif [ "$FIRST_ARG" == "fmakemessages" ]; then
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag update src/locale/vi.po src
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag update src/locale/en.po src
@@ -98,7 +98,7 @@ elif [ "$FIRST_ARG" == "fdumpmessages" ]; then
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/vi.po > ../frontend/src/locale/vi.po.json
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/en.po > ../frontend/src/locale/en.po.json
 elif [ "$FIRST_ARG" == "fupgrade" ]; then
-    docker compose exec "$NAME"_frontend yarn upgrade-interactive --latest
+    docker compose exec "$NAME"_frontend bun update
 elif [ "$FIRST_ARG" == "go" ]; then
     docker compose exec "$NAME"_backend go $ARGS
 elif [ "$FIRST_ARG" == "startworker" ]; then
