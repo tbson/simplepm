@@ -10,16 +10,8 @@ import { urls, messages } from './config';
 import ProfileSummary from './summary';
 import UpdateProfile from './update_profile';
 import ChangePwd from './change_pwd';
+import {emptyProfile} from './const';
 
-export const emptyProfile = {
-    id: 0,
-    email: '',
-    phone_number: '',
-    first_name: '',
-    last_name: '',
-    title_label: '',
-    list_parent: []
-};
 
 export default function Profile() {
     const { notification } = App.useApp();

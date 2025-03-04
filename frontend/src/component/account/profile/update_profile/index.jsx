@@ -4,7 +4,7 @@ import { t } from "ttag";
 import { Modal } from "antd";
 import Util from "service/helper/util";
 import Form from "./form";
-import { emptyProfile } from "..";
+import { emptyProfile } from "../const";
 
 export class Service {
     static get toggleEvent() {
