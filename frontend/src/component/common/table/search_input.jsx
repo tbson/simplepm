@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Input } from 'antd';
 import { t } from 'ttag';
 const { Search } = Input;

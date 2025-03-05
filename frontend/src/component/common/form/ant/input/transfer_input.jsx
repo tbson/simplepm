@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Transfer } from 'antd';
 
 export class Service {

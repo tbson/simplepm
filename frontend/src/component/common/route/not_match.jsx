@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { t } from 'ttag';
 import { Result, Button } from 'antd';
 import { HomeFilled } from '@ant-design/icons';

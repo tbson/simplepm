@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { t } from 'ttag';
 import { Modal } from 'antd';
 import Util from 'service/helper/util';
