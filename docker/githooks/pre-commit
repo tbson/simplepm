@@ -1,13 +1,25 @@
 #!/bin/sh
-echo "Running go vet..."
-
-# Run go vet on all packages
-(cd backend/src && go vet ./...)
-
-# Check if go vet returned any errors
+echo "Running Go tools..."
+# Run go vet and go fmt on all packages in backend
+(cd backend/src && go vet ./... && go fmt ./...)
+# Check if go vet or go fmt returned any errors
 if [ $? -ne 0 ]; then
-    echo "Commit aborted: go vet found issues in the code."
+    echo "Commit aborted: Go tools found issues in the backend code."
     exit 1
 else
-    echo "Go vet completed successfully. No issues found."
+    echo "Go tools completed successfully. No issues found in backend."
 fi
+
+echo "Running ESLint..."
+# Run ESLint on frontend code
+(npx eslint .)
+# Check if ESLint returned any errors
+if [ $? -ne 0 ]; then
+    echo "Commit aborted: ESLint found issues in the frontend code."
+    exit 1
+else
+    echo "ESLint completed successfully. No issues found in frontend."
+fi
+
+echo "All checks passed successfully!"
+exit 0
