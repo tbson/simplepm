@@ -59,7 +59,7 @@ export default class StorageUtil {
                 return '';
             }
             return String(value);
-        } catch (error) {
+        } catch (_error) {
             return '';
         }
     }
@@ -95,7 +95,7 @@ export default class StorageUtil {
     static parseJson(input) {
         try {
             return JSON.parse(input);
-        } catch (error) {
+        } catch (_error) {
             return String(input);
         }
     }

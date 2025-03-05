@@ -18,6 +18,7 @@ import Dialog from './dialog';
 import { variableFilterSt } from 'component/config/variable/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
+
 export default function VariableTable() {
     const { notification } = App.useApp();
     const variableFilter = useAtomValue(variableFilterSt);

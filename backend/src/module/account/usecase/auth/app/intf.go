@@ -7,6 +7,10 @@ import (
 	"src/module/account/schema"
 )
 
+type AuthService interface {
+	GetAuthUrl(tenantUid string, nextParam string) (string, error)
+}
+
 type PemModulesActionsMap map[string][]string
 
 type AuthClientInfo struct {

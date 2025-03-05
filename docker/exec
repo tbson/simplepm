@@ -98,7 +98,7 @@ elif [ "$FIRST_ARG" == "fdumpmessages" ]; then
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/vi.po > ../frontend/src/locale/vi.po.json
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag po2json src/locale/en.po > ../frontend/src/locale/en.po.json
 elif [ "$FIRST_ARG" == "fupgrade" ]; then
-    docker compose exec "$NAME"_frontend bun update
+    docker compose exec "$NAME"_frontend bun update --latest
 elif [ "$FIRST_ARG" == "go" ]; then
     docker compose exec "$NAME"_backend go $ARGS
 elif [ "$FIRST_ARG" == "startworker" ]; then

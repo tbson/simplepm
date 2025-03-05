@@ -10,8 +10,7 @@ import { urls, messages } from './config';
 import ProfileSummary from './summary';
 import UpdateProfile from './update_profile';
 import ChangePwd from './change_pwd';
-import {emptyProfile} from './const';
-
+import { emptyProfile } from './const';
 
 export default function Profile() {
     const { notification } = App.useApp();

@@ -37,6 +37,19 @@ func CheckAuthUrl(c echo.Context) error {
 	return c.JSON(http.StatusOK, ctype.Dict{})
 }
 
+func CheckAuthUrlCtrl(srv app.AuthService) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		tenantUid := c.Param("tenantUid")
+
+		_, err := srv.GetAuthUrl(tenantUid, "")
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err)
+		}
+
+		return c.JSON(http.StatusOK, ctype.Dict{})
+	}
+}
+
 func GetAuthUrl(c echo.Context) error {
 	tenantUid := c.Param("tenantUid")
 	nextParam := c.QueryParam("next")

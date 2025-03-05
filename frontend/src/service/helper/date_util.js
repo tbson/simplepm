@@ -24,7 +24,7 @@ export default class DateUtil {
     static toIsoDate(date) {
         try {
             return format(date, DATE_ISO_FORMAT);
-        } catch (e) {
+        } catch (_e) {
             return null;
         }
     }
@@ -38,7 +38,7 @@ export default class DateUtil {
     static toIsoDateTime(date) {
         try {
             return format(date, DATETIME_ISO_FORMAT);
-        } catch (e) {
+        } catch (_e) {
             return null;
         }
     }

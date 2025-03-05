@@ -22,7 +22,7 @@ export default class PemUtil {
                 }
             }
             return false;
-        } catch (e) {
+        } catch (_e) {
             return false;
         }
     }
