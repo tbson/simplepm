@@ -244,7 +244,6 @@ export default function UserTable() {
                         <RemoveSelectedBtn ids={ids} onClick={onBulkDelete} />
                     </PemCheck>
                 </Col>
-                <Col span={12} className="right"></Col>
             </Row>
 
             <SearchInput onChange={handleSearching} />
