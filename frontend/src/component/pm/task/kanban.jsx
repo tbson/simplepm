@@ -1,6 +1,5 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { App, Row, Col, Button } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { App, Button } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { useAtomValue } from 'jotai';
 import { useNavigate } from 'react-router';
@@ -17,7 +16,7 @@ import { taskOptionSt } from 'component/pm/task/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 export default function TaskKanban({ project }) {
-    const projectId = project.id
+    const projectId = project.id;
     const { notification } = App.useApp();
     const navigate = useNavigate();
     const taskOption = useAtomValue(taskOptionSt);
@@ -166,7 +165,7 @@ export default function TaskKanban({ project }) {
     };
 
     const onChangeProject = (data, _id) => {
-        setProjectTitle(data.title)
+        setProjectTitle(data.title);
         Util.event.dispatch('FETCH_BOOKMARK', {});
     };
 

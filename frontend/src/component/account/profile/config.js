@@ -1,13 +1,13 @@
-import { t } from "ttag";
-import RequestUtil from "service/helper/request_util";
+import { t } from 'ttag';
+import RequestUtil from 'service/helper/request_util';
 
 const urlMap = {
     base: {
-        prefix: "account",
+        prefix: 'account',
         endpoints: {
-            crud: "",
-            profile: "profile",
-            password: "profile/password"
+            crud: '',
+            profile: 'profile',
+            password: 'profile/password'
         }
     }
 };
@@ -23,12 +23,12 @@ export const messages = {
 
 export const emptyRecord = {
     id: 0,
-    last_name: "",
-    first_name: "",
-    email: "",
-    phone_number: "",
-    github_id: "",
-    gitlab_id: "",
+    last_name: '',
+    first_name: '',
+    email: '',
+    phone_number: '',
+    github_id: '',
+    gitlab_id: '',
     groups: []
 };
 

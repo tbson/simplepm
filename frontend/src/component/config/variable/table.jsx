@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { App, Row, Col, Table } from 'antd';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
@@ -17,7 +16,6 @@ import RequestUtil from 'service/helper/request_util';
 import Dialog from './dialog';
 import { variableFilterSt } from 'component/config/variable/state';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
-
 
 export default function VariableTable() {
     const { notification } = App.useApp();

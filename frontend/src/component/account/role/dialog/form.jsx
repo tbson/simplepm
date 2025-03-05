@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { App, Form, Input } from 'antd';
 import { useParams } from 'react-router';

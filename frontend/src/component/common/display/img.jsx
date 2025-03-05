@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image } from 'antd';
-const Img = ({ src, width=200, height=200, preview=true }) => (
+const Img = ({ src, width = 200, height = 200, preview = true }) => (
     <Image
         preview={preview}
         width={width || 'auto'}

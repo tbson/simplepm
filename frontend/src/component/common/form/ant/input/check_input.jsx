@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Checkbox } from "antd";
+import * as React from 'react';
+import { Checkbox } from 'antd';
 
 /**
  * CheckInput.
@@ -8,7 +8,7 @@ import { Checkbox } from "antd";
  * @param {number[]} props.value
  * @param {function} props.onChange
  */
-export default function CheckInput({ value, onChange, disabled=false }) {
+export default function CheckInput({ value, onChange, disabled = false }) {
     return (
         <Checkbox
             disabled={disabled}

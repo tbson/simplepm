@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { useSetAtom } from 'jotai';
 import { App, Badge, Button, Flex, Avatar, Dropdown, Space } from 'antd';
@@ -65,10 +64,10 @@ export default function Chat({ project, defaultTask, onNav }) {
     const { styles } = useStyle();
 
     // ==================== State ====================
-    const [headerOpen, setHeaderOpen] = React.useState(false);
-    const [content, setContent] = React.useState('');
-    const [taskList, setTaskList] = React.useState([]);
-    const [attachedFiles, setAttachedFiles] = React.useState([]);
+    const [headerOpen, setHeaderOpen] = useState(false);
+    const [content, setContent] = useState('');
+    const [taskList, setTaskList] = useState([]);
+    const [attachedFiles, setAttachedFiles] = useState([]);
 
     const navigateTo = NavUtil.navigateTo(navigate);
     // ==================== Runtime ====================

@@ -1,8 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import { t } from 'ttag';
 import { App, Button, Row, Col, Form, Input } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
-import StorageUtil from "service/helper/storage_util";
+import StorageUtil from 'service/helper/storage_util';
 import FormUtil from 'service/helper/form_util';
 import { signupUrls } from 'component/auth/config';
 
@@ -56,18 +56,11 @@ export default function SignupForm({ onChange, children }) {
                 <Input />
             </Form.Item>
 
-            <Form.Item
-                name="email"
-                label={t`Email`}
-                rules={[FormUtil.ruleRequired()]}
-            >
+            <Form.Item name="email" label={t`Email`} rules={[FormUtil.ruleRequired()]}>
                 <Input />
             </Form.Item>
 
-            <Form.Item
-                name="mobile"
-                label={t`Mobile`}
-            >
+            <Form.Item name="mobile" label={t`Mobile`}>
                 <Input />
             </Form.Item>
 

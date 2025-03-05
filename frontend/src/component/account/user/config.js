@@ -6,13 +6,13 @@ const urlMap = {
         prefix: 'account/user',
         endpoints: {
             crud: '',
-            option: 'option',
+            option: 'option'
         }
     },
     lock: {
         prefix: 'account/lock-user',
         endpoints: {
-            lock: '',
+            lock: ''
         }
     }
 };

@@ -32,5 +32,5 @@ export const getLabels = () => ({
     auth_client_id: t`Auth client`,
     uid: t`UID`,
     title: t`Title`,
-    avatar: t`Avatar`,
+    avatar: t`Avatar`
 });

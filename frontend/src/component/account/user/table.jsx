@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { t } from 'ttag';
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { App, Row, Col, Table, Button, Flex, Tooltip } from 'antd';
 import { LockOutlined, UnlockOutlined, GithubOutlined } from '@ant-design/icons';

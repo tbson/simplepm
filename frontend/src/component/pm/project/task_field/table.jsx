@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { App, Skeleton } from 'antd';
 import RequestUtil from 'service/helper/request_util';
 import Util from 'service/helper/util';

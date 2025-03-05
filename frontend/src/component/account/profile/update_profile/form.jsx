@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { t } from 'ttag';
 import { App, Form, Input, Row, Col } from 'antd';
 import FormUtil from 'service/helper/form_util';
@@ -35,7 +34,7 @@ export default function UpdateProfileForm({ data, onChange }) {
             name: 'last_name',
             label: t`Last Name`,
             rules: [FormUtil.ruleRequired()]
-        },
+        }
     };
 
     return (

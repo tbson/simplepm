@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { t } from 'ttag';
 import { App, Button } from 'antd';
 import Util from 'service/helper/util';

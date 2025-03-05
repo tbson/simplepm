@@ -1,6 +1,5 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Outlet, NavLink } from 'react-router';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Outlet } from 'react-router';
 import { t } from 'ttag';
 import { Layout, Menu, Badge } from 'antd';
 import Icon, {
@@ -46,15 +45,15 @@ export default function UserLayout() {
     }, [collapsed]);
 
     useEffect(() => {
-        Util.event.listen("FETCH_BOOKMARK", handleFetchBookmark);
+        Util.event.listen('FETCH_BOOKMARK', handleFetchBookmark);
         return () => {
-            Util.event.remove("FETCH_BOOKMARK", handleFetchBookmark);
+            Util.event.remove('FETCH_BOOKMARK', handleFetchBookmark);
         };
     }, []);
 
     const handleFetchBookmark = () => {
         getBookmarks();
-    }
+    };
 
     const navigateTo = NavUtil.navigateTo(navigate);
 

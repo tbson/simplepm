@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useAtomValue } from 'jotai';
 import { App, Form, Input, Row, Col } from 'antd';
 import Util from 'service/helper/util';
@@ -65,10 +64,7 @@ export default function TenantForm({ data, onChange }) {
         >
             <Row gutter={40}>
                 <Col span={8}>
-                    <Form.Item
-                        name="avatar"
-                        label={labels.avatar}
-                    >
+                    <Form.Item name="avatar" label={labels.avatar}>
                         <ImgInput />
                     </Form.Item>
                 </Col>

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { App, Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';

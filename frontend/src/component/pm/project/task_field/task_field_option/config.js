@@ -12,5 +12,5 @@ export const getMessages = () => ({
 export const getLabels = () => ({
     title: t`Title`,
     description: t`Description`,
-    color: t`Color`,
+    color: t`Color`
 });

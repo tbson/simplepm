@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useAtom } from 'jotai';
 import PageHeading from 'component/common/page_heading';
 import RequestUtil from 'service/helper/request_util';

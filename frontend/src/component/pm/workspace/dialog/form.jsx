@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { App, Form, Input, Row, Col, InputNumber } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
@@ -14,7 +13,7 @@ const emptyRecord = {
     tenant_id: null,
     title: '',
     description: '',
-    order: 0,
+    order: 0
 };
 
 /**
@@ -64,10 +63,7 @@ export default function WorkspaceForm({ data, onChange }) {
         >
             <Row gutter={40}>
                 <Col span={8}>
-                    <Form.Item
-                        name="avatar"
-                        label={labels.avatar}
-                    >
+                    <Form.Item name="avatar" label={labels.avatar}>
                         <ImgInput />
                     </Form.Item>
                 </Col>
@@ -77,20 +73,14 @@ export default function WorkspaceForm({ data, onChange }) {
                         label={labels.title}
                         rules={[FormUtil.ruleRequired()]}
                     >
-                        <Input ref={inputRef}/>
+                        <Input ref={inputRef} />
                     </Form.Item>
 
-                    <Form.Item
-                        name="description"
-                        label={labels.description}
-                    >
+                    <Form.Item name="description" label={labels.description}>
                         <TextArea />
                     </Form.Item>
 
-                    <Form.Item
-                        name="order"
-                        label={labels.order}
-                    >
+                    <Form.Item name="order" label={labels.order}>
                         <InputNumber className="full-width" />
                     </Form.Item>
                 </Col>

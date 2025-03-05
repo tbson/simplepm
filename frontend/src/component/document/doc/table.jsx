@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createStyles } from 'antd-style';
 import { useNavigate } from 'react-router';
 import { App, Button, Dropdown, List } from 'antd';
@@ -26,7 +25,7 @@ export default function DocTable({ taskId, showControl = false }) {
     const [list, setList] = useState([]);
     const { styles } = useStyle();
 
-    React.useEffect(() => {
+    useEffect(() => {
         getList();
     }, [taskId]);
 

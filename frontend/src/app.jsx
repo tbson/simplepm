@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useLocale } from 'ttag';
 import { App, ConfigProvider } from 'antd';
 import { Outlet } from 'react-router';
@@ -15,17 +14,19 @@ const themeConfig = {
         fontFamily: 'Calibri, Arial, sans-serif',
         colorPrimary: '#255891',
         colorLink: '#255891',
-        borderRadius: 3,
+        borderRadius: 3
     }
 };
 
 export default function MainApp() {
     useEffect(() => {
-        LocaleUtil.fetchLocales().then(() => {
-            useLocale(LocaleUtil.getLocale());
-        }).catch((err) => {
-            console.error(err);
-        });
+        LocaleUtil.fetchLocales()
+            .then(() => {
+                useLocale(LocaleUtil.getLocale());
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     }, []);
 
     return (

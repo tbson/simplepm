@@ -1,6 +1,6 @@
-import * as React from "react";
-import { Input } from "antd";
-import { t } from "ttag";
+import * as React from 'react';
+import { Input } from 'antd';
+import { t } from 'ttag';
 const { Search } = Input;
 
 /**
@@ -22,7 +22,7 @@ export default function SearchInput({ show = true, onChange }) {
         <div>
             <Search
                 name="keyword"
-                placeholder={t`Search` + "..."}
+                placeholder={t`Search` + '...'}
                 onSearch={onChange}
             />
         </div>

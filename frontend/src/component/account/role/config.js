@@ -23,5 +23,5 @@ export const getMessages = () => ({
 
 export const getLabels = () => ({
     title: t`Title`,
-    pem_ids: t`Permissions`,
+    pem_ids: t`Permissions`
 });

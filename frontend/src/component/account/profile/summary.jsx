@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React from 'react';
 import { t } from 'ttag';
-import { GithubOutlined, GitlabOutlined } from '@ant-design/icons';
 import Img from 'component/common/display/img';
 
 export default function ProfileSummary(data) {

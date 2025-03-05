@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import '@ant-design/v5-patch-for-react-19';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
@@ -8,7 +8,7 @@ import 'service/styles/main.css';
 import router from './router';
 
 window.refreshTokenUtil = new RefreshTokenUtil();
-window.socConn = null
+window.socConn = null;
 
 createRoot(document.getElementById('root')).render(
     <Provider>

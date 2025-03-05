@@ -1,7 +1,7 @@
-import StorageUtil from "service/helper/storage_util";
+import StorageUtil from 'service/helper/storage_util';
 
 export default class PemUtil {
-    static hasPermit(pem_group, pem = "view") {
+    static hasPermit(pem_group, pem = 'view') {
         try {
             const permissions = StorageUtil.getPermissions();
             return permissions[pem_group].includes(pem);
@@ -12,12 +12,12 @@ export default class PemUtil {
 
     static canView(pem_groups) {
         try {
-            if (typeof pem_groups === "string") {
+            if (typeof pem_groups === 'string') {
                 pem_groups = [pem_groups];
             }
             const permissions = StorageUtil.getPermissions();
             for (const pem_group of pem_groups) {
-                if (permissions[pem_group].includes("list")) {
+                if (permissions[pem_group].includes('list')) {
                     return true;
                 }
             }

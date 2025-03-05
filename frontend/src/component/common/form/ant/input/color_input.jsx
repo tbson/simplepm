@@ -1,7 +1,6 @@
 import React from 'react';
-import { Row, Col, Divider } from 'antd';
+import { Row, Col, Divider, ColorPicker, theme } from 'antd';
 import { generate, green, presetPalettes, red } from '@ant-design/colors';
-import { ColorPicker, theme } from 'antd';
 const genPresets = (presets = presetPalettes) =>
     Object.entries(presets).map(([label, colors]) => ({
         label,

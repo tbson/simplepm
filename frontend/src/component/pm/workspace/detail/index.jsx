@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { t } from 'ttag';
-import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import { useParams } from 'react-router';
 import { App, Divider, Button } from 'antd';
@@ -37,13 +36,14 @@ export default function Workspace() {
 
     const getItem = (workspace_id) => {
         Util.toggleGlobalLoading();
-        return RequestUtil.apiCall(`${urls.crud}${workspace_id}`).then((resp) => {
-            setItem(resp.data);
-        })
-        .catch(RequestUtil.displayError(notification))
-        .finally(() => {
-            Util.toggleGlobalLoading(false);
-        })
+        return RequestUtil.apiCall(`${urls.crud}${workspace_id}`)
+            .then((resp) => {
+                setItem(resp.data);
+            })
+            .catch(RequestUtil.displayError(notification))
+            .finally(() => {
+                Util.toggleGlobalLoading(false);
+            });
     };
 
     const onChange = (data, _id) => {

@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { t } from 'ttag';
-import { useState, useEffect } from 'react';
 import { App, Modal, Button } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
@@ -22,7 +21,7 @@ const emptyData = {
     title: '',
     description: '',
     task_fields: [],
-    task_users: [],
+    task_users: []
 };
 
 /**

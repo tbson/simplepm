@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { t } from 'ttag';
 import { Button, Tooltip } from 'antd';
 import {
@@ -10,7 +10,13 @@ import {
     PlusOutlined
 } from '@ant-design/icons';
 
-export function IconButton({ icon, tootip, onClick, type="default", disabled=false }) {
+export function IconButton({
+    icon,
+    tootip,
+    onClick,
+    type = 'default',
+    disabled = false
+}) {
     return (
         <Tooltip title={tootip}>
             <Button

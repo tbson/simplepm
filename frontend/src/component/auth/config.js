@@ -1,16 +1,16 @@
-import RequestUtil from "service/helper/request_util";
+import RequestUtil from 'service/helper/request_util';
 
 const urlMap = {
     base: {
-        prefix: "account/auth/sso",
+        prefix: 'account/auth/sso',
         endpoints: {
-            loginCheck: "login/check",
+            loginCheck: 'login/check'
         }
     },
     signup: {
-        prefix: "account/signup-tenant",
+        prefix: 'account/signup-tenant',
         endpoints: {
-            signup: "",
+            signup: ''
         }
     }
 };
@@ -18,7 +18,7 @@ const urlMap = {
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const signupUrls = RequestUtil.prefixMapValues(urlMap.signup);
 
-const headingTxt = "Hồ sơ";
+const headingTxt = 'Hồ sơ';
 export const messages = {
     heading: headingTxt
 };

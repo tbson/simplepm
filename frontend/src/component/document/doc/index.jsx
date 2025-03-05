@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router';
 import { createStyles } from 'antd-style';
 import { App, Breadcrumb, Skeleton } from 'antd';
@@ -102,9 +101,14 @@ export default function Doc() {
                 />
             );
         }
-        return <DocView data={doc} toggleMode={() => {
-            setMode(MODE.EDIT);
-        }}/>;
+        return (
+            <DocView
+                data={doc}
+                toggleMode={() => {
+                    setMode(MODE.EDIT);
+                }}
+            />
+        );
     };
 
     return (

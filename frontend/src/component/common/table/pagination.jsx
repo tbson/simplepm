@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { t } from 'ttag';
 import { Button, Divider } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
@@ -53,7 +53,7 @@ export default function Pagination({ next, prev, onChange }) {
     return (
         <div className="right">
             <ActionBtn type="prev" page={prev} onChange={onChange} />
-            {(next && prev) ? <Divider type="vertical" /> : null}
+            {next && prev ? <Divider type="vertical" /> : null}
             <ActionBtn type="next" page={next} onChange={onChange} />
         </div>
     );

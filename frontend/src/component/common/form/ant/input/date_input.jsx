@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import DatePicker from 'component/common/form/ant/date_picker';
 import { DATE_REABLE_FORMAT } from 'service/helper/date_util';
 

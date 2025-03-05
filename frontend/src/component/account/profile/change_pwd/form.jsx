@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { t } from 'ttag';
 import { App, Row, Col, Form, Input } from 'antd';
 import FormUtil from 'service/helper/form_util';

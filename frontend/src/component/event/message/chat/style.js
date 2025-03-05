@@ -95,7 +95,7 @@ export function getStyles(createStyles) {
                 font-weight: bold;
                 background: ${token.colorBgLayout}80;
                 border-bottom: 1px solid ${token.colorBorder};
-            `,
+            `
         };
     });
 }

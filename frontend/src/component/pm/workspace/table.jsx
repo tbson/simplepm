@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router';
 import { App, Row, Col, Table, Flex } from 'antd';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
@@ -157,7 +156,7 @@ export default function WorkspaceTable() {
             key: 'description',
             title: labels.description,
             dataIndex: 'description'
-        }, 
+        },
         {
             key: 'avatar',
             title: labels.avatar,

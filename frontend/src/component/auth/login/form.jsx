@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { t } from 'ttag';
 import { App, Button, Row, Col, Form, Input } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';

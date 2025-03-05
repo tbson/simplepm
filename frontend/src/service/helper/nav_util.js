@@ -1,5 +1,5 @@
-import StorageUtil from "service/helper/storage_util";
-import RequestUtil from "service/helper/request_util";
+import StorageUtil from 'service/helper/storage_util';
+import RequestUtil from 'service/helper/request_util';
 
 export default class NavUtil {
     /**
@@ -8,13 +8,13 @@ export default class NavUtil {
      * @param {Navigate} navigate
      */
     static navigateTo(navigate) {
-        return (url = "/") => {
+        return (url = '/') => {
             navigate(url);
         };
     }
 
     static clearAuthData() {
-        StorageUtil.removeStorage("auth");
+        StorageUtil.removeStorage('auth');
     }
 
     /**
@@ -40,7 +40,7 @@ export default class NavUtil {
     static cleanAndMoveToLoginPage(navigate) {
         const currentUrl = window.location.pathname;
         NavUtil.clearAuthData();
-        let loginUrl = "/login";
+        let loginUrl = '/login';
         if (currentUrl) {
             loginUrl = `${loginUrl}?next=${currentUrl}`;
         }

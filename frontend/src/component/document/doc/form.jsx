@@ -1,7 +1,6 @@
-import * as React from 'react';
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useParams, Link } from 'react-router';
-import { App, Form, Input, Button, Row, Col } from 'antd';
+import { App, Form, Input, Button } from 'antd';
 import { createStyles } from 'antd-style';
 import { LeftOutlined, CheckOutlined } from '@ant-design/icons';
 import Util from 'service/helper/util';

@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 import { t } from 'ttag';
-import { Result, Button } from "antd";
-import { HomeFilled } from "@ant-design/icons";
-import { Link } from "react-router";
+import { Result, Button } from 'antd';
+import { HomeFilled } from '@ant-design/icons';
+import { Link } from 'react-router';
 
 export default function AuthError() {
     return (
@@ -12,7 +12,7 @@ export default function AuthError() {
             subTitle={t`Sorry, there was a problem with authentication. Please contact the administrator.`}
             extra={
                 <Link to="/">
-                    {" "}
+                    {' '}
                     <Button type="primary" icon={<HomeFilled />}>
                         {t`Back to Home`}
                     </Button>
@@ -22,4 +22,4 @@ export default function AuthError() {
     );
 }
 
-AuthError.displayName = "AuthError";
+AuthError.displayName = 'AuthError';

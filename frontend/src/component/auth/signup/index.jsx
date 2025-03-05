@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { t } from 'ttag';
 import { Row, Col, Card, Button, Divider } from 'antd';
@@ -22,7 +21,7 @@ export default function Signup() {
     }, []);
 
     const handleSignup = () => {
-        navigateTo("/verify-email");
+        navigateTo('/verify-email');
     };
 
     return (

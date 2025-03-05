@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import PageHeading from 'component/common/page_heading';
 import { getMessages } from './config';
 import Table from './table';

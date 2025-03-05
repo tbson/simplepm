@@ -6,15 +6,15 @@ const urlMap = {
         prefix: 'document/doc',
         endpoints: {
             crud: '',
-            createDocFromLink: 'create-doc-from-link',
+            createDocFromLink: 'create-doc-from-link'
         }
     },
     task: {
         prefix: 'pm/task',
         endpoints: {
-            crud: '',
+            crud: ''
         }
-    },
+    }
 };
 
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
@@ -33,10 +33,10 @@ export const getLabels = () => ({
     title: t`Title`,
     description: t`Description`,
     content: t`Content`,
-    link: t`Link`,
+    link: t`Link`
 });
 
 export const MODE = {
     EDIT: 'EDIT',
-    VIEW: 'VIEW',
+    VIEW: 'VIEW'
 };

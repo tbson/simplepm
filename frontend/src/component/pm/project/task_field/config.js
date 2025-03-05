@@ -6,7 +6,7 @@ const urlMap = {
         prefix: 'pm/task-field',
         endpoints: {
             crud: '',
-            reorder: 'reorder',
+            reorder: 'reorder'
         }
     }
 };
@@ -27,5 +27,5 @@ export const getLabels = () => ({
     description: t`Description`,
     type: t`Type`,
     order: t`Order`,
-    task_field_options: t`Options`,
+    task_field_options: t`Options`
 });

@@ -1,8 +1,8 @@
-import { addLocale } from "ttag";
-import StorageUtil from "service/helper/storage_util";
+import { addLocale } from 'ttag';
+import StorageUtil from 'service/helper/storage_util';
 
-export const DEFAULT_LOCALE = "en";
-export const SUPPORTED_LOCALES = ["vi", "en"];
+export const DEFAULT_LOCALE = 'en';
+export const SUPPORTED_LOCALES = ['vi', 'en'];
 
 export default class LocaleUtil {
     static async fetchLocales() {
@@ -16,12 +16,12 @@ export default class LocaleUtil {
         return result;
     }
     static setLocale(locale = DEFAULT_LOCALE) {
-        StorageUtil.setStorage("locale", locale);
+        StorageUtil.setStorage('locale', locale);
         // useLocale(locale);
         return locale;
     }
     static getLocale() {
-        let locale = StorageUtil.getStorageStr("locale");
+        let locale = StorageUtil.getStorageStr('locale');
         return SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
     }
     static getSupportedLocales() {

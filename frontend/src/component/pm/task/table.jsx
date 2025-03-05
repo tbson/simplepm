@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { App, Table } from 'antd';
 import { EditBtn, RemoveBtn } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';

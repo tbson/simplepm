@@ -6,16 +6,16 @@ const urlMap = {
         prefix: 'event/message',
         endpoints: {
             crud: '',
-            delete: 'delete',
+            delete: 'delete'
         }
     },
     task: {
         prefix: 'pm/task',
         endpoints: {
             option: 'option',
-            crud: '',
+            crud: ''
         }
-    },
+    }
 };
 
 export const urls = RequestUtil.prefixMapValues(urlMap.base);

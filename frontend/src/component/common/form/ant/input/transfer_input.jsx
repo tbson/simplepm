@@ -1,5 +1,5 @@
-import * as React from "react";
-import { Transfer } from "antd";
+import * as React from 'react';
+import { Transfer } from 'antd';
 
 export class Service {
     /**

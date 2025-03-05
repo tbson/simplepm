@@ -1,8 +1,8 @@
-import { vi } from "vitest";
+import { vi } from 'vitest';
 const window = {
     location: {
-        protocol: "http",
-        host: "location"
+        protocol: 'http',
+        host: 'location'
     }
 };
-vi.stubGlobal("window", window);
+vi.stubGlobal('window', window);

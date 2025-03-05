@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { t } from 'ttag';
 import { Button, Avatar, List } from 'antd';
 import { GithubOutlined } from '@ant-design/icons';

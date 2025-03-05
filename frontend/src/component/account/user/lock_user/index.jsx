@@ -1,11 +1,10 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { t } from 'ttag';
-import { useState, useEffect } from 'react';
 import { App, Modal } from 'antd';
 import Util from 'service/helper/util';
 import RequestUtil from 'service/helper/request_util';
 import Form from './form';
-import { urls, getMessages, TOGGLE_LOCK_DIALOG_EVENT } from '../config';
+import { urls, TOGGLE_LOCK_DIALOG_EVENT } from '../config';
 
 export class Service {
     static get toggleEvent() {

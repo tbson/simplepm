@@ -1,7 +1,7 @@
 export function getStyles(createStyles) {
     return createStyles(({ token, css }) => {
-        console.log("background", token.colorBgLayout);
-        console.log("border-bottom", token.colorBorder);
+        console.log('background', token.colorBgLayout);
+        console.log('border-bottom', token.colorBorder);
         return {
             layout: css`
                 width: 100%;
@@ -99,7 +99,7 @@ export function getStyles(createStyles) {
                 font-weight: bold;
                 background: ${token.colorBgLayout}80;
                 border-bottom: 1px solid ${token.colorBorder};
-            `,
+            `
         };
     });
 }

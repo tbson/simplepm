@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Form, Input } from 'antd';
 import Util from 'service/helper/util';
 import FormUtil from 'service/helper/form_util';
@@ -70,7 +69,7 @@ export default function TaskFieldOptionForm({ data, onChange }) {
                 label={labels.color}
                 rules={[FormUtil.ruleRequired()]}
             >
-                <ColorInput/>
+                <ColorInput />
             </Form.Item>
         </Form>
     );

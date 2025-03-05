@@ -5,7 +5,7 @@ const urlMap = {
     base: {
         prefix: 'pm/workspace',
         endpoints: {
-            crud: '',
+            crud: ''
         }
     }
 };
@@ -25,5 +25,5 @@ export const getLabels = () => ({
     title: t`Title`,
     description: t`Description`,
     avatar: t`Avatar`,
-    order: t`Order`,
+    order: t`Order`
 });

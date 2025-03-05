@@ -1,8 +1,8 @@
-import * as React from "react";
+import * as React from 'react';
 import { t } from 'ttag';
-import { Result, Button } from "antd";
-import { HomeFilled } from "@ant-design/icons";
-import { Link } from "react-router";
+import { Result, Button } from 'antd';
+import { HomeFilled } from '@ant-design/icons';
+import { Link } from 'react-router';
 
 export default function VerifyEmail() {
     return (
@@ -12,7 +12,7 @@ export default function VerifyEmail() {
             subTitle={t`Please check your email and click on the link to verify your email`}
             extra={
                 <Link to="/">
-                    {" "}
+                    {' '}
                     <Button type="primary" icon={<HomeFilled />}>
                         {t`Back to Home`}
                     </Button>
@@ -22,4 +22,4 @@ export default function VerifyEmail() {
     );
 }
 
-VerifyEmail.displayName = "VerifyEmail";
+VerifyEmail.displayName = 'VerifyEmail';

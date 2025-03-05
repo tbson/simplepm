@@ -1,8 +1,8 @@
-import * as React from "react";
-import { Outlet } from "react-router";
+import * as React from 'react';
+import { Outlet } from 'react-router';
 
 export default function Auth() {
-    return <Outlet />
+    return <Outlet />;
 }
 
-Auth.displayName = "Auth";
+Auth.displayName = 'Auth';

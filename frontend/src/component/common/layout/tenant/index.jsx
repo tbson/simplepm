@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams, Outlet, NavLink } from 'react-router';
 import { t } from 'ttag';
 import { Layout, Menu, Row, Col, Button, Flex } from 'antd';

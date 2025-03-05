@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { App, Row, Col, Table, Flex } from 'antd';
 import Pagination, { defaultPages } from 'component/common/table/pagination';

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router';
 import { Button } from 'antd';
 import { LeftOutlined, EditOutlined } from '@ant-design/icons';
@@ -20,9 +20,14 @@ export default function DocView({ data, toggleMode }) {
                     </Link>
                 </div>
                 <div>
-                    <Button icon={<EditOutlined />} onClick={() => {
-                        toggleMode();
-                    }}>Edit</Button>
+                    <Button
+                        icon={<EditOutlined />}
+                        onClick={() => {
+                            toggleMode();
+                        }}
+                    >
+                        Edit
+                    </Button>
                 </div>
             </div>
             <div className="content">

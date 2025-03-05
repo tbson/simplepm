@@ -9,7 +9,7 @@ export const projectOptionSt = atom({
     task_field: {
         type: []
     },
-    git_repo: [],
+    git_repo: []
 });
 
 export const projectFilterSt = atom((get) => {

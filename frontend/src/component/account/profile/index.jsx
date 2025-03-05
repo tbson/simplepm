@@ -1,6 +1,5 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { t } from 'ttag';
-import { useEffect, useState } from 'react';
 import { App, Divider, Button } from 'antd';
 import { KeyOutlined, UserOutlined } from '@ant-design/icons';
 import PageHeading from 'component/common/page_heading';

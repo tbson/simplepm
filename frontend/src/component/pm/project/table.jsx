@@ -1,9 +1,8 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { t } from 'ttag';
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { useAtomValue } from 'jotai';
-import { App, Row, Col, Table, Flex, Dropdown } from 'antd';
+import { App, Row, Col, Table, Dropdown } from 'antd';
 import {
     ProfileOutlined,
     SettingOutlined,
@@ -12,9 +11,7 @@ import {
 } from '@ant-design/icons';
 import Pagination, { defaultPages } from 'component/common/table/pagination';
 import SearchInput from 'component/common/table/search_input';
-import {
-    AddNewBtn
-} from 'component/common/table/buttons';
+import { AddNewBtn } from 'component/common/table/buttons';
 import PemCheck from 'component/common/pem_check';
 import Img from 'component/common/display/img';
 import Util from 'service/helper/util';
@@ -205,7 +202,7 @@ export default function ProjectTable() {
             width: 50,
             render: (_text, record) => (
                 <Dropdown menu={getTableActions(record)} trigger={['click']}>
-                    <MoreOutlined style={{ fontSize: '20px' }}/>
+                    <MoreOutlined style={{ fontSize: '20px' }} />
                 </Dropdown>
             )
         }

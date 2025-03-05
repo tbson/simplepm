@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useAtomValue } from 'jotai';
 import { t } from 'ttag';
 import Img from 'component/common/display/img';

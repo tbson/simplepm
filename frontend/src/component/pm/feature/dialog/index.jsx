@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { t } from 'ttag';
 import { App, Modal, Button } from 'antd';
 import Util from 'service/helper/util';

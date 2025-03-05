@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSetAtom } from 'jotai';
 import Util from 'service/helper/util';
 import { Drawer } from 'antd';

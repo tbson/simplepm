@@ -5,7 +5,7 @@ const urlMap = {
     base: {
         prefix: 'account/auth-client',
         endpoints: {
-            crud: '',
+            crud: ''
         }
     }
 };

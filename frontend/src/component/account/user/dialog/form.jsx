@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { useAtomValue } from 'jotai';
 import { App, Form, Input } from 'antd';
 import { useParams } from 'react-router';

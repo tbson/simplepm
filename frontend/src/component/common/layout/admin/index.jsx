@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Outlet, NavLink } from 'react-router';
 import { t } from 'ttag';
 import { Layout, Menu, Row, Col, Button, Flex } from 'antd';
@@ -33,7 +32,7 @@ function processSelectedKeys(pathname) {
         return '/user';
     }
     return [pathname];
-};
+}
 
 /**
  * AdminLayout.

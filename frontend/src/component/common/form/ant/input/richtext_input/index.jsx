@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useRef, useCallback } from 'react';
 import { createReactEditorJS } from 'react-editor-js';
 import { getTools } from './tools';
 
@@ -10,17 +10,17 @@ import { getTools } from './tools';
  */
 export default function RichTextInput({ value, onChange, taskId, disabled = false }) {
     const ReactEditorJS = createReactEditorJS();
-    const editorCore = React.useRef(null);
+    const editorCore = useRef(null);
 
-    const handleInitialize = React.useCallback((instance) => {
+    const handleInitialize = useCallback((instance) => {
         editorCore.current = instance;
     }, []);
 
-    const handleSave = React.useCallback(() => {
+    const handleSave = useCallback(() => {
         return editorCore.current.save();
     }, []);
     return (
-        <div className={disabled ? "richtext-view" : "richtext-edit"}>
+        <div className={disabled ? 'richtext-view' : 'richtext-edit'}>
             <ReactEditorJS
                 readOnly={disabled}
                 onInitialize={handleInitialize}
