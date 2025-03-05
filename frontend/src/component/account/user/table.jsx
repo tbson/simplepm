@@ -172,6 +172,7 @@ export default function UserTable() {
                                 <a
                                     href={`https://github.com/${record.github_username}`}
                                     target="_blank"
+                                    rel="noopener noreferrer"
                                 >
                                     {record.github_username}
                                 </a>

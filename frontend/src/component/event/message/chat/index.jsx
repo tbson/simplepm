@@ -476,7 +476,12 @@ export default function Chat({ project, defaultTask, onNav }) {
                 item.url = attachment.file_url;
             }
             return (
-                <a key={index} href={item.file_url} target="_blank">
+                <a
+                    key={index}
+                    href={item.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
                     <Attachments.FileCard key={index} item={item} className="pointer" />
                 </a>
             );
@@ -526,7 +531,11 @@ export default function Chat({ project, defaultTask, onNav }) {
                 <ul>
                     {item.git_data.git_commits.map((commit, index) => (
                         <li key={index}>
-                            <a href={commit.commit_url} target="_blank">
+                            <a
+                                href={commit.commit_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
                                 {commit.commit_message}
                             </a>
                         </li>
@@ -550,7 +559,11 @@ export default function Chat({ project, defaultTask, onNav }) {
                         Open
                     </Button>
                     &nbsp;&nbsp;
-                    <a href={item.git_data.url} target="_blank">
+                    <a
+                        href={item.git_data.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         {item.git_data.title}
                     </a>
                 </div>
@@ -577,7 +590,11 @@ export default function Chat({ project, defaultTask, onNav }) {
                         Closed
                     </Button>
                     &nbsp;&nbsp;
-                    <a href={item.git_data.url} target="_blank">
+                    <a
+                        href={item.git_data.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         {item.git_data.title}
                     </a>
                 </div>
@@ -604,7 +621,11 @@ export default function Chat({ project, defaultTask, onNav }) {
                         Merged
                     </Button>
                     &nbsp;&nbsp;
-                    <a href={item.git_data.url} target="_blank">
+                    <a
+                        href={item.git_data.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         {item.git_data.title}
                     </a>
                 </div>

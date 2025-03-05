@@ -155,7 +155,11 @@ export default function DocTable({ taskId, showControl = false }) {
                             <List.Item.Meta
                                 avatar={getDocIcon(item.type)}
                                 title={
-                                    <a href={item.url} target="_blank">
+                                    <a
+                                        href={item.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
                                         {item.title}
                                     </a>
                                 }
