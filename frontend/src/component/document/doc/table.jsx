@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { createStyles } from 'antd-style';
 import { useNavigate } from 'react-router';
 import { App, Button, Dropdown, List } from 'antd';
@@ -131,6 +131,44 @@ export default function DocTable({ taskId, showControl = false }) {
         };
     };
 
+    const renderItem = useCallback(
+        (item) => {
+            return (
+                <List.Item>
+                    <List.Item.Meta
+                        avatar={getDocIcon(item.type)}
+                        title={
+                            <a
+                                href={item.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {item.title}
+                            </a>
+                        }
+                        onClick={() => {
+                            if (item.type === 'FILE') {
+                                return window.open(item.file_url);
+                            }
+                            if (item.type === 'LINK') {
+                                return window.open(item.link);
+                            }
+                            navigateTo(`/pm/task/${taskId}/doc/${item.id}`);
+                        }}
+                    />
+                    {showControl ? (
+                        <div>
+                            <Dropdown menu={getTableActions(item)} trigger={['click']}>
+                                <MoreOutlined style={{ fontSize: '20px' }} />
+                            </Dropdown>
+                        </div>
+                    ) : null}
+                </List.Item>
+            );
+        },
+        [taskId, showControl]
+    );
+
     return (
         <>
             <div className={styles.document}>
@@ -150,41 +188,7 @@ export default function DocTable({ taskId, showControl = false }) {
                     itemLayout="horizontal"
                     size="small"
                     dataSource={list}
-                    renderItem={(item) => (
-                        <List.Item>
-                            <List.Item.Meta
-                                avatar={getDocIcon(item.type)}
-                                title={
-                                    <a
-                                        href={item.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {item.title}
-                                    </a>
-                                }
-                                onClick={() => {
-                                    if (item.type === 'FILE') {
-                                        return window.open(item.file_url);
-                                    }
-                                    if (item.type === 'LINK') {
-                                        return window.open(item.link);
-                                    }
-                                    navigateTo(`/pm/task/${taskId}/doc/${item.id}`);
-                                }}
-                            />
-                            {showControl ? (
-                                <div>
-                                    <Dropdown
-                                        menu={getTableActions(item)}
-                                        trigger={['click']}
-                                    >
-                                        <MoreOutlined style={{ fontSize: '20px' }} />
-                                    </Dropdown>
-                                </div>
-                            ) : null}
-                        </List.Item>
-                    )}
+                    renderItem={renderItem}
                 />
             </div>
             <DocLinkDialog onChange={getList} />

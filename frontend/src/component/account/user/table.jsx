@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { t } from 'ttag';
 import { useParams } from 'react-router';
 import { App, Row, Col, Table, Button, Flex, Tooltip } from 'antd';
@@ -104,7 +104,7 @@ export default function UserTable() {
         handleSorting(sorter);
     };
 
-    const onChange = (data, id) => {
+    const onChange = useCallback((data, id) => {
         if (!id) {
             setList([{ ...Util.appendKey(data) }, ...list]);
         } else {
@@ -113,7 +113,7 @@ export default function UserTable() {
             list[index] = data;
             setList([...list]);
         }
-    };
+    }, [list]);
 
     const onDelete = (id) => {
         const r = window.confirm(messages.deleteOne);
