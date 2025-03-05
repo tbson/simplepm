@@ -94,7 +94,7 @@ export default class RequestUtil {
      * @param {string} method - method: get, post, put, delete
      * @returns {Promise} Axios response promise
      */
-    static async request(url, params = {}, method = 'get', blobResponseType = false) {
+    static request(url, params = {}, method = 'get', blobResponseType = false) {
         const { data, 'Content-Type': contentType } = RequestUtil.fileInObject(params)
             ? RequestUtil.getFormDataPayload(params)
             : RequestUtil.getJsonPayload(params);
@@ -116,7 +116,7 @@ export default class RequestUtil {
         } else {
             config.data = RequestUtil.convertParams(method, data);
         }
-        return await axios(config);
+        return axios(config);
     }
 
     /**
