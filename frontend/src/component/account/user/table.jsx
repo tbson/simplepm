@@ -15,6 +15,10 @@ import LockUserDialog from './lock_user';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
 function LockButton({ locked, value, onClick }) {
+    const handleClick = useCallback(() => {
+        onClick(value);
+    }, [value]);
+
     return (
         <Tooltip title={t`Lock`}>
             <Button
@@ -22,7 +26,7 @@ function LockButton({ locked, value, onClick }) {
                 htmlType="button"
                 icon={locked ? <LockOutlined /> : <UnlockOutlined />}
                 size="small"
-                onClick={onClick.bind(null, value)}
+                onClick={handleClick}
             />
         </Tooltip>
     );
