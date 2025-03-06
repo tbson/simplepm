@@ -52,83 +52,89 @@ export default function UserTable() {
             });
     };
 
-    const handlePaging = (page) => {
+    const handlePaging = useCallback((page) => {
         if (!page) {
             setPageParam({});
         } else {
             setPageParam({ page });
         }
-    };
+    }, []);
 
-    const handleSearching = (keyword) => {
+    const handleSearch = useCallback((keyword) => {
         setPageParam({});
         if (!keyword) {
             setSearchParam({});
         } else {
             setSearchParam({ q: keyword });
         }
-    };
+    }, []);
 
-    const handleFiltering = (filterObj) => {
-        if (DictUtil.isEmpty(filterObj)) {
-            setFilterParam({});
-        } else {
-            setFilterParam(
-                Object.entries(filterObj).reduce((acc, [key, value]) => {
-                    if (!value || value.length === 0) {
+    const handleSortFilter = useCallback((_pagination, filters, sorter) => {
+        const applyFilter = (filterObj) => {
+            if (DictUtil.isEmpty(filterObj)) {
+                setFilterParam({});
+            } else {
+                setFilterParam(
+                    Object.entries(filterObj).reduce((acc, [key, value]) => {
+                        if (!value || value.length === 0) {
+                            return acc;
+                        }
+                        acc[key] = value[0];
                         return acc;
-                    }
-                    acc[key] = value[0];
-                    return acc;
-                }, {})
-            );
-        }
-    };
+                    }, {})
+                );
+            }
+        };
 
-    const handleSorting = (sortObj) => {
-        if (DictUtil.isEmpty(sortObj)) {
-            return setSortParam({});
-        }
-        if (!sortObj.field) {
-            return setSortParam({});
-        }
-        const sign = sortObj.order === 'descend' ? '-' : '';
-        setSortParam({
-            order: `${sign}${sortObj.field}`
-        });
-    };
+        const applySort = (sortObj) => {
+            if (DictUtil.isEmpty(sortObj)) {
+                return setSortParam({});
+            }
+            if (!sortObj.field) {
+                return setSortParam({});
+            }
+            const sign = sortObj.order === 'descend' ? '-' : '';
+            setSortParam({
+                order: `${sign}${sortObj.field}`
+            });
+        };
 
-    const handleTableChange = (_pagination, filters, sorter) => {
         setPageParam({});
-        handleFiltering(filters);
-        handleSorting(sorter);
-    };
+        applyFilter(filters);
+        applySort(sorter);
+    }, []);
 
-    const onChange = useCallback((data, id) => {
-        if (!id) {
-            setList([{ ...Util.appendKey(data) }, ...list]);
-        } else {
-            const index = list.findIndex((item) => item.id === id);
-            data.key = data.id;
-            list[index] = data;
-            setList([...list]);
-        }
-    }, [list]);
+    const handleDataChange = useCallback(
+        (data, id) => {
+            if (!id) {
+                setList([{ ...Util.appendKey(data) }, ...list]);
+            } else {
+                const index = list.findIndex((item) => item.id === id);
+                data.key = data.id;
+                list[index] = data;
+                setList([...list]);
+            }
+        },
+        [list]
+    );
 
-    const onDelete = (id) => {
-        const r = window.confirm(messages.deleteOne);
-        if (!r) return;
+    const handleDelete = useCallback(
+        (id) => {
+            const r = window.confirm(messages.deleteOne);
+            if (!r) return;
 
-        Util.toggleGlobalLoading(true);
-        RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
-            .then(() => {
-                setList([...list.filter((item) => item.id !== id)]);
-            })
-            .catch(RequestUtil.displayError(notification))
-            .finally(() => Util.toggleGlobalLoading(false));
-    };
+            Util.toggleGlobalLoading(true);
+            RequestUtil.apiCall(`${urls.crud}${id}`, {}, 'delete')
+                .then(() => {
+                    setList([...list.filter((item) => item.id !== id)]);
+                })
+                .catch(RequestUtil.displayError(notification))
+                .finally(() => Util.toggleGlobalLoading(false));
+        },
+        [list]
+    );
 
-    const onBulkDelete = (ids) => {
+    const handleBulkDelete = useCallback(() => {
         const r = window.confirm(messages.deleteMultiple);
         if (!r) return;
 
@@ -139,7 +145,7 @@ export default function UserTable() {
             })
             .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
-    };
+    }, [ids, list]); 
 
     const columns = [
         {
@@ -206,7 +212,7 @@ export default function UserTable() {
                         <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
-                        <RemoveBtn onClick={() => onDelete(record.id)} />
+                        <RemoveBtn onClick={() => handleDelete(record.id)} />
                     </PemCheck>
 
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
@@ -242,19 +248,19 @@ export default function UserTable() {
             <Row>
                 <Col span={12}>
                     <PemCheck pem_group={PEM_GROUP} pem="delete_list">
-                        <RemoveSelectedBtn ids={ids} onClick={onBulkDelete} />
+                        <RemoveSelectedBtn ids={ids} onClick={handleBulkDelete} />
                     </PemCheck>
                 </Col>
             </Row>
 
-            <SearchInput onChange={handleSearching} />
+            <SearchInput onChange={handleSearch} />
 
             <Table
                 rowSelection={{
                     type: 'checkbox',
                     ...rowSelection
                 }}
-                onChange={handleTableChange}
+                onChange={handleSortFilter}
                 loading={init}
                 columns={columns}
                 dataSource={list}
@@ -262,8 +268,8 @@ export default function UserTable() {
                 pagination={false}
             />
             <Pagination next={pages.next} prev={pages.prev} onChange={handlePaging} />
-            <Dialog onChange={onChange} />
-            <LockUserDialog onChange={onChange} />
+            <Dialog onChange={handleDataChange} />
+            <LockUserDialog onChange={handleDataChange} />
         </div>
     );
 }
