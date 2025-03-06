@@ -133,6 +133,16 @@ export default function DocTable({ taskId, showControl = false }) {
 
     const renderItem = useCallback(
         (item) => {
+            const handleItemClick = () => {
+                if (item.type === 'FILE') {
+                    return window.open(item.file_url);
+                }
+                if (item.type === 'LINK') {
+                    return window.open(item.link);
+                }
+                navigateTo(`/pm/task/${taskId}/doc/${item.id}`);
+            };
+
             return (
                 <List.Item>
                     <List.Item.Meta
@@ -146,15 +156,7 @@ export default function DocTable({ taskId, showControl = false }) {
                                 {item.title}
                             </a>
                         }
-                        onClick={() => {
-                            if (item.type === 'FILE') {
-                                return window.open(item.file_url);
-                            }
-                            if (item.type === 'LINK') {
-                                return window.open(item.link);
-                            }
-                            navigateTo(`/pm/task/${taskId}/doc/${item.id}`);
-                        }}
+                        onClick={handleItemClick}
                     />
                     {showControl ? (
                         <div>
