@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { t } from 'ttag';
 import { Button, Tooltip } from 'antd';
 import {
@@ -18,6 +18,10 @@ export function IconButton({
     type = 'default',
     disabled = false
 }) {
+    const handleClick = useCallback(() => {
+        onClick(value);
+    }, [onClick, value]);
+
     return (
         <Tooltip title={tootip}>
             <Button
@@ -26,32 +30,39 @@ export function IconButton({
                 htmlType="button"
                 icon={icon}
                 size="small"
-                onClick={onClick.bind(null, value)}
+                onClick={handleClick}
             />
         </Tooltip>
     );
 }
 
 export function AddNewBtn({ onClick, value }) {
+    const handleClick = useCallback(() => {
+        onClick(value);
+    }, [onClick, value]);
+
     return (
-        <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={onClick.bind(null, value)}
-        >
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleClick}>
             {t`Add new`}
         </Button>
     );
 }
 
-export function RemoveSelectedBtn({ onClick, value=[] }) {
+export function RemoveSelectedBtn({ onClick, value }) {
+    if (!value) {
+        value = [];
+    }
+    const handleClick = useCallback(() => {
+        onClick(value);
+    }, [onClick, value]);
+
     return (
         <Button
             type="primary"
             danger
             icon={<DeleteOutlined />}
             disabled={!value.length}
-            onClick={onClick.bind(null, value)}
+            onClick={handleClick}
         >
             {t`Remove selected`}
         </Button>
@@ -59,6 +70,10 @@ export function RemoveSelectedBtn({ onClick, value=[] }) {
 }
 
 export function EditBtn({ onClick, value }) {
+    const handleClick = useCallback(() => {
+        onClick(value);
+    }, [onClick, value]);
+
     return (
         <Tooltip title={t`Update`}>
             <Button
@@ -66,13 +81,17 @@ export function EditBtn({ onClick, value }) {
                 htmlType="button"
                 icon={<EditOutlined />}
                 size="small"
-                onClick={onClick.bind(null, value)}
+                onClick={handleClick}
             />
         </Tooltip>
     );
 }
 
 export function RemoveBtn({ onClick, value }) {
+    const handleClick = useCallback(() => {
+        onClick(value);
+    }, [onClick, value]);
+
     return (
         <Tooltip title={t`Remove`}>
             <Button
@@ -81,13 +100,17 @@ export function RemoveBtn({ onClick, value }) {
                 htmlType="button"
                 icon={<DeleteOutlined />}
                 size="small"
-                onClick={onClick.bind(null, value)}
+                onClick={handleClick}
             />
         </Tooltip>
     );
 }
 
 export function ViewBtn({ onClick, value }) {
+    const handleClick = useCallback(() => {
+        onClick(value);
+    }, [onClick, value]);
+
     return (
         <Tooltip title={t`View`}>
             <Button
@@ -95,13 +118,17 @@ export function ViewBtn({ onClick, value }) {
                 htmlType="button"
                 icon={<EyeOutlined />}
                 size="small"
-                onClick={onClick.bind(null, value)}
+                onClick={handleClick}
             />
         </Tooltip>
     );
 }
 
 export function LinkBtn({ onClick, value }) {
+    const handleClick = useCallback(() => {
+        onClick(value);
+    }, [onClick, value]);
+
     return (
         <Tooltip title={t`Link`}>
             <Button
@@ -109,13 +136,17 @@ export function LinkBtn({ onClick, value }) {
                 htmlType="button"
                 icon={<GlobalOutlined />}
                 size="small"
-                onClick={onClick.bind(null, value)}
+                onClick={handleClick}
             />
         </Tooltip>
     );
 }
 
 export function CheckBtn({ onClick, disabled, value }) {
+    const handleClick = useCallback(() => {
+        onClick(value);
+    }, [onClick, value]);
+
     return (
         <Tooltip title={t`Check`}>
             <Button
@@ -124,7 +155,7 @@ export function CheckBtn({ onClick, disabled, value }) {
                 icon={<CheckOutlined />}
                 disabled={disabled}
                 size="small"
-                onClick={onClick.bind(null, value)}
+                onClick={handleClick}
             />
         </Tooltip>
     );
