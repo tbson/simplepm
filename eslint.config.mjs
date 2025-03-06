@@ -9,7 +9,9 @@ export default [
         ignores: [
             'backend',
             'frontend/dist',
-            'frontend/vite.config.js'
+            'frontend/vite.config.js',
+            'frontend/vite.config.web.js',
+            'frontend/vite.config.desktop.js'
         ]
     },
     {

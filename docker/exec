@@ -61,7 +61,8 @@ help () {
     echo "down              :  down docker inscance"
     echo "restart           :  down then up docker instance"
     echo "bserver           :  run phoenix dev server"
-    echo "fserver           :  run frontendpack dev server"
+    echo "fserver           :  run web dev server"
+    echo "dserver           :  run desktop dev server"
     echo "bun               :  run bun on frontend"
     echo "npx               :  run npx on frontend"
     echo "command <args>    :   run spefic command on backend/src/command"
@@ -89,7 +90,13 @@ elif [ "$FIRST_ARG" == "bun" ]; then
     docker compose exec "$NAME"_frontend bun $ARGS
 elif [ "$FIRST_ARG" == "npx" ]; then
     docker compose exec "$NAME"_frontend npx $ARGS
+elif [ "$FIRST_ARG" == "dserver" ]; then
+    rm -f ../frontend/vite.config.js
+    cp ../frontend/vite.config.desktop.js ../frontend/vite.config.js
+    cd ../frontend && bun run tauri dev
 elif [ "$FIRST_ARG" == "fserver" ]; then
+    rm -f ../frontend/vite.config.js
+    cp ../frontend/vite.config.web.js ../frontend/vite.config.js
     docker compose exec "$NAME"_frontend bun run dev
 elif [ "$FIRST_ARG" == "fmakemessages" ]; then
     docker compose exec "$NAME"_frontend node_modules/.bin/ttag update src/locale/vi.po src

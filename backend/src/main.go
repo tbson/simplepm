@@ -62,6 +62,11 @@ func main() {
 		templates: template.Must(template.ParseGlob("/code/public/views/*.html")),
 	}
 	e.Renderer = t
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:1420", "tauri://localhost"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
+	}))
 	// e.Pre(middleware.RemoveTrailingSlash())
 	if !setting.DEBUG {
 		e.Use(middleware.Recover())
