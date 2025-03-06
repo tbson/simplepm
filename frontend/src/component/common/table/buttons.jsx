@@ -14,6 +14,7 @@ export function IconButton({
     icon,
     tootip,
     onClick,
+    value,
     type = 'default',
     disabled = false
 }) {
@@ -25,35 +26,39 @@ export function IconButton({
                 htmlType="button"
                 icon={icon}
                 size="small"
-                onClick={onClick}
+                onClick={onClick.bind(null, value)}
             />
         </Tooltip>
     );
 }
 
-export function AddNewBtn({ onClick }) {
+export function AddNewBtn({ onClick, value }) {
     return (
-        <Button type="primary" icon={<PlusOutlined />} onClick={onClick}>
+        <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={onClick.bind(null, value)}
+        >
             {t`Add new`}
         </Button>
     );
 }
 
-export function RemoveSelectedBtn({ ids, onClick }) {
+export function RemoveSelectedBtn({ onClick, value=[] }) {
     return (
         <Button
             type="primary"
             danger
             icon={<DeleteOutlined />}
-            disabled={!ids.length}
-            onClick={() => onClick(ids)}
+            disabled={!value.length}
+            onClick={onClick.bind(null, value)}
         >
             {t`Remove selected`}
         </Button>
     );
 }
 
-export function EditBtn({ onClick }) {
+export function EditBtn({ onClick, value }) {
     return (
         <Tooltip title={t`Update`}>
             <Button
@@ -61,13 +66,13 @@ export function EditBtn({ onClick }) {
                 htmlType="button"
                 icon={<EditOutlined />}
                 size="small"
-                onClick={onClick}
+                onClick={onClick.bind(null, value)}
             />
         </Tooltip>
     );
 }
 
-export function RemoveBtn({ onClick }) {
+export function RemoveBtn({ onClick, value }) {
     return (
         <Tooltip title={t`Remove`}>
             <Button
@@ -76,13 +81,13 @@ export function RemoveBtn({ onClick }) {
                 htmlType="button"
                 icon={<DeleteOutlined />}
                 size="small"
-                onClick={onClick}
+                onClick={onClick.bind(null, value)}
             />
         </Tooltip>
     );
 }
 
-export function ViewBtn({ onClick }) {
+export function ViewBtn({ onClick, value }) {
     return (
         <Tooltip title={t`View`}>
             <Button
@@ -90,13 +95,13 @@ export function ViewBtn({ onClick }) {
                 htmlType="button"
                 icon={<EyeOutlined />}
                 size="small"
-                onClick={onClick}
+                onClick={onClick.bind(null, value)}
             />
         </Tooltip>
     );
 }
 
-export function LinkBtn({ onClick }) {
+export function LinkBtn({ onClick, value }) {
     return (
         <Tooltip title={t`Link`}>
             <Button
@@ -104,13 +109,13 @@ export function LinkBtn({ onClick }) {
                 htmlType="button"
                 icon={<GlobalOutlined />}
                 size="small"
-                onClick={onClick}
+                onClick={onClick.bind(null, value)}
             />
         </Tooltip>
     );
 }
 
-export function CheckBtn({ onClick, disabled }) {
+export function CheckBtn({ onClick, disabled, value }) {
     return (
         <Tooltip title={t`Check`}>
             <Button
@@ -119,7 +124,7 @@ export function CheckBtn({ onClick, disabled }) {
                 icon={<CheckOutlined />}
                 disabled={disabled}
                 size="small"
-                onClick={onClick}
+                onClick={onClick.bind(null, value)}
             />
         </Tooltip>
     );

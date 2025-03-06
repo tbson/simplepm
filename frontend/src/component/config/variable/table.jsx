@@ -149,6 +149,10 @@ export default function VariableTable() {
             .finally(() => Util.toggleGlobalLoading(false));
     }, [ids, list]);
 
+    const handleOpenAddEditDialog = useCallback((id) => {
+        Dialog.toggle(true, id);
+    }, []);
+
     const columns = [
         {
             key: 'key',
@@ -180,10 +184,10 @@ export default function VariableTable() {
             render: (_text, record) => (
                 <div className="flex-space">
                     <PemCheck pem_group={PEM_GROUP} pem="update">
-                        <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
+                        <EditBtn value={record.id} onClick={handleOpenAddEditDialog} />
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
-                        <RemoveBtn onClick={() => handleDelete(record.id)} />
+                        <RemoveBtn value={record.id} onClick={handleDelete} />
                     </PemCheck>
                 </div>
             )
@@ -201,12 +205,12 @@ export default function VariableTable() {
             <Row>
                 <Col span={12}>
                     <PemCheck pem_group={PEM_GROUP} pem="delete_list">
-                        <RemoveSelectedBtn ids={ids} onClick={handleBulkDelete} />
+                        <RemoveSelectedBtn value={ids} onClick={handleBulkDelete} />
                     </PemCheck>
                 </Col>
                 <Col span={12} className="right">
                     <PemCheck pem_group={PEM_GROUP} pem="create">
-                        <AddNewBtn onClick={() => Dialog.toggle()} />
+                        <AddNewBtn value={null} onClick={handleOpenAddEditDialog} />
                     </PemCheck>
                 </Col>
             </Row>

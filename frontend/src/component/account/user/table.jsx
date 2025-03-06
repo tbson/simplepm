@@ -14,6 +14,20 @@ import Dialog from './dialog';
 import LockUserDialog from './lock_user';
 import { urls, getLabels, getMessages, PEM_GROUP } from './config';
 
+function LockButton({ locked, value, onClick }) {
+    return (
+        <Tooltip title={t`Lock`}>
+            <Button
+                danger={locked}
+                htmlType="button"
+                icon={locked ? <LockOutlined /> : <UnlockOutlined />}
+                size="small"
+                onClick={onClick.bind(null, value)}
+            />
+        </Tooltip>
+    );
+}
+
 export default function UserTable() {
     const { notification } = App.useApp();
     const { tenant_id } = useParams();
@@ -145,7 +159,15 @@ export default function UserTable() {
             })
             .catch(RequestUtil.displayError(notification))
             .finally(() => Util.toggleGlobalLoading(false));
-    }, [ids, list]); 
+    }, [ids, list]);
+
+    const handleOpenAddEditDialog = useCallback((id) => {
+        Dialog.toggle(true, id);
+    }, []);
+
+    const handleToggleLock = useCallback((id) => {
+        LockUserDialog.toggle(true, id);
+    }, []);
 
     const columns = [
         {
@@ -209,28 +231,18 @@ export default function UserTable() {
             render: (_text, record) => (
                 <Flex wrap gap={5} justify="flex-end">
                     <PemCheck pem_group={PEM_GROUP} pem="update">
-                        <EditBtn onClick={() => Dialog.toggle(true, record.id)} />
+                        <EditBtn value={record.id} onClick={handleOpenAddEditDialog} />
                     </PemCheck>
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
-                        <RemoveBtn onClick={() => handleDelete(record.id)} />
+                        <RemoveBtn value={record.id} onClick={handleDelete} />
                     </PemCheck>
 
                     <PemCheck pem_group={PEM_GROUP} pem="delete">
-                        <Tooltip title={t`Lock`}>
-                            <Button
-                                danger={record.locked}
-                                htmlType="button"
-                                icon={
-                                    record.locked ? (
-                                        <LockOutlined />
-                                    ) : (
-                                        <UnlockOutlined />
-                                    )
-                                }
-                                size="small"
-                                onClick={() => LockUserDialog.toggle(true, record.id)}
-                            />
-                        </Tooltip>
+                        <LockButton
+                            locked={record.locked}
+                            value={record.id}
+                            onClick={handleToggleLock}
+                        />
                     </PemCheck>
                 </Flex>
             )
@@ -248,7 +260,7 @@ export default function UserTable() {
             <Row>
                 <Col span={12}>
                     <PemCheck pem_group={PEM_GROUP} pem="delete_list">
-                        <RemoveSelectedBtn ids={ids} onClick={handleBulkDelete} />
+                        <RemoveSelectedBtn value={ids} onClick={handleBulkDelete} />
                     </PemCheck>
                 </Col>
             </Row>
