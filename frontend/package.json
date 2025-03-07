@@ -28,9 +28,9 @@
         "@editorjs/paragraph": "^2.11.7",
         "@editorjs/quote": "^2.7.6",
         "@editorjs/table": "^2.4.3",
-        "@tauri-apps/api": "^2",
-        "@tauri-apps/plugin-opener": "^2",
-        "antd": "5.24.2",
+        "@tauri-apps/api": "^2.3.0",
+        "@tauri-apps/plugin-opener": "^2.2.6",
+        "antd": "5.24.3",
         "antd-style": "^3.7.1",
         "axios": "1.8.1",
         "centrifuge": "^5.3.4",
@@ -41,19 +41,19 @@
         "react-dom": "^19.0.0",
         "react-editor-js": "^2.1.0",
         "react-markdown": "^10.0.1",
-        "react-router": "^7.2.0",
+        "react-router": "^7.3.0",
         "react-virtuoso": "^4.12.5",
         "ttag": "^1.8.7"
     },
     "devDependencies": {
         "@vitejs/plugin-react-swc": "^3.8.0",
-        "@tauri-apps/cli": "^2",
+        "@tauri-apps/cli": "^2.3.1",
         "eslint-plugin-react-hooks": "^5.2.0",
         "eslint-plugin-react-refresh": "^0.4.19",
         "jsdom": "^26.0.0",
         "less": "^4.2.2",
         "ttag-cli": "^1.10.18",
         "vite": "^6.2.0",
-        "vitest": "^3.0.7"
+        "vitest": "^3.0.8"
     }
 }
