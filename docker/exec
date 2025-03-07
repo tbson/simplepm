@@ -145,6 +145,9 @@ elif [ "$FIRST_ARG" == "resetmakemigrations" ]; then
 
     echo "[+] Migrate migration files..."
     docker compose exec "$NAME"_backend atlas migrate apply --env gorm
+elif [ "$FIRST_ARG" == "bupgrade" ]; then
+    docker compose exec "$NAME"_backend go get -u
+    docker compose exec "$NAME"_backend go mod tidy
 elif [ "$FIRST_ARG" == "bserver" ]; then
     docker compose exec "$NAME"_backend gow run .
 elif [ "$FIRST_ARG" == "bbuild" ]; then
