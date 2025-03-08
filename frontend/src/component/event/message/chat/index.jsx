@@ -243,23 +243,26 @@ export default function Chat({ project, defaultTask, onNav }) {
         */
     };
 
-    const handleDelete = (id) => {
-        const r = window.confirm('Do you want to remove this task?');
-        if (!r) {
-            return;
-        }
+    const handleDelete = useCallback(
+        ({ id }) => {
+            const r = window.confirm('Do you want to remove this task?');
+            if (!r) {
+                return;
+            }
 
-        Util.toggleGlobalLoading(true);
-        RequestUtil.apiCall(`${taskUrls.crud}${id}`, {}, 'delete')
-            .then(() => {
-                TaskDialog.toggle(false);
-                navigateTo(`/pm/project/${projectId}`);
-            })
-            .catch(RequestUtil.displayError(notification))
-            .finally(() => {
-                Util.toggleGlobalLoading(false);
-            });
-    };
+            Util.toggleGlobalLoading(true);
+            RequestUtil.apiCall(`${taskUrls.crud}${id}`, {}, 'delete')
+                .then(() => {
+                    TaskDialog.toggle(false);
+                    navigateTo(`/pm/project/${projectId}`);
+                })
+                .catch(RequestUtil.displayError(notification))
+                .finally(() => {
+                    Util.toggleGlobalLoading(false);
+                });
+        },
+        [projectId]
+    );
 
     // ==================== Event ====================
 
@@ -638,6 +641,24 @@ export default function Chat({ project, defaultTask, onNav }) {
         );
     };
 
+    const renderSenderActions = useCallback(
+        (_, info) => {
+            const { SendButton, ClearButton } = info.components;
+            const appyClear = () => setEditId(null);
+            return (
+                <Space size="small">
+                    {editId ? <ClearButton onClick={appyClear} /> : null}
+                    <SendButton
+                        type="primary"
+                        icon={<ArrowUpOutlined />}
+                        disabled={isRequesting}
+                    />
+                </Space>
+            );
+        },
+        [editId, isRequesting]
+    );
+
     // ==================== Render =================
     return (
         <>
@@ -662,7 +683,7 @@ export default function Chat({ project, defaultTask, onNav }) {
                         <div>
                             <Button
                                 danger
-                                onClick={() => handleDelete(task.id)}
+                                onClick={handleDelete}
                                 icon={<DeleteOutlined />}
                             />
                             &nbsp;
@@ -764,21 +785,7 @@ export default function Chat({ project, defaultTask, onNav }) {
                         prefix={editId ? null : attachmentsNode}
                         loading={isRequesting}
                         className={styles.sender}
-                        actions={(_, info) => {
-                            const { SendButton, ClearButton } = info.components;
-                            return (
-                                <Space size="small">
-                                    {editId ? (
-                                        <ClearButton onClick={() => setEditId(null)} />
-                                    ) : null}
-                                    <SendButton
-                                        type="primary"
-                                        icon={<ArrowUpOutlined />}
-                                        disabled={isRequesting}
-                                    />
-                                </Space>
-                            );
-                        }}
+                        actions={renderSenderActions}
                     />
                 </div>
                 {showDocList ? <DocTable taskId={taskId} showControl /> : null}
