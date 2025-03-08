@@ -78,7 +78,7 @@ func TestRetrieve(t *testing.T) {
 			Filters: ctype.Dict{"ID": getID(index)},
 		}
 		_, err := repo.Retrieve(queryOptions)
-		assert.EqualError(t, err, "record not found")
+		assert.EqualError(t, err, "no record found")
 	})
 }
 
@@ -231,7 +231,7 @@ func TestDelete(t *testing.T) {
 	})
 	t.Run("Fail", func(t *testing.T) {
 		_, err := repo.Delete(9999)
-		assert.EqualError(t, err, "record not found")
+		assert.EqualError(t, err, "no record found")
 
 		list, _ := repo.List(ctype.QueryOptions{})
 		expectedLength := 12

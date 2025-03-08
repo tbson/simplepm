@@ -55,6 +55,12 @@ prepareTestingDbs() {
     prepareTestDb
 }
 
+initTestDb() {
+    prepareTestingDbs
+    setTestEnv
+    migrate
+}
+
 help () {
     echo "build             :  build docker instance"
     echo "up                :  up docker instance"
@@ -152,11 +158,13 @@ elif [ "$FIRST_ARG" == "bserver" ]; then
     docker compose exec "$NAME"_backend gow run .
 elif [ "$FIRST_ARG" == "bbuild" ]; then
     docker compose exec "$NAME"_backend bash -c 'GOOS=linux GOARCH=amd64 go build -o main .'
-elif [ "$FIRST_ARG" == "btest" ]; then
-    prepareTestingDbs 
-    setTestEnv
-    migrate
+elif [ "$FIRST_ARG" == "btestfull" ]; then
+    initTestDb
     docker compose exec "$NAME"_backend go test ./...
+elif [ "$FIRST_ARG" == "btestinit" ]; then
+    initTestDb
+elif [ "$FIRST_ARG" == "btest" ]; then
+    docker compose exec "$NAME"_backend go test $ARGS
 elif [ "$FIRST_ARG" == "bupgrade" ]; then
     docker compose exec "$NAME"_backend bash -c 'go get -u && go mod tidy'
 elif [ "$FIRST_ARG" == "setup" ]; then
