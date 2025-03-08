@@ -65,8 +65,8 @@ type User struct {
 	TenantTmpID    *uint          `json:"tenant_tmp_id"`
 	Sub            *string        `gorm:"type:text;default:null;unique" json:"sub"`
 	Pwd            string         `gorm:"type:text;not null;default:''" json:"pwd"`
-	ResetPwdToken  string         `gorm:"type:text;not null;default:''" json:"reset_pwd_token"`
-	ResetPwdExpiry *time.Time     `gorm:"type:timestamp;default:null" json:"reset_pwd_expiry"`
+	PwdResetToken  string         `gorm:"type:text;not null;default:''" json:"pwd_reset_token"`
+	PwdResetAt     *time.Time     `gorm:"type:timestamp;default:null" json:"pwd_reset_at"`
 	Roles          []Role         `gorm:"many2many:users_roles;constraint:OnDelete:CASCADE,OnUpdate:CASCADE;" json:"roles"`
 	ExternalID     string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_external" json:"uid"`
 	Email          string         `gorm:"type:text;not null;uniqueIndex:idx_users_tenant_email" json:"email"`
