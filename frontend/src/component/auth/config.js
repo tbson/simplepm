@@ -1,3 +1,4 @@
+import { t } from 'ttag';
 import RequestUtil from 'service/helper/request_util';
 
 const urlMap = {
@@ -18,7 +19,8 @@ const urlMap = {
 export const urls = RequestUtil.prefixMapValues(urlMap.base);
 export const signupUrls = RequestUtil.prefixMapValues(urlMap.signup);
 
-const headingTxt = 'Hồ sơ';
+export const TOGGLE_DIALOG_EVENT = 'TOGGLE_RESET_PWD_DIALOG';
+const headingTxt = t`Profile`;
 export const messages = {
     heading: headingTxt
 };

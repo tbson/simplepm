@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router';
 import { t } from 'ttag';
 import { Row, Col, Card, Button, Divider } from 'antd';
@@ -6,6 +6,7 @@ import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import StorageUtil from 'service/helper/storage_util';
 import LocaleSelect from 'component/common/locale_select.jsx';
+import ResetPwdDialog from 'component/auth/reset_pwd';
 import Form from './form';
 
 const styles = {
@@ -31,6 +32,10 @@ export default function Login() {
         window.location.href = ssoUrl;
     };
 
+    const handleOpenResetPwd = useCallback(() => {
+        ResetPwdDialog.toggle(true);
+    }, []);
+
     return (
         <div>
             <div className="right content">
@@ -43,7 +48,15 @@ export default function Login() {
                     lg={{ span: 8, offset: 8 }}
                 >
                     <Card title={t`Login`} style={styles.wrapper}>
-                        <Form onChange={handleLogin} />
+                        <Form onChange={handleLogin}>
+                            <Button
+                                color="primary"
+                                variant="link"
+                                onClick={handleOpenResetPwd}
+                            >
+                                {t`Forgot password`}
+                            </Button>
+                        </Form>
                         <Divider plain>Don’t have an account yet?</Divider>
                         <div className="center">
                             <Link to="/signup">
@@ -55,6 +68,7 @@ export default function Login() {
                     </Card>
                 </Col>
             </Row>
+            <ResetPwdDialog />
         </div>
     );
 }

@@ -12,7 +12,8 @@ export default function LoginForm({ onChange, children }) {
     const { notification } = App.useApp();
     const [form] = Form.useForm();
     const initialValues = {
-        tenantUid: StorageUtil.getTenantUid()
+        username: '',
+        password: ''
     };
 
     const checkAuthUrl = (tenantUid) => {
@@ -35,11 +36,19 @@ export default function LoginForm({ onChange, children }) {
             }}
         >
             <Form.Item
-                name="tenantUid"
-                label={t`Company code`}
+                name="username"
+                label={t`Username`}
                 rules={[FormUtil.ruleRequired()]}
             >
                 <Input autoFocus />
+            </Form.Item>
+
+            <Form.Item
+                name="password"
+                label={t`Password`}
+                rules={[FormUtil.ruleRequired()]}
+            >
+                <Input type="password" />
             </Form.Item>
 
             <br />
