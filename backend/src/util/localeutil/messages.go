@@ -265,4 +265,28 @@ var (
 		ID:    "FailedToCreateKafkaConsumer",
 		Other: "failed to create Kafka consumer",
 	}
+	FailedToCreateEmailClient = &i18n.Message{
+		ID:    "FailedToCreateEmailClient",
+		Other: "failed to create email client",
+	}
+	FailedToSetFromAddress = &i18n.Message{
+		ID:    "FailedToSetFromAddress",
+		Other: "failed to set FROM address: {{.Value}}",
+	}
+	FailedToSetToAddress = &i18n.Message{
+		ID:    "FailedToSetToAddress",
+		Other: "failed to set TO address: {{.Value}}",
+	}
+	FailedToDeliverEmail = &i18n.Message{
+		ID:    "FailedToDeliverEmail",
+		Other: "failed to deliver email",
+	}
+	FailedToParseTemplate = &i18n.Message{
+		ID:    "FailedToParseTemplate",
+		Other: "failed to parse template: {{.Value}}",
+	}
+	FailedToExecuteTemplate = &i18n.Message{
+		ID:    "FailedToExecuteTemplate",
+		Other: "failed to execute template: {{.Value}}",
+	}
 )

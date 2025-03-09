@@ -9,6 +9,7 @@ import (
 var DEBUG bool = frameworkutil.GetEnv("DEBUG", "true") == "true"
 var BASE_URL string = frameworkutil.GetEnv("BASE_URL", "")
 var DOMAIN string = frameworkutil.GetEnv("DOMAIN", "")
+var APP_NAME string = frameworkutil.GetEnv("APP_NAME", "")
 var DB_HOST string = frameworkutil.GetEnv("DB_HOST", "")
 var DB_PORT string = frameworkutil.GetEnv("DB_PORT", "5432")
 var DB_USER string = frameworkutil.GetEnv("DB_USER", "")
@@ -17,6 +18,16 @@ var DB_PASSWORD string = frameworkutil.GetEnv("DB_PASSWORD", "")
 
 var NOSQL_HOST string = frameworkutil.GetEnv("NOSQL_HOST", "")
 var NOSQL_PORT string = frameworkutil.GetEnv("NOSQL_PORT", "9042")
+
+var EMAIL_FROM string = frameworkutil.GetEnv("EMAIL_FROM", "")
+var DEFAULT_EMAIL_FROM string = fmt.Sprintf(
+	"%s <%s>", APP_NAME, EMAIL_FROM,
+)
+var EMAIL_HOST string = frameworkutil.GetEnv("EMAIL_HOST", "")
+var EMAIL_PORT int = numberutil.StrToInt(frameworkutil.GetEnv("EMAIL_PORT", "587"), 587)
+var EMAIL_HOST_USER string = frameworkutil.GetEnv("EMAIL_HOST_USER", "")
+var EMAIL_HOST_PASSWORD string = frameworkutil.GetEnv("EMAIL_HOST_PASSWORD", "")
+var EMAIL_USE_TLS bool = frameworkutil.GetEnv("EMAIL_USE_TLS", "true") == "true"
 
 const DEFAULT_LANG = "en"
 

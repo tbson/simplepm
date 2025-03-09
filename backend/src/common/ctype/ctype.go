@@ -30,3 +30,8 @@ type SelectOption[T any] struct {
 	Group       string                  `json:"group"`
 	Options     []SimpleSelectOption[T] `json:"options"`
 }
+
+type EmailBody struct {
+	HmtlPath string
+	Data     Dict
+}

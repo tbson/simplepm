@@ -88,8 +88,9 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 }
 
 func (r Repo) Create(data ctype.Dict) (*Schema, error) {
+	db := r.client
 	item := newSchema(data)
-	result := r.client.Create(item)
+	result := db.Create(item)
 	err := result.Error
 	if err != nil {
 		return item, errutil.NewGormError(err)
@@ -106,11 +107,12 @@ func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Sc
 }
 
 func (r Repo) Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
+	db := r.client
 	item, err := r.Retrieve(queryOptions)
 	if err != nil {
 		return nil, err
 	}
-	result := r.client.Model(&item).Omit("ID").Updates(map[string]interface{}(data))
+	result := db.Model(&item).Omit("ID").Updates(map[string]interface{}(data))
 	err = result.Error
 	if err != nil {
 		return nil, errutil.NewGormError(err)
@@ -131,12 +133,13 @@ func (r Repo) UpdateOrCreate(
 }
 
 func (r Repo) Delete(id uint) ([]uint, error) {
+	db := r.client
 	ids := []uint{id}
 	_, err := r.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"id": id}})
 	if err != nil {
 		return ids, err
 	}
-	result := r.client.Where("id = ?", id).Delete(&Schema{})
+	result := db.Where("id = ?", id).Delete(&Schema{})
 	err = result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)
@@ -145,7 +148,8 @@ func (r Repo) Delete(id uint) ([]uint, error) {
 }
 
 func (r Repo) DeleteList(ids []uint) ([]uint, error) {
-	result := r.client.Where("id IN (?)", ids).Delete(&Schema{})
+	db := r.client
+	result := db.Where("id IN (?)", ids).Delete(&Schema{})
 	err := result.Error
 	if err != nil {
 		return ids, errutil.NewGormError(err)

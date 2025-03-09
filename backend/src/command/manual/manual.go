@@ -2,20 +2,31 @@ package main
 
 import (
 	"fmt"
-	"src/module/git/usecase/github/infra"
-	"src/util/dbutil"
+	"src/client/emailclient"
+	"src/common/ctype"
+	"src/module/account/repo/email"
 )
 
 func main() {
-	dbutil.InitDb()
-	repo := infra.New(dbutil.Db(nil))
-	gitRepo := "nghiencode/integrate-simplepm"
-	gitBranch := "son/test-branch1"
-	result, err := repo.GetTaskUser(gitRepo, gitBranch)
+	client, err := emailclient.NewClient()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	fmt.Println(result)
+	emailRepo := email.New(client)
+
+	to := "tbson87@gmail.com"
+	subject := "Test email for new client"
+	body := ctype.EmailBody{
+		HmtlPath: "emails/sample.html",
+		Data: ctype.Dict{
+			"Param": "Hello from Go!",
+		},
+	}
+
+	emailRepo.SendEmailAsync(to, subject, body)
+
+	fmt.Println("Press Enter to exit...")
+	fmt.Scanln()
 }
