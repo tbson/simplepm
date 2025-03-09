@@ -164,6 +164,7 @@ elif [ "$FIRST_ARG" == "btestfull" ]; then
 elif [ "$FIRST_ARG" == "btestinit" ]; then
     initTestDb
 elif [ "$FIRST_ARG" == "btest" ]; then
+    # ./exec btest src/util/pwdutil -run TestMakeThenCheckPwd
     docker compose exec "$NAME"_backend go test $ARGS
 elif [ "$FIRST_ARG" == "bupgrade" ]; then
     docker compose exec "$NAME"_backend bash -c 'go get -u && go mod tidy'
