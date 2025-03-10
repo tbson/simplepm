@@ -6,10 +6,7 @@ import (
 
 func TestMakeThenCheckPwd(t *testing.T) {
 	pwd := "password"
-	encodedHash, err := MakePwd(pwd)
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
+	encodedHash := MakePwd(pwd)
 	result, err := CheckPwd(pwd, encodedHash)
 	if err != nil {
 		t.Errorf("Error: %v", err)

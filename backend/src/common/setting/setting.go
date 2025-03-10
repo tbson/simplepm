@@ -36,6 +36,15 @@ var DEFAULT_ADMIN_EMAIL string = frameworkutil.GetEnv("DEFAULT_ADMIN_EMAIL", "ad
 var ADMIN_TEANT_UID string = frameworkutil.GetEnv("ADMIN_TEANT_UID", "admin")
 var ADMIN_TEANT_TITLE string = frameworkutil.GetEnv("ADMIN_TEANT_TITLE", "admin")
 
+var TEST_TEANT_UID string = frameworkutil.GetEnv("TEST_TEANT_UID", "")
+var TETS_TEANT_TITLE string = frameworkutil.GetEnv("TETS_TEANT_TITLE", "")
+var TEST_USER_EMAIL_ADMIN string = frameworkutil.GetEnv("TEST_USER_EMAIL_ADMIN", "")
+var TEST_USER_EMAIL_STAFF string = frameworkutil.GetEnv("TEST_USER_EMAIL_STAFF", "")
+var TEST_USER_EMAIL_OWNER string = frameworkutil.GetEnv("TEST_USER_EMAIL_OWNER", "")
+var TEST_USER_EMAIL_MANAGER string = frameworkutil.GetEnv("TEST_USER_EMAIL_MANAGER", "")
+var TEST_USER_EMAIL_USER string = frameworkutil.GetEnv("TEST_USER_EMAIL_USER", "")
+var TEST_USER_PASSWORD string = frameworkutil.GetEnv("TEST_USER_PASSWORD", "")
+
 var S3_ACCOUNT_ID string = frameworkutil.GetEnv("S3_ACCOUNT_ID", "")
 var S3_ACCESS_KEY_ID string = frameworkutil.GetEnv("S3_ACCESS_KEY_ID", "")
 var S3_SECRET_ACCESS_KEY string = frameworkutil.GetEnv("S3_SECRET_ACCESS_KEY", "")

@@ -30,6 +30,14 @@ func cleanup(dbClient *gorm.DB) {
 	dbClient.Exec("TRUNCATE TABLE variables")
 }
 
+func seedData() {
+	for i := 0; i < 10; i++ {
+		data := getData(i)
+		result, _ := repo.Create(data)
+		idMap[i] = result.ID
+	}
+}
+
 func getData(index int) ctype.Dict {
 	return ctype.Dict{
 		"Key":         fmt.Sprintf("key%d", index),
@@ -48,14 +56,6 @@ func getID(index int) uint {
 
 func setID(index int, id uint) {
 	idMap[index] = id
-}
-
-func seedData() {
-	for i := 0; i < 10; i++ {
-		data := getData(i)
-		result, _ := repo.Create(data)
-		idMap[i] = result.ID
-	}
 }
 
 func TestList(t *testing.T) {

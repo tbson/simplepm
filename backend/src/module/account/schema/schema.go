@@ -7,6 +7,7 @@ import (
 
 	"src/common/ctype"
 	"src/util/dictutil"
+	"src/util/pwdutil"
 
 	"gorm.io/datatypes"
 )
@@ -94,7 +95,10 @@ func NewUser(data ctype.Dict) *User {
 	if err != nil {
 		panic("Failed to marshal ExtraInfo")
 	}
-	return &User{
+
+	pwd := pwdutil.MakePwd(dictutil.GetValue[string](data, "Pwd"))
+
+	result := &User{
 		TenantID:    dictutil.GetValue[uint](data, "TenantID"),
 		TenantTmpID: dictutil.GetValue[*uint](data, "TenantTmpID"),
 		ExternalID:  dictutil.GetValue[string](data, "ExternalID"),
@@ -108,6 +112,12 @@ func NewUser(data ctype.Dict) *User {
 		ExtraInfo:   datatypes.JSON(extraInfoJSON),
 		Roles:       dictutil.GetValue[[]Role](data, "Roles"),
 	}
+
+	if pwd != "" {
+		result.Pwd = pwd
+	}
+
+	return result
 }
 
 type Role struct {

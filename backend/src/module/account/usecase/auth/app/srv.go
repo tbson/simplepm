@@ -204,21 +204,20 @@ func (srv Service) RefreshToken(
 	return tokensAndClaims, nil
 }
 
-func (srv Service) RequestResetPassword(email string, tenantUid string) error {
+func (srv Service) RequestResetPwd(email string, tenantID uint) error {
 	// Check user exists
 	getUserOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"Email": email, "Tenant.UID": tenantUid},
-		Joins:   []string{"Tenant"},
+		Filters: ctype.Dict{"Email": email, "TenantID": tenantID},
 	}
 	user, err := srv.userRepo.Retrieve(getUserOptions)
 	if err != nil {
 		return err
 	}
 
-	// Generate reset password token
+	// Generate reset pwd token
 	code := stringutil.GetRandomString(6)
 
-	// update user reset password token
+	// update user reset pwd token
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": user.ID}}
 	updateData := ctype.Dict{
 		"PwdResetToken": code,
@@ -228,7 +227,7 @@ func (srv Service) RequestResetPassword(email string, tenantUid string) error {
 		return err
 	}
 
-	// Send email containing reset password token
+	// Send email containing reset pwd token
 	to := user.Email
 	subject := "Reset Password"
 	body := ctype.EmailBody{
@@ -242,25 +241,24 @@ func (srv Service) RequestResetPassword(email string, tenantUid string) error {
 	return nil
 }
 
-func (srv Service) ResetPassword(
+func (srv Service) ResetPwd(
 	email string,
 	code string,
-	password string,
-	tenantUid string,
+	pwd string,
+	tenantID uint,
 ) error {
 	localizer := localeutil.Get()
 
 	// Check user exists
 	getUserOptions := ctype.QueryOptions{
-		Filters: ctype.Dict{"Email": email, "Tenant.UID": tenantUid},
-		Joins:   []string{"Tenant"},
+		Filters: ctype.Dict{"Email": email, "TenantID": tenantID},
 	}
 	user, err := srv.userRepo.Retrieve(getUserOptions)
 	if err != nil {
 		return err
 	}
 
-	// Check reset password code
+	// Check reset pwd code
 	if user.PwdResetToken != code {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.InvalidResetPwdCode,
@@ -268,13 +266,10 @@ func (srv Service) ResetPassword(
 		return errutil.New("", []string{msg})
 	}
 
-	// Update user password
-	pwdHash, err := pwdutil.MakePwd(password)
-	if err != nil {
-		return err
-	}
+	// Update user pwd
+	pwdHash := pwdutil.MakePwd(pwd)
 	updateData := ctype.Dict{
-		"Password":      pwdHash,
+		"Pwd":           pwdHash,
 		"PwdResetToken": "",
 		"PwdResetAt":    dateutil.Now(),
 	}
@@ -285,4 +280,59 @@ func (srv Service) ResetPassword(
 	}
 
 	return nil
+}
+
+func (srv Service) ChangePwd(userID uint, pwd string) error {
+	// Update user pwd
+	pwdHash := pwdutil.MakePwd(pwd)
+	updateData := ctype.Dict{
+		"Pwd": pwdHash,
+	}
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": userID}}
+	_, err := srv.userRepo.Update(updateOptions, updateData)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (srv Service) Login(
+	email string,
+	pwd string,
+	tenantID uint,
+) (schema.User, error) {
+	localizer := localeutil.Get()
+
+	// Check user exists
+	getUserOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"Email": email, "TenantID": tenantID},
+	}
+	user, err := srv.userRepo.Retrieve(getUserOptions)
+	if err != nil {
+		return schema.User{}, err
+	}
+
+	// Check user is locked
+	if user.LockedAt != nil {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.LockedAccount,
+		})
+		return schema.User{}, errutil.New("", []string{msg})
+	}
+
+	// Check pwd
+	ok, err := pwdutil.CheckPwd(pwd, user.Pwd)
+	if err != nil {
+		return schema.User{}, err
+	}
+
+	if !ok {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.InvalidUsernameOrPwd,
+		})
+		return schema.User{}, errutil.New("", []string{msg})
+	}
+
+	return *user, nil
 }

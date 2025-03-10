@@ -291,6 +291,18 @@ var (
 	}
 	InvalidResetPwdCode = &i18n.Message{
 		ID:    "InvalidResetPwdCode",
-		Other: "Invalid reset password code",
+		Other: "invalid reset password code",
+	}
+	InvalidUsernameOrPwd = &i18n.Message{
+		ID:    "InvalidUsernameOrPwd",
+		Other: "invalid username or password",
+	}
+	InvalidHashFormat = &i18n.Message{
+		ID:    "InvalidHashFormat",
+		Other: "invalid hash format",
+	}
+	UnsupportedAlgorithm = &i18n.Message{
+		ID:    "UnsupportedAlgorithm",
+		Other: "unsupported algorithm: {{.Value}}",
 	}
 )

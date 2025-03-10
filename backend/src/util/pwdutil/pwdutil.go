@@ -4,8 +4,12 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
+	"src/common/ctype"
+	"src/util/errutil"
+	"src/util/localeutil"
 	"strings"
 
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/crypto/argon2"
 )
 
@@ -17,7 +21,11 @@ type params struct {
 	keyLength   uint32
 }
 
-func MakePwd(pwd string) (string, error) {
+func MakePwd(pwd string) string {
+	if pwd == "" {
+		return ""
+	}
+
 	// Recommended parameters for Argon2id
 	p := &params{
 		memory:      64 * 1024, // 64MB
@@ -30,7 +38,7 @@ func MakePwd(pwd string) (string, error) {
 	// Generate a random salt
 	salt := make([]byte, p.saltLength)
 	if _, err := rand.Read(salt); err != nil {
-		return "", err
+		return ""
 	}
 
 	// Generate the hash
@@ -53,19 +61,30 @@ func MakePwd(pwd string) (string, error) {
 		argon2.Version, p.memory, p.iterations, p.parallelism, b64Salt, b64Hash,
 	)
 
-	return encodedHash, nil
+	return encodedHash
 }
 
 func CheckPwd(pwd, encodedHash string) (bool, error) {
+	localizer := localeutil.Get()
 	// Extract the parameters, salt, and derived key from the encoded hash
 	parts := strings.Split(encodedHash, "$")
 	if len(parts) != 6 {
-		return false, fmt.Errorf("invalid hash format")
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.InvalidHashFormat,
+		})
+		return false, errutil.New("", []string{msg})
 	}
 
 	// Check the algorithm
 	if parts[1] != "argon2id" {
-		return false, fmt.Errorf("unsupported algorithm: %s", parts[1])
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.UnsupportedAlgorithm,
+			TemplateData: ctype.Dict{
+				"Value": parts[1],
+			},
+		})
+
+		return false, errutil.New("", []string{msg})
 	}
 
 	// Parse the parameters
