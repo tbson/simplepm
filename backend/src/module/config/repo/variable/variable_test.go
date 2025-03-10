@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 var repo Repo
@@ -15,10 +16,18 @@ var idMap = make(map[int]uint)
 
 func TestMain(m *testing.M) {
 	dbutil.InitDb()
-	repo = New(dbutil.Db(nil))
+	dbClient := dbutil.Db(nil)
+	repo = New(dbClient)
 
 	seedData()
+
 	m.Run()
+
+	cleanup(dbClient)
+}
+
+func cleanup(dbClient *gorm.DB) {
+	dbClient.Exec("TRUNCATE TABLE variables")
 }
 
 func getData(index int) ctype.Dict {

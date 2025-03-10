@@ -5,19 +5,23 @@ import (
 	"src/common/authtype"
 	"src/common/ctype"
 	"src/module/account/schema"
+	"src/util/dateutil"
 	"src/util/dictutil"
 	"src/util/errutil"
 	"src/util/localeutil"
+	"src/util/pwdutil"
 	"src/util/ssoutil"
+	"src/util/stringutil"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 type Service struct {
-	userRepo UserRepo
-	roleRepo RoleRepo
-	iamRepo  IamRepo
-	authRepo AuthRepo
+	userRepo  UserRepo
+	roleRepo  RoleRepo
+	iamRepo   IamRepo
+	authRepo  AuthRepo
+	emailRepo EmailRepo
 }
 
 func New(
@@ -25,8 +29,9 @@ func New(
 	roleRepo RoleRepo,
 	iamRepo IamRepo,
 	authRepo AuthRepo,
+	emailRepo EmailRepo,
 ) Service {
-	return Service{userRepo, roleRepo, iamRepo, authRepo}
+	return Service{userRepo, roleRepo, iamRepo, authRepo, emailRepo}
 }
 
 func (srv Service) parseState(state string) (StateData, error) {
@@ -197,4 +202,87 @@ func (srv Service) RefreshToken(
 	}
 
 	return tokensAndClaims, nil
+}
+
+func (srv Service) RequestResetPassword(email string, tenantUid string) error {
+	// Check user exists
+	getUserOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"Email": email, "Tenant.UID": tenantUid},
+		Joins:   []string{"Tenant"},
+	}
+	user, err := srv.userRepo.Retrieve(getUserOptions)
+	if err != nil {
+		return err
+	}
+
+	// Generate reset password token
+	code := stringutil.GetRandomString(6)
+
+	// update user reset password token
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": user.ID}}
+	updateData := ctype.Dict{
+		"PwdResetToken": code,
+	}
+	_, err = srv.userRepo.Update(updateOptions, updateData)
+	if err != nil {
+		return err
+	}
+
+	// Send email containing reset password token
+	to := user.Email
+	subject := "Reset Password"
+	body := ctype.EmailBody{
+		HmtlPath: "emails/reset-pwd.html",
+		Data: ctype.Dict{
+			"Name": user.FullName(),
+			"Code": code,
+		},
+	}
+	srv.emailRepo.SendEmailAsync(to, subject, body)
+	return nil
+}
+
+func (srv Service) ResetPassword(
+	email string,
+	code string,
+	password string,
+	tenantUid string,
+) error {
+	localizer := localeutil.Get()
+
+	// Check user exists
+	getUserOptions := ctype.QueryOptions{
+		Filters: ctype.Dict{"Email": email, "Tenant.UID": tenantUid},
+		Joins:   []string{"Tenant"},
+	}
+	user, err := srv.userRepo.Retrieve(getUserOptions)
+	if err != nil {
+		return err
+	}
+
+	// Check reset password code
+	if user.PwdResetToken != code {
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.InvalidResetPwdCode,
+		})
+		return errutil.New("", []string{msg})
+	}
+
+	// Update user password
+	pwdHash, err := pwdutil.MakePwd(password)
+	if err != nil {
+		return err
+	}
+	updateData := ctype.Dict{
+		"Password":      pwdHash,
+		"PwdResetToken": "",
+		"PwdResetAt":    dateutil.Now(),
+	}
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": user.ID}}
+	_, err = srv.userRepo.Update(updateOptions, updateData)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -26,6 +26,7 @@ type StateData struct {
 }
 
 type UserRepo interface {
+	Retrieve(queryOptions ctype.QueryOptions) (*schema.User, error)
 	Create(data ctype.Dict) (*schema.User, error)
 	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
 }
@@ -60,4 +61,8 @@ type AuthRepo interface {
 	GetAuthClientFromTenantUid(tenantUid string) (AuthClientInfo, error)
 	GetAuthClientFromSub(tenantUid string) (AuthClientInfo, error)
 	GetPemModulesActionsMap(userId uint) (PemModulesActionsMap, error)
+}
+
+type EmailRepo interface {
+	SendEmailAsync(to string, subject string, body ctype.EmailBody)
 }

@@ -3,6 +3,7 @@ package infra
 import (
 	"net/http"
 
+	"src/client/emailclient"
 	"src/common/ctype"
 	"src/module/account/repo/iam"
 	"src/module/account/repo/role"
@@ -12,16 +13,23 @@ import (
 	"src/util/dbutil"
 	"src/util/ssoutil"
 
+	"src/module/account/repo/email"
+
 	"github.com/labstack/echo/v4"
 )
 
 func getService() app.Service {
+	emailClient, err := emailclient.NewClient()
+	if err != nil {
+		panic(err)
+	}
 	client := dbutil.Db(nil)
 	userRepo := user.New(client)
 	roleRepo := role.New(client)
 	iamRepo := iam.New(ssoutil.Client())
 	authRepo := New(client)
-	return app.New(userRepo, roleRepo, iamRepo, authRepo)
+	emailRepo := email.New(emailClient)
+	return app.New(userRepo, roleRepo, iamRepo, authRepo, emailRepo)
 }
 
 func CheckAuthUrl(c echo.Context) error {
@@ -114,6 +122,11 @@ func RefreshToken(c echo.Context) error {
 }
 
 func RefreshTokenCheck(c echo.Context) error {
+	result := ctype.Dict{}
+	return c.JSON(http.StatusOK, result)
+}
+
+func RequestPasswordReset(c echo.Context) error {
 	result := ctype.Dict{}
 	return c.JSON(http.StatusOK, result)
 }

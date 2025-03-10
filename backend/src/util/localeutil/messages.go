@@ -289,4 +289,8 @@ var (
 		ID:    "FailedToExecuteTemplate",
 		Other: "failed to execute template: {{.Value}}",
 	}
+	InvalidResetPwdCode = &i18n.Message{
+		ID:    "InvalidResetPwdCode",
+		Other: "Invalid reset password code",
+	}
 )
