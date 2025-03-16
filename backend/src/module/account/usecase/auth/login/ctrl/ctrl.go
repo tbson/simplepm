@@ -17,7 +17,7 @@ type ctrl struct {
 	Srv SrvProvider
 }
 
-type loginInpu struct {
+type input struct {
 	Email string `json:"email" validate:"required"`
 	Pwd   string `json:"pwd" validate:"required"`
 }
@@ -35,7 +35,7 @@ type loginInpu struct {
 // @Router /account/auth/login [post]
 func (ctrl ctrl) Handler(c echo.Context) error {
 	tenantID := c.Get("TenantID").(uint)
-	structData, err := vldtutil.ValidatePayload(c, loginInpu{})
+	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

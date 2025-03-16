@@ -26,5 +26,6 @@ func WireCtrl() frameworkutil.CtrlHandler {
 	ctrlHandler = ctrl.New(
 		srv.New(localDataRepo, iamRepo),
 	)
+
 	return ctrlHandler
 }

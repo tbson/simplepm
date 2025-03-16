@@ -1,10 +1,8 @@
 package ctrl
 
 import (
-	"context"
 	"net/http"
 
-	"src/common/authtype"
 	"src/common/ctype"
 	"src/util/vldtutil"
 
@@ -12,11 +10,7 @@ import (
 )
 
 type SrvProvider interface {
-	RefreshToken(
-		ctx context.Context,
-		realm string,
-		refreshToken string,
-	) (authtype.SsoCallbackResult, error)
+	ResetPwd(email string, code string, pwd string, tenantID uint) error
 }
 
 type ctrl struct {
@@ -24,18 +18,19 @@ type ctrl struct {
 }
 
 type input struct {
-	Realm        string `json:"realm" validate:"required"`
-	RefreshToken string `json:"refresh_token" validate:"required"`
+	Email string `json:"email" validate:"required"`
+	Code  string `json:"code" validate:"required"`
+	Pwd   string `json:"pwd" validate:"required"`
 }
 
 func (ctrl ctrl) Handler(c echo.Context) error {
-	ctx := c.Request().Context()
+	tenantID := c.Get("TenantID").(uint)
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	_, err = ctrl.Srv.RefreshToken(ctx, structData.Realm, structData.RefreshToken)
+	err = ctrl.Srv.ResetPwd(structData.Email, structData.Code, structData.Pwd, tenantID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

@@ -10,7 +10,7 @@ import (
 	signuptenant "src/module/account/usecase/signuptenant/infra"
 	tenant "src/module/account/usecase/tenant/infra"
 	user "src/module/account/usecase/user/infra"
-	variable "src/module/config/usecase/variable/infra"
+	"src/module/config/usecase/variable"
 	createdocfromlink "src/module/document/usecase/createdocfromlink/infra"
 	doc "src/module/document/usecase/doc/infra"
 	docattachment "src/module/document/usecase/docattachment/infra"

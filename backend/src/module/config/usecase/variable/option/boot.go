@@ -1,7 +1,7 @@
-package refreshtokencheck
+package option
 
 import (
-	"src/module/account/usecase/auth/refreshtokencheck/ctrl"
+	"src/module/config/usecase/variable/option/ctrl"
 	"src/util/frameworkutil"
 )
 
@@ -12,6 +12,6 @@ func WireCtrl() frameworkutil.CtrlHandler {
 		return ctrlHandler
 	}
 
-	ctrlHandler := ctrl.New()
+	ctrlHandler = ctrl.New()
 	return ctrlHandler
 }

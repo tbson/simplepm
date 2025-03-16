@@ -1,9 +1,8 @@
-package login
+package create
 
 import (
-	"src/module/account/repo/user"
-	"src/module/account/usecase/auth/login/ctrl"
-	"src/module/account/usecase/auth/login/srv"
+	"src/module/config/repo/variable"
+	"src/module/config/usecase/variable/create/ctrl"
 	"src/util/dbutil"
 	"src/util/frameworkutil"
 )
@@ -17,9 +16,9 @@ func WireCtrl() frameworkutil.CtrlHandler {
 
 	dbClient := dbutil.Db(nil)
 
-	userRepo := user.New(dbClient)
+	variableRepo := variable.New(dbClient)
 
-	ctrlHandler = ctrl.New(srv.New(userRepo))
+	ctrlHandler = ctrl.New(variableRepo)
 
 	return ctrlHandler
 }

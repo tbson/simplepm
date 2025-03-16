@@ -17,13 +17,13 @@ type ctrl struct {
 	Srv SrvProvider
 }
 
-type inputData struct {
+type input struct {
 	Pwd string `json:"pwd" validate:"required"`
 }
 
 func (ctrl ctrl) Handler(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
-	structData, err := vldtutil.ValidatePayload(c, inputData{})
+	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

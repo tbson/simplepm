@@ -12,8 +12,8 @@ import (
 	"src/module/account/usecase/auth/login"
 	"src/module/account/usecase/auth/refreshtoken"
 	"src/module/account/usecase/auth/refreshtokencheck"
-	"src/module/account/usecase/auth/requestresetpwd"
 	"src/module/account/usecase/auth/resetpwd"
+	"src/module/account/usecase/auth/resetpwdrequest"
 )
 
 var module = "account"
@@ -31,16 +31,16 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 		"PUT", "/change-pwd", changepwd.WireCtrl().Handler,
 	)
 	rr.Public(
-		"POST", "/reset-pwd", resetpwd.WireCtrl().Handler,
+		"POST", "/reset-pwd/request", resetpwdrequest.WireCtrl().Handler,
 	)
 	rr.Public(
-		"POST", "/request-reset-pwd", requestresetpwd.WireCtrl().Handler,
+		"POST", "/reset-pwd", resetpwd.WireCtrl().Handler,
 	)
 	rr.Public(
 		"POST", "/refresh-token", refreshtoken.WireCtrl().Handler,
 	)
 	rr.Public(
-		"GET", "/refresh-token-check", refreshtokencheck.WireCtrl().Handler,
+		"GET", "/refresh-token/check", refreshtokencheck.WireCtrl().Handler,
 	)
 	return e, pemMap
 }
