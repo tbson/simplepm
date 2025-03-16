@@ -2,7 +2,7 @@ package route
 
 import (
 	"src/common/ctype"
-	auth "src/module/account/usecase/auth/infra"
+	auth "src/module/account/usecase/auth"
 	authclient "src/module/account/usecase/authclient/infra"
 	lockuser "src/module/account/usecase/lockuser/infra"
 	profile "src/module/account/usecase/profile/infra"

@@ -8,7 +8,7 @@ import (
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
-	"src/module/abstract/repo/paging"
+	"src/module/abstract/repo/page"
 	"src/module/config"
 	"src/module/config/repo/variable"
 	"src/module/config/schema"
@@ -34,7 +34,7 @@ func Option(c echo.Context) error {
 // List godoc
 //
 //	@Summary		Get list of variables
-//	@Description	Get list of variables with filtering, sorting and paging
+//	@Description	Get list of variables with filtering, sorting and page
 //	@Tags			config
 //	@Accept			json
 //	@Produce		json
@@ -46,14 +46,14 @@ func Option(c echo.Context) error {
 //	@Failure		404	{object}	map[string]interface{}
 //	@Router			/api/v1/config/variable/ [get]
 func List(c echo.Context) error {
-	pager := paging.New[Schema, ListOutput](dbutil.Db(nil), ListPres)
 
 	if err := vldtutil.CheckRequiredFilter(c, "tenant_id"); err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
-	listResult, err := pager.Paging(options, searchableFields)
+	page := page.New[Schema](dbutil.Db(nil))
+	listResult, err := page.Paging(options, searchableFields)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

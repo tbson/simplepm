@@ -11,7 +11,7 @@ type Service struct {
 	userRepo   UserRepo
 }
 
-type initDataResult struct {
+type InitDataResult struct {
 	TenantID schema.Tenant
 	UserID   schema.User
 }
@@ -23,7 +23,7 @@ func New(
 	return Service{tenantRepo, userRepo}
 }
 
-func (srv Service) InitData() (initDataResult, error) {
+func (srv Service) InitData() (InitDataResult, error) {
 	// Init tenant
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
@@ -36,7 +36,7 @@ func (srv Service) InitData() (initDataResult, error) {
 	}
 	tenant, err := srv.tenantRepo.GetOrCreate(queryOptions, tenantData)
 	if err != nil {
-		return initDataResult{}, err
+		return InitDataResult{}, err
 	}
 
 	// Init user
@@ -57,10 +57,10 @@ func (srv Service) InitData() (initDataResult, error) {
 
 	user, err := srv.userRepo.GetOrCreate(queryOptions, userData)
 	if err != nil {
-		return initDataResult{}, err
+		return InitDataResult{}, err
 	}
 
-	return initDataResult{
+	return InitDataResult{
 		TenantID: *tenant,
 		UserID:   *user,
 	}, nil

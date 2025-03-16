@@ -6,19 +6,19 @@ import (
 	"gorm.io/gorm"
 )
 
-type Repo[S any, P any] struct {
+type repo[S any, P any] struct {
 	client *gorm.DB
 	pres   func([]S) []P
 }
 
-func New[S any, P any](client *gorm.DB, pres func([]S) []P) Repo[S, P] {
-	return Repo[S, P]{
+func New[S any, P any](client *gorm.DB, pres func([]S) []P) repo[S, P] {
+	return repo[S, P]{
 		client: client,
 		pres:   pres,
 	}
 }
 
-func (r Repo[S, P]) Paging(
+func (r repo[S, P]) Paging(
 	options restlistutil.ListOptions,
 	searchableFields []string,
 ) (restlistutil.ListRestfulResult[P], error) {
@@ -82,7 +82,7 @@ func (r Repo[S, P]) Paging(
 	}, nil
 }
 
-func (r Repo[S, P]) List(
+func (r repo[S, P]) List(
 	options restlistutil.ListOptions,
 	searchableFields []string,
 ) ([]P, error) {

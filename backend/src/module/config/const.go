@@ -1,21 +1,24 @@
 package config
 
-import "src/common/ctype"
+import (
+	"src/common/ctype"
+	"src/util/dictutil"
+)
 
-const VDTString = "STRING"
-const VDTInteger = "INTEGER"
-const VDTFloat = "FLOAT"
-const VDTBoolean = "BOOLEAN"
-const VDTDate = "DATE"
-const VDTDateTime = "DATETIME"
+const STRING = "STRING"
+const INTEGER = "INTEGER"
+const FLOAT = "FLOAT"
+const BOOLEAN = "BOOLEAN"
+const DATE = "DATE"
+const DATETIME = "DATETIME"
 
-type option = ctype.SelectOption[string]
-
-var VariableDataTypeOptions = []option{
-	{Value: VDTString, Label: "String"},
-	{Value: VDTInteger, Label: "Integer"},
-	{Value: VDTFloat, Label: "Float"},
-	{Value: VDTBoolean, Label: "Boolean"},
-	{Value: VDTDate, Label: "Date"},
-	{Value: VDTDateTime, Label: "Date time"},
+var VariableDataTypeDict = ctype.StrDict{
+	STRING:   "String",
+	INTEGER:  "Integer",
+	FLOAT:    "Float",
+	BOOLEAN:  "Boolean",
+	DATE:     "Date",
+	DATETIME: "Date time",
 }
+
+var VariableDataTypeOptions = dictutil.StrDictToSelectOptions(VariableDataTypeDict)

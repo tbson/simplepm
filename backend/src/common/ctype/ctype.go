@@ -2,6 +2,15 @@ package ctype
 
 type Dict map[string]interface{}
 
+type StrDict map[string]string
+
+func (v StrDict) Get(key string) string {
+	if val, ok := v[key]; ok {
+		return val
+	}
+	return ""
+}
+
 type Pem struct {
 	ProfileTypes []string
 	Title        string

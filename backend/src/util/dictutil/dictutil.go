@@ -1,6 +1,7 @@
 package dictutil
 
 import (
+	"fmt"
 	"reflect"
 	"src/common/ctype"
 	"src/util/stringutil"
@@ -63,4 +64,17 @@ func DiffDict(m1, m2 ctype.Dict) ctype.Dict {
 		}
 	}
 	return differences
+}
+
+func StrDictToSelectOptions(data ctype.StrDict) []ctype.SelectOption[string] {
+	var result []ctype.SelectOption[string]
+	for k, v := range data {
+		value := fmt.Sprintf("%v", k)
+		label := fmt.Sprintf("%v", v)
+		result = append(result, ctype.SelectOption[string]{
+			Value: value,
+			Label: label,
+		})
+	}
+	return result
 }

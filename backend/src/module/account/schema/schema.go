@@ -36,7 +36,7 @@ func NewAuthClient(data ctype.Dict) *AuthClient {
 
 type Tenant struct {
 	ID           uint         `gorm:"primaryKey" json:"id"`
-	AuthClientID uint         `json:"auth_client_id"`
+	AuthClientID *uint        `json:"auth_client_id"`
 	AuthClient   *AuthClient  `json:"auth_client"`
 	Roles        []Role       `gorm:"constraint:OnDelete:CASCADE;" json:"roles"`
 	Users        []User       `gorm:"constraint:OnDelete:CASCADE;" json:"users"`
@@ -51,11 +51,10 @@ type Tenant struct {
 
 func NewTenant(data ctype.Dict) *Tenant {
 	return &Tenant{
-		AuthClientID: dictutil.GetValue[uint](data, "AuthClientID"),
-		Uid:          dictutil.GetValue[string](data, "Uid"),
-		Title:        dictutil.GetValue[string](data, "Title"),
-		Avatar:       dictutil.GetValue[string](data, "Avatar"),
-		AvatarStr:    dictutil.GetValue[string](data, "AvatarStr"),
+		Uid:       dictutil.GetValue[string](data, "Uid"),
+		Title:     dictutil.GetValue[string](data, "Title"),
+		Avatar:    dictutil.GetValue[string](data, "Avatar"),
+		AvatarStr: dictutil.GetValue[string](data, "AvatarStr"),
 	}
 }
 
