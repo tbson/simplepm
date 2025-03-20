@@ -13,7 +13,7 @@ func newCookie(name string, value string, path string) *http.Cookie {
 	cookie := new(http.Cookie)
 	cookie.Name = name
 	cookie.Value = value
-	cookie.Domain = setting.DOMAIN         // Set the Domain attribute
+	cookie.Domain = setting.DOMAIN()       // Set the Domain attribute
 	cookie.Path = path                     // Set the Path attribute
 	cookie.Secure = true                   // Set the Secure attribute
 	cookie.HttpOnly = true                 // Prevents JavaScript access (optional)
@@ -31,10 +31,6 @@ func NewRefreshTokenCookie(value string) *http.Cookie {
 
 func NewIDTokenCookie(value string) *http.Cookie {
 	return newCookie("id_token", value, "/api/v1/account/auth/sso/logout/")
-}
-
-func NewRealmCookie(value string) *http.Cookie {
-	return newCookie("realm", value, "/api/v1/")
 }
 
 func NewSessionIDCookie() *http.Cookie {

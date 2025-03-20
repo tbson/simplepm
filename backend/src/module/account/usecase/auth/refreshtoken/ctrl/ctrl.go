@@ -1,22 +1,17 @@
 package ctrl
 
 import (
-	"context"
 	"net/http"
 
-	"src/common/authtype"
 	"src/common/ctype"
+	"src/module/account"
 	"src/util/vldtutil"
 
 	"github.com/labstack/echo/v4"
 )
 
 type SrvProvider interface {
-	RefreshToken(
-		ctx context.Context,
-		realm string,
-		refreshToken string,
-	) (authtype.SsoCallbackResult, error)
+	RefreshToken(refreshToken string) (account.TokenPair, error)
 }
 
 type ctrl struct {
@@ -24,18 +19,16 @@ type ctrl struct {
 }
 
 type input struct {
-	Realm        string `json:"realm" validate:"required"`
 	RefreshToken string `json:"refresh_token" validate:"required"`
 }
 
 func (ctrl ctrl) Handler(c echo.Context) error {
-	ctx := c.Request().Context()
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	_, err = ctrl.Srv.RefreshToken(ctx, structData.Realm, structData.RefreshToken)
+	_, err = ctrl.Srv.RefreshToken(structData.RefreshToken)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

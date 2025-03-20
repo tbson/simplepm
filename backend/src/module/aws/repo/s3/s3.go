@@ -29,8 +29,8 @@ type FileInfo struct {
 }
 
 func New(client *s3.Client) Repo {
-	bucketName := setting.S3_BUCKET_NAME
-	region := setting.S3_REGION
+	bucketName := setting.S3_BUCKET_NAME()
+	region := setting.S3_REGION()
 	return Repo{client: client, bucketName: bucketName, region: region}
 }
 
@@ -71,7 +71,7 @@ func (u *Repo) Upload(
 	}
 
 	// Generate the S3 URL
-	fileUrl := fmt.Sprintf("%s/%s", setting.S3_ENDPOINT_URL, key)
+	fileUrl := fmt.Sprintf("%s/%s", setting.S3_ENDPOINT_URL(), key)
 	fileName := fileHeader.Filename
 	fileType := fileHeader.Header.Get("Content-Type")
 	fileSize := int(fileHeader.Size)

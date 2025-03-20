@@ -21,13 +21,13 @@ type Client struct {
 func NewClient() (Client, error) {
 	localizer := localeutil.Get()
 	client, err := mail.NewClient(
-		setting.EMAIL_HOST,                             // SMTP server host
-		mail.WithPort(setting.EMAIL_PORT),              // SMTP server port
-		mail.WithSMTPAuth(mail.SMTPAuthPlain),          // Auth mechanism
-		mail.WithUsername(setting.EMAIL_HOST_USER),     // Username
-		mail.WithPassword(setting.EMAIL_HOST_PASSWORD), // Password
-		mail.WithTLSPolicy(mail.TLSMandatory),          // Force TLS
-		mail.WithTimeout(30*time.Second),               // Connection timeout
+		setting.EMAIL_HOST(),                             // SMTP server host
+		mail.WithPort(setting.EMAIL_PORT()),              // SMTP server port
+		mail.WithSMTPAuth(mail.SMTPAuthPlain),            // Auth mechanism
+		mail.WithUsername(setting.EMAIL_HOST_USER()),     // Username
+		mail.WithPassword(setting.EMAIL_HOST_PASSWORD()), // Password
+		mail.WithTLSPolicy(mail.TLSMandatory),            // Force TLS
+		mail.WithTimeout(30*time.Second),                 // Connection timeout
 	)
 	if err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
@@ -45,11 +45,11 @@ func (c Client) SendEmail(to string, subject string, body ctype.EmailBody) error
 	localizer := localeutil.Get()
 	message := mail.NewMsg()
 
-	if err := message.From(setting.DEFAULT_EMAIL_FROM); err != nil {
+	if err := message.From(setting.DEFAULT_EMAIL_FROM()); err != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.FailedToSetFromAddress,
 			TemplateData: ctype.Dict{
-				"Value": setting.DEFAULT_EMAIL_FROM,
+				"Value": setting.DEFAULT_EMAIL_FROM(),
 			},
 		})
 		return errutil.New("", []string{msg})

@@ -5,10 +5,6 @@ import (
 	"src/module/account/schema"
 )
 
-type AuthClientRepo interface {
-	GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.AuthClient, error)
-}
-
 type TenantRepo interface {
 	GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.Tenant, error)
 }

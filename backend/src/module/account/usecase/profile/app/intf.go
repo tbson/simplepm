@@ -10,8 +10,6 @@ type UserRepo interface {
 	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
 }
 
-type IamRepo interface {
-	GetAdminAccessToken() (string, error)
-	UpdateUser(accessToken string, realm string, sub string, data ctype.Dict) error
-	SetPassword(accessToken string, sub string, realm string, password string) error
+type AuthSrv interface {
+	SetPwd(userID uint, pwd string) error
 }

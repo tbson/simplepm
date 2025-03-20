@@ -7,12 +7,12 @@ import (
 	"src/module/account/usecase/auth/resetpwdrequest/ctrl"
 	"src/module/account/usecase/auth/resetpwdrequest/srv"
 	"src/util/dbutil"
-	"src/util/frameworkutil"
+	"src/util/fwutil"
 )
 
-var ctrlHandler frameworkutil.CtrlHandler
+var ctrlHandler fwutil.CtrlHandler
 
-func WireCtrl() frameworkutil.CtrlHandler {
+func WireCtrl() fwutil.CtrlHandler {
 	if ctrlHandler != nil {
 		return ctrlHandler
 	}

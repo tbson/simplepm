@@ -27,10 +27,10 @@ func NewClient() RabbitClient {
 	}
 	dialUrl := fmt.Sprintf(
 		"amqp://%s:%s@%s:%d/",
-		setting.RABBITMQ_USER,
-		setting.RABBITMQ_PASSWORD,
-		setting.RABBITMQ_HOST,
-		setting.RABBITMQ_PORT,
+		setting.RABBITMQ_USER(),
+		setting.RABBITMQ_PASSWORD(),
+		setting.RABBITMQ_HOST(),
+		setting.RABBITMQ_PORT(),
 	)
 	conn, err = amqp.Dial(dialUrl)
 	failOnError(err, "Failed to connect to RabbitMQ")

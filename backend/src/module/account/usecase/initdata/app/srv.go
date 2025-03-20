@@ -7,50 +7,29 @@ import (
 )
 
 type Service struct {
-	authClientRepo AuthClientRepo
-	tenantRepo     TenantRepo
-	userRepo       UserRepo
-	roleRepo       RoleRepo
+	tenantRepo TenantRepo
+	userRepo   UserRepo
+	roleRepo   RoleRepo
 }
 
 func New(
-	authClientRepo AuthClientRepo,
 	tenantRepo TenantRepo,
 	userRepo UserRepo,
 	roleRepo RoleRepo,
 ) Service {
-	return Service{authClientRepo, tenantRepo, userRepo, roleRepo}
+	return Service{tenantRepo, userRepo, roleRepo}
 }
 
 func (srv Service) InitData(pemMap ctype.PemMap) error {
-	// Init auth client
+	// Init tenant
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
-			"Uid": setting.KEYCLOAK_DEFAULT_CLIENT_ID,
-		},
-	}
-	authClientData := ctype.Dict{
-		"Uid":         setting.KEYCLOAK_DEFAULT_CLIENT_ID,
-		"Description": "Default client",
-		"Secret":      setting.KEYCLOAK_DEFAULT_CLIENT_SECRET,
-		"Partition":   setting.KEYCLOAK_DEFAULT_REALM,
-		"Default":     true,
-	}
-	authClient, err := srv.authClientRepo.GetOrCreate(queryOptions, authClientData)
-	if err != nil {
-		return err
-	}
-
-	// Init tenant
-	queryOptions = ctype.QueryOptions{
-		Filters: ctype.Dict{
-			"Uid": setting.ADMIN_TEANT_UID,
+			"Uid": setting.ADMIN_TEANT_UID(),
 		},
 	}
 	tenantData := ctype.Dict{
-		"AuthClientID": authClient.ID,
-		"Uid":          setting.ADMIN_TEANT_UID,
-		"Title":        setting.ADMIN_TEANT_TITLE,
+		"Uid":   setting.ADMIN_TEANT_UID(),
+		"Title": setting.ADMIN_TEANT_TITLE(),
 	}
 	tenant, err := srv.tenantRepo.GetOrCreate(queryOptions, tenantData)
 	if err != nil {
@@ -87,7 +66,7 @@ func (srv Service) InitData(pemMap ctype.PemMap) error {
 	}
 
 	// Init user
-	email := setting.DEFAULT_ADMIN_EMAIL
+	email := setting.DEFAULT_ADMIN_EMAIL()
 	queryOptions = ctype.QueryOptions{
 		Filters: ctype.Dict{
 			"email": email,

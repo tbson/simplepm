@@ -27,6 +27,8 @@ type QueryOptions struct {
 	Order    string
 }
 
+type Fields []string
+
 type SimpleSelectOption[T any] struct {
 	Value T      `json:"value"`
 	Label string `json:"label"`

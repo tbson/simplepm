@@ -24,7 +24,7 @@ func New(client *scyllaclient.Client) Repo {
 }
 
 func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, error) {
-	pageSize := setting.MSG_PAGE_SIZE
+	pageSize := setting.MSG_PAGE_SIZE()
 	client := scyllaclient.NewClient()
 
 	// Use QueryWithPaging to build the query

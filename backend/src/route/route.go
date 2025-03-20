@@ -3,11 +3,9 @@ package route
 import (
 	"src/common/ctype"
 	auth "src/module/account/usecase/auth"
-	authclient "src/module/account/usecase/authclient/infra"
 	lockuser "src/module/account/usecase/lockuser/infra"
 	profile "src/module/account/usecase/profile/infra"
 	role "src/module/account/usecase/role/infra"
-	signuptenant "src/module/account/usecase/signuptenant/infra"
 	tenant "src/module/account/usecase/tenant/infra"
 	user "src/module/account/usecase/user/infra"
 	"src/module/config/usecase/variable"
@@ -34,7 +32,6 @@ import (
 func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	pemMap := ctype.PemMap{}
 	e, pemMap = variable.RegisterUrls(e, pemMap)
-	e, pemMap = authclient.RegisterUrls(e, pemMap)
 	e, pemMap = tenant.RegisterUrls(e, pemMap)
 	e, pemMap = role.RegisterUrls(e, pemMap)
 	e, pemMap = user.RegisterUrls(e, pemMap)
@@ -44,7 +41,6 @@ func CollectRoutes(e *echo.Group) (*echo.Group, ctype.PemMap) {
 	e, pemMap = auth.RegisterUrls(e, pemMap)
 	e, pemMap = profile.RegisterUrls(e, pemMap)
 	e, pemMap = lockuser.RegisterUrls(e, pemMap)
-	e, pemMap = signuptenant.RegisterUrls(e, pemMap)
 	e, pemMap = reordertaskfield.RegisterUrls(e, pemMap)
 	e, pemMap = task.RegisterUrls(e, pemMap)
 	e, pemMap = feature.RegisterUrls(e, pemMap)

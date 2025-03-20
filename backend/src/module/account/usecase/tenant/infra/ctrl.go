@@ -10,7 +10,6 @@ import (
 	"src/util/vldtutil"
 
 	"src/module/abstract/repo/paging"
-	"src/module/account/repo/authclient"
 	"src/module/account/repo/role"
 	"src/module/account/repo/tenant"
 	"src/module/account/schema"
@@ -28,26 +27,7 @@ var filterableFields = []string{}
 var orderableFields = []string{"id", "uid"}
 
 func Option(c echo.Context) error {
-	authClientRepo := authclient.New(dbutil.Db(nil))
-	authClients, err := authClientRepo.List(ctype.QueryOptions{})
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
-	var authClientOptions []ctype.SelectOption[uint] = make(
-		[]ctype.SelectOption[uint],
-		len(authClients),
-	)
-	for i, authClient := range authClients {
-		authClientOptions[i] = ctype.SelectOption[uint]{
-			Value:       authClient.ID,
-			Label:       authClient.Uid,
-			Description: authClient.Partition,
-		}
-	}
-
-	result := ctype.Dict{
-		"auth_client": authClientOptions,
-	}
+	result := ctype.Dict{}
 
 	return c.JSON(http.StatusOK, result)
 }

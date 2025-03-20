@@ -12,12 +12,12 @@ import (
 )
 
 func NewClient() *s3.Client {
-	region := setting.S3_REGION
+	region := setting.S3_REGION()
 	cfg, _ := config.LoadDefaultConfig(
 		context.TODO(),
 		config.WithCredentialsProvider(
 			credentials.NewStaticCredentialsProvider(
-				setting.S3_ACCESS_KEY_ID, setting.S3_SECRET_ACCESS_KEY, "",
+				setting.S3_ACCESS_KEY_ID(), setting.S3_SECRET_ACCESS_KEY(), "",
 			)),
 		config.WithRegion(region),
 	)
@@ -25,7 +25,7 @@ func NewClient() *s3.Client {
 		o.BaseEndpoint = aws.String(
 			fmt.Sprintf(
 				"https://%s.r2.cloudflarestorage.com",
-				setting.S3_ACCOUNT_ID,
+				setting.S3_ACCOUNT_ID(),
 			),
 		)
 	})

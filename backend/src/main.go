@@ -68,12 +68,12 @@ func main() {
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
 	// e.Pre(middleware.RemoveTrailingSlash())
-	if !setting.DEBUG {
+	if !setting.DEBUG() {
 		e.Use(middleware.Recover())
 		e.Use(middleware.Logger())
 		// sentry setup
 		if err := sentry.Init(sentry.ClientOptions{
-			Dsn: setting.SENTRY_DSN,
+			Dsn: setting.SENTRY_DSN(),
 			// Set TracesSampleRate to 1.0 to capture 100%
 			// of transactions for tracing.
 			// We recommend adjusting this value in production,

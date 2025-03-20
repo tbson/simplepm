@@ -78,6 +78,16 @@ var (
 		Other: "failed to fetch JWKS",
 	}
 
+	InvalidAccessToken = &i18n.Message{
+		ID:    "InvalidAccessToken",
+		Other: "invalid access token",
+	}
+
+	InvalidRefreshToken = &i18n.Message{
+		ID:    "InvalidRefreshToken",
+		Other: "invalid refresh token",
+	}
+
 	FailedToParseToken = &i18n.Message{
 		ID:    "FailedToParseToken",
 		Other: "failed to parse token",
@@ -111,11 +121,6 @@ var (
 	TokenHasExpired = &i18n.Message{
 		ID:    "TokenHasExpired",
 		Other: "token has expired",
-	}
-
-	NoRealmFound = &i18n.Message{
-		ID:    "NoRealmFound",
-		Other: "no realm found",
 	}
 
 	RefreshTokenNotFound = &i18n.Message{
@@ -216,6 +221,10 @@ var (
 	FeatureInUse = &i18n.Message{
 		ID:    "FeatureInUse",
 		Other: "feature is in use",
+	}
+	MissingSubject = &i18n.Message{
+		ID:    "MissingSubject",
+		Other: "missing subject",
 	}
 	FailedToBuildToken = &i18n.Message{
 		ID:    "FailedToBuildToken",

@@ -2,12 +2,12 @@ package option
 
 import (
 	"src/module/config/usecase/variable/option/ctrl"
-	"src/util/frameworkutil"
+	"src/util/fwutil"
 )
 
-var ctrlHandler frameworkutil.CtrlHandler
+var ctrlHandler fwutil.CtrlHandler
 
-func WireCtrl() frameworkutil.CtrlHandler {
+func WireCtrl() fwutil.CtrlHandler {
 	if ctrlHandler != nil {
 		return ctrlHandler
 	}

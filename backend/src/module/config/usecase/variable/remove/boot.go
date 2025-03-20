@@ -4,12 +4,12 @@ import (
 	"src/module/config/repo/variable"
 	"src/module/config/usecase/variable/remove/ctrl"
 	"src/util/dbutil"
-	"src/util/frameworkutil"
+	"src/util/fwutil"
 )
 
-var ctrlHandler frameworkutil.CtrlHandler
+var ctrlHandler fwutil.CtrlHandler
 
-func WireCtrl() frameworkutil.CtrlHandler {
+func WireCtrl() fwutil.CtrlHandler {
 	if ctrlHandler != nil {
 		return ctrlHandler
 	}

@@ -67,12 +67,6 @@ export default function AdminLayout() {
                 key: '/account/tenant',
                 icon: <AuditOutlined />
             });
-        PemUtil.canView('authclient') &&
-            result.push({
-                label: t`Auth client`,
-                key: '/account/auth-client',
-                icon: <LockOutlined />
-            });
         PemUtil.canView('variable') &&
             result.push({
                 label: t`Variable`,

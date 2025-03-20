@@ -27,8 +27,8 @@ func GenerateID() gocql.UUID {
 
 // newClient initializes the cluster and session, returning a new Client.
 func newClient() (*Client, error) {
-	host := setting.NOSQL_HOST
-	port := setting.NOSQL_PORT
+	host := setting.NOSQL_HOST()
+	port := setting.NOSQL_PORT()
 
 	url := fmt.Sprintf("%s:%s", host, port)
 	cluster := gocql.NewCluster(url)

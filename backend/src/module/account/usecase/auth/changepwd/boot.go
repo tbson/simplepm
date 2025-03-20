@@ -5,12 +5,12 @@ import (
 	"src/module/account/usecase/auth/changepwd/ctrl"
 	"src/module/account/usecase/auth/changepwd/srv"
 	"src/util/dbutil"
-	"src/util/frameworkutil"
+	"src/util/fwutil"
 )
 
-var ctrlHandler frameworkutil.CtrlHandler
+var ctrlHandler fwutil.CtrlHandler
 
-func WireCtrl() frameworkutil.CtrlHandler {
+func WireCtrl() fwutil.CtrlHandler {
 	if ctrlHandler != nil {
 		return ctrlHandler
 	}

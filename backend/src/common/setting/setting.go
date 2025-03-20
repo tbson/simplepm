@@ -2,103 +2,343 @@ package setting
 
 import (
 	"fmt"
-	"src/util/frameworkutil"
-	"src/util/numberutil"
+	"src/util/fwutil"
 )
 
-var DEBUG bool = frameworkutil.GetEnv("DEBUG", "true") == "true"
-var BASE_URL string = frameworkutil.GetEnv("BASE_URL", "")
-var DOMAIN string = frameworkutil.GetEnv("DOMAIN", "")
-var APP_NAME string = frameworkutil.GetEnv("APP_NAME", "")
-var DB_HOST string = frameworkutil.GetEnv("DB_HOST", "")
-var DB_PORT string = frameworkutil.GetEnv("DB_PORT", "5432")
-var DB_USER string = frameworkutil.GetEnv("DB_USER", "")
-var DB_NAME string = frameworkutil.GetEnv("DB_NAME", "")
-var DB_PASSWORD string = frameworkutil.GetEnv("DB_PASSWORD", "")
+var debug bool = fwutil.BoolEnv("DEBUG", true)
 
-var NOSQL_HOST string = frameworkutil.GetEnv("NOSQL_HOST", "")
-var NOSQL_PORT string = frameworkutil.GetEnv("NOSQL_PORT", "9042")
+func DEBUG() bool {
+	return debug
+}
 
-var EMAIL_FROM string = frameworkutil.GetEnv("EMAIL_FROM", "")
-var DEFAULT_EMAIL_FROM string = fmt.Sprintf(
-	"%s <%s>", APP_NAME, EMAIL_FROM,
-)
-var EMAIL_HOST string = frameworkutil.GetEnv("EMAIL_HOST", "")
-var EMAIL_PORT int = numberutil.StrToInt(frameworkutil.GetEnv("EMAIL_PORT", "587"), 587)
-var EMAIL_HOST_USER string = frameworkutil.GetEnv("EMAIL_HOST_USER", "")
-var EMAIL_HOST_PASSWORD string = frameworkutil.GetEnv("EMAIL_HOST_PASSWORD", "")
-var EMAIL_USE_TLS bool = frameworkutil.GetEnv("EMAIL_USE_TLS", "true") == "true"
+var baseUrl string = fwutil.Env("BASE_URL", "")
+
+func BASE_URL() string {
+	return baseUrl
+}
+
+var domain string = fwutil.Env("DOMAIN", "")
+
+func DOMAIN() string {
+	return domain
+}
+
+var appName string = fwutil.Env("APP_NAME", "")
+
+func APP_NAME() string {
+	return appName
+}
+
+var accessTokenLifetime int = fwutil.IntEnv("ACCESS_TOKEN_LIFETIME", 15)
+
+func ACCESS_TOKEN_LIFETIME() int {
+	return accessTokenLifetime
+}
+
+var accessTokenSecret string = fwutil.Env("ACCESS_TOKEN_SECRET", "")
+
+func ACCESS_TOKEN_SECRET() string {
+	return accessTokenSecret
+}
+
+var refreshTokenLifetime int = fwutil.IntEnv("REFRESH_TOKEN_LIFETIME", 1440)
+
+func REFRESH_TOKEN_LIFETIME() int {
+	return refreshTokenLifetime
+}
+
+var refreshTokenSecret string = fwutil.Env("REFRESH_TOKEN_SECRET", "")
+
+func REFRESH_TOKEN_SECRET() string {
+	return refreshTokenSecret
+}
+
+var dbHost string = fwutil.Env("DB_HOST", "")
+
+func DB_HOST() string {
+	return dbHost
+}
+
+var dbPort string = fwutil.Env("DB_PORT", "5432")
+
+func DB_PORT() string {
+	return dbPort
+}
+
+var dbUser string = fwutil.Env("DB_USER", "")
+
+func DB_USER() string {
+	return dbUser
+}
+
+var dbName string = fwutil.Env("DB_NAME", "")
+
+func DB_NAME() string {
+	return dbName
+}
+
+var dbPassword string = fwutil.Env("DB_PASSWORD", "")
+
+func DB_PASSWORD() string {
+	return dbPassword
+}
+
+var nosqlHost string = fwutil.Env("NOSQL_HOST", "")
+
+func NOSQL_HOST() string {
+	return nosqlHost
+}
+
+var nosqlPort string = fwutil.Env("NOSQL_PORT", "9042")
+
+func NOSQL_PORT() string {
+	return nosqlPort
+}
+
+var emailFrom string = fwutil.Env("EMAIL_FROM", "")
+
+func EMAIL_FROM() string {
+	return emailFrom
+}
+
+func DEFAULT_EMAIL_FROM() string {
+	return fmt.Sprintf("%s <%s>", APP_NAME(), EMAIL_FROM())
+}
+
+var emailHost string = fwutil.Env("EMAIL_HOST", "")
+
+func EMAIL_HOST() string {
+	return emailHost
+}
+
+var emailPort int = fwutil.IntEnv("EMAIL_PORT", 587)
+
+func EMAIL_PORT() int {
+	return emailPort
+}
+
+var emailHostUser string = fwutil.Env("EMAIL_HOST_USER", "")
+
+func EMAIL_HOST_USER() string {
+	return emailHostUser
+}
+
+var emailHostPassword string = fwutil.Env("EMAIL_HOST_PASSWORD", "")
+
+func EMAIL_HOST_PASSWORD() string {
+	return emailHostPassword
+}
+
+var emailUseTls bool = fwutil.BoolEnv("EMAIL_USE_TLS", true)
+
+func EMAIL_USE_TLS() bool {
+	return emailUseTls
+}
 
 const DEFAULT_LANG = "en"
 
-var TIME_ZONE string = frameworkutil.GetEnv("TIME_ZONE", "")
-var DEFAULT_ADMIN_EMAIL string = frameworkutil.GetEnv("DEFAULT_ADMIN_EMAIL", "admin@local.dev")
-var ADMIN_TEANT_UID string = frameworkutil.GetEnv("ADMIN_TEANT_UID", "admin")
-var ADMIN_TEANT_TITLE string = frameworkutil.GetEnv("ADMIN_TEANT_TITLE", "admin")
+var timeZone string = fwutil.Env("TIME_ZONE", "")
 
-var TEST_TEANT_UID string = frameworkutil.GetEnv("TEST_TEANT_UID", "")
-var TETS_TEANT_TITLE string = frameworkutil.GetEnv("TETS_TEANT_TITLE", "")
-var TEST_USER_EMAIL_ADMIN string = frameworkutil.GetEnv("TEST_USER_EMAIL_ADMIN", "")
-var TEST_USER_EMAIL_STAFF string = frameworkutil.GetEnv("TEST_USER_EMAIL_STAFF", "")
-var TEST_USER_EMAIL_OWNER string = frameworkutil.GetEnv("TEST_USER_EMAIL_OWNER", "")
-var TEST_USER_EMAIL_MANAGER string = frameworkutil.GetEnv("TEST_USER_EMAIL_MANAGER", "")
-var TEST_USER_EMAIL_USER string = frameworkutil.GetEnv("TEST_USER_EMAIL_USER", "")
-var TEST_USER_PASSWORD string = frameworkutil.GetEnv("TEST_USER_PASSWORD", "")
+func TIME_ZONE() string {
+	return timeZone
+}
 
-var S3_ACCOUNT_ID string = frameworkutil.GetEnv("S3_ACCOUNT_ID", "")
-var S3_ACCESS_KEY_ID string = frameworkutil.GetEnv("S3_ACCESS_KEY_ID", "")
-var S3_SECRET_ACCESS_KEY string = frameworkutil.GetEnv("S3_SECRET_ACCESS_KEY", "")
-var S3_BUCKET_NAME string = frameworkutil.GetEnv("S3_BUCKET_NAME", "")
-var S3_REGION string = frameworkutil.GetEnv("S3_REGION", "")
-var S3_ENDPOINT_URL string = frameworkutil.GetEnv("S3_ENDPOINT_URL", "")
+var defaultAdminEmail string = fwutil.Env("DEFAULT_ADMIN_EMAIL", "admin@local.dev")
 
-var SENTRY_DSN string = frameworkutil.GetEnv("SENTRY_DSN", "")
+func DEFAULT_ADMIN_EMAIL() string {
+	return defaultAdminEmail
+}
 
-var KEYCLOAK_ADMIN string = frameworkutil.GetEnv("KEYCLOAK_ADMIN", "")
-var KEYCLOAK_ADMIN_PASSWORD string = frameworkutil.GetEnv("KEYCLOAK_ADMIN_PASSWORD", "")
-var KEYCLOAK_URL string = frameworkutil.GetEnv("KEYCLOAK_URL", "")
-var KEYCLOAK_DEFAULT_REALM string = frameworkutil.GetEnv("KEYCLOAK_DEFAULT_REALM", "")
-var KEYCLOAK_DEFAULT_CLIENT_ID string = frameworkutil.GetEnv("KEYCLOAK_DEFAULT_CLIENT_ID", "")
-var KEYCLOAK_DEFAULT_CLIENT_SECRET string = frameworkutil.GetEnv("KEYCLOAK_DEFAULT_CLIENT_SECRET", "")
-var KEYCLOAK_REDIRECT_URI string = fmt.Sprintf(
-	"%s%s",
-	BASE_URL,
-	frameworkutil.GetEnv("KEYCLOAK_REDIRECT_URI", ""),
-)
-var KEYCLOAK_POST_LOGOUT_URI string = fmt.Sprintf(
-	"%s%s",
-	BASE_URL,
-	frameworkutil.GetEnv("KEYCLOAK_POST_LOGOUT_URI", ""),
-)
-var KEYCLOAK_CLOCK_SKEW int = numberutil.StrToInt(
-	frameworkutil.GetEnv("KEYCLOAK_CLOCK_SKEW", "2"), 2,
-)
-var FE_REDIRECT_URI string = fmt.Sprintf(
-	"%s%s",
-	BASE_URL,
-	"/login",
-)
+var adminTeantUid string = fwutil.Env("ADMIN_TEANT_UID", "admin")
 
-var CENTRIFUGO_CLIENT_SECRET string = frameworkutil.GetEnv("CENTRIFUGO_CLIENT_SECRET", "")
-var CENTRIFUGO_API_KEY string = frameworkutil.GetEnv("CENTRIFUGO_API_KEY", "")
-var CENTRIFUGO_API_ENDPOINT string = frameworkutil.GetEnv("CENTRIFUGO_API_ENDPOINT", "")
-var CENTRIFUGO_JWT_LIFE_SPAN int = numberutil.StrToInt(
-	frameworkutil.GetEnv("CENTRIFUGO_JWT_LIFE_SPAN", "1200"), 1200,
-)
+func ADMIN_TEANT_UID() string {
+	return adminTeantUid
+}
 
-var RABBITMQ_HOST string = frameworkutil.GetEnv("RABBITMQ_HOST", "localhost")
-var RABBITMQ_PORT int = numberutil.StrToInt(frameworkutil.GetEnv("RABBITMQ_PORT", "5672"), 9092)
-var RABBITMQ_USER string = frameworkutil.GetEnv("RABBITMQ_USER", "guest")
-var RABBITMQ_PASSWORD string = frameworkutil.GetEnv("RABBITMQ_PASSWORD", "guest")
+var adminTeantTitle string = fwutil.Env("ADMIN_TEANT_TITLE", "admin")
 
-var GITHUB_APP_PUBLIC_LINK string = frameworkutil.GetEnv("GITHUB_APP_PUBLIC_LINK", "")
-var GITHUB_CLIENT_ID string = frameworkutil.GetEnv("GITHUB_CLIENT_ID", "")
-var GITHUB_CLIENT_SECRET string = frameworkutil.GetEnv("GITHUB_CLIENT_SECRET", "")
-var GITHUB_PRIVATE_KEY string = frameworkutil.GetEnv("GITHUB_PRIVATE_KEY", "")
-var GITHUB_PRIVATE_KEY_PATH string = "config/" + GITHUB_PRIVATE_KEY
+func ADMIN_TEANT_TITLE() string {
+	return adminTeantTitle
+}
 
-var QUEUE_BACKEND string = frameworkutil.GetEnv("QUEUE_BACKEND", "rabbitmq")
+var testTeantUid string = fwutil.Env("TEST_TEANT_UID", "")
 
-var MSG_PAGE_SIZE int = numberutil.StrToInt(
-	frameworkutil.GetEnv("MSG_PAGE_SIZE", "25"), 25,
-)
+func TEST_TEANT_UID() string {
+	return testTeantUid
+}
+
+var tetsTeantTitle string = fwutil.Env("TETS_TEANT_TITLE", "")
+
+func TETS_TEANT_TITLE() string {
+	return tetsTeantTitle
+}
+
+var testUserEmailAdmin string = fwutil.Env("TEST_USER_EMAIL_ADMIN", "")
+
+func TEST_USER_EMAIL_ADMIN() string {
+	return testUserEmailAdmin
+}
+
+var testUserEmailStaff string = fwutil.Env("TEST_USER_EMAIL_STAFF", "")
+
+func TEST_USER_EMAIL_STAFF() string {
+	return testUserEmailStaff
+}
+
+var testUserEmailOwner string = fwutil.Env("TEST_USER_EMAIL_OWNER", "")
+
+func TEST_USER_EMAIL_OWNER() string {
+	return testUserEmailOwner
+}
+
+var testUserEmailManager string = fwutil.Env("TEST_USER_EMAIL_MANAGER", "")
+
+func TEST_USER_EMAIL_MANAGER() string {
+	return testUserEmailManager
+}
+
+var testUserEmailUser string = fwutil.Env("TEST_USER_EMAIL_USER", "")
+
+func TEST_USER_EMAIL_USER() string {
+	return testUserEmailUser
+}
+
+var testUserPassword string = fwutil.Env("TEST_USER_PASSWORD", "")
+
+func TEST_USER_PASSWORD() string {
+	return testUserPassword
+}
+
+var s3AccountId string = fwutil.Env("S3_ACCOUNT_ID", "")
+
+func S3_ACCOUNT_ID() string {
+	return s3AccountId
+}
+
+var s3AccessKeyId string = fwutil.Env("S3_ACCESS_KEY_ID", "")
+
+func S3_ACCESS_KEY_ID() string {
+	return s3AccessKeyId
+}
+
+var s3SecretAccessKey string = fwutil.Env("S3_SECRET_ACCESS_KEY", "")
+
+func S3_SECRET_ACCESS_KEY() string {
+	return s3SecretAccessKey
+}
+
+var s3BucketName string = fwutil.Env("S3_BUCKET_NAME", "")
+
+func S3_BUCKET_NAME() string {
+	return s3BucketName
+}
+
+var s3Region string = fwutil.Env("S3_REGION", "")
+
+func S3_REGION() string {
+	return s3Region
+}
+
+var s3EndpointUrl string = fwutil.Env("S3_ENDPOINT_URL", "")
+
+func S3_ENDPOINT_URL() string {
+	return s3EndpointUrl
+}
+
+var sentryDsn string = fwutil.Env("SENTRY_DSN", "")
+
+func SENTRY_DSN() string {
+	return sentryDsn
+}
+
+func FE_REDIRECT_URI() string {
+	return fmt.Sprintf("%s%s", BASE_URL(), "/login")
+}
+
+var centrifugoClientSecret string = fwutil.Env("CENTRIFUGO_CLIENT_SECRET", "")
+
+func CENTRIFUGO_CLIENT_SECRET() string {
+	return centrifugoClientSecret
+}
+
+var centrifugoApiKey string = fwutil.Env("CENTRIFUGO_API_KEY", "")
+
+func CENTRIFUGO_API_KEY() string {
+	return centrifugoApiKey
+}
+
+var centrifugoApiEndpoint string = fwutil.Env("CENTRIFUGO_API_ENDPOINT", "")
+
+func CENTRIFUGO_API_ENDPOINT() string {
+	return centrifugoApiEndpoint
+}
+
+var centrifugoJwtLifeSpan int = fwutil.IntEnv("CENTRIFUGO_JWT_LIFE_SPAN", 1200)
+
+func CENTRIFUGO_JWT_LIFE_SPAN() int {
+	return centrifugoJwtLifeSpan
+}
+
+var rabbitmqHost string = fwutil.Env("RABBITMQ_HOST", "localhost")
+
+func RABBITMQ_HOST() string {
+	return rabbitmqHost
+}
+
+var rabbitmqPort int = fwutil.IntEnv("RABBITMQ_PORT", 9092)
+
+func RABBITMQ_PORT() int {
+	return rabbitmqPort
+}
+
+var rabbitmqUser string = fwutil.Env("RABBITMQ_USER", "guest")
+
+func RABBITMQ_USER() string {
+	return rabbitmqUser
+}
+
+var rabbitmqPassword string = fwutil.Env("RABBITMQ_PASSWORD", "guest")
+
+func RABBITMQ_PASSWORD() string {
+	return rabbitmqPassword
+}
+
+var githubAppPublicLink string = fwutil.Env("GITHUB_APP_PUBLIC_LINK", "")
+
+func GITHUB_APP_PUBLIC_LINK() string {
+	return githubAppPublicLink
+}
+
+var githubClientId string = fwutil.Env("GITHUB_CLIENT_ID", "")
+
+func GITHUB_CLIENT_ID() string {
+	return githubClientId
+}
+
+var githubClientSecret string = fwutil.Env("GITHUB_CLIENT_SECRET", "")
+
+func GITHUB_CLIENT_SECRET() string {
+	return githubClientSecret
+}
+
+var githubPrivateKey string = fwutil.Env("GITHUB_PRIVATE_KEY", "")
+
+func GITHUB_PRIVATE_KEY() string {
+	return githubPrivateKey
+}
+
+func GITHUB_PRIVATE_KEY_PATH() string {
+	return "config/" + GITHUB_PRIVATE_KEY()
+}
+
+var queueBackend string = fwutil.Env("QUEUE_BACKEND", "rabbitmq")
+
+func QUEUE_BACKEND() string {
+	return queueBackend
+}
+
+var msgPageSize int = fwutil.IntEnv("MSG_PAGE_SIZE", 25)
+
+func MSG_PAGE_SIZE() int {
+	return msgPageSize
+}

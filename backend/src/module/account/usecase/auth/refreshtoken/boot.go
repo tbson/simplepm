@@ -1,30 +1,30 @@
 package refreshtoken
 
 import (
-	"src/module/account/repo/iam"
 	"src/module/account/usecase/auth/refreshtoken/ctrl"
-	"src/module/account/usecase/auth/refreshtoken/repo"
+
+	"src/module/account/repo/user"
 	"src/module/account/usecase/auth/refreshtoken/srv"
+
+	"src/module/account/srv/auth"
 	"src/util/dbutil"
-	"src/util/frameworkutil"
-	"src/util/ssoutil"
+	"src/util/fwutil"
 )
 
-var ctrlHandler frameworkutil.CtrlHandler
+var ctrlHandler fwutil.CtrlHandler
 
-func WireCtrl() frameworkutil.CtrlHandler {
+func WireCtrl() fwutil.CtrlHandler {
 	if ctrlHandler != nil {
 		return ctrlHandler
 	}
 
 	dbClient := dbutil.Db(nil)
-	ssoClient := ssoutil.Client()
 
-	localDataRepo := repo.New(dbClient)
-	iamRepo := iam.New(ssoClient)
+	userRepo := user.New(dbClient)
+	authSrv := auth.New()
 
 	ctrlHandler = ctrl.New(
-		srv.New(localDataRepo, iamRepo),
+		srv.New(authSrv, userRepo),
 	)
 
 	return ctrlHandler

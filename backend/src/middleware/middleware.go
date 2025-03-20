@@ -3,15 +3,14 @@ package middleware
 import (
 	"context"
 	"src/common/ctype"
-	"src/module/account/repo/iam"
 	"src/module/account/repo/user"
 	"src/module/account/schema"
+	"src/module/account/srv/auth"
 	"src/util/cookieutil"
 	"src/util/dbutil"
 	"src/util/errutil"
 	"src/util/localeutil"
 	"src/util/numberutil"
-	"src/util/ssoutil"
 
 	"github.com/labstack/echo/v4"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -41,25 +40,23 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 				DefaultMessage: localeutil.Unauthorized,
 			})
 			// check access_token cookie
-			iamRepo := iam.New(ssoutil.Client())
 			userRepo := user.New(dbutil.Db(nil))
+			authRepo := auth.New()
 
 			accessToken := cookieutil.GetValue(c, "access_token")
-			realm := cookieutil.GetValue(c, "realm")
 
-			if accessToken == "" || realm == "" {
+			if accessToken == "" {
 				return c.JSON(401, errutil.New("", []string{msg}))
 			}
 
-			userInfo, err := iamRepo.ValidateToken(accessToken, realm)
+			userID, err := authRepo.VerifyAccessToken(accessToken)
 			if err != nil {
 				return c.JSON(401, err)
 			}
 
-			email := userInfo.Email
 			// preload roles and pems which pem
 			user, err := userRepo.Retrieve(ctype.QueryOptions{
-				Filters:  ctype.Dict{"email": email},
+				Filters:  ctype.Dict{"id": userID},
 				Preloads: []string{"Roles.Pems", "Tenant"},
 			})
 			if err != nil {

@@ -27,12 +27,12 @@ func (srv Service) InitData() (InitDataResult, error) {
 	// Init tenant
 	queryOptions := ctype.QueryOptions{
 		Filters: ctype.Dict{
-			"Uid": setting.ADMIN_TEANT_UID,
+			"Uid": setting.ADMIN_TEANT_UID(),
 		},
 	}
 	tenantData := ctype.Dict{
-		"Uid":   setting.TEST_TEANT_UID,
-		"Title": setting.TETS_TEANT_TITLE,
+		"Uid":   setting.TEST_TEANT_UID(),
+		"Title": setting.TETS_TEANT_TITLE(),
 	}
 	tenant, err := srv.tenantRepo.GetOrCreate(queryOptions, tenantData)
 	if err != nil {
@@ -40,7 +40,7 @@ func (srv Service) InitData() (InitDataResult, error) {
 	}
 
 	// Init user
-	email := setting.TEST_USER_EMAIL_OWNER
+	email := setting.TEST_USER_EMAIL_OWNER()
 	queryOptions = ctype.QueryOptions{
 		Filters: ctype.Dict{
 			"email": email,
@@ -52,7 +52,7 @@ func (srv Service) InitData() (InitDataResult, error) {
 		"Email":     email,
 		"FirstName": "Owner",
 		"LastName":  "Owner",
-		"Pwd":       setting.TEST_USER_PASSWORD,
+		"Pwd":       setting.TEST_USER_PASSWORD(),
 	}
 
 	user, err := srv.userRepo.GetOrCreate(queryOptions, userData)

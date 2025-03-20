@@ -1,4 +1,4 @@
-package frameworkutil
+package fwutil
 
 import "github.com/labstack/echo/v4"
 

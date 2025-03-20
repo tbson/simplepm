@@ -19,7 +19,6 @@ const Role = (await import('component/account/role')).default;
 const User = (await import('component/account/user')).default;
 const Profile = (await import('component/account/profile')).default;
 const Variable = (await import('component/config/variable')).default;
-const AuthClient = (await import('component/account/auth_client')).default;
 const Tenant = (await import('component/account/tenant')).default;
 const Workspace = (await import('component/pm/workspace')).default;
 const Project = (await import('component/pm/project')).default;
@@ -106,10 +105,6 @@ const router = createBrowserRouter([
                             {
                                 path: 'config/variable',
                                 lazy: async () => ({ Component: Variable })
-                            },
-                            {
-                                path: 'account/auth-client',
-                                lazy: async () => ({ Component: AuthClient })
                             },
                             {
                                 path: 'account/tenant',

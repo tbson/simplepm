@@ -10,14 +10,14 @@ import (
 	"gorm.io/gorm"
 )
 
-var repo Repo
+var r *repo
 
 var idMap = make(map[int]uint)
 
 func TestMain(m *testing.M) {
 	dbutil.InitDb()
 	dbClient := dbutil.Db(nil)
-	repo = New(dbClient)
+	r = New(dbClient)
 
 	seedData()
 
@@ -33,7 +33,7 @@ func cleanup(dbClient *gorm.DB) {
 func seedData() {
 	for i := 0; i < 10; i++ {
 		data := getData(i)
-		result, _ := repo.Create(data)
+		result, _ := r.Create(data)
 		idMap[i] = result.ID
 	}
 }
@@ -60,7 +60,7 @@ func setID(index int, id uint) {
 
 func TestList(t *testing.T) {
 	queryOptions := ctype.QueryOptions{}
-	result, err := repo.List(queryOptions)
+	result, err := r.List(queryOptions)
 	if err != nil {
 		t.Errorf("Error: %v", err)
 	}
@@ -76,7 +76,7 @@ func TestRetrieve(t *testing.T) {
 		queryOptions := ctype.QueryOptions{
 			Filters: ctype.Dict{"ID": getID(index)},
 		}
-		_, err := repo.Retrieve(queryOptions)
+		_, err := r.Retrieve(queryOptions)
 		if err != nil {
 			t.Errorf("Expected nil error, got %v", err)
 		}
@@ -86,7 +86,7 @@ func TestRetrieve(t *testing.T) {
 		queryOptions := ctype.QueryOptions{
 			Filters: ctype.Dict{"ID": getID(index)},
 		}
-		_, err := repo.Retrieve(queryOptions)
+		_, err := r.Retrieve(queryOptions)
 		assert.EqualError(t, err, "no record found")
 	})
 }
@@ -95,7 +95,7 @@ func TestCreate(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		index := 11
 		data := getData(index)
-		result, err := repo.Create(data)
+		result, err := r.Create(data)
 		setID(index, result.ID)
 		if err != nil {
 			t.Errorf("Expected nil error, got %v", err)
@@ -105,7 +105,7 @@ func TestCreate(t *testing.T) {
 	t.Run("Duplicate key", func(t *testing.T) {
 		index := 11
 		data := getData(index)
-		_, err := repo.Create(data)
+		_, err := r.Create(data)
 		assert.EqualError(t, err, "value already exists")
 	})
 }
@@ -113,11 +113,11 @@ func TestCreate(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	index := 1
 	data := getData(index)
-	item, _ := repo.Retrieve(
+	item, _ := r.Retrieve(
 		ctype.QueryOptions{Filters: ctype.Dict{"ID": getID(index)}},
 	)
 	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": item.ID}}
-	result, err := repo.Update(updateOptions, data)
+	result, err := r.Update(updateOptions, data)
 	if err != nil {
 		t.Errorf("Error: %v", err)
 	}
@@ -135,7 +135,7 @@ func TestGetOrCreate(t *testing.T) {
 		queryOptions := ctype.QueryOptions{
 			Filters: ctype.Dict{"ID": getID(searchIndex)},
 		}
-		result, err := repo.GetOrCreate(queryOptions, data)
+		result, err := r.GetOrCreate(queryOptions, data)
 		if err != nil {
 			t.Errorf("Error: %v", err)
 		}
@@ -144,7 +144,7 @@ func TestGetOrCreate(t *testing.T) {
 			t.Errorf("Expected non-nil result, got nil")
 		}
 
-		list, _ := repo.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOptions{})
 		expectedLength := 11
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -156,7 +156,7 @@ func TestGetOrCreate(t *testing.T) {
 		queryOptions := ctype.QueryOptions{
 			Filters: ctype.Dict{"ID": getID(index)},
 		}
-		result, err := repo.GetOrCreate(queryOptions, data)
+		result, err := r.GetOrCreate(queryOptions, data)
 		setID(index, result.ID)
 		if err != nil {
 			t.Errorf("Error: %v", err)
@@ -166,7 +166,7 @@ func TestGetOrCreate(t *testing.T) {
 			t.Errorf("Expected non-nil result, got nil")
 		}
 
-		list, _ := repo.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOptions{})
 		expectedLength := 12
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -182,7 +182,7 @@ func TestUpdateOrCreate(t *testing.T) {
 		queryOptions := ctype.QueryOptions{
 			Filters: ctype.Dict{"ID": getID(searchIndex)},
 		}
-		result, err := repo.UpdateOrCreate(queryOptions, data)
+		result, err := r.UpdateOrCreate(queryOptions, data)
 		if err != nil {
 			t.Errorf("Error: %v", err)
 		}
@@ -191,7 +191,7 @@ func TestUpdateOrCreate(t *testing.T) {
 			t.Errorf("Expected non-nil result, got nil")
 		}
 
-		list, _ := repo.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOptions{})
 		expectedLength := 12
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -204,7 +204,7 @@ func TestUpdateOrCreate(t *testing.T) {
 		queryOptions := ctype.QueryOptions{
 			Filters: ctype.Dict{"ID": getID(index)},
 		}
-		result, err := repo.UpdateOrCreate(queryOptions, data)
+		result, err := r.UpdateOrCreate(queryOptions, data)
 		setID(index, result.ID)
 		if err != nil {
 			t.Errorf("Error: %v", err)
@@ -214,7 +214,7 @@ func TestUpdateOrCreate(t *testing.T) {
 			t.Errorf("Expected non-nil result, got nil")
 		}
 
-		list, _ := repo.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOptions{})
 		expectedLength := 13
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -225,24 +225,24 @@ func TestUpdateOrCreate(t *testing.T) {
 func TestDelete(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		index := 1
-		item, _ := repo.Retrieve(
+		item, _ := r.Retrieve(
 			ctype.QueryOptions{Filters: ctype.Dict{"ID": getID(index)}},
 		)
-		_, err := repo.Delete(item.ID)
+		_, err := r.Delete(item.ID)
 		if err != nil {
 			t.Errorf("Error: %v", err)
 		}
 
-		list, _ := repo.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOptions{})
 		if len(list) != 12 {
 			t.Errorf("Expected 11 items, got %d", len(list))
 		}
 	})
 	t.Run("Fail", func(t *testing.T) {
-		_, err := repo.Delete(9999)
+		_, err := r.Delete(9999)
 		assert.EqualError(t, err, "no record found")
 
-		list, _ := repo.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOptions{})
 		expectedLength := 12
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -251,17 +251,17 @@ func TestDelete(t *testing.T) {
 }
 
 func TestDeleteList(t *testing.T) {
-	list, _ := repo.List(ctype.QueryOptions{})
+	list, _ := r.List(ctype.QueryOptions{})
 	ids := make([]uint, 0, len(list))
 	for _, item := range list {
 		ids = append(ids, item.ID)
 	}
-	_, err := repo.DeleteList(ids)
+	_, err := r.DeleteList(ids)
 	if err != nil {
 		t.Errorf("Error: %v", err)
 	}
 
-	list, _ = repo.List(ctype.QueryOptions{})
+	list, _ = r.List(ctype.QueryOptions{})
 	expectedLength := 0
 	if len(list) != expectedLength {
 		t.Errorf("Expected %d items, got %d", expectedLength, len(list))

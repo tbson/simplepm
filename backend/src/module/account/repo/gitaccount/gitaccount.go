@@ -15,15 +15,19 @@ type Schema = schema.GitAccount
 
 var newSchema = schema.NewGitAccount
 
-type Repo struct {
+type repo struct {
 	client *gorm.DB
 }
 
-func New(client *gorm.DB) Repo {
-	return Repo{client: client}
+func New(client *gorm.DB) *repo {
+	return &repo{client: client}
 }
 
-func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
+func (r *repo) WithTx(tx *gorm.DB) {
+	r.client = tx
+}
+
+func (r *repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	db := r.client
 	if queryOptions.Order == "" {
 		db = db.Order("id DESC")
@@ -51,7 +55,7 @@ func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	return items, err
 }
 
-func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
+func (r *repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	db := r.client
 	localizer := localeutil.Get()
 	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
@@ -87,7 +91,7 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	return &item, err
 }
 
-func (r Repo) Create(data ctype.Dict) (*Schema, error) {
+func (r *repo) Create(data ctype.Dict) (*Schema, error) {
 	item := newSchema(data)
 	result := r.client.Create(item)
 	err := result.Error
@@ -97,7 +101,7 @@ func (r Repo) Create(data ctype.Dict) (*Schema, error) {
 	return item, err
 }
 
-func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
+func (r *repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
 	existItem, err := r.Retrieve(queryOptions)
 	if err != nil {
 		return r.Create(data)
@@ -105,7 +109,7 @@ func (r Repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Sc
 	return existItem, nil
 }
 
-func (r Repo) Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
+func (r *repo) Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
 	item, err := r.Retrieve(queryOptions)
 	if err != nil {
 		return nil, err
@@ -118,7 +122,7 @@ func (r Repo) Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema,
 	return item, err
 }
 
-func (r Repo) UpdateOrCreate(
+func (r *repo) UpdateOrCreate(
 	queryOptions ctype.QueryOptions,
 	data ctype.Dict,
 ) (*Schema, error) {
@@ -130,7 +134,7 @@ func (r Repo) UpdateOrCreate(
 	return r.Update(updateOptions, data)
 }
 
-func (r Repo) DeleteBy(queryOptions ctype.QueryOptions) ([]uint, error) {
+func (r *repo) DeleteBy(queryOptions ctype.QueryOptions) ([]uint, error) {
 	var ids []uint
 	items, err := r.List(queryOptions)
 	if err != nil {
@@ -148,7 +152,7 @@ func (r Repo) DeleteBy(queryOptions ctype.QueryOptions) ([]uint, error) {
 	return ids, err
 }
 
-func (r Repo) Delete(id uint) ([]uint, error) {
+func (r *repo) Delete(id uint) ([]uint, error) {
 	ids := []uint{id}
 	_, err := r.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"id": id}})
 	if err != nil {
@@ -162,7 +166,7 @@ func (r Repo) Delete(id uint) ([]uint, error) {
 	return ids, err
 }
 
-func (r Repo) DeleteList(ids []uint) ([]uint, error) {
+func (r *repo) DeleteList(ids []uint) ([]uint, error) {
 	result := r.client.Where("id IN (?)", ids).Delete(&Schema{})
 	err := result.Error
 	if err != nil {

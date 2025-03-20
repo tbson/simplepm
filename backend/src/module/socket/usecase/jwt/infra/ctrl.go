@@ -14,8 +14,8 @@ import (
 
 func GetAuthJWT(c echo.Context) error {
 	clientID := cookieutil.GetValue(c, "session_id")
-	clientSecret := setting.CENTRIFUGO_CLIENT_SECRET
-	lifeSpan := setting.CENTRIFUGO_JWT_LIFE_SPAN
+	clientSecret := setting.CENTRIFUGO_CLIENT_SECRET()
+	lifeSpan := setting.CENTRIFUGO_JWT_LIFE_SPAN()
 	userID := c.Get("UserID").(uint)
 	token, err := tokenutil.GenerateSimpleJWT(clientID, userID, clientSecret, lifeSpan)
 	if err != nil {
@@ -26,7 +26,7 @@ func GetAuthJWT(c echo.Context) error {
 
 func GetSubscriptionJWT(c echo.Context) error {
 	clientID := cookieutil.GetValue(c, "session_id")
-	clientSecret := setting.CENTRIFUGO_CLIENT_SECRET
+	clientSecret := setting.CENTRIFUGO_CLIENT_SECRET()
 	channel := c.QueryParam("channel")
 	token, err := tokenutil.GenerateSubscriptionJWT(clientID, clientSecret, channel)
 	if err != nil {

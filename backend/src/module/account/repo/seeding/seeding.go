@@ -2,10 +2,14 @@ package seeding
 
 import "gorm.io/gorm"
 
-type Repo struct {
+type repo struct {
 	client *gorm.DB
 }
 
-func New(client *gorm.DB) Repo {
-	return Repo{client: client}
+func New(client *gorm.DB) *repo {
+	return &repo{client: client}
+}
+
+func (r *repo) WithTx(tx *gorm.DB) {
+	r.client = tx
 }

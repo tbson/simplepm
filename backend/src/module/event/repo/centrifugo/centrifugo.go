@@ -20,8 +20,8 @@ func New() Repo {
 
 func (r Repo) Publish(data interface{}) error {
 	localizer := localeutil.Get()
-	apiKey := setting.CENTRIFUGO_API_KEY
-	url := fmt.Sprintf("%s/publish", setting.CENTRIFUGO_API_ENDPOINT)
+	apiKey := setting.CENTRIFUGO_API_KEY()
+	url := fmt.Sprintf("%s/publish", setting.CENTRIFUGO_API_ENDPOINT())
 
 	jsonData, err := json.Marshal(data)
 	if err != nil {

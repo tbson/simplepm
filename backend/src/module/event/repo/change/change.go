@@ -15,15 +15,19 @@ type Schema = schema.Change
 
 var newSchema = schema.NewChange
 
-type Repo struct {
+type repo struct {
 	client *gorm.DB
 }
 
-func New(client *gorm.DB) Repo {
-	return Repo{client: client}
+func New(client *gorm.DB) *repo {
+	return &repo{client: client}
 }
 
-func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
+func (r *repo) WithTx(tx *gorm.DB) {
+	r.client = tx
+}
+
+func (r *repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	db := r.client
 	if queryOptions.Order == "" {
 		db = db.Order("id DESC")
@@ -51,7 +55,7 @@ func (r Repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	return items, err
 }
 
-func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
+func (r *repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	db := r.client
 	localizer := localeutil.Get()
 	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
@@ -87,7 +91,7 @@ func (r Repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
 	return &item, err
 }
 
-func (r Repo) Create(data ctype.Dict) (*Schema, error) {
+func (r *repo) Create(data ctype.Dict) (*Schema, error) {
 	item := newSchema(data)
 	result := r.client.Create(item)
 	err := result.Error

@@ -12,41 +12,17 @@ import (
 	"gorm.io/datatypes"
 )
 
-type AuthClient struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
-	Tenants     []Tenant  `gorm:"constraint:OnDelete:SET NULL;" json:"tenants"`
-	Uid         string    `gorm:"type:text;not null;unique" json:"uid"`
-	Description string    `gorm:"type:text;not null;default:''" json:"description"`
-	Secret      string    `gorm:"type:text;not null" json:"secret"`
-	Partition   string    `gorm:"type:text;not null" json:"partition"`
-	Default     bool      `gorm:"type:boolean;not null;default:false" json:"default"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
-}
-
-func NewAuthClient(data ctype.Dict) *AuthClient {
-	return &AuthClient{
-		Uid:         dictutil.GetValue[string](data, "Uid"),
-		Description: dictutil.GetValue[string](data, "Description"),
-		Secret:      dictutil.GetValue[string](data, "Secret"),
-		Partition:   dictutil.GetValue[string](data, "Partition"),
-		Default:     dictutil.GetValue[bool](data, "Default"),
-	}
-}
-
 type Tenant struct {
-	ID           uint         `gorm:"primaryKey" json:"id"`
-	AuthClientID *uint        `json:"auth_client_id"`
-	AuthClient   *AuthClient  `json:"auth_client"`
-	Roles        []Role       `gorm:"constraint:OnDelete:CASCADE;" json:"roles"`
-	Users        []User       `gorm:"constraint:OnDelete:CASCADE;" json:"users"`
-	GitAccounts  []GitAccount `gorm:"constraint:OnDelete:CASCADE;" json:"git_accounts"`
-	Uid          string       `gorm:"type:text;not null;unique" json:"uid"`
-	Title        string       `gorm:"type:text;not null" json:"title"`
-	Avatar       string       `gorm:"type:text;not null;default:''" json:"avatar"`
-	AvatarStr    string       `gorm:"type:text;not null;default:''" json:"avatar_str"`
-	CreatedAt    time.Time    `json:"created_at"`
-	UpdatedAt    time.Time    `json:"updated_at"`
+	ID          uint         `gorm:"primaryKey" json:"id"`
+	Roles       []Role       `gorm:"constraint:OnDelete:CASCADE;" json:"roles"`
+	Users       []User       `gorm:"constraint:OnDelete:CASCADE;" json:"users"`
+	GitAccounts []GitAccount `gorm:"constraint:OnDelete:CASCADE;" json:"git_accounts"`
+	Uid         string       `gorm:"type:text;not null;unique" json:"uid"`
+	Title       string       `gorm:"type:text;not null" json:"title"`
+	Avatar      string       `gorm:"type:text;not null;default:''" json:"avatar"`
+	AvatarStr   string       `gorm:"type:text;not null;default:''" json:"avatar_str"`
+	CreatedAt   time.Time    `json:"created_at"`
+	UpdatedAt   time.Time    `json:"updated_at"`
 }
 
 func NewTenant(data ctype.Dict) *Tenant {

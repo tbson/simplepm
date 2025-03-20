@@ -40,15 +40,15 @@ type GitbRepoResult struct {
 }
 
 func (r Repo) GetInstallUrl(tenantUid string) string {
-	publicLink := setting.GITHUB_APP_PUBLIC_LINK
+	publicLink := setting.GITHUB_APP_PUBLIC_LINK()
 	return fmt.Sprintf("%s?state=%s", publicLink, tenantUid)
 }
 
 func (r Repo) generateJWT() (string, error) {
 	localizer := localeutil.Get()
 
-	clientID := setting.GITHUB_CLIENT_ID
-	privateKeyPath := setting.GITHUB_PRIVATE_KEY_PATH
+	clientID := setting.GITHUB_CLIENT_ID()
+	privateKeyPath := setting.GITHUB_PRIVATE_KEY_PATH()
 
 	// Read your private key file.
 	keyBytes, err := os.ReadFile(privateKeyPath)

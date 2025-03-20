@@ -11,35 +11,22 @@ import (
 
 type Service struct {
 	userRepo UserRepo
-	iamRepo  IamRepo
+	authSrv  AuthSrv
 }
 
-func New(userRepo UserRepo, iamRepo IamRepo) Service {
-	return Service{userRepo, iamRepo}
+func New(userRepo UserRepo, authSrv AuthSrv) Service {
+	return Service{userRepo, authSrv}
 }
 
 func (srv Service) UpdateProfile(userID uint, data ctype.Dict) (*schema.User, error) {
 	user, err := srv.userRepo.Retrieve(ctype.QueryOptions{
-		Filters:  ctype.Dict{"id": userID},
-		Preloads: []string{"Tenant.AuthClient"},
+		Filters: ctype.Dict{"id": userID},
 	})
 	if err != nil {
 		return nil, err
 	}
-	sub := user.Sub
-	realm := user.Tenant.AuthClient.Partition
 
-	accessToken, err := srv.iamRepo.GetAdminAccessToken()
-	if err != nil {
-		return nil, err
-	}
-
-	err = srv.iamRepo.UpdateUser(accessToken, realm, *sub, data)
-	if err != nil {
-		return nil, err
-	}
-
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": userID}}
+	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": user.ID}}
 	userResult, err := srv.userRepo.Update(updateOptions, data)
 	if err != nil {
 		return nil, err
@@ -47,33 +34,25 @@ func (srv Service) UpdateProfile(userID uint, data ctype.Dict) (*schema.User, er
 	return userResult, nil
 }
 
-func (srv Service) ChangePassword(userID uint, data ctype.Dict) (ctype.Dict, error) {
+func (srv Service) ChangePwd(userID uint, data ctype.Dict) (ctype.Dict, error) {
 	result := ctype.Dict{}
 	localizer := localeutil.Get()
-	if data["Password"].(string) != data["PasswordConfirm"].(string) {
+	if data["Pwd"].(string) != data["PwdConfirm"].(string) {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.PasswordsNotMatch,
 		})
 		return result, errutil.New("", []string{msg})
 	}
-	password := data["Password"].(string)
+	pwd := data["Pwd"].(string)
 
 	user, err := srv.userRepo.Retrieve(ctype.QueryOptions{
-		Filters:  ctype.Dict{"id": userID},
-		Preloads: []string{"Tenant.AuthClient"},
+		Filters: ctype.Dict{"id": userID},
 	})
 	if err != nil {
 		return result, err
 	}
-	sub := user.Sub
-	realm := user.Tenant.AuthClient.Partition
 
-	accessToken, err := srv.iamRepo.GetAdminAccessToken()
-	if err != nil {
-		return result, err
-	}
-
-	err = srv.iamRepo.SetPassword(accessToken, *sub, realm, password)
+	err = srv.authSrv.SetPwd(user.ID, pwd)
 	if err != nil {
 		return result, err
 	}

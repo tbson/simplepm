@@ -13,10 +13,10 @@ type Client interface {
 }
 
 func NewClient() Client {
-	switch setting.QUEUE_BACKEND {
+	switch setting.QUEUE_BACKEND() {
 	case "rabbitmq":
 		return rabbitclient.NewClient()
 	default:
-		panic(fmt.Sprintf("unsupported queue backend: %s", setting.QUEUE_BACKEND))
+		panic(fmt.Sprintf("unsupported queue backend: %s", setting.QUEUE_BACKEND()))
 	}
 }
