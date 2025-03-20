@@ -93,15 +93,15 @@ func (srv Service) Create(data ctype.Dict) (*schema.Project, error) {
 }
 
 func (srv Service) Update(
-	updateOptions ctype.QueryOptions,
+	updateOpts ctype.QueryOpts,
 	data ctype.Dict,
 ) (*schema.Project, error) {
-	project, err := srv.projectRepo.Update(updateOptions, data)
+	project, err := srv.projectRepo.Update(updateOpts, data)
 	if err != nil {
 		return nil, err
 	}
 
-	featureOptions := ctype.QueryOptions{
+	featureOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"ProjectID": project.ID,
 			"Default":   true,
@@ -111,7 +111,7 @@ func (srv Service) Update(
 		"Title":       project.Title,
 		"Description": project.Description,
 	}
-	_, err = srv.featureRepo.Update(featureOptions, featureData)
+	_, err = srv.featureRepo.Update(featureOpts, featureData)
 	if err != nil {
 		return nil, err
 	}

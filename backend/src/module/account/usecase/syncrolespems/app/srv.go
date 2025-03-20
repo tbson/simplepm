@@ -16,7 +16,7 @@ func New(syncRolesPemsRepo SynRolesPemsRepo, roleRepo RoleRepo, tenantRepo Tenan
 
 func (srv Service) ensureAllTenantRoles() error {
 
-	tenants, err := srv.tenantRepo.List(ctype.QueryOptions{})
+	tenants, err := srv.tenantRepo.List(ctype.QueryOpts{})
 	if err != nil {
 		return err
 	}
@@ -31,6 +31,6 @@ func (srv Service) ensureAllTenantRoles() error {
 func (srv Service) SyncRolesPems(pemMap ctype.PemMap) error {
 	srv.repo.WritePems(pemMap)
 	srv.ensureAllTenantRoles()
-	srv.roleRepo.EnsureRolesPems(pemMap, ctype.QueryOptions{})
+	srv.roleRepo.EnsureRolesPems(pemMap, ctype.QueryOpts{})
 	return nil
 }

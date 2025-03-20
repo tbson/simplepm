@@ -24,30 +24,30 @@ type InputData struct {
 }
 
 type TaskRepo interface {
-	List(queryOptions ctype.QueryOptions) ([]schema.Task, error)
+	List(opts ctype.QueryOpts) ([]schema.Task, error)
 	Create(data ctype.Dict) (*schema.Task, error)
-	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.Task, error)
+	Update(updateOpts ctype.QueryOpts, data ctype.Dict) (*schema.Task, error)
 }
 
 type TaskFieldRepo interface {
-	List(queryOptions ctype.QueryOptions) ([]schema.TaskField, error)
-	Retrieve(queryOptions ctype.QueryOptions) (*schema.TaskField, error)
+	List(opts ctype.QueryOpts) ([]schema.TaskField, error)
+	Retrieve(opts ctype.QueryOpts) (*schema.TaskField, error)
 }
 
 type TaskFieldOptionRepo interface {
-	Retrieve(queryOptions ctype.QueryOptions) (*schema.TaskFieldOption, error)
+	Retrieve(opts ctype.QueryOpts) (*schema.TaskFieldOption, error)
 }
 
 type TaskFieldValueRepo interface {
-	List(queryOptions ctype.QueryOptions) ([]schema.TaskFieldValue, error)
+	List(opts ctype.QueryOpts) ([]schema.TaskFieldValue, error)
 	Create(data ctype.Dict) (*schema.TaskFieldValue, error)
-	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskFieldValue, error)
-	UpdateOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskFieldValue, error)
+	Update(updateOpts ctype.QueryOpts, data ctype.Dict) (*schema.TaskFieldValue, error)
+	UpdateOrCreate(opts ctype.QueryOpts, data ctype.Dict) (*schema.TaskFieldValue, error)
 	DeleteList(ids []uint) ([]uint, error)
 }
 
 type TaskUserRepo interface {
-	List(queryOptions ctype.QueryOptions) ([]schema.TaskUser, error)
+	List(opts ctype.QueryOpts) ([]schema.TaskUser, error)
 	Create(data ctype.Dict) (*schema.TaskUser, error)
-	DeleteBy(queryOptions ctype.QueryOptions) ([]uint, error)
+	DeleteBy(opts ctype.QueryOpts) ([]uint, error)
 }

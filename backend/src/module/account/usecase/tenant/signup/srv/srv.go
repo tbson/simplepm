@@ -18,9 +18,9 @@ type tenantProvider interface {
 }
 
 type roleProvider interface {
-	Retrieve(queryOptions ctype.QueryOptions) (*schema.Role, error)
+	Retrieve(opts ctype.QueryOpts) (*schema.Role, error)
 	EnsureTenantRoles(ID uint, Uid string) error
-	EnsureRolesPems(pemMap ctype.PemMap, queryOptions ctype.QueryOptions) error
+	EnsureRolesPems(pemMap ctype.PemMap, opts ctype.QueryOpts) error
 	WithTx(*gorm.DB)
 }
 
@@ -81,24 +81,24 @@ func (srv srv) Signup(
 	}
 
 	// Sync roles and permissions
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"TenantID": tenant.ID,
 		},
 	}
-	err = srv.roleRepo.EnsureRolesPems(pemMap, queryOptions)
+	err = srv.roleRepo.EnsureRolesPems(pemMap, opts)
 	if err != nil {
 		return err
 	}
 
 	// get MANAGER role
-	roleOptions := ctype.QueryOptions{
+	roleOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"TenantID": tenant.ID,
 			"Title":    "MANAGER",
 		},
 	}
-	role, err := srv.roleRepo.Retrieve(roleOptions)
+	role, err := srv.roleRepo.Retrieve(roleOpts)
 	if err != nil {
 		return err
 	}

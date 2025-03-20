@@ -15,20 +15,20 @@ func New(taskRepo TaskRepo, taskFieldValueRepo TaskFieldValueRepo) Service {
 }
 
 func (srv Service) updateStatus(taskId uint, status uint) error {
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Joins: []string{"TaskField"},
 		Filters: ctype.Dict{
 			"TaskID":             taskId,
 			"TaskField.IsStatus": true,
 		},
 	}
-	taskFieldValue, err := srv.taskFieldValueRepo.Retrieve(queryOptions)
+	taskFieldValue, err := srv.taskFieldValueRepo.Retrieve(opts)
 	if err != nil {
 		return err
 	}
 	taskFieldValueID := taskFieldValue.ID
 
-	updateOptions := ctype.QueryOptions{
+	updateOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"ID": taskFieldValueID,
 		},
@@ -38,7 +38,7 @@ func (srv Service) updateStatus(taskId uint, status uint) error {
 		"TaskFieldOptionID": status,
 		"Value":             numberutil.UintToStr(status),
 	}
-	_, err = srv.taskFieldValueRepo.Update(updateOptions, data)
+	_, err = srv.taskFieldValueRepo.Update(updateOpts, data)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (srv Service) Reorder(data InputData) ([]OrderInfoItem, error) {
 	projectID := data.ProjectID
 	for _, info := range orderInfo {
 		status := info.Status
-		updateOptions := ctype.QueryOptions{
+		updateOpts := ctype.QueryOpts{
 			Filters: ctype.Dict{
 				"ID":        info.ID,
 				"ProjectID": projectID,
@@ -60,7 +60,7 @@ func (srv Service) Reorder(data InputData) ([]OrderInfoItem, error) {
 		data := ctype.Dict{
 			"order": info.Order,
 		}
-		_, err := srv.taskRepo.Update(updateOptions, data)
+		_, err := srv.taskRepo.Update(updateOpts, data)
 		if err != nil {
 			return defaultResult, err
 		}

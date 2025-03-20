@@ -19,7 +19,7 @@ func (srv Service) Reorder(data InputData) ([]uint, error) {
 	projectID := data.ProjectID
 	for index, id := range ids {
 		order := index + 1
-		updateOptions := ctype.QueryOptions{
+		updateOpts := ctype.QueryOpts{
 			Joins: []string{"TaskField"},
 			Filters: ctype.Dict{
 				fmt.Sprintf("%s.ID", srv.taskFieldOptionRepo.GetTableName()): id,
@@ -29,7 +29,7 @@ func (srv Service) Reorder(data InputData) ([]uint, error) {
 		data := ctype.Dict{
 			"order": order,
 		}
-		_, err := srv.taskFieldOptionRepo.Update(updateOptions, data)
+		_, err := srv.taskFieldOptionRepo.Update(updateOpts, data)
 		if err != nil {
 			return defaultResult, err
 		}

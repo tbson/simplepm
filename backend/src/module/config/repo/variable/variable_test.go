@@ -59,8 +59,8 @@ func setID(index int, id uint) {
 }
 
 func TestList(t *testing.T) {
-	queryOptions := ctype.QueryOptions{}
-	result, err := r.List(queryOptions)
+	opts := ctype.QueryOpts{}
+	result, err := r.List(opts)
 	if err != nil {
 		t.Errorf("Error: %v", err)
 	}
@@ -73,20 +73,20 @@ func TestList(t *testing.T) {
 func TestRetrieve(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		index := 1
-		queryOptions := ctype.QueryOptions{
+		opts := ctype.QueryOpts{
 			Filters: ctype.Dict{"ID": getID(index)},
 		}
-		_, err := r.Retrieve(queryOptions)
+		_, err := r.Retrieve(opts)
 		if err != nil {
 			t.Errorf("Expected nil error, got %v", err)
 		}
 	})
 	t.Run("Not found", func(t *testing.T) {
 		index := 99
-		queryOptions := ctype.QueryOptions{
+		opts := ctype.QueryOpts{
 			Filters: ctype.Dict{"ID": getID(index)},
 		}
-		_, err := r.Retrieve(queryOptions)
+		_, err := r.Retrieve(opts)
 		assert.EqualError(t, err, "no record found")
 	})
 }
@@ -114,10 +114,10 @@ func TestUpdate(t *testing.T) {
 	index := 1
 	data := getData(index)
 	item, _ := r.Retrieve(
-		ctype.QueryOptions{Filters: ctype.Dict{"ID": getID(index)}},
+		ctype.QueryOpts{Filters: ctype.Dict{"ID": getID(index)}},
 	)
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": item.ID}}
-	result, err := r.Update(updateOptions, data)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": item.ID}}
+	result, err := r.Update(updateOpts, data)
 	if err != nil {
 		t.Errorf("Error: %v", err)
 	}
@@ -132,10 +132,10 @@ func TestGetOrCreate(t *testing.T) {
 		searchIndex := 11
 		index := 12
 		data := getData(index)
-		queryOptions := ctype.QueryOptions{
+		opts := ctype.QueryOpts{
 			Filters: ctype.Dict{"ID": getID(searchIndex)},
 		}
-		result, err := r.GetOrCreate(queryOptions, data)
+		result, err := r.GetOrCreate(opts, data)
 		if err != nil {
 			t.Errorf("Error: %v", err)
 		}
@@ -144,7 +144,7 @@ func TestGetOrCreate(t *testing.T) {
 			t.Errorf("Expected non-nil result, got nil")
 		}
 
-		list, _ := r.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOpts{})
 		expectedLength := 11
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -153,10 +153,10 @@ func TestGetOrCreate(t *testing.T) {
 	t.Run("Create", func(t *testing.T) {
 		index := 14
 		data := getData(index)
-		queryOptions := ctype.QueryOptions{
+		opts := ctype.QueryOpts{
 			Filters: ctype.Dict{"ID": getID(index)},
 		}
-		result, err := r.GetOrCreate(queryOptions, data)
+		result, err := r.GetOrCreate(opts, data)
 		setID(index, result.ID)
 		if err != nil {
 			t.Errorf("Error: %v", err)
@@ -166,7 +166,7 @@ func TestGetOrCreate(t *testing.T) {
 			t.Errorf("Expected non-nil result, got nil")
 		}
 
-		list, _ := r.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOpts{})
 		expectedLength := 12
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -179,10 +179,10 @@ func TestUpdateOrCreate(t *testing.T) {
 		searchIndex := 14
 		index := 15
 		data := getData(index)
-		queryOptions := ctype.QueryOptions{
+		opts := ctype.QueryOpts{
 			Filters: ctype.Dict{"ID": getID(searchIndex)},
 		}
-		result, err := r.UpdateOrCreate(queryOptions, data)
+		result, err := r.UpdateOrCreate(opts, data)
 		if err != nil {
 			t.Errorf("Error: %v", err)
 		}
@@ -191,7 +191,7 @@ func TestUpdateOrCreate(t *testing.T) {
 			t.Errorf("Expected non-nil result, got nil")
 		}
 
-		list, _ := r.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOpts{})
 		expectedLength := 12
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -201,10 +201,10 @@ func TestUpdateOrCreate(t *testing.T) {
 	t.Run("Create", func(t *testing.T) {
 		index := 16
 		data := getData(index)
-		queryOptions := ctype.QueryOptions{
+		opts := ctype.QueryOpts{
 			Filters: ctype.Dict{"ID": getID(index)},
 		}
-		result, err := r.UpdateOrCreate(queryOptions, data)
+		result, err := r.UpdateOrCreate(opts, data)
 		setID(index, result.ID)
 		if err != nil {
 			t.Errorf("Error: %v", err)
@@ -214,7 +214,7 @@ func TestUpdateOrCreate(t *testing.T) {
 			t.Errorf("Expected non-nil result, got nil")
 		}
 
-		list, _ := r.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOpts{})
 		expectedLength := 13
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -226,14 +226,14 @@ func TestDelete(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		index := 1
 		item, _ := r.Retrieve(
-			ctype.QueryOptions{Filters: ctype.Dict{"ID": getID(index)}},
+			ctype.QueryOpts{Filters: ctype.Dict{"ID": getID(index)}},
 		)
 		_, err := r.Delete(item.ID)
 		if err != nil {
 			t.Errorf("Error: %v", err)
 		}
 
-		list, _ := r.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOpts{})
 		if len(list) != 12 {
 			t.Errorf("Expected 11 items, got %d", len(list))
 		}
@@ -242,7 +242,7 @@ func TestDelete(t *testing.T) {
 		_, err := r.Delete(9999)
 		assert.EqualError(t, err, "no record found")
 
-		list, _ := r.List(ctype.QueryOptions{})
+		list, _ := r.List(ctype.QueryOpts{})
 		expectedLength := 12
 		if len(list) != expectedLength {
 			t.Errorf("Expected %d items, got %d", expectedLength, len(list))
@@ -251,7 +251,7 @@ func TestDelete(t *testing.T) {
 }
 
 func TestDeleteList(t *testing.T) {
-	list, _ := r.List(ctype.QueryOptions{})
+	list, _ := r.List(ctype.QueryOpts{})
 	ids := make([]uint, 0, len(list))
 	for _, item := range list {
 		ids = append(ids, item.ID)
@@ -261,7 +261,7 @@ func TestDeleteList(t *testing.T) {
 		t.Errorf("Error: %v", err)
 	}
 
-	list, _ = r.List(ctype.QueryOptions{})
+	list, _ = r.List(ctype.QueryOpts{})
 	expectedLength := 0
 	if len(list) != expectedLength {
 		t.Errorf("Expected %d items, got %d", expectedLength, len(list))

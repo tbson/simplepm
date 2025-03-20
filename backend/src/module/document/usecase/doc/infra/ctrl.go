@@ -41,11 +41,11 @@ func Retrieve(c echo.Context) error {
 	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{"id": id},
 	}
 
-	result, err := repo.Retrieve(queryOptions)
+	result, err := repo.Retrieve(opts)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
@@ -92,8 +92,8 @@ func Update(c echo.Context) error {
 	}
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
-	result, err := repo.Update(updateOptions, data)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": id}}
+	result, err := repo.Update(updateOpts, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

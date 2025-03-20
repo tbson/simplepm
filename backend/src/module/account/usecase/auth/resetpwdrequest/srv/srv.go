@@ -7,8 +7,8 @@ import (
 )
 
 type userProvider interface {
-	Retrieve(queryOptions ctype.QueryOptions) (*schema.User, error)
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
+	Retrieve(opts ctype.QueryOpts) (*schema.User, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.User, error)
 }
 
 type emailProvider interface {
@@ -26,10 +26,10 @@ func New(userRepo userProvider, emailRepo emailProvider) srv {
 
 func (srv srv) RequestResetPwd(email string, tenantID uint) error {
 	// Check user exists
-	getUserOptions := ctype.QueryOptions{
+	userOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{"Email": email, "TenantID": tenantID},
 	}
-	user, err := srv.userRepo.Retrieve(getUserOptions)
+	user, err := srv.userRepo.Retrieve(userOpts)
 	if err != nil {
 		return err
 	}
@@ -38,11 +38,11 @@ func (srv srv) RequestResetPwd(email string, tenantID uint) error {
 	code := stringutil.GetRandomString(6)
 
 	// update user reset pwd token
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": user.ID}}
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": user.ID}}
 	updateData := ctype.Dict{
 		"PwdResetToken": code,
 	}
-	_, err = srv.userRepo.Update(updateOptions, updateData)
+	_, err = srv.userRepo.Update(updateOpts, updateData)
 	if err != nil {
 		return err
 	}

@@ -19,15 +19,15 @@ func New(userRepo UserRepo, authSrv AuthSrv) Service {
 }
 
 func (srv Service) UpdateProfile(userID uint, data ctype.Dict) (*schema.User, error) {
-	user, err := srv.userRepo.Retrieve(ctype.QueryOptions{
+	user, err := srv.userRepo.Retrieve(ctype.QueryOpts{
 		Filters: ctype.Dict{"id": userID},
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": user.ID}}
-	userResult, err := srv.userRepo.Update(updateOptions, data)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": user.ID}}
+	userResult, err := srv.userRepo.Update(updateOpts, data)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (srv Service) ChangePwd(userID uint, data ctype.Dict) (ctype.Dict, error) {
 	}
 	pwd := data["Pwd"].(string)
 
-	user, err := srv.userRepo.Retrieve(ctype.QueryOptions{
+	user, err := srv.userRepo.Retrieve(ctype.QueryOpts{
 		Filters: ctype.Dict{"id": userID},
 	})
 	if err != nil {

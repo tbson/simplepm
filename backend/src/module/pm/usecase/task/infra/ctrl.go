@@ -47,32 +47,32 @@ func Option(c echo.Context) error {
 	taskfieldoptionRepo := taskfieldoption.New(dbutil.Db(nil))
 	userRepo := user.New(dbutil.Db(nil))
 
-	projectQueryOptions := ctype.QueryOptions{
+	projectQueryOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{"ID": projectID},
 	}
-	project, err := projectRepo.Retrieve(projectQueryOptions)
+	project, err := projectRepo.Retrieve(projectQueryOpts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	featureQueryOptions := ctype.QueryOptions{
+	featureQueryOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{"ProjectID": projectID},
 		Order:   "\"order\" ASC",
 	}
-	features, err := featureRepo.List(featureQueryOptions)
+	features, err := featureRepo.List(featureQueryOpts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	featureOptions := []ctype.SelectOption[uint]{}
+	featureOpts := []ctype.SelectOption[uint]{}
 	for _, feature := range features {
-		featureOptions = append(featureOptions, ctype.SelectOption[uint]{
+		featureOpts = append(featureOpts, ctype.SelectOption[uint]{
 			Value: feature.ID,
 			Label: feature.Title,
 		})
 	}
 
-	statusQueryOption := ctype.QueryOptions{
+	statusOpts := ctype.QueryOpts{
 		Joins: []string{"TaskField"},
 		Filters: ctype.Dict{
 			"TaskField.ProjectID": projectID,
@@ -80,7 +80,7 @@ func Option(c echo.Context) error {
 		},
 		Order: fmt.Sprintf("%s.order ASC", schema.TaskFieldOption{}.TableName()),
 	}
-	status, err := taskfieldoptionRepo.List(statusQueryOption)
+	status, err := taskfieldoptionRepo.List(statusOpts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -92,7 +92,7 @@ func Option(c echo.Context) error {
 		})
 	}
 
-	taskFieldQueryOption := ctype.QueryOptions{
+	taskFieldQueryOption := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"ProjectID": projectID,
 		},
@@ -102,7 +102,7 @@ func Option(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	taskFieldOptions := []TaskFieldOption{}
+	taskFieldOpts := []TaskFieldOption{}
 	for _, taskField := range taskFields {
 		options := []ctype.SimpleSelectOption[uint]{}
 		for _, option := range taskField.TaskFieldOptions {
@@ -111,7 +111,7 @@ func Option(c echo.Context) error {
 				Label: option.Title,
 			})
 		}
-		taskFieldOptions = append(taskFieldOptions, TaskFieldOption{
+		taskFieldOpts = append(taskFieldOpts, TaskFieldOption{
 			Value:       taskField.ID,
 			Label:       taskField.Title,
 			Description: taskField.Description,
@@ -121,7 +121,7 @@ func Option(c echo.Context) error {
 		})
 	}
 
-	userQueryOption := ctype.QueryOptions{
+	userQueryOption := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"TenantID": tenantID,
 		},
@@ -130,9 +130,9 @@ func Option(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	userOptions := []ctype.SelectOption[uint]{}
+	userOpts := []ctype.SelectOption[uint]{}
 	for _, u := range users {
-		userOptions = append(userOptions, ctype.SelectOption[uint]{
+		userOpts = append(userOpts, ctype.SelectOption[uint]{
 			Value: u.ID,
 			Label: u.Email,
 			// Label: fmt.Sprintf("%s %s", u.FirstName, u.LastName),
@@ -144,10 +144,10 @@ func Option(c echo.Context) error {
 			"id":    project.ID,
 			"title": project.Title,
 		},
-		"feature":    featureOptions,
-		"status":     statusOptions,
-		"task_field": taskFieldOptions,
-		"user":       userOptions,
+		"feature":    featureOpts,
+		"status":     statusOpts,
+		"task_field": taskFieldOpts,
+		"user":       userOpts,
 	}
 	return c.JSON(http.StatusOK, result)
 }
@@ -176,7 +176,7 @@ func Retrieve(c echo.Context) error {
 	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{"id": id},
 		Preloads: []string{
 			"Project",
@@ -186,7 +186,7 @@ func Retrieve(c echo.Context) error {
 		},
 	}
 
-	result, err := repo.Retrieve(queryOptions)
+	result, err := repo.Retrieve(opts)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
@@ -288,8 +288,8 @@ func Update(c echo.Context) error {
 
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
-	result, err := srv.Update(updateOptions, structData, data)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": id}}
+	result, err := srv.Update(updateOpts, structData, data)
 
 	if err != nil {
 		tx.Rollback()
@@ -325,7 +325,7 @@ func Delete(c echo.Context) error {
 
 	id := vldtutil.ValidateId(c.Param("id"))
 
-	result, err := repo.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"id": id}})
+	result, err := repo.Retrieve(ctype.QueryOpts{Filters: ctype.Dict{"id": id}})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

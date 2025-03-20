@@ -17,10 +17,10 @@ type InputData struct {
 }
 
 type TaskRepo interface {
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.Task, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.Task, error)
 }
 
 type TaskFieldValueRepo interface {
-	Retrieve(queryOptions ctype.QueryOptions) (*schema.TaskFieldValue, error)
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskFieldValue, error)
+	Retrieve(opts ctype.QueryOpts) (*schema.TaskFieldValue, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.TaskFieldValue, error)
 }

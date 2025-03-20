@@ -16,5 +16,5 @@ type InputData struct {
 }
 
 type TaskFieldRepo interface {
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskField, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.TaskField, error)
 }

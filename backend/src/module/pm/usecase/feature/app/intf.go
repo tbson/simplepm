@@ -10,5 +10,5 @@ type FeatureRepo interface {
 }
 
 type TaskRepo interface {
-	List(queryOptions ctype.QueryOptions) ([]schema.Task, error)
+	List(opts ctype.QueryOpts) ([]schema.Task, error)
 }

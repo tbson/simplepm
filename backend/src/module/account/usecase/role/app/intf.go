@@ -7,7 +7,7 @@ import (
 
 type RoleRepo interface {
 	Create(data ctype.Dict) (*schema.Role, error)
-	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.Role, error)
+	Update(updateOpts ctype.QueryOpts, data ctype.Dict) (*schema.Role, error)
 }
 
 type RoleLocalRepo interface {

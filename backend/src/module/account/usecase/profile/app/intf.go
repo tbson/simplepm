@@ -6,8 +6,8 @@ import (
 )
 
 type UserRepo interface {
-	Retrieve(opts ctype.QueryOptions) (*schema.User, error)
-	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
+	Retrieve(opts ctype.QueryOpts) (*schema.User, error)
+	Update(updateOpts ctype.QueryOpts, data ctype.Dict) (*schema.User, error)
 }
 
 type AuthSrv interface {

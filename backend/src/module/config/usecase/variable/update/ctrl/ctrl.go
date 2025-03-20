@@ -21,7 +21,7 @@ type input struct {
 }
 
 type srvProvider interface {
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.Variable, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.Variable, error)
 }
 
 type ctrl struct {
@@ -50,8 +50,8 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
-	result, err := ctrl.srv.Update(updateOptions, data)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": id}}
+	result, err := ctrl.srv.Update(updateOpts, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

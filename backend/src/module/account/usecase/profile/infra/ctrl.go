@@ -17,7 +17,7 @@ func GetProfile(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
 	client := dbutil.Db(nil)
 	userRepo := user.New(client)
-	user, err := userRepo.Retrieve(ctype.QueryOptions{
+	user, err := userRepo.Retrieve(ctype.QueryOpts{
 		Filters: ctype.Dict{"id": userID},
 	})
 	if err != nil {

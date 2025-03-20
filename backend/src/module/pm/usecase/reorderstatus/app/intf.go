@@ -12,6 +12,6 @@ type InputData struct {
 
 type TaskFieldOptionRepo interface {
 	GetTableName() string
-	List(queryOptions ctype.QueryOptions) ([]schema.TaskFieldOption, error)
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskFieldOption, error)
+	List(opts ctype.QueryOpts) ([]schema.TaskFieldOption, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.TaskFieldOption, error)
 }

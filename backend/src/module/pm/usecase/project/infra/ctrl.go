@@ -37,10 +37,10 @@ func Option(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	workspaceRepo := workspace.New(dbutil.Db(nil))
 	gitRepoRepo := gitrepo.New(dbutil.Db(nil))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{"tenant_id": tenantId},
 	}
-	workspaces, err := workspaceRepo.List(queryOptions)
+	workspaces, err := workspaceRepo.List(opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -52,12 +52,12 @@ func Option(c echo.Context) error {
 		})
 	}
 
-	gitRepoQueryOptions := ctype.QueryOptions{
+	gitRepoQueryOpts := ctype.QueryOpts{
 		Joins:   []string{"GitAccount"},
 		Filters: ctype.Dict{"GitAccount.TenantID": tenantId},
 	}
 
-	gitRepos, err := gitRepoRepo.List(gitRepoQueryOptions)
+	gitRepos, err := gitRepoRepo.List(gitRepoQueryOpts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -86,10 +86,10 @@ func Bookmark(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	repo := NewRepo(dbutil.Db(nil))
 
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{"TenantID": tenantId},
 	}
-	result, err := repo.List(queryOptions)
+	result, err := repo.List(opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -115,11 +115,11 @@ func Retrieve(c echo.Context) error {
 	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{"id": id},
 	}
 
-	result, err := repo.Retrieve(queryOptions)
+	result, err := repo.Retrieve(opts)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
@@ -203,10 +203,10 @@ func Update(c echo.Context) error {
 	}
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	updateOptions := ctype.QueryOptions{
+	updateOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{"ID": id},
 	}
-	result, err := srv.Update(updateOptions, data)
+	result, err := srv.Update(updateOpts, data)
 
 	if err != nil {
 		tx.Rollback()

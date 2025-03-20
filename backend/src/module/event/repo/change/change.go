@@ -27,15 +27,15 @@ func (r *repo) WithTx(tx *gorm.DB) {
 	r.client = tx
 }
 
-func (r *repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
+func (r *repo) List(opts ctype.QueryOpts) ([]Schema, error) {
 	db := r.client
-	if queryOptions.Order == "" {
+	if opts.Order == "" {
 		db = db.Order("id DESC")
 	} else {
-		db = db.Order(queryOptions.Order)
+		db = db.Order(opts.Order)
 	}
-	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
-	preloads := queryOptions.Preloads
+	filters := dictutil.DictCamelToSnake(opts.Filters)
+	preloads := opts.Preloads
 	if len(preloads) > 0 {
 		for _, preload := range preloads {
 			db = db.Preload(preload)
@@ -55,11 +55,11 @@ func (r *repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	return items, err
 }
 
-func (r *repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
+func (r *repo) Retrieve(opts ctype.QueryOpts) (*Schema, error) {
 	db := r.client
 	localizer := localeutil.Get()
-	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
-	preloads := queryOptions.Preloads
+	filters := dictutil.DictCamelToSnake(opts.Filters)
+	preloads := opts.Preloads
 	if len(preloads) > 0 {
 		for _, preload := range preloads {
 			db = db.Preload(preload)

@@ -28,14 +28,14 @@ var orderableFields = []string{"id", "uid"}
 func Option(c echo.Context) error {
 	admin := c.Get("Admin").(bool)
 	pemRepo := pem.New(dbutil.Db(nil))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{},
 		Order:   "module ASC",
 	}
 	if !admin {
-		queryOptions.Filters["admin"] = false
+		opts.Filters["admin"] = false
 	}
-	items, err := pemRepo.List(queryOptions)
+	items, err := pemRepo.List(opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -71,12 +71,12 @@ func Retrieve(c echo.Context) error {
 	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters:  ctype.Dict{"id": id},
 		Preloads: []string{"Pems"},
 	}
 
-	result, err := repo.Retrieve(queryOptions)
+	result, err := repo.Retrieve(opts)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
@@ -120,8 +120,8 @@ func Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
-	result, err := srv.Update(updateOptions, data)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": id}}
+	result, err := srv.Update(updateOpts, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

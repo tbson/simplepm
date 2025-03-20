@@ -7,5 +7,5 @@ import (
 
 type TenantRepo interface {
 	Create(data ctype.Dict) (*schema.Tenant, error)
-	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.Tenant, error)
+	Update(updateOpts ctype.QueryOpts, data ctype.Dict) (*schema.Tenant, error)
 }

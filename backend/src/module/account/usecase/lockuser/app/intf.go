@@ -6,5 +6,5 @@ import (
 )
 
 type UserRepo interface {
-	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
+	Update(updateOpts ctype.QueryOpts, data ctype.Dict) (*schema.User, error)
 }

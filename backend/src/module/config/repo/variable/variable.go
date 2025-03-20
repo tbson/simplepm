@@ -27,15 +27,15 @@ func (r *repo) WithTx(tx *gorm.DB) {
 	r.client = tx
 }
 
-func (r *repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
+func (r *repo) List(opts ctype.QueryOpts) ([]Schema, error) {
 	db := r.client
-	if queryOptions.Order == "" {
+	if opts.Order == "" {
 		db = db.Order("id DESC")
 	} else {
-		db = db.Order(queryOptions.Order)
+		db = db.Order(opts.Order)
 	}
-	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
-	preloads := queryOptions.Preloads
+	filters := dictutil.DictCamelToSnake(opts.Filters)
+	preloads := opts.Preloads
 	if len(preloads) > 0 {
 		for _, preload := range preloads {
 			db = db.Preload(preload)
@@ -55,11 +55,11 @@ func (r *repo) List(queryOptions ctype.QueryOptions) ([]Schema, error) {
 	return items, err
 }
 
-func (r *repo) Retrieve(queryOptions ctype.QueryOptions) (*Schema, error) {
+func (r *repo) Retrieve(opts ctype.QueryOpts) (*Schema, error) {
 	db := r.client
 	localizer := localeutil.Get()
-	filters := dictutil.DictCamelToSnake(queryOptions.Filters)
-	preloads := queryOptions.Preloads
+	filters := dictutil.DictCamelToSnake(opts.Filters)
+	preloads := opts.Preloads
 	if len(preloads) > 0 {
 		for _, preload := range preloads {
 			db = db.Preload(preload)
@@ -102,17 +102,17 @@ func (r *repo) Create(data ctype.Dict) (*Schema, error) {
 	return item, err
 }
 
-func (r *repo) GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
-	existItem, err := r.Retrieve(queryOptions)
+func (r *repo) GetOrCreate(opts ctype.QueryOpts, data ctype.Dict) (*Schema, error) {
+	existItem, err := r.Retrieve(opts)
 	if err != nil {
 		return r.Create(data)
 	}
 	return existItem, nil
 }
 
-func (r *repo) Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema, error) {
+func (r *repo) Update(opts ctype.QueryOpts, data ctype.Dict) (*Schema, error) {
 	db := r.client
-	item, err := r.Retrieve(queryOptions)
+	item, err := r.Retrieve(opts)
 	if err != nil {
 		return nil, err
 	}
@@ -125,21 +125,21 @@ func (r *repo) Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*Schema
 }
 
 func (r *repo) UpdateOrCreate(
-	queryOptions ctype.QueryOptions,
+	opts ctype.QueryOpts,
 	data ctype.Dict,
 ) (*Schema, error) {
-	existItem, err := r.Retrieve(queryOptions)
+	existItem, err := r.Retrieve(opts)
 	if err != nil {
 		return r.Create(data)
 	}
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": existItem.ID}}
-	return r.Update(updateOptions, data)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": existItem.ID}}
+	return r.Update(updateOpts, data)
 }
 
 func (r *repo) Delete(id uint) ([]uint, error) {
 	db := r.client
 	ids := []uint{id}
-	_, err := r.Retrieve(ctype.QueryOptions{Filters: ctype.Dict{"id": id}})
+	_, err := r.Retrieve(ctype.QueryOpts{Filters: ctype.Dict{"id": id}})
 	if err != nil {
 		return ids, err
 	}

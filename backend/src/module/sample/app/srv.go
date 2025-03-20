@@ -21,8 +21,8 @@ func (srv Service) Create(data ctype.Dict) (*schema.Tenant, error) {
 	return tenant, nil
 }
 
-func (srv Service) Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.Tenant, error) {
-	tenant, err := srv.tenantRepo.Update(updateOptions, data)
+func (srv Service) Update(updateOpts ctype.QueryOpts, data ctype.Dict) (*schema.Tenant, error) {
+	tenant, err := srv.tenantRepo.Update(updateOpts, data)
 	if err != nil {
 		return nil, err
 	}

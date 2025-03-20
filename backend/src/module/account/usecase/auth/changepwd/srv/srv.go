@@ -7,7 +7,7 @@ import (
 )
 
 type userProvider interface {
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.User, error)
 }
 
 type srv struct {
@@ -24,8 +24,8 @@ func (srv srv) ChangePwd(userID uint, pwd string) error {
 	updateData := ctype.Dict{
 		"Pwd": pwdHash,
 	}
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": userID}}
-	_, err := srv.userRepo.Update(updateOptions, updateData)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": userID}}
+	_, err := srv.userRepo.Update(updateOpts, updateData)
 	if err != nil {
 		return err
 	}

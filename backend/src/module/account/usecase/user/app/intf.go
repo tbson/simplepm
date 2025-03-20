@@ -7,7 +7,7 @@ import (
 
 type UserRepo interface {
 	Create(data ctype.Dict) (*schema.User, error)
-	Update(updateOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
+	Update(updateOpts ctype.QueryOpts, data ctype.Dict) (*schema.User, error)
 }
 
 type UserLocalRepo interface {

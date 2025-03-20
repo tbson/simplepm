@@ -22,7 +22,7 @@ func New(
 
 func (srv Service) InitData(pemMap ctype.PemMap) error {
 	// Init tenant
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"Uid": setting.ADMIN_TEANT_UID(),
 		},
@@ -31,7 +31,7 @@ func (srv Service) InitData(pemMap ctype.PemMap) error {
 		"Uid":   setting.ADMIN_TEANT_UID(),
 		"Title": setting.ADMIN_TEANT_TITLE(),
 	}
-	tenant, err := srv.tenantRepo.GetOrCreate(queryOptions, tenantData)
+	tenant, err := srv.tenantRepo.GetOrCreate(opts, tenantData)
 	if err != nil {
 		return err
 	}
@@ -43,31 +43,31 @@ func (srv Service) InitData(pemMap ctype.PemMap) error {
 	}
 
 	// Sync roles and permissions
-	queryOptions = ctype.QueryOptions{
+	opts = ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"TenantID": tenant.ID,
 		},
 	}
-	err = srv.roleRepo.EnsureRolesPems(pemMap, queryOptions)
+	err = srv.roleRepo.EnsureRolesPems(pemMap, opts)
 	if err != nil {
 		return err
 	}
 
 	// Assign ADMIN role to user
-	queryOptions = ctype.QueryOptions{
+	opts = ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"tenant_id": tenant.ID,
 			"title":     "ADMIN",
 		},
 	}
-	adminRole, err := srv.roleRepo.Retrieve(queryOptions)
+	adminRole, err := srv.roleRepo.Retrieve(opts)
 	if err != nil {
 		return err
 	}
 
 	// Init user
 	email := setting.DEFAULT_ADMIN_EMAIL()
-	queryOptions = ctype.QueryOptions{
+	opts = ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"email": email,
 		},
@@ -80,7 +80,7 @@ func (srv Service) InitData(pemMap ctype.PemMap) error {
 		"LastName":   "Admin",
 		"Roles":      []schema.Role{*adminRole},
 	}
-	user, err := srv.userRepo.GetOrCreate(queryOptions, userData)
+	user, err := srv.userRepo.GetOrCreate(opts, userData)
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (srv Service) InitData(pemMap ctype.PemMap) error {
 	userData = ctype.Dict{
 		"Admin": true,
 	}
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": user.ID}}
-	_, err = srv.userRepo.Update(updateOptions, userData)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": user.ID}}
+	_, err = srv.userRepo.Update(updateOpts, userData)
 	return nil
 }

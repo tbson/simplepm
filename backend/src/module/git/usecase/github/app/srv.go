@@ -48,7 +48,7 @@ func (srv Service) HandleInstallCallback(
 	uid string,
 	tenantUid string,
 ) (*schema.GitAccount, error) {
-	tenant, err := srv.tenantRepo.Retrieve(ctype.QueryOptions{
+	tenant, err := srv.tenantRepo.Retrieve(ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"uid": tenantUid,
 		},
@@ -63,7 +63,7 @@ func (srv Service) HandleInstallCallback(
 		"TenantID": &tenantID,
 	}
 
-	result, err := srv.gitAccountRepo.UpdateOrCreate(ctype.QueryOptions{
+	result, err := srv.gitAccountRepo.UpdateOrCreate(ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"Uid": &uid,
 		},
@@ -87,7 +87,7 @@ func (srv Service) HandleInstallWebhook(
 		"Avatar": avatar,
 	}
 
-	gitAccount, err := srv.gitAccountRepo.UpdateOrCreate(ctype.QueryOptions{
+	gitAccount, err := srv.gitAccountRepo.UpdateOrCreate(ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"Uid": &uid,
 		},
@@ -98,7 +98,7 @@ func (srv Service) HandleInstallWebhook(
 
 	gitAccountID := gitAccount.ID
 
-	_, err = srv.gitRepoRepo.DeleteBy(ctype.QueryOptions{
+	_, err = srv.gitRepoRepo.DeleteBy(ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"GitAccountID": &gitAccountID,
 		},
@@ -130,7 +130,7 @@ func (srv Service) HandleInstallWebhook(
 func (srv Service) HandleUninstallWebhook(
 	uid string,
 ) error {
-	_, err := srv.gitAccountRepo.DeleteBy(ctype.QueryOptions{
+	_, err := srv.gitAccountRepo.DeleteBy(ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"Uid": &uid,
 		},

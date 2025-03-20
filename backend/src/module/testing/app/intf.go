@@ -6,9 +6,9 @@ import (
 )
 
 type TenantRepo interface {
-	GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.Tenant, error)
+	GetOrCreate(opts ctype.QueryOpts, data ctype.Dict) (*schema.Tenant, error)
 }
 
 type UserRepo interface {
-	GetOrCreate(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.User, error)
+	GetOrCreate(opts ctype.QueryOpts, data ctype.Dict) (*schema.User, error)
 }

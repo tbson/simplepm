@@ -16,5 +16,5 @@ type InputData struct {
 }
 
 type FeatureRepo interface {
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.Feature, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.Feature, error)
 }

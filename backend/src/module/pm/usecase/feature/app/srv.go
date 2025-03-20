@@ -20,10 +20,10 @@ func New(featureRepo FeatureRepo, taskRepo TaskRepo) Service {
 func (srv Service) Delete(id uint) ([]uint, error) {
 	emptyResult := []uint{}
 	localizer := localeutil.Get()
-	taskQueryOptions := ctype.QueryOptions{
+	taskQueryOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{"FeatureID": id},
 	}
-	tasks, err := srv.taskRepo.List(taskQueryOptions)
+	tasks, err := srv.taskRepo.List(taskQueryOpts)
 	if err != nil {
 		return nil, err
 	}

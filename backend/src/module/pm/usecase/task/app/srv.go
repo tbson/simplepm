@@ -59,7 +59,7 @@ func (srv Service) Create(structData InputData) (*schema.Task, error) {
 }
 
 func (srv Service) Update(
-	updateOptions ctype.QueryOptions,
+	updateOpts ctype.QueryOpts,
 	structData InputData,
 	data ctype.Dict,
 ) (*schema.Task, error) {
@@ -68,7 +68,7 @@ func (srv Service) Update(
 	delete(data, "TaskFields")
 	delete(data, "TaskUsers")
 
-	task, err := srv.taskRepo.Update(updateOptions, data)
+	task, err := srv.taskRepo.Update(updateOpts, data)
 	if err != nil {
 		return nil, err
 	}
@@ -87,13 +87,13 @@ func (srv Service) Update(
 }
 
 func (srv Service) getNextTaskOrder(ProjectID uint) int {
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"ProjectID": ProjectID,
 		},
 		Order: "\"order\" DESC",
 	}
-	tasks, err := srv.taskRepo.List(queryOptions)
+	tasks, err := srv.taskRepo.List(opts)
 	if err != nil {
 		return 0
 	}
@@ -108,7 +108,7 @@ func (srv Service) upsertTaskFieldValueText(
 	taskField schema.TaskField,
 	value string,
 ) error {
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"TaskID":      taskID,
 			"TaskFieldID": taskField.ID,
@@ -119,7 +119,7 @@ func (srv Service) upsertTaskFieldValueText(
 		"TaskFieldID": taskField.ID,
 		"Value":       value,
 	}
-	_, err := srv.taskFieldValueRepo.UpdateOrCreate(queryOptions, data)
+	_, err := srv.taskFieldValueRepo.UpdateOrCreate(opts, data)
 	if err != nil {
 		return err
 	}
@@ -131,7 +131,7 @@ func (srv Service) upsertTaskFieldValueNumber(
 	taskField schema.TaskField,
 	value string,
 ) error {
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"TaskID":      taskID,
 			"TaskFieldID": taskField.ID,
@@ -144,7 +144,7 @@ func (srv Service) upsertTaskFieldValueNumber(
 		"NumberValue": &numberValue,
 		"Value":       value,
 	}
-	_, err := srv.taskFieldValueRepo.UpdateOrCreate(queryOptions, data)
+	_, err := srv.taskFieldValueRepo.UpdateOrCreate(opts, data)
 	if err != nil {
 		return err
 	}
@@ -160,7 +160,7 @@ func (srv Service) upsertTaskFieldValueDate(
 		"TaskID":      taskID,
 		"TaskFieldID": taskField.ID,
 	}
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"TaskID":      taskID,
 			"TaskFieldID": taskField.ID,
@@ -175,7 +175,7 @@ func (srv Service) upsertTaskFieldValueDate(
 		// data["DateValue"] = nil
 		data["Value"] = ""
 	}
-	_, err = srv.taskFieldValueRepo.UpdateOrCreate(queryOptions, data)
+	_, err = srv.taskFieldValueRepo.UpdateOrCreate(opts, data)
 	if err != nil {
 		return err
 	}
@@ -187,7 +187,7 @@ func (srv Service) upsertTaskFieldValueSelect(
 	taskField schema.TaskField,
 	value string,
 ) error {
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"TaskID":      taskID,
 			"TaskFieldID": taskField.ID,
@@ -202,7 +202,7 @@ func (srv Service) upsertTaskFieldValueSelect(
 	if taskFieldOptionID != 0 {
 		data["TaskFieldOptionID"] = &taskFieldOptionID
 	}
-	_, err := srv.taskFieldValueRepo.UpdateOrCreate(queryOptions, data)
+	_, err := srv.taskFieldValueRepo.UpdateOrCreate(opts, data)
 	if err != nil {
 		return err
 	}
@@ -248,14 +248,14 @@ func (srv Service) upsertTaskFieldValueMultipleSelect(
 }
 
 func (srv Service) cleanUpMultipleSelectTaskFieldValues(taskID uint) error {
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Joins: []string{"TaskField"},
 		Filters: ctype.Dict{
 			"TaskID":         taskID,
 			"TaskField.Type": pm.TASK_FIELD_TYPE_MULTIPLE_SELECT,
 		},
 	}
-	items, err := srv.taskFieldValueRepo.List(queryOptions)
+	items, err := srv.taskFieldValueRepo.List(opts)
 	if err != nil {
 		return err
 	}
@@ -274,11 +274,11 @@ func (srv Service) syncTaskFieldValues(
 ) error {
 	srv.cleanUpMultipleSelectTaskFieldValues(taskID)
 	for _, taskFieldData := range taskFields {
-		taskFieldQueryOptions := ctype.QueryOptions{
+		taskFieldOpts := ctype.QueryOpts{
 			Filters:  ctype.Dict{"ID": taskFieldData.TaskFieldID},
 			Preloads: []string{"TaskFieldOptions"},
 		}
-		taskField, err := srv.taskFieldRepo.Retrieve(taskFieldQueryOptions)
+		taskField, err := srv.taskFieldRepo.Retrieve(taskFieldOpts)
 		if err != nil {
 			return err
 		}
@@ -325,12 +325,12 @@ func (srv Service) syncTaskUsers(
 	taskID uint,
 	taskUsers []TaskUserData,
 ) error {
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"TaskID": taskID,
 		},
 	}
-	_, err := srv.taskUserRepo.DeleteBy(queryOptions)
+	_, err := srv.taskUserRepo.DeleteBy(opts)
 	if err != nil {
 		return err
 	}

@@ -14,20 +14,20 @@ const GITHUB_WEBHOOK_PR_OPENED = "opened"
 const GITHUB_WEBHOOK_PR_CLOSED = "closed"
 
 type TenantRepo interface {
-	Retrieve(queryOptions ctype.QueryOptions) (*account.Tenant, error)
+	Retrieve(opts ctype.QueryOpts) (*account.Tenant, error)
 }
 
 type GitAccountRepo interface {
 	UpdateOrCreate(
-		queryOptions ctype.QueryOptions,
+		opts ctype.QueryOpts,
 		data ctype.Dict,
 	) (*account.GitAccount, error)
-	DeleteBy(queryOptions ctype.QueryOptions) ([]uint, error)
+	DeleteBy(opts ctype.QueryOpts) ([]uint, error)
 }
 
 type GitRepoRepo interface {
 	Create(data ctype.Dict) (*account.GitRepo, error)
-	DeleteBy(queryOptions ctype.QueryOptions) ([]uint, error)
+	DeleteBy(opts ctype.QueryOpts) ([]uint, error)
 }
 
 type GitPushRepo interface {

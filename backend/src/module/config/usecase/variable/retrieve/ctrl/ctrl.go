@@ -14,7 +14,7 @@ import (
 )
 
 type srvProvider interface {
-	Retrieve(queryOptions ctype.QueryOptions) (*schema.Variable, error)
+	Retrieve(opts ctype.QueryOpts) (*schema.Variable, error)
 }
 
 type ctrl struct {
@@ -34,10 +34,10 @@ type ctrl struct {
 func (ctrl ctrl) Handler(c echo.Context) error {
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{"id": id},
 	}
-	result, err := ctrl.srv.Retrieve(queryOptions)
+	result, err := ctrl.srv.Retrieve(opts)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
 	}

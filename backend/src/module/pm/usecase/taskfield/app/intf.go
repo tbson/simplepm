@@ -30,11 +30,11 @@ type InputData struct {
 
 type TaskFieldRepo interface {
 	Create(data ctype.Dict) (*schema.TaskField, error)
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskField, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.TaskField, error)
 }
 
 type TaskFieldOptionRepo interface {
 	Create(data ctype.Dict) (*schema.TaskFieldOption, error)
-	Update(queryOptions ctype.QueryOptions, data ctype.Dict) (*schema.TaskFieldOption, error)
+	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.TaskFieldOption, error)
 	Delete(id uint) ([]uint, error)
 }

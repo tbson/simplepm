@@ -32,10 +32,10 @@ func (srv Service) syncOptions(taskFieldID uint, options []FeTaskFieldOption) er
 			}
 		}
 		if status == FE_OPTION_UPDATED {
-			updateOptions := ctype.QueryOptions{
+			updateOpts := ctype.QueryOpts{
 				Filters: ctype.Dict{"ID": id},
 			}
-			_, err := srv.taskFieldOptionRepo.Update(updateOptions, data)
+			_, err := srv.taskFieldOptionRepo.Update(updateOpts, data)
 			if err != nil {
 				return err
 			}
@@ -66,13 +66,13 @@ func (srv Service) Create(structData InputData) (*schema.TaskField, error) {
 }
 
 func (srv Service) Update(
-	updateOptions ctype.QueryOptions,
+	updateOpts ctype.QueryOpts,
 	data ctype.Dict,
 	options []FeTaskFieldOption,
 ) (*schema.TaskField, error) {
 	defaultResult := schema.TaskField{}
 	delete(data, "TaskFieldOptions")
-	result, err := srv.taskFieldRepo.Update(updateOptions, data)
+	result, err := srv.taskFieldRepo.Update(updateOpts, data)
 
 	if err != nil {
 		return &defaultResult, err

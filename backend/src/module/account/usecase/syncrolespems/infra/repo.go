@@ -47,7 +47,7 @@ func getAdmin(profileTypes []string) bool {
 func (r Repo) WritePems(pemMap ctype.PemMap) error {
 	pemRepo := pem.New(r.client)
 	for _, pemData := range pemMap {
-		filterOptions := ctype.QueryOptions{
+		filterOpts := ctype.QueryOpts{
 			Filters: ctype.Dict{
 				"module": pemData.Module,
 				"action": pemData.Action,
@@ -60,7 +60,7 @@ func (r Repo) WritePems(pemMap ctype.PemMap) error {
 			"Admin":  getAdmin(pemData.ProfileTypes),
 		}
 
-		_, err := pemRepo.GetOrCreate(filterOptions, data)
+		_, err := pemRepo.GetOrCreate(filterOpts, data)
 
 		if err != nil {
 			panic(err)

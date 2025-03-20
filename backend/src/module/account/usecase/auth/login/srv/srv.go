@@ -11,7 +11,7 @@ import (
 )
 
 type userProvider interface {
-	Retrieve(queryOptions ctype.QueryOptions) (*schema.User, error)
+	Retrieve(opts ctype.QueryOpts) (*schema.User, error)
 }
 
 type srv struct {
@@ -26,10 +26,10 @@ func (srv srv) Login(email string, pwd string, tenantID uint) (ctype.Dict, error
 	localizer := localeutil.Get()
 
 	// Check user exists
-	getUserOptions := ctype.QueryOptions{
+	userOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{"Email": email, "TenantID": tenantID},
 	}
-	user, err := srv.userRepo.Retrieve(getUserOptions)
+	user, err := srv.userRepo.Retrieve(userOpts)
 	if err != nil {
 		return ctype.Dict{}, err
 	}

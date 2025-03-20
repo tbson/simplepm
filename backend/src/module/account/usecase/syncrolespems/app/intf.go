@@ -11,9 +11,9 @@ type SynRolesPemsRepo interface {
 
 type RoleRepo interface {
 	EnsureTenantRoles(ID uint, Uid string) error
-	EnsureRolesPems(pemMap ctype.PemMap, queryOptions ctype.QueryOptions) error
+	EnsureRolesPems(pemMap ctype.PemMap, opts ctype.QueryOpts) error
 }
 
 type TenantRepo interface {
-	List(ctype.QueryOptions) ([]schema.Tenant, error)
+	List(ctype.QueryOpts) ([]schema.Tenant, error)
 }

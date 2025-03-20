@@ -74,12 +74,12 @@ func DetailPres(item schema.Project) DetailOutput {
 
 func MutatePres(item schema.Project) ListOutput {
 	projectRepo := project.New(dbutil.Db(nil))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"id": item.ID,
 		},
 		Preloads: []string{"Workspace"},
 	}
-	presItem, _ := projectRepo.Retrieve(queryOptions)
+	presItem, _ := projectRepo.Retrieve(opts)
 	return listPresItem(*presItem)
 }

@@ -28,23 +28,23 @@ var orderableFields = []string{"id", "uid"}
 func Option(c echo.Context) error {
 	tenantId := c.Get("TenantID").(uint)
 	roleRepo := role.New(dbutil.Db(nil))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{"tenant_id": tenantId},
 		Order:   "title ASC",
 	}
-	items, err := roleRepo.List(queryOptions)
+	items, err := roleRepo.List(opts)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	roleOptions := []ctype.SelectOption[uint]{}
+	roleOpts := []ctype.SelectOption[uint]{}
 	for _, item := range items {
-		roleOptions = append(roleOptions, ctype.SelectOption[uint]{
+		roleOpts = append(roleOpts, ctype.SelectOption[uint]{
 			Value: item.ID,
 			Label: item.Title,
 		})
 	}
 	result := ctype.Dict{
-		"role": roleOptions,
+		"role": roleOpts,
 	}
 	return c.JSON(http.StatusOK, result)
 }
@@ -68,12 +68,12 @@ func Retrieve(c echo.Context) error {
 	repo := NewRepo(dbutil.Db(nil))
 
 	id := vldtutil.ValidateId(c.Param("id"))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters:  ctype.Dict{"id": id},
 		Preloads: []string{"Roles"},
 	}
 
-	result, err := repo.Retrieve(queryOptions)
+	result, err := repo.Retrieve(opts)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, err)
@@ -114,8 +114,8 @@ func Update(c echo.Context) error {
 
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	id := vldtutil.ValidateId(c.Param("id"))
-	updateOptions := ctype.QueryOptions{Filters: ctype.Dict{"ID": id}}
-	result, err := srv.Update(updateOptions, data)
+	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": id}}
+	result, err := srv.Update(updateOpts, data)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)

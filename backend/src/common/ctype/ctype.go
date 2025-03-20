@@ -20,7 +20,7 @@ type Pem struct {
 
 type PemMap map[string]Pem
 
-type QueryOptions struct {
+type QueryOpts struct {
 	Filters  Dict
 	Preloads []string
 	Joins    []string

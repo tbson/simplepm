@@ -136,7 +136,7 @@ func DetailPres(item schema.Task) ListOutput {
 
 func MutatePres(item schema.Task) ListOutput {
 	taskRepo := task.New(dbutil.Db(nil))
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{
 			"id": item.ID,
 		},
@@ -146,6 +146,6 @@ func MutatePres(item schema.Task) ListOutput {
 			"TaskFieldValues.TaskFieldOption",
 		},
 	}
-	task, _ := taskRepo.Retrieve(queryOptions)
+	task, _ := taskRepo.Retrieve(opts)
 	return presItem(*task)
 }

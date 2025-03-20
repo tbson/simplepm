@@ -16,7 +16,7 @@ type authProvider interface {
 }
 
 type userProvider interface {
-	Retrieve(queryOptions ctype.QueryOptions) (*schema.User, error)
+	Retrieve(opts ctype.QueryOpts) (*schema.User, error)
 }
 
 type srv struct {
@@ -36,10 +36,10 @@ func (srv srv) RefreshToken(refreshToken string) (account.TokenPair, error) {
 		return account.TokenPair{}, err
 	}
 
-	queryOptions := ctype.QueryOptions{
+	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{"id": userID},
 	}
-	user, err := srv.userRepo.Retrieve(queryOptions)
+	user, err := srv.userRepo.Retrieve(opts)
 	if err != nil {
 		return account.TokenPair{}, err
 	}

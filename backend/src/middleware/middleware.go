@@ -55,7 +55,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			}
 
 			// preload roles and pems which pem
-			user, err := userRepo.Retrieve(ctype.QueryOptions{
+			user, err := userRepo.Retrieve(ctype.QueryOpts{
 				Filters:  ctype.Dict{"id": userID},
 				Preloads: []string{"Roles.Pems", "Tenant"},
 			})
