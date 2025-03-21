@@ -12,11 +12,11 @@ import (
 )
 
 var module = "account"
-var useCaseGroup = "tenant"
-var useCaseGroupName = "tenant"
+var featureSet = "tenant"
+var featureSetName = "tenant"
 
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
-	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
+	g := e.Group(fmt.Sprintf("/%s/%s", module, featureSet))
 	rr := routeutil.RegisterRoute(g, pemMap)
 
 	rr.Public(

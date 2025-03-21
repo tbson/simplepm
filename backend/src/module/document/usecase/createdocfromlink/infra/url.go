@@ -11,11 +11,11 @@ import (
 )
 
 var module = "document"
-var useCaseGroup = "doc"
-var useCaseGroupName = "create document from link"
+var featureSet = "doc"
+var featureSetName = "create document from link"
 
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
-	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
+	g := e.Group(fmt.Sprintf("/%s/%s", module, featureSet))
 	rr := routeutil.RegisterRoute(g, pemMap)
 
 	rr.Rbac(
@@ -26,7 +26,7 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 			profiletype.STAFF,
 			profiletype.MANAGER,
 		},
-		fmt.Sprintf("%s", useCaseGroupName),
+		fmt.Sprintf("%s", featureSetName),
 	)
 
 	return e, pemMap

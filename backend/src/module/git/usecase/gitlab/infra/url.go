@@ -10,11 +10,11 @@ import (
 )
 
 var module = "git"
-var useCaseGroup = "gitlab"
-var useCaseGroupName = "gitlab"
+var featureSet = "gitlab"
+var featureSetName = "gitlab"
 
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
-	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
+	g := e.Group(fmt.Sprintf("/%s/%s", module, featureSet))
 	rr := routeutil.RegisterRoute(g, pemMap)
 	rr.Public(
 		"GET", "/callback", Callback,

@@ -11,11 +11,11 @@ import (
 )
 
 var module = "account"
-var useCaseGroup = "tenant"
-var useCaseGroupName = "tenant"
+var featureSet = "tenant"
+var featureSetName = "tenant"
 
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
-	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
+	g := e.Group(fmt.Sprintf("/%s/%s", module, featureSet))
 	rr := routeutil.RegisterRoute(g, pemMap)
 	rr.Public(
 		"GET", "/option/", Option,
@@ -23,32 +23,32 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr.Rbac(
 		"GET", "/", List,
 		[]string{profiletype.ADMIN, profiletype.STAFF},
-		fmt.Sprintf("Get %s list", useCaseGroupName),
+		fmt.Sprintf("Get %s list", featureSetName),
 	)
 	rr.Rbac(
 		"GET", "/:id", Retrieve,
 		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
-		fmt.Sprintf("Get %s detail", useCaseGroupName),
+		fmt.Sprintf("Get %s detail", featureSetName),
 	)
 	rr.Rbac(
 		"POST", "/", Create,
 		[]string{profiletype.ADMIN, profiletype.STAFF},
-		fmt.Sprintf("Create %s", useCaseGroupName),
+		fmt.Sprintf("Create %s", featureSetName),
 	)
 	rr.Rbac(
 		"PUT", "/:id", Update,
 		[]string{profiletype.ADMIN, profiletype.STAFF, profiletype.MANAGER},
-		fmt.Sprintf("Update %s", useCaseGroupName),
+		fmt.Sprintf("Update %s", featureSetName),
 	)
 	rr.Rbac(
 		"DELETE", "/:id", Delete,
 		[]string{profiletype.ADMIN, profiletype.STAFF},
-		fmt.Sprintf("Delete %s", useCaseGroupName),
+		fmt.Sprintf("Delete %s", featureSetName),
 	)
 	rr.Rbac(
 		"DELETE", "/", DeleteList,
 		[]string{profiletype.ADMIN, profiletype.STAFF},
-		fmt.Sprintf("Delete list %s", useCaseGroupName),
+		fmt.Sprintf("Delete list %s", featureSetName),
 	)
 	return e, pemMap
 }

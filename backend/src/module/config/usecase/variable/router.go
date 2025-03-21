@@ -19,11 +19,11 @@ import (
 )
 
 var module = "config"
-var useCaseGroup = "variable"
-var useCaseGroupName = "variable"
+var featureSet = "variable"
+var featureSetName = "variable"
 
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
-	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
+	g := e.Group(fmt.Sprintf("/%s/%s", module, featureSet))
 	rr := routeutil.RegisterRoute(g, pemMap)
 
 	rr.Private(
@@ -32,32 +32,32 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr.Rbac(
 		"GET", "/", list.WireCtrl().Handler,
 		[]string{profiletype.ADMIN, profiletype.STAFF},
-		fmt.Sprintf("Get %s list", useCaseGroupName),
+		fmt.Sprintf("Get %s list", featureSetName),
 	)
 	rr.Rbac(
 		"GET", "/:id", retrieve.WireCtrl().Handler,
 		[]string{profiletype.ADMIN, profiletype.STAFF},
-		fmt.Sprintf("Get %s detail", useCaseGroupName),
+		fmt.Sprintf("Get %s detail", featureSetName),
 	)
 	rr.Rbac(
 		"POST", "/", create.WireCtrl().Handler,
 		[]string{profiletype.ADMIN},
-		fmt.Sprintf("Create %s", useCaseGroupName),
+		fmt.Sprintf("Create %s", featureSetName),
 	)
 	rr.Rbac(
 		"PUT", "/:id", update.WireCtrl().Handler,
 		[]string{profiletype.ADMIN},
-		fmt.Sprintf("Update %s", useCaseGroupName),
+		fmt.Sprintf("Update %s", featureSetName),
 	)
 	rr.Rbac(
 		"DELETE", "/:id", remove.WireCtrl().Handler,
 		[]string{profiletype.ADMIN},
-		fmt.Sprintf("Delete %s", useCaseGroupName),
+		fmt.Sprintf("Delete %s", featureSetName),
 	)
 	rr.Rbac(
 		"DELETE", "/", removelist.WireCtrl().Handler,
 		[]string{profiletype.ADMIN},
-		fmt.Sprintf("Delete list %s", useCaseGroupName),
+		fmt.Sprintf("Delete list %s", featureSetName),
 	)
 	return e, pemMap
 }

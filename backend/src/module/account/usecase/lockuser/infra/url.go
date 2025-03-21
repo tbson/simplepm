@@ -10,11 +10,11 @@ import (
 )
 
 var module = "account"
-var useCaseGroup = "lock-user"
-var useCaseGroupName = "lock user"
+var featureSet = "lock-user"
+var featureSetName = "lock user"
 
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
-	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
+	g := e.Group(fmt.Sprintf("/%s/%s", module, featureSet))
 	rr := routeutil.RegisterRoute(g, pemMap)
 
 	rr.Private(

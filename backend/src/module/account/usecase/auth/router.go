@@ -10,18 +10,18 @@ import (
 
 	"src/module/account/usecase/auth/changepwd"
 	"src/module/account/usecase/auth/login"
-	"src/module/account/usecase/auth/refreshtoken"
-	"src/module/account/usecase/auth/refreshtokencheck"
-	"src/module/account/usecase/auth/resetpwd"
-	"src/module/account/usecase/auth/resetpwdrequest"
+	refreshtokenapply "src/module/account/usecase/auth/refreshtoken/apply"
+	refreshtokencheck "src/module/account/usecase/auth/refreshtoken/check"
+	resetpwdapply "src/module/account/usecase/auth/resetpwd/apply"
+	resetpwdrequest "src/module/account/usecase/auth/resetpwd/request"
 )
 
 var module = "account"
-var useCaseGroup = "auth"
-var useCaseGroupName = "auth"
+var featureSet = "auth"
+var featureSetName = "auth"
 
 func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap) {
-	g := e.Group(fmt.Sprintf("/%s/%s", module, useCaseGroup))
+	g := e.Group(fmt.Sprintf("/%s/%s", module, featureSet))
 	rr := routeutil.RegisterRoute(g, pemMap)
 
 	rr.Public(
@@ -34,13 +34,13 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 		"POST", "/reset-pwd/request", resetpwdrequest.WireCtrl().Handler,
 	)
 	rr.Public(
-		"POST", "/reset-pwd", resetpwd.WireCtrl().Handler,
-	)
-	rr.Public(
-		"POST", "/refresh-token", refreshtoken.WireCtrl().Handler,
+		"POST", "/reset-pwd/apply", resetpwdapply.WireCtrl().Handler,
 	)
 	rr.Public(
 		"GET", "/refresh-token/check", refreshtokencheck.WireCtrl().Handler,
+	)
+	rr.Public(
+		"POST", "/refresh-token/apply", refreshtokenapply.WireCtrl().Handler,
 	)
 	return e, pemMap
 }
