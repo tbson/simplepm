@@ -2,10 +2,13 @@ package srv
 
 import (
 	"src/common/ctype"
+	"src/common/setting"
 	"src/module/account"
 	"src/module/account/schema"
 	"src/util/errutil"
 	"src/util/localeutil"
+
+	"src/module/account/domain/srv/authtoken"
 
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
@@ -20,18 +23,25 @@ type userProvider interface {
 }
 
 type srv struct {
-	authSrv  authProvider
 	userRepo userProvider
 }
 
-func New(authSrv authProvider, userRepo userProvider) srv {
-	return srv{authSrv, userRepo}
+func New(userRepo userProvider) srv {
+	return srv{userRepo}
 }
 
 func (srv srv) RefreshToken(refreshToken string) (account.TokenPair, error) {
+	tokenSettings := setting.AUTH_TOKEN_SETTINGS()
+	authTokenSrv := authtoken.New(
+		tokenSettings.AccessTokenSecret,
+		tokenSettings.RefreshTokenSecret,
+		tokenSettings.AccessTokenLifetime,
+		tokenSettings.RefreshTokenLifetime,
+	)
+
 	localizer := localeutil.Get()
 
-	userID, err := srv.authSrv.VerifyRefreshToken(refreshToken)
+	userID, err := authTokenSrv.VerifyRefreshToken(refreshToken)
 	if err != nil {
 		return account.TokenPair{}, err
 	}
@@ -51,6 +61,6 @@ func (srv srv) RefreshToken(refreshToken string) (account.TokenPair, error) {
 		return account.TokenPair{}, errutil.New("", []string{msg})
 	}
 
-	return srv.authSrv.GenerateTokenPair(userID)
+	return authTokenSrv.GenerateTokenPair(userID)
 
 }

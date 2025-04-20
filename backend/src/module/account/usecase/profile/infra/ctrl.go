@@ -8,8 +8,6 @@ import (
 	"src/util/dbutil"
 	"src/util/vldtutil"
 
-	"src/module/account/srv/auth"
-
 	"github.com/labstack/echo/v4"
 )
 
@@ -32,9 +30,8 @@ func UpdateProfile(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
 
 	userRepo := user.New(dbutil.Db(nil))
-	authSrv := auth.New()
 
-	srv := app.New(userRepo, authSrv)
+	srv := app.New(userRepo)
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
@@ -59,9 +56,8 @@ func ChangePassword(c echo.Context) error {
 	userID := c.Get("UserID").(uint)
 
 	userRepo := user.New(dbutil.Db(nil))
-	authSrv := auth.New()
 
-	srv := app.New(userRepo, authSrv)
+	srv := app.New(userRepo)
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputPassword{})
 	if err != nil {

@@ -84,6 +84,7 @@ func main() {
 		e.Use(sentryecho.New(sentryecho.Options{}))
 	}
 	e.Use(custommw.LangMiddleware)
+	e.Use(custommw.TenantMiddleware)
 
 	apiGroup := e.Group("/api/v1")
 	_, pemMap := route.CollectRoutes(apiGroup)

@@ -34,23 +34,28 @@ type srv struct {
 	userRepo   userProvider
 	tenantRepo tenantProvider
 	roleRepo   roleProvider
-	authSrv    authProvider
 }
 
 func New(
 	userRepo userProvider,
 	tenantRepo tenantProvider,
 	roleRepo roleProvider,
-	authSrv authProvider,
 ) srv {
-	return srv{userRepo, tenantRepo, roleRepo, authSrv}
+	return srv{userRepo, tenantRepo, roleRepo}
 }
 
 func (srv srv) WithTx(tx *gorm.DB) {
 	srv.userRepo.WithTx(tx)
 	srv.tenantRepo.WithTx(tx)
 	srv.roleRepo.WithTx(tx)
-	// srv.authSrv.WithTx(tx)
+}
+
+func (srv srv) setPwd(userID uint, pwd string) error {
+	return nil
+}
+
+func (srv srv) sendVerifyEmail(userID uint) error {
+	return nil
 }
 
 func (srv srv) Signup(
@@ -119,13 +124,13 @@ func (srv srv) Signup(
 	}
 
 	// set pwd
-	err = srv.authSrv.SetPwd(user.ID, pwd)
+	err = srv.setPwd(user.ID, pwd)
 	if err != nil {
 		return err
 	}
 
 	// send verify email
-	err = srv.authSrv.SendVerifyEmail(user.ID)
+	err = srv.sendVerifyEmail(user.ID)
 	if err != nil {
 		return err
 	}

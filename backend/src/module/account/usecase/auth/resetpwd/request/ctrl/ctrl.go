@@ -10,7 +10,7 @@ import (
 )
 
 type SrvProvider interface {
-	RequestResetPwd(email string, tenantID uint) error
+	ResetPwdRequest(email string, tenantID uint) error
 }
 
 type ctrl struct {
@@ -28,7 +28,7 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	err = ctrl.Srv.RequestResetPwd(structData.Email, tenantID)
+	err = ctrl.Srv.ResetPwdRequest(structData.Email, tenantID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}

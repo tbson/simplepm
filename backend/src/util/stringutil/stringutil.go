@@ -4,7 +4,8 @@ import (
 	"regexp"
 	"strings"
 
-	"golang.org/x/exp/rand"
+	"math/rand/v2"
+
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -50,18 +51,11 @@ func ToCamelCase(s string) string {
 }
 
 func GetRandomString(length int) string {
-	// Define the character set: lowercase letters and digits
-	const charset = "abcdefghijklmnopqrstuvwxyz0123456789"
-
-	// Create a string builder for efficient string concatenation
-	var builder strings.Builder
-	builder.Grow(length)
-
-	// Generate the random string
-	for i := 0; i < length; i++ {
-		randomIndex := rand.Intn(len(charset))
-		builder.WriteByte(charset[randomIndex])
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	const charsetLength = len(charset)
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.IntN(charsetLength)]
 	}
-
-	return builder.String()
+	return string(b)
 }

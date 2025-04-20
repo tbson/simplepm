@@ -19,7 +19,8 @@ func WireCtrl() fwutil.CtrlHandler {
 
 	userRepo := user.New(dbClient)
 
-	ctrlHandler = ctrl.New(srv.New(userRepo))
+	appSrv := srv.New(userRepo)
+	ctrlHandler = ctrl.New(appSrv)
 
 	return ctrlHandler
 }

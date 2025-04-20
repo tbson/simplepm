@@ -1,9 +1,8 @@
-package auth
+package authtoken
 
 import (
 	"src/module/account"
 
-	"src/common/setting"
 	"src/util/errutil"
 	"src/util/localeutil"
 	"src/util/numberutil"
@@ -13,15 +12,29 @@ import (
 )
 
 type srv struct {
+	accessTokenSecret    string
+	refreshTokenSecret   string
+	accessTokenLifetime  int
+	refreshTokenLifetime int
 }
 
-func New() *srv {
-	return &srv{}
+func New(
+	accessTokenSecret string,
+	refreshTokenSecret string,
+	accessTokenLifetime int,
+	refreshTokenLifetime int,
+) *srv {
+	return &srv{
+		accessTokenSecret:    accessTokenSecret,
+		refreshTokenSecret:   refreshTokenSecret,
+		accessTokenLifetime:  accessTokenLifetime,
+		refreshTokenLifetime: refreshTokenLifetime,
+	}
 }
 
 func (r srv) VerifyAccessToken(token string) (uint, error) {
 	localizer := localeutil.Get()
-	tokenSecret := setting.ACCESS_TOKEN_SECRET()
+	tokenSecret := r.accessTokenSecret
 	claims, err := tokenutil.VerifyToken(token, tokenSecret)
 	if err != nil {
 		return 0, err
@@ -39,7 +52,7 @@ func (r srv) VerifyAccessToken(token string) (uint, error) {
 
 func (r srv) VerifyRefreshToken(token string) (uint, error) {
 	localizer := localeutil.Get()
-	tokenSecret := setting.REFRESH_TOKEN_SECRET()
+	tokenSecret := r.refreshTokenSecret
 	claims, err := tokenutil.VerifyToken(token, tokenSecret)
 	if err != nil {
 		return 0, err
@@ -56,11 +69,11 @@ func (r srv) VerifyRefreshToken(token string) (uint, error) {
 }
 
 func (r srv) GenerateTokenPair(userID uint) (account.TokenPair, error) {
-	accessTokenSecret := setting.ACCESS_TOKEN_SECRET()
-	accessTokenLifetime := setting.ACCESS_TOKEN_LIFETIME()
+	accessTokenSecret := r.accessTokenSecret
+	accessTokenLifetime := r.accessTokenLifetime
 
-	refreshTokenSecret := setting.REFRESH_TOKEN_SECRET()
-	refreshTokenLifetime := setting.REFRESH_TOKEN_LIFETIME()
+	refreshTokenSecret := r.refreshTokenSecret
+	refreshTokenLifetime := r.refreshTokenLifetime
 
 	sub := numberutil.UintToStr(userID)
 	accessToken, err := tokenutil.GenerateToken(
@@ -96,19 +109,8 @@ func (r srv) GenerateTokenPair(userID uint) (account.TokenPair, error) {
 	return result, nil
 }
 
-func (r *srv) SetPwd(userID uint, pwd string) error {
-	return nil
-}
-
-func (r *srv) SendVerifyEmail(userID uint) error {
-	return nil
-}
-
-func (r *srv) VerifyOTP(code string) error {
-	return nil
-}
-
 func (r *srv) RefreshToken(refreshToken uint) (account.TokenPair, error) {
+	// to be implemented
 	result := account.TokenPair{}
 	return result, nil
 }

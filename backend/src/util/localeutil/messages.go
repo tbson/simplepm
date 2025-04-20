@@ -3,6 +3,14 @@ package localeutil
 import "github.com/nicksnyder/go-i18n/v2/i18n"
 
 var (
+	RawMsg = &i18n.Message{
+		ID:    "RawMsg",
+		Other: "{{.Msg}}",
+	}
+	UnknownError = &i18n.Message{
+		ID:    "UnknownError",
+		Other: "unknown error",
+	}
 	CannotReadRequestBody = &i18n.Message{
 		ID:    "CannotReadRequestBody",
 		Other: "can not read request body",
@@ -163,6 +171,16 @@ var (
 		Other: "passwords do not match",
 	}
 
+	PasswordPolicyError = &i18n.Message{
+		ID:    "PasswordPolicyError",
+		Other: "password policy error",
+	}
+
+	PasswordHashError = &i18n.Message{
+		ID:    "PasswordHashError",
+		Other: "password hash error",
+	}
+
 	FailedToOpenFile = &i18n.Message{
 		ID:    "FailedToOpenFile",
 		Other: "failed to open file '{{.Filename}}'",
@@ -313,5 +331,17 @@ var (
 	UnsupportedAlgorithm = &i18n.Message{
 		ID:    "UnsupportedAlgorithm",
 		Other: "unsupported algorithm: {{.Value}}",
+	}
+	RotatePwdPolicyFail = &i18n.Message{
+		ID:    "RotatePwdPolicyFail",
+		Other: "your password must be changed every {{.Value}} days",
+	}
+	OTPLengthConditionFail = &i18n.Message{
+		ID:    "OTPLengthConditionFail",
+		Other: "the OTP must be {{.Value}} characters",
+	}
+	OTPExpired = &i18n.Message{
+		ID:    "OTPExpired",
+		Other: "the OTP has expired",
 	}
 )

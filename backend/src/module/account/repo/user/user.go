@@ -7,7 +7,8 @@ import (
 	"src/util/errutil"
 	"src/util/localeutil"
 
-	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"src/util/errutilnew"
+
 	"gorm.io/gorm"
 )
 
@@ -57,7 +58,6 @@ func (r *repo) List(opts ctype.QueryOpts) ([]Schema, error) {
 
 func (r *repo) Retrieve(opts ctype.QueryOpts) (*Schema, error) {
 	db := r.client
-	localizer := localeutil.Get()
 	filters := dictutil.DictCamelToSnake(opts.Filters)
 	preloads := opts.Preloads
 	if len(preloads) > 0 {
@@ -77,17 +77,11 @@ func (r *repo) Retrieve(opts ctype.QueryOpts) (*Schema, error) {
 	}
 
 	if len(items) == 0 {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.NoRecordFound,
-		})
-		return &item, errutil.New("", []string{msg})
+		return &item, errutilnew.NewSimple(localeutil.NoRecordFound)
 	}
 
 	if len(items) > 1 {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.MultipleRecordsFound,
-		})
-		return &item, errutil.New("", []string{msg})
+		return &item, errutilnew.NewSimple(localeutil.MultipleRecordsFound)
 	}
 
 	item = items[0]

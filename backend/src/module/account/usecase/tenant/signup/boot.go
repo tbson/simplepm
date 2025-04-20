@@ -9,7 +9,6 @@ import (
 
 	"src/module/account/repo/role"
 	"src/module/account/repo/tenant"
-	"src/module/account/srv/auth"
 )
 
 var ctrlHandler fwutil.CtrlHandler
@@ -24,10 +23,9 @@ func WireCtrl() fwutil.CtrlHandler {
 	userRepo := user.New(dbClient)
 	tenantRepo := tenant.New(dbClient)
 	roleRepo := role.New(dbClient)
-	authSrv := auth.New()
 
 	ctrlHandler = ctrl.New(
-		srv.New(userRepo, tenantRepo, roleRepo, authSrv),
+		srv.New(userRepo, tenantRepo, roleRepo),
 		dbClient,
 	)
 

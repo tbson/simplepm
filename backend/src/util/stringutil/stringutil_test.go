@@ -46,3 +46,21 @@ func TestToCamelCase(t *testing.T) {
 		}
 	}
 }
+
+func TestRandomString(t *testing.T) {
+	tests := []struct {
+		length   int
+		expected int
+	}{
+		{10, 10},
+		{20, 20},
+		{0, 0},
+	}
+
+	for _, test := range tests {
+		result := GetRandomString(test.length)
+		if len(result) != test.expected {
+			t.Errorf("GetRandomString(%d) = %d; want %d", test.length, len(result), test.expected)
+		}
+	}
+}

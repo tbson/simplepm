@@ -1,1 +1,5 @@
 package pres
+
+func GetWebAuthResult() {
+
+}

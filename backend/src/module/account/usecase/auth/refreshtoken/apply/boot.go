@@ -6,7 +6,6 @@ import (
 	"src/module/account/repo/user"
 	"src/module/account/usecase/auth/refreshtoken/apply/srv"
 
-	"src/module/account/srv/auth"
 	"src/util/dbutil"
 	"src/util/fwutil"
 )
@@ -21,11 +20,9 @@ func WireCtrl() fwutil.CtrlHandler {
 	dbClient := dbutil.Db(nil)
 
 	userRepo := user.New(dbClient)
-	authSrv := auth.New()
 
-	ctrlHandler = ctrl.New(
-		srv.New(authSrv, userRepo),
-	)
+	srv := srv.New(userRepo)
+	ctrlHandler = ctrl.New(srv)
 
 	return ctrlHandler
 }

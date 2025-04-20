@@ -3,14 +3,18 @@ package middleware
 import (
 	"context"
 	"src/common/ctype"
+	"src/module/account/domain/srv/authtoken"
+	"src/module/account/repo/tenant"
 	"src/module/account/repo/user"
 	"src/module/account/schema"
-	"src/module/account/srv/auth"
 	"src/util/cookieutil"
 	"src/util/dbutil"
 	"src/util/errutil"
 	"src/util/localeutil"
 	"src/util/numberutil"
+	"strings"
+
+	"src/common/setting"
 
 	"github.com/labstack/echo/v4"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -18,6 +22,32 @@ import (
 
 func BlankMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		return next(c)
+	}
+}
+
+func TenantMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		localizer := localeutil.Get()
+		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
+			DefaultMessage: localeutil.MissingTenantID,
+		})
+
+		requestDomain := c.Request().Host
+		domainParts := strings.Split(requestDomain, ".")
+		if len(domainParts) < 2 {
+			return c.JSON(400, errutil.New("", []string{msg}))
+		}
+		tenantUID := domainParts[0]
+		tenantRepo := tenant.New(dbutil.Db(nil))
+		tenant, err := tenantRepo.Retrieve(ctype.QueryOpts{
+			Filters: ctype.Dict{"Uid": tenantUID},
+		})
+		if err != nil {
+			return c.JSON(400, errutil.New("", []string{msg}))
+		}
+		c.Set("TenantID", tenant.ID)
+		c.Set("TenantUid", tenant.Uid)
 		return next(c)
 	}
 }
@@ -35,13 +65,20 @@ func LangMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+			tokenSettings := setting.AUTH_TOKEN_SETTINGS()
+
 			localizer := localeutil.Get()
 			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 				DefaultMessage: localeutil.Unauthorized,
 			})
 			// check access_token cookie
 			userRepo := user.New(dbutil.Db(nil))
-			authRepo := auth.New()
+			authTokenSrv := authtoken.New(
+				tokenSettings.AccessTokenSecret,
+				tokenSettings.RefreshTokenSecret,
+				tokenSettings.AccessTokenLifetime,
+				tokenSettings.RefreshTokenLifetime,
+			)
 
 			accessToken := cookieutil.GetValue(c, "access_token")
 
@@ -49,7 +86,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 				return c.JSON(401, errutil.New("", []string{msg}))
 			}
 
-			userID, err := authRepo.VerifyAccessToken(accessToken)
+			userID, err := authTokenSrv.VerifyAccessToken(accessToken)
 			if err != nil {
 				return c.JSON(401, err)
 			}

@@ -1,42 +1,298 @@
 {
+  "AuthorizationCodeNotFound": {
+    "hash": "sha1-941062fd77ed4db3d8b44443557c228ead07bd70",
+    "other": "không tìm thấy mã ủy quyền"
+  },
   "BadJson": {
-    "hash": "sha1-90240dae35af1ca7ac49998c59a4c33c9826d380",
+    "hash": "sha1-acc49477e4104665238a1878bf258ee91c7033ab",
     "other": "Request body contains badly-formed JSON (at position {{.Offset}}) VN"
   },
+  "BadRequest": {
+    "hash": "sha1-bfbd6f9d467615d45c44668b42e106654abba9a0",
+    "other": "yêu cầu không tốt"
+  },
+  "CanNotCreateRequest": {
+    "hash": "sha1-d110737307756bd2611201fec29a1c540587cd51",
+    "other": "không thể tạo yêu cầu"
+  },
+  "CanNotParseDateStr": {
+    "hash": "sha1-84ff29615511db8327d80dfbbfd20ce1fd06e80d",
+    "other": "không thể phân tích chuỗi ngày"
+  },
+  "CanNotParseLinkMetaData": {
+    "hash": "sha1-96a506c0d5ce7234a8115000dedaa12b315395ef",
+    "other": "không thể phân tích cú pháp siêu dữ liệu liên kết"
+  },
+  "CanNotReadResponse": {
+    "hash": "sha1-2113a20b57d7690489e7cc9d96a6953202dc0da3",
+    "other": "không thể đọc được phản hồi"
+  },
+  "CanNotSendRequest": {
+    "hash": "sha1-7f76435721c449e6796cc87c8c28511b492eda28",
+    "other": "không thể gửi yêu cầu"
+  },
+  "CannotCreateIAMUser": {
+    "hash": "sha1-1a3a9f527208d7c664a8a7c4ba0a8a87159219a2",
+    "other": "không thể tạo người dùng IAM"
+  },
+  "CannotExchangeAuthorizationCode": {
+    "hash": "sha1-ef55a3a3e2a9ebbc6deea9ea374efe227fc83b73",
+    "other": "không thể đổi mã ủy quyền lấy token"
+  },
+  "CannotExchangeRefreshToken": {
+    "hash": "sha1-34602937c6b4ce7a20b13d26b4ab2f1c736cdaf2",
+    "other": "không thể đổi mã thông báo làm mới lấy mã thông báo"
+  },
+  "CannotGetUserInfo": {
+    "hash": "sha1-ec452235ff90a1a2fb79283f59923378d9d25a05",
+    "other": "không thể lấy được thông tin người dùng"
+  },
+  "CannotLogout": {
+    "hash": "sha1-a4b19790c7f99a05c7c52704d1dee90ad63181bd",
+    "other": "không thể đăng xuất"
+  },
   "CannotReadRequestBody": {
-    "hash": "sha1-dcc91bf0db344550b8dc94f5a3993bacf62623fd",
+    "hash": "sha1-fd37e9ed3a9e41329da78019f48f8472fdcfb81e",
     "other": "Can not read request body VN"
   },
+  "CannotSendVerifyEmail": {
+    "hash": "sha1-dec14be7b101dcbd2814fa9568ba684dfa86b83d",
+    "other": "không thể gửi email xác minh"
+  },
+  "CannotSetPassword": {
+    "hash": "sha1-aae8124af331b04dcbbba4d139aa3d82fe1fc894",
+    "other": "không thể thiết lập mật khẩu"
+  },
+  "CannotUpdateIAMUser": {
+    "hash": "sha1-2497ae3116a04a933e883c00b58a6820dcac5b85",
+    "other": "không thể cập nhật người dùng IAM"
+  },
   "EmptyRequestBody": {
-    "hash": "sha1-eae505b15a085a0c32c0b30beaf361118e38f93b",
+    "hash": "sha1-238cfbfcd063de82e33bc99195df6b4f06186706",
     "other": "Request body must not be empty VN"
   },
+  "ExpectedRSAKey": {
+    "hash": "sha1-e9b6b740e0508cf7cf4d9e61333961ff75222777",
+    "other": "mong đợi khóa công khai RSA nhưng lại nhận được thứ khác"
+  },
   "FailToDecodeJSON": {
-    "hash": "sha1-0d936f5d9ba9662ae29eae54a48cc40e6b343d87",
+    "hash": "sha1-b84370fe96a52b41d17efc5ca3b6ca5b046a3ae8",
     "other": "Failed to decode JSON VN"
   },
+  "FailToParsRSAPrivateKey": {
+    "hash": "sha1-2e6ec71200510c901388cf0756a3f992d1695ab6",
+    "other": "không phân tích được khóa riêng RSA"
+  },
+  "FailedToBuildToken": {
+    "hash": "sha1-26112e25d51f5d2c6e0d3b5e0bab7179785bd736",
+    "other": "không xây dựng được token"
+  },
+  "FailedToCreateEmailClient": {
+    "hash": "sha1-390d93e24067c722f215c1e0d73039a9388480a0",
+    "other": "không tạo được email client"
+  },
+  "FailedToCreateKafkaConsumer": {
+    "hash": "sha1-7d53ff206322318e8964ce707337319c83a8a535",
+    "other": "không tạo được người dùng Kafka"
+  },
+  "FailedToCreateKafkaProducer": {
+    "hash": "sha1-b8317991a0bcbb9d3c24fbedb55d83cf8d3cfb7a",
+    "other": "không tạo được nhà sản xuất Kafka"
+  },
+  "FailedToCreateRawKey": {
+    "hash": "sha1-d1bbb4ee82f2d76cd9945db41ee43d0fab23258a",
+    "other": "không tạo được khóa thô"
+  },
+  "FailedToDeliverEmail": {
+    "hash": "sha1-92be5ddf054548f2fb5bc377af04e0b76d48ed98",
+    "other": "không gửi được email"
+  },
+  "FailedToExecuteTemplate": {
+    "hash": "sha1-916b1db597560adb335189473ea67f7ee64e35e7",
+    "other": "không thực hiện được mẫu: {{.Value}}"
+  },
+  "FailedToFetchJWKS": {
+    "hash": "sha1-97f8006c90ff1cbd93cebcf940f46c5f37bd9383",
+    "other": "không tải được JWKS"
+  },
+  "FailedToOpenFile": {
+    "hash": "sha1-ed5bb8483f15b883277ae71cfebf2a849a693e46",
+    "other": "không mở được tệp '{{.Filename}}'"
+  },
+  "FailedToParseTemplate": {
+    "hash": "sha1-1b6fc30aefba36aaf69b6a86560aaa5cac1c2e00",
+    "other": "không phân tích được mẫu: {{.Value}}"
+  },
+  "FailedToParseToken": {
+    "hash": "sha1-75de2bf418f5b0b7743153ca37ea785cf0da5720",
+    "other": "không phân tích được mã thông báo"
+  },
+  "FailedToReadPrivateKey": {
+    "hash": "sha1-511eed5c8fb7660c766ae3285064141408f622d5",
+    "other": "không đọc được khóa riêng tư"
+  },
+  "FailedToSetFromAddress": {
+    "hash": "sha1-1ff24963867fd7c1cbb39880c356e100c93a3161",
+    "other": "không thể thiết lập địa chỉ TỪ: {{.Value}}"
+  },
+  "FailedToSetToAddress": {
+    "hash": "sha1-b91a360edc15de4a1b8c1bb2c9e6376c361c39e9",
+    "other": "không thể thiết lập địa chỉ ĐẾN: {{.Value}}"
+  },
+  "FailedToSignToken": {
+    "hash": "sha1-363eb93ae22e8a2c81f160aef6afa6c55e64c12e",
+    "other": "không thể ký mã thông báo"
+  },
+  "FailedToUploadFileToS3": {
+    "hash": "sha1-d6320727704a4761dd938af1ca15be4e326425eb",
+    "other": "không tải được file lên S3"
+  },
+  "FailedToVerifyToken": {
+    "hash": "sha1-1a9ae18a55454b48f025037603aa7bdeef3eb1f1",
+    "other": "không xác minh được mã thông báo"
+  },
+  "FeatureInUse": {
+    "hash": "sha1-bbbcc46a1f6968a20bf5abbd5b9531a9b3ad8d3e",
+    "other": "tính năng đang được sử dụng"
+  },
   "FieldRequired": {
-    "hash": "sha1-dedbaded6d5a4ed17eefa2e4ee3eee026b7d1d11",
-    "other": "This field is required VN"
+    "hash": "sha1-39b899d5f5ac041821180279a93ba47bf6aba6aa",
+    "other": "trường này là bắt buộc"
+  },
+  "GormDuplicateKey": {
+    "hash": "sha1-0f49a03f6ebbfbba9921008ae55fe118e8d3ecbd",
+    "other": "giá trị đã tồn tại"
+  },
+  "InvalidAccessToken": {
+    "hash": "sha1-443fe4e817f15f5b62b02db228cd59ec2d5cfc8f",
+    "other": "mã thông báo truy cập không hợp lệ"
   },
   "InvalidFieldValue": {
-    "hash": "sha1-7b1a67fdece2de2555eaf2b5cb40f9eed54b1917",
+    "hash": "sha1-43ab26482676698a8cc1cbce9d0a3ee467787f4a",
     "other": "Invalid value for field '{{.FieldName}}'. Expected type {{.Type}} but got {{.Value}} VN"
   },
+  "InvalidHashFormat": {
+    "hash": "sha1-132ab08a74d4dd8e80fd1d8e898481f1e79a4768",
+    "other": "định dạng băm không hợp lệ"
+  },
   "InvalidJSONPayload": {
-    "hash": "sha1-bc7c54c8ded25b45dd9247942d23a55570bc3642",
+    "hash": "sha1-ce1a4c3c14fab4f5fbb626d6cbdbf4e866b344db",
     "other": "Invalid JSON payload VN"
   },
+  "InvalidRefreshToken": {
+    "hash": "sha1-30b2c8de656c87bb6dc353ce638b783de3ba00c9",
+    "other": "mã thông báo làm mới không hợp lệ"
+  },
+  "InvalidResetPwdCode": {
+    "hash": "sha1-405632c0d494736bb1a2086ab9848e33b533d3d0",
+    "other": "mã đặt lại mật khẩu không hợp lệ"
+  },
+  "InvalidState": {
+    "hash": "sha1-0e9cac57807ec9c9f59b266ba99cd2589965dd96",
+    "other": "trạng thái không hợp lệ"
+  },
+  "InvalidUsernameOrPwd": {
+    "hash": "sha1-8db25d0e383ca9ff325915ceed5ccbbc00fecc50",
+    "other": "tên người dùng hoặc mật khẩu không hợp lệ"
+  },
   "InvalidValue": {
-    "hash": "sha1-7e5ba8172e8e0f040beb647ab1be74ae0618bb56",
+    "hash": "sha1-eac69b397294d2f828a616d25c36c04c67896870",
     "other": "Invalid value VN"
   },
+  "LockedAccount": {
+    "hash": "sha1-ff347bf773a91d6528587347a050e0725d2ef677",
+    "other": "tài khoản đã bị khóa"
+  },
+  "MissingSubject": {
+    "hash": "sha1-14dabb4dd687696fe72b4559ff882f5e17e5e875",
+    "other": "thiếu chủ đề"
+  },
+  "MissingTenantID": {
+    "hash": "sha1-23abf00f4ea4b9d512d68959cd0188b16fdd50dc",
+    "other": "ID người thuê nhà bị thiếu"
+  },
+  "MultipleRecordsFound": {
+    "hash": "sha1-88ca410cb52b7f5ea11eb8560797e32096181a74",
+    "other": "nhiều hồ sơ được tìm thấy"
+  },
   "MustBeOneOf": {
-    "hash": "sha1-924a1e9e02729db2e53baee493dd24e4d1162064",
+    "hash": "sha1-a955a2fd3f0100d0371bbff59c9b7f81c5be0b9e",
     "other": "Must be one of: {{.Values}} VN"
   },
+  "NoKidFieldInJWTTokenHeader": {
+    "hash": "sha1-62261fe5d44c575bca171243cc48fddce85d362b",
+    "other": "không có trường 'kid' trong tiêu đề mã thông báo JWT"
+  },
+  "NoRecordFound": {
+    "hash": "sha1-a2a9959622e473440052a4b7de74dcf63172efcf",
+    "other": "không tìm thấy hồ sơ"
+  },
   "NotRecognizedField": {
-    "hash": "sha1-00faf4a09464aa1cf470038a5b2931bd84b20866",
+    "hash": "sha1-16bbb0753550f323e4f6202bfd0a8da2b2e4019c",
     "other": "This field is not recognized VN"
+  },
+  "OTPExpired": {
+    "hash": "sha1-1f86a97ab0b0482b3b933decc675994e9db4f2a3",
+    "other": "OTP đã hết hạn"
+  },
+  "OTPLengthConditionFail": {
+    "hash": "sha1-bb0383bd1a5e1922017004fcefb678cd207f5d41",
+    "other": "OTP phải có {{.Value}} ký tự"
+  },
+  "PasswordHashError": {
+    "hash": "sha1-edaa700689c6655269d5597f61ff021869c8e1b1",
+    "other": "lỗi băm mật khẩu"
+  },
+  "PasswordPolicyError": {
+    "hash": "sha1-e1dfd2ade84b2605726b0833bd1a4cae3334cc2c",
+    "other": "lỗi chính sách mật khẩu"
+  },
+  "PasswordsNotMatch": {
+    "hash": "sha1-2711dd1852b7f56fdc19fee13b66dfef887a405c",
+    "other": "mật khẩu không khớp"
+  },
+  "RawMsg": {
+    "hash": "sha1-45e23950e3302dfe9697a959691688d1943e06bb",
+    "other": "{{.Msg}}"
+  },
+  "RefreshTokenNotFound": {
+    "hash": "sha1-0aca353190f14b2f4e4da46a2be3f9c409bc4a84",
+    "other": "không tìm thấy mã thông báo fefresh"
+  },
+  "RotatePwdPolicyFail": {
+    "hash": "sha1-971843522860ba32343b6108fafdeeeb93b7078c",
+    "other": "mật khẩu của bạn phải được thay đổi sau mỗi {{.Value}} ngày"
+  },
+  "SubClaimNotFound": {
+    "hash": "sha1-addf18ca3996ab84cfeb6eb8c33fb37ed8125354",
+    "other": "không tìm thấy yêu cầu phụ"
+  },
+  "TaskUserNotFound": {
+    "hash": "sha1-a23d57f078fe6e8656f872b75b592a48603b84de",
+    "other": "không tìm thấy người dùng nhiệm vụ"
+  },
+  "TokenHasExpired": {
+    "hash": "sha1-8654986ad813bca0984d494f5a668c4fee65018f",
+    "other": "mã thông báo đã hết hạn"
+  },
+  "UnableToFindKeyWithKid": {
+    "hash": "sha1-f2badf0551093ead4e05a0c45056d8066b24c77c",
+    "other": "không tìm thấy chìa khóa với đứa trẻ"
+  },
+  "Unauthorized": {
+    "hash": "sha1-9d9f2ff112fdae743826cab85678ecc0b000c5af",
+    "other": "không được phép"
+  },
+  "UnknownError": {
+    "hash": "sha1-af6321ca7a8b8d025769a1d8bc508d6c21f44e08",
+    "other": "lỗi không xác định"
+  },
+  "UnsupportedAlgorithm": {
+    "hash": "sha1-d4e72c59ec62d169a3270ff2f4c316d0582afc89",
+    "other": "thuật toán không được hỗ trợ: {{.Value}}"
+  },
+  "cannotLoginAdmin": {
+    "hash": "sha1-341735489451d0de79d6a94739f5f6c4d8732fa7",
+    "other": "Không thể đăng nhập quản trị viên"
   }
 }

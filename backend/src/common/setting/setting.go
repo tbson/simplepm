@@ -5,6 +5,13 @@ import (
 	"src/util/fwutil"
 )
 
+type authTokenSetting struct {
+	AccessTokenLifetime  int
+	AccessTokenSecret    string
+	RefreshTokenLifetime int
+	RefreshTokenSecret   string
+}
+
 var debug bool = fwutil.BoolEnv("DEBUG", true)
 
 func DEBUG() bool {
@@ -51,6 +58,15 @@ var refreshTokenSecret string = fwutil.Env("REFRESH_TOKEN_SECRET", "")
 
 func REFRESH_TOKEN_SECRET() string {
 	return refreshTokenSecret
+}
+
+func AUTH_TOKEN_SETTINGS() authTokenSetting {
+	return authTokenSetting{
+		AccessTokenLifetime:  ACCESS_TOKEN_LIFETIME(),
+		AccessTokenSecret:    ACCESS_TOKEN_SECRET(),
+		RefreshTokenLifetime: REFRESH_TOKEN_LIFETIME(),
+		RefreshTokenSecret:   REFRESH_TOKEN_SECRET(),
+	}
 }
 
 var dbHost string = fwutil.Env("DB_HOST", "")
@@ -341,4 +357,47 @@ var msgPageSize int = fwutil.IntEnv("MSG_PAGE_SIZE", 25)
 
 func MSG_PAGE_SIZE() int {
 	return msgPageSize
+}
+
+func checkMinMax(label string, value int, minValue int, maxValue int) {
+	if (value < minValue) || (value > maxValue) {
+		panic(fmt.Sprintf(
+			"%s must be between %d and %d", label, minValue, maxValue,
+		))
+	}
+}
+
+var maxResetPwdPeriodDays int = fwutil.IntEnv("MAX_RESET_PWD_PERIOD_DAYS", 90)
+
+func MAX_RESET_PWD_PERIOD_DAYS() int {
+	checkMinMax("MAX_RESET_PWD_PERIOD_DAYS", maxResetPwdPeriodDays, 7, 365)
+	return maxResetPwdPeriodDays
+}
+
+var otpLength int = fwutil.IntEnv("OTP_LENGTH", 6)
+
+func OTP_LENGTH() int {
+	checkMinMax("OTP_LENGTH", otpLength, 4, 8)
+	return otpLength
+}
+
+var otpLifeMinutes int = fwutil.IntEnv("OTP_LIFE_MINUTES", 10)
+
+func OTP_LIFE_MINUTES() int {
+	checkMinMax("OTP_LIFE_MINUTES", otpLength, 5, 30)
+	return otpLifeMinutes
+}
+
+var pwdFailedAttemps int = fwutil.IntEnv("MAX_PWD_FAILED_ATTEMPTS", 5)
+
+func MAX_PWD_FAILED_ATTEMPTS() int {
+	checkMinMax("MAX_PWD_FAILED_ATTEMPTS", pwdFailedAttemps, 3, 10)
+	return pwdFailedAttemps
+}
+
+var lastPwdsCheck int = fwutil.IntEnv("LAST_PWDS_CHECK", 5)
+
+func LAST_PWDS_CHECK() int {
+	checkMinMax("LAST_PWDS_CHECK", lastPwdsCheck, 1, 10)
+	return lastPwdsCheck
 }

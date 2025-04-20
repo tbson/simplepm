@@ -1,10 +1,13 @@
 package ctrl
 
 import (
+	"fmt"
 	"net/http"
 
 	"src/common/ctype"
 	"src/util/vldtutil"
+
+	"src/util/errutilnew"
 
 	"github.com/labstack/echo/v4"
 )
@@ -14,7 +17,7 @@ type SrvProvider interface {
 }
 
 type ctrl struct {
-	Srv SrvProvider
+	appSrv SrvProvider
 }
 
 type input struct {
@@ -40,14 +43,17 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	_, err = ctrl.Srv.Login(structData.Email, structData.Pwd, tenantID)
+	cookieData, err := ctrl.appSrv.Login(structData.Email, structData.Pwd, tenantID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutilnew.CustomError).Localize())
 	}
+
+	// write cookies here
+	fmt.Println(cookieData)
 
 	return c.JSON(http.StatusOK, ctype.Dict{})
 }
 
 func New(srv SrvProvider) ctrl {
-	return ctrl{Srv: srv}
+	return ctrl{appSrv: srv}
 }

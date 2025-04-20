@@ -1,13 +1,15 @@
 package srv
 
 import (
+	"fmt"
 	"src/common/ctype"
 	"src/module/account/schema"
-	"src/util/errutil"
+	"src/util/errutilnew"
 	"src/util/localeutil"
 	"src/util/pwdutil"
+	"time"
 
-	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"src/module/account/domain/srv/pwdpolicy"
 )
 
 type userProvider interface {
@@ -23,7 +25,7 @@ func New(userRepo userProvider) srv {
 }
 
 func (srv srv) Login(email string, pwd string, tenantID uint) (ctype.Dict, error) {
-	localizer := localeutil.Get()
+	pwdPolicy := pwdpolicy.New()
 
 	// Check user exists
 	userOpts := ctype.QueryOpts{
@@ -34,25 +36,28 @@ func (srv srv) Login(email string, pwd string, tenantID uint) (ctype.Dict, error
 		return ctype.Dict{}, err
 	}
 
-	// Check user is locked
-	if user.LockedAt != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.LockedAccount,
-		})
-		return ctype.Dict{}, errutil.New("", []string{msg})
+	// Check pwd policy
+	var lastResetPwd *time.Time
+	if user.PwdResetAt != nil {
+		lastResetPwd = user.PwdResetAt
+	} else {
+		lastResetPwd = &user.CreatedAt
 	}
-
-	// Check pwd
-	ok, err := pwdutil.CheckPwd(pwd, user.Pwd)
+	fmt.Println("lastResetPwd", lastResetPwd)
+	err = pwdPolicy.CheckOnValidation(pwd, *lastResetPwd, 0)
 	if err != nil {
 		return ctype.Dict{}, err
 	}
 
-	if !ok {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.InvalidUsernameOrPwd,
-		})
-		return ctype.Dict{}, errutil.New("", []string{msg})
+	// Check user is locked
+	if user.LockedAt != nil {
+		return ctype.Dict{}, errutilnew.NewSimple(localeutil.LockedAccount)
+	}
+
+	// Check pwd
+	err = pwdutil.CheckPwd(pwd, user.Pwd)
+	if err != nil {
+		return ctype.Dict{}, err
 	}
 
 	return ctype.Dict{}, nil

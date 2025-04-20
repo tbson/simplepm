@@ -5,11 +5,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"src/common/ctype"
-	"src/util/errutil"
+	"src/util/errutilnew"
 	"src/util/localeutil"
 	"strings"
 
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/crypto/argon2"
 )
 
@@ -64,27 +63,21 @@ func MakePwd(pwd string) string {
 	return encodedHash
 }
 
-func CheckPwd(pwd, encodedHash string) (bool, error) {
-	localizer := localeutil.Get()
+func CheckPwd(pwd, encodedHash string) error {
 	// Extract the parameters, salt, and derived key from the encoded hash
 	parts := strings.Split(encodedHash, "$")
 	if len(parts) != 6 {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.InvalidHashFormat,
-		})
-		return false, errutil.New("", []string{msg})
+		return errutilnew.NewSimple(localeutil.InvalidHashFormat)
 	}
 
 	// Check the algorithm
 	if parts[1] != "argon2id" {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.UnsupportedAlgorithm,
-			TemplateData: ctype.Dict{
+		return errutilnew.NewSimpleWithArgs(
+			localeutil.UnsupportedAlgorithm,
+			ctype.Dict{
 				"Value": parts[1],
 			},
-		})
-
-		return false, errutil.New("", []string{msg})
+		)
 	}
 
 	// Parse the parameters
@@ -92,24 +85,24 @@ func CheckPwd(pwd, encodedHash string) (bool, error) {
 	p := &params{}
 	_, err := fmt.Sscanf(parts[2], "v=%d", &version)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	_, err = fmt.Sscanf(parts[3], "m=%d,t=%d,p=%d", &p.memory, &p.iterations, &p.parallelism)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	// Decode the salt and hash
 	salt, err := base64.RawStdEncoding.DecodeString(parts[4])
 	if err != nil {
-		return false, err
+		return err
 	}
 	p.saltLength = uint32(len(salt))
 
 	hash, err := base64.RawStdEncoding.DecodeString(parts[5])
 	if err != nil {
-		return false, err
+		return err
 	}
 	p.keyLength = uint32(len(hash))
 
@@ -124,5 +117,9 @@ func CheckPwd(pwd, encodedHash string) (bool, error) {
 	)
 
 	// Compare the computed hash with the stored hash
-	return base64.RawStdEncoding.EncodeToString(computedHash) == parts[5], nil
+	if base64.RawStdEncoding.EncodeToString(computedHash) == parts[5] {
+		return nil
+	}
+
+	return errutilnew.NewSimple(localeutil.InvalidUsernameOrPwd)
 }
