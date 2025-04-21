@@ -6,6 +6,8 @@ import (
 	"src/module/account/repo/user"
 	"src/module/account/usecase/auth/refreshtoken/apply/srv"
 
+	"src/common/setting"
+	"src/module/account/domain/srv/authtoken"
 	"src/util/dbutil"
 	"src/util/fwutil"
 )
@@ -21,7 +23,15 @@ func WireCtrl() fwutil.CtrlHandler {
 
 	userRepo := user.New(dbClient)
 
-	srv := srv.New(userRepo)
+	tokenSettings := setting.AUTH_TOKEN_SETTINGS()
+	authTokenSrv := authtoken.New(
+		tokenSettings.AccessTokenSecret,
+		tokenSettings.RefreshTokenSecret,
+		tokenSettings.AccessTokenLifetime,
+		tokenSettings.RefreshTokenLifetime,
+	)
+
+	srv := srv.New(userRepo, authTokenSrv)
 	ctrlHandler = ctrl.New(srv)
 
 	return ctrlHandler

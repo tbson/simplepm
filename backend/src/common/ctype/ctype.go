@@ -1,6 +1,6 @@
 package ctype
 
-type Dict map[string]interface{}
+type Dict map[string]any
 
 type StrDict map[string]string
 

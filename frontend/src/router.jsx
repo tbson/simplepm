@@ -27,7 +27,7 @@ const Message = (await import('component/event/message')).default;
 const Doc = (await import('component/document/doc')).default;
 
 const userInfor = StorageUtil.getUserInfo();
-const MainLayout = userInfor?.profile_type === 'admin' ? AdminLayout : UserLayout;
+const MainLayout = userInfor?.admin ? AdminLayout : UserLayout;
 
 const router = createBrowserRouter([
     {

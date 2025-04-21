@@ -1,7 +1,6 @@
 package srv
 
 import (
-	"fmt"
 	"src/common/ctype"
 	"src/module/account/schema"
 	"src/util/errutilnew"
@@ -9,31 +8,44 @@ import (
 	"src/util/pwdutil"
 	"time"
 
-	"src/module/account/domain/srv/pwdpolicy"
+	"src/module/account/domain/model"
 )
+
+type authTokenProvider interface {
+	GenerateTokenPair(userID uint) (model.TokenPair, error)
+}
+
+type pwdPolicyProvider interface {
+	CheckOnValidation(pwd string, lastResetPwd time.Time, failedAttempts int) error
+}
 
 type userProvider interface {
 	Retrieve(opts ctype.QueryOpts) (*schema.User, error)
 }
 
 type srv struct {
-	userRepo userProvider
+	userRepo     userProvider
+	authTokenSrv authTokenProvider
+	pwdPolicySrv pwdPolicyProvider
 }
 
-func New(userRepo userProvider) srv {
-	return srv{userRepo}
+func New(
+	userRepo userProvider,
+	authTokenSrv authTokenProvider,
+	pwdPolicySrv pwdPolicyProvider,
+) srv {
+	return srv{userRepo, authTokenSrv, pwdPolicySrv}
 }
 
-func (srv srv) Login(email string, pwd string, tenantID uint) (ctype.Dict, error) {
-	pwdPolicy := pwdpolicy.New()
-
+func (srv srv) Login(email string, pwd string, tenantID uint) (model.LoginResult, error) {
+	result := model.LoginResult{}
 	// Check user exists
 	userOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{"Email": email, "TenantID": tenantID},
 	}
 	user, err := srv.userRepo.Retrieve(userOpts)
 	if err != nil {
-		return ctype.Dict{}, err
+		return result, err
 	}
 
 	// Check pwd policy
@@ -43,22 +55,34 @@ func (srv srv) Login(email string, pwd string, tenantID uint) (ctype.Dict, error
 	} else {
 		lastResetPwd = &user.CreatedAt
 	}
-	fmt.Println("lastResetPwd", lastResetPwd)
-	err = pwdPolicy.CheckOnValidation(pwd, *lastResetPwd, 0)
+	err = srv.pwdPolicySrv.CheckOnValidation(pwd, *lastResetPwd, 0)
 	if err != nil {
-		return ctype.Dict{}, err
+		return result, err
 	}
 
 	// Check user is locked
 	if user.LockedAt != nil {
-		return ctype.Dict{}, errutilnew.NewSimple(localeutil.LockedAccount)
+		return result, errutilnew.NewSimple(localeutil.LockedAccount)
 	}
 
 	// Check pwd
 	err = pwdutil.CheckPwd(pwd, user.Pwd)
 	if err != nil {
-		return ctype.Dict{}, err
+		return result, err
 	}
 
-	return ctype.Dict{}, nil
+	// Generate token pair
+	tokenPair, err := srv.authTokenSrv.GenerateTokenPair(user.ID)
+	userInfo := model.NewUserInfo(
+		user.ID,
+		user.TenantID,
+		user.Admin,
+		user.FirstName,
+		user.LastName,
+		user.Avatar,
+	)
+	result.TokenPair = tokenPair
+	result.UserInfo = userInfo
+
+	return result, nil
 }

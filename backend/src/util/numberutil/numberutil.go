@@ -24,6 +24,16 @@ func StrToUint(id string, defaultValue uint) uint {
 	return defaultValue
 }
 
+func StrToFloat(id string, defaultValue float64) float64 {
+	if id == "" {
+		return defaultValue
+	}
+	if id, err := strconv.ParseFloat(id, 64); err == nil {
+		return id
+	}
+	return defaultValue
+}
+
 func UintToStr(id uint) string {
 	return strconv.Itoa(int(id))
 }

@@ -1,7 +1,7 @@
 package authtoken
 
 import (
-	"src/module/account"
+	"src/module/account/domain/model"
 
 	"src/util/errutil"
 	"src/util/localeutil"
@@ -68,7 +68,7 @@ func (r srv) VerifyRefreshToken(token string) (uint, error) {
 	return userID, nil
 }
 
-func (r srv) GenerateTokenPair(userID uint) (account.TokenPair, error) {
+func (r srv) GenerateTokenPair(userID uint) (model.TokenPair, error) {
 	accessTokenSecret := r.accessTokenSecret
 	accessTokenLifetime := r.accessTokenLifetime
 
@@ -86,7 +86,7 @@ func (r srv) GenerateTokenPair(userID uint) (account.TokenPair, error) {
 		accessTokenLifetime,
 	)
 	if err != nil {
-		return account.TokenPair{}, err
+		return model.TokenPair{}, err
 	}
 
 	refreshToken, err := tokenutil.GenerateToken(
@@ -99,18 +99,18 @@ func (r srv) GenerateTokenPair(userID uint) (account.TokenPair, error) {
 		refreshTokenLifetime,
 	)
 	if err != nil {
-		return account.TokenPair{}, err
+		return model.TokenPair{}, err
 	}
 
-	result := account.TokenPair{
+	result := model.TokenPair{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
 	return result, nil
 }
 
-func (r *srv) RefreshToken(refreshToken uint) (account.TokenPair, error) {
+func (r *srv) RefreshToken(refreshToken uint) (model.TokenPair, error) {
 	// to be implemented
-	result := account.TokenPair{}
+	result := model.TokenPair{}
 	return result, nil
 }

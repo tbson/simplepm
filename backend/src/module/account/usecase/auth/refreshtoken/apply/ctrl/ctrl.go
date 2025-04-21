@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"src/common/ctype"
-	"src/module/account"
+	"src/module/account/domain/model"
 	"src/util/vldtutil"
 
 	"github.com/labstack/echo/v4"
 )
 
 type SrvProvider interface {
-	RefreshToken(refreshToken string) (account.TokenPair, error)
+	RefreshToken(refreshToken string) (model.TokenPair, error)
 }
 
 type ctrl struct {

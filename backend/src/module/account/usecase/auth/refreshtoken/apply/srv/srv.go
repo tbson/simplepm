@@ -2,20 +2,17 @@ package srv
 
 import (
 	"src/common/ctype"
-	"src/common/setting"
-	"src/module/account"
+	"src/module/account/domain/model"
 	"src/module/account/schema"
 	"src/util/errutil"
 	"src/util/localeutil"
 
-	"src/module/account/domain/srv/authtoken"
-
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
-type authProvider interface {
+type authTokenProvider interface {
 	VerifyRefreshToken(token string) (uint, error)
-	GenerateTokenPair(userID uint) (account.TokenPair, error)
+	GenerateTokenPair(userID uint) (model.TokenPair, error)
 }
 
 type userProvider interface {
@@ -23,27 +20,20 @@ type userProvider interface {
 }
 
 type srv struct {
-	userRepo userProvider
+	userRepo     userProvider
+	authTokenSrv authTokenProvider
 }
 
-func New(userRepo userProvider) srv {
-	return srv{userRepo}
+func New(userRepo userProvider, authTokenSrv authTokenProvider) srv {
+	return srv{userRepo, authTokenSrv}
 }
 
-func (srv srv) RefreshToken(refreshToken string) (account.TokenPair, error) {
-	tokenSettings := setting.AUTH_TOKEN_SETTINGS()
-	authTokenSrv := authtoken.New(
-		tokenSettings.AccessTokenSecret,
-		tokenSettings.RefreshTokenSecret,
-		tokenSettings.AccessTokenLifetime,
-		tokenSettings.RefreshTokenLifetime,
-	)
-
+func (srv srv) RefreshToken(refreshToken string) (model.TokenPair, error) {
 	localizer := localeutil.Get()
 
-	userID, err := authTokenSrv.VerifyRefreshToken(refreshToken)
+	userID, err := srv.authTokenSrv.VerifyRefreshToken(refreshToken)
 	if err != nil {
-		return account.TokenPair{}, err
+		return model.TokenPair{}, err
 	}
 
 	opts := ctype.QueryOpts{
@@ -51,16 +41,16 @@ func (srv srv) RefreshToken(refreshToken string) (account.TokenPair, error) {
 	}
 	user, err := srv.userRepo.Retrieve(opts)
 	if err != nil {
-		return account.TokenPair{}, err
+		return model.TokenPair{}, err
 	}
 
 	if user.LockedAt != nil {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
 			DefaultMessage: localeutil.LockedAccount,
 		})
-		return account.TokenPair{}, errutil.New("", []string{msg})
+		return model.TokenPair{}, errutil.New("", []string{msg})
 	}
 
-	return authTokenSrv.GenerateTokenPair(userID)
+	return srv.authTokenSrv.GenerateTokenPair(userID)
 
 }

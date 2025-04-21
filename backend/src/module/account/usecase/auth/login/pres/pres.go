@@ -1,5 +1,0 @@
-package pres
-
-func GetWebAuthResult() {
-
-}

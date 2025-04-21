@@ -1,19 +1,22 @@
 package ctrl
 
 import (
-	"fmt"
 	"net/http"
 
-	"src/common/ctype"
 	"src/util/vldtutil"
 
 	"src/util/errutilnew"
+
+	"src/module/account/domain/model"
+
+	"src/module/account/usecase/auth/login/pres/cookie"
+	"src/module/account/usecase/auth/login/pres/json"
 
 	"github.com/labstack/echo/v4"
 )
 
 type SrvProvider interface {
-	Login(email string, pwd string, tenantID uint) (ctype.Dict, error)
+	Login(email string, pwd string, tenantID uint) (model.LoginResult, error)
 }
 
 type ctrl struct {
@@ -21,8 +24,9 @@ type ctrl struct {
 }
 
 type input struct {
-	Email string `json:"email" validate:"required"`
-	Pwd   string `json:"pwd" validate:"required"`
+	Email      string `json:"email" validate:"required"`
+	Pwd        string `json:"pwd" validate:"required"`
+	ClientType string `json:"client_type" validate:"required,oneof=web app"`
 }
 
 // Login godoc
@@ -37,21 +41,23 @@ type input struct {
 // @Failure 400 {object} ctype.Dict
 // @Router /account/auth/login [post]
 func (ctrl ctrl) Handler(c echo.Context) error {
+	next := c.QueryParam("next")
 	tenantID := c.Get("TenantID").(uint)
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	cookieData, err := ctrl.appSrv.Login(structData.Email, structData.Pwd, tenantID)
+	loginResult, err := ctrl.appSrv.Login(structData.Email, structData.Pwd, tenantID)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.(*errutilnew.CustomError).Localize())
 	}
 
-	// write cookies here
-	fmt.Println(cookieData)
+	if structData.ClientType == "web" {
+		return cookie.LoginPres(c, loginResult, next)
+	}
 
-	return c.JSON(http.StatusOK, ctype.Dict{})
+	return json.LoginPres(c, loginResult, next)
 }
 
 func New(srv SrvProvider) ctrl {
