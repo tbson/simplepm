@@ -29,33 +29,33 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr.Private(
 		"GET", "/option/", option.WireCtrl().Handler,
 	)
-	rr.Rbac(
-		"GET", "/", list.WireCtrl().Handler,
+	rr.RbacNew(
+		"GET", "/", list.WireCtrl,
 		[]string{profiletype.ADMIN, profiletype.STAFF},
 		fmt.Sprintf("Get %s list", featureSetName),
 	)
-	rr.Rbac(
-		"GET", "/:id", retrieve.WireCtrl().Handler,
+	rr.RbacNew(
+		"GET", "/:id", retrieve.WireCtrl,
 		[]string{profiletype.ADMIN, profiletype.STAFF},
 		fmt.Sprintf("Get %s detail", featureSetName),
 	)
-	rr.Rbac(
-		"POST", "/", create.WireCtrl().Handler,
+	rr.RbacNew(
+		"POST", "/", create.WireCtrl,
 		[]string{profiletype.ADMIN},
 		fmt.Sprintf("Create %s", featureSetName),
 	)
-	rr.Rbac(
-		"PUT", "/:id", update.WireCtrl().Handler,
+	rr.RbacNew(
+		"PUT", "/:id", update.WireCtrl,
 		[]string{profiletype.ADMIN},
 		fmt.Sprintf("Update %s", featureSetName),
 	)
-	rr.Rbac(
-		"DELETE", "/:id", remove.WireCtrl().Handler,
+	rr.RbacNew(
+		"DELETE", "/:id", remove.WireCtrl,
 		[]string{profiletype.ADMIN},
 		fmt.Sprintf("Delete %s", featureSetName),
 	)
-	rr.Rbac(
-		"DELETE", "/", removelist.WireCtrl().Handler,
+	rr.RbacNew(
+		"DELETE", "/", removelist.WireCtrl,
 		[]string{profiletype.ADMIN},
 		fmt.Sprintf("Delete list %s", featureSetName),
 	)

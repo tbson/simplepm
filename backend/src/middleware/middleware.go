@@ -37,6 +37,7 @@ func TenantMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		requestDomain := c.Request().Host
 		domainParts := strings.Split(requestDomain, ".")
 		if len(domainParts) < 2 {
+			fmt.Println("case 1....")
 			return c.JSON(400, errutil.New("", []string{msg}))
 		}
 		tenantUID := domainParts[0]
@@ -45,6 +46,7 @@ func TenantMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			Filters: ctype.Dict{"Uid": tenantUID},
 		})
 		if err != nil {
+			fmt.Println("case 2....")
 			return c.JSON(400, errutil.New("", []string{msg}))
 		}
 		c.Set("TenantID", tenant.ID)
@@ -141,7 +143,6 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			}
 
 			for _, role := range user.Roles {
-				fmt.Println("role", role.Title)
 				for _, pem := range role.Pems {
 					if pem.Module == module && pem.Action == action {
 						setContext(c, user, tenantID)

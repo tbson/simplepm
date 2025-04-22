@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"src/util/restlistutil"
-	"src/util/vldtutil"
 
 	"src/module/config/schema"
 
@@ -46,10 +45,6 @@ var orderableFields = []string{"id", "key"}
 // @Failure 400 {object} ctype.Dict
 // @Router /config/variable [get]
 func (ctrl ctrl) Handler(c echo.Context) error {
-
-	if err := vldtutil.CheckRequiredFilter(c, "tenant_id"); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
-	}
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 
 	result, err := ctrl.srv.Paging(options, searchableFields)

@@ -320,7 +320,10 @@ func CheckRequiredFilter(c echo.Context, param string) error {
 	localizer := localeutil.Get()
 	if c.QueryParam(param) == "" {
 		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.MissingTenantID,
+			DefaultMessage: localeutil.MissingQueryParam,
+			TemplateData: ctype.Dict{
+				"Value": param,
+			},
 		})
 		return errutil.New("", []string{msg})
 	}

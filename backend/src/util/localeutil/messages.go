@@ -191,6 +191,11 @@ var (
 		Other: "failed to upload file to S3",
 	}
 
+	MissingQueryParam = &i18n.Message{
+		ID:    "MissingQueryParam",
+		Other: "missing query param: {{.Value}}",
+	}
+
 	MissingTenantID = &i18n.Message{
 		ID:    "MissingTenantID",
 		Other: "missing tenant ID",
