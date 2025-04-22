@@ -5,6 +5,8 @@ import (
 	"src/util/dictutil"
 	"src/util/iterutil"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 var TypeDict = iterutil.FieldEnum{
@@ -19,7 +21,7 @@ var TypeDict = iterutil.FieldEnum{
 var TypeOptions = iterutil.GetFieldOptions(TypeDict)
 
 type Variable struct {
-	ID          uint      `gorm:"primaryKey" json:"id"`
+	ID          uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v1mc()" json:"id"`
 	Key         string    `gorm:"type:text;not null;unique" json:"key"`
 	Value       string    `gorm:"type:text;not null;default:''" json:"value"`
 	Description string    `gorm:"type:text;not null;default:''" json:"description"`

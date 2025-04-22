@@ -2,12 +2,11 @@ import React, { useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router';
 import { t } from 'ttag';
 import { Row, Col, Card, Button, Divider } from 'antd';
-import Util from 'service/helper/util';
-import NavUtil from 'service/helper/nav_util';
 import StorageUtil from 'service/helper/storage_util';
+import NavUtil from 'service/helper/nav_util';
 import LocaleSelect from 'component/common/locale_select.jsx';
 import ResetPwdDialog from 'component/auth/reset_pwd';
-import Form from './form';
+import LoginForm from './form';
 
 const styles = {
     wrapper: {
@@ -23,13 +22,13 @@ export default function Login() {
         StorageUtil.getUserInfo() && navigateTo();
     }, []);
 
-    const handleLogin = (tenantUid) => {
-        setTimeout(() => {
-            Util.toggleGlobalLoading();
-        }, 100);
-        const next = searchParams.get('next') || '';
-        const ssoUrl = `/api/v1/account/auth/sso/login/${tenantUid}/?next=${next}`;
-        window.location.href = ssoUrl;
+    const handleLogin = ({auth, next}) => {
+        StorageUtil.setStorage('auth', auth);
+        if (next) {
+            navigateTo(next);
+        } else {
+            navigateTo('/');
+        }
     };
 
     const handleOpenResetPwd = useCallback(() => {
@@ -48,7 +47,7 @@ export default function Login() {
                     lg={{ span: 8, offset: 8 }}
                 >
                     <Card title={t`Login`} style={styles.wrapper}>
-                        <Form onChange={handleLogin}>
+                        <LoginForm onChange={handleLogin}>
                             <Button
                                 color="primary"
                                 variant="link"
@@ -56,7 +55,7 @@ export default function Login() {
                             >
                                 {t`Forgot password`}
                             </Button>
-                        </Form>
+                        </LoginForm>
                         <Divider plain>Don’t have an account yet?</Divider>
                         <div className="center">
                             <Link to="/signup">

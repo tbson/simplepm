@@ -1,1 +1,224 @@
-{}
+{
+    "AuthorizationCodeNotFound": {
+        "other": "authorization code not found"
+    },
+    "BadJson": {
+        "other": "request body contains badly-formed JSON (at position {{.Offset}})"
+    },
+    "BadRequest": {
+        "other": "bad request"
+    },
+    "CanNotCreateRequest": {
+        "other": "can not create request"
+    },
+    "CanNotParseDateStr": {
+        "other": "can not parse date string"
+    },
+    "CanNotParseLinkMetaData": {
+        "other": "can not parse link meta data"
+    },
+    "CanNotReadResponse": {
+        "other": "can not read response"
+    },
+    "CanNotSendRequest": {
+        "other": "can not send request"
+    },
+    "CannotCreateIAMUser": {
+        "other": "cannot create IAM user"
+    },
+    "CannotExchangeAuthorizationCode": {
+        "other": "can not exchange authorization code for tokens"
+    },
+    "CannotExchangeRefreshToken": {
+        "other": "can not exchange refresh token for tokens"
+    },
+    "CannotGetUserInfo": {
+        "other": "cannot get user info"
+    },
+    "CannotLogout": {
+        "other": "cannot logout"
+    },
+    "CannotReadRequestBody": {
+        "other": "can not read request body"
+    },
+    "CannotSendVerifyEmail": {
+        "other": "cannot send verify email"
+    },
+    "CannotSetPassword": {
+        "other": "cannot set password"
+    },
+    "CannotUpdateIAMUser": {
+        "other": "cannot update IAM user"
+    },
+    "EmptyRequestBody": {
+        "other": "request body must not be empty"
+    },
+    "ExpectedRSAKey": {
+        "other": "expected RSA public key but got something else"
+    },
+    "FailToDecodeJSON": {
+        "other": "failed to decode JSON"
+    },
+    "FailToParsRSAPrivateKey": {
+        "other": "failed to parse RSA private key"
+    },
+    "FailedToBuildToken": {
+        "other": "failed to build token"
+    },
+    "FailedToCreateEmailClient": {
+        "other": "failed to create email client"
+    },
+    "FailedToCreateKafkaConsumer": {
+        "other": "failed to create Kafka consumer"
+    },
+    "FailedToCreateKafkaProducer": {
+        "other": "failed to create Kafka producer"
+    },
+    "FailedToCreateRawKey": {
+        "other": "failed to create raw key"
+    },
+    "FailedToDeliverEmail": {
+        "other": "failed to deliver email"
+    },
+    "FailedToExecuteTemplate": {
+        "other": "failed to execute template: {{.Value}}"
+    },
+    "FailedToFetchJWKS": {
+        "other": "failed to fetch JWKS"
+    },
+    "FailedToOpenFile": {
+        "other": "failed to open file '{{.Filename}}'"
+    },
+    "FailedToParseTemplate": {
+        "other": "failed to parse template: {{.Value}}"
+    },
+    "FailedToParseToken": {
+        "other": "failed to parse token"
+    },
+    "FailedToReadPrivateKey": {
+        "other": "failed to read private key"
+    },
+    "FailedToSetFromAddress": {
+        "other": "failed to set FROM address: {{.Value}}"
+    },
+    "FailedToSetToAddress": {
+        "other": "failed to set TO address: {{.Value}}"
+    },
+    "FailedToSignToken": {
+        "other": "failed to sign token"
+    },
+    "FailedToUploadFileToS3": {
+        "other": "failed to upload file to S3"
+    },
+    "FailedToVerifyToken": {
+        "other": "failed to verify token"
+    },
+    "FeatureInUse": {
+        "other": "feature is in use"
+    },
+    "FieldRequired": {
+        "other": "this field is required"
+    },
+    "GormDuplicateKey": {
+        "other": "value already exists"
+    },
+    "InvalidAccessToken": {
+        "other": "invalid access token"
+    },
+    "InvalidFieldValue": {
+        "other": "invalid value for field '{{.FieldName}}'. Expected type {{.Type}} but got {{.Value}}"
+    },
+    "InvalidHashFormat": {
+        "other": "invalid hash format"
+    },
+    "InvalidJSONPayload": {
+        "other": "invalid JSON payload"
+    },
+    "InvalidRefreshToken": {
+        "other": "invalid refresh token"
+    },
+    "InvalidResetPwdCode": {
+        "other": "invalid reset password code"
+    },
+    "InvalidState": {
+        "other": "invalid state"
+    },
+    "InvalidUsernameOrPwd": {
+        "other": "invalid username or password"
+    },
+    "InvalidValue": {
+        "other": "invalid value"
+    },
+    "LockedAccount": {
+        "other": "account is locked"
+    },
+    "MissingSubject": {
+        "other": "missing subject"
+    },
+    "MissingTenantID": {
+        "other": "missing tenant ID"
+    },
+    "MultipleRecordsFound": {
+        "other": "multiple records found"
+    },
+    "MustBeOneOf": {
+        "other": "must be one of: {{.Values}}"
+    },
+    "NoKidFieldInJWTTokenHeader": {
+        "other": "no 'kid' field in JWT token header"
+    },
+    "NoRecordFound": {
+        "other": "no record found"
+    },
+    "NotRecognizedField": {
+        "other": "this field is not recognized"
+    },
+    "OTPExpired": {
+        "other": "the OTP has expired"
+    },
+    "OTPLengthConditionFail": {
+        "other": "the OTP must be {{.Value}} characters"
+    },
+    "PasswordHashError": {
+        "other": "password hash error"
+    },
+    "PasswordPolicyError": {
+        "other": "password policy error"
+    },
+    "PasswordsNotMatch": {
+        "other": "passwords do not match"
+    },
+    "RawMsg": {
+        "other": "{{.Msg}}"
+    },
+    "RefreshTokenNotFound": {
+        "other": "fefresh token not found"
+    },
+    "RotatePwdPolicyFail": {
+        "other": "your password must be changed every {{.Value}} days"
+    },
+    "SubClaimNotFound": {
+        "other": "sub claim not found"
+    },
+    "TaskUserNotFound": {
+        "other": "task user not found"
+    },
+    "TokenHasExpired": {
+        "other": "token has expired"
+    },
+    "UnableToFindKeyWithKid": {
+        "other": "unable to find key with kid"
+    },
+    "Unauthorized": {
+        "other": "unauthorized"
+    },
+    "UnknownError": {
+        "other": "unknown error"
+    },
+    "UnsupportedAlgorithm": {
+        "other": "unsupported algorithm: {{.Value}}"
+    },
+    "cannotLoginAdmin": {
+        "other": "Cannot login admin"
+    }
+}

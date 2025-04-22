@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"src/common/ctype"
 	"src/module/account/domain/srv/authtoken"
 	"src/module/account/repo/tenant"
@@ -85,7 +86,6 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			if accessToken == "" {
 				return c.JSON(401, errutil.New("", []string{msg}))
 			}
-
 			userID, err := authTokenSrv.VerifyAccessToken(accessToken)
 			if err != nil {
 				return c.JSON(401, err)
@@ -141,6 +141,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			}
 
 			for _, role := range user.Roles {
+				fmt.Println("role", role.Title)
 				for _, pem := range role.Pems {
 					if pem.Module == module && pem.Action == action {
 						setContext(c, user, tenantID)

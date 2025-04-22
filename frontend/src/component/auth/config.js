@@ -3,9 +3,9 @@ import RequestUtil from 'service/helper/request_util';
 
 const urlMap = {
     base: {
-        prefix: 'account/auth/sso',
+        prefix: 'account/auth',
         endpoints: {
-            loginCheck: 'login/check'
+            login: 'login'
         }
     },
     signup: {

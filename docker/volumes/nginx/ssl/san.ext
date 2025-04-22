@@ -6,5 +6,6 @@ subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = simplepm.test
-DNS.2 = testinc.simplepm.test
-DNS.3 = otherinc.simplepm.test
+DNS.2 = admin.simplepm.test
+DNS.3 = testinc.simplepm.test
+DNS.4 = otherinc.simplepm.test

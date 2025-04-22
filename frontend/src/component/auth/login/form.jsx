@@ -2,7 +2,7 @@ import React from 'react';
 import { t } from 'ttag';
 import { App, Button, Row, Col, Form, Input } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
-import StorageUtil from 'service/helper/storage_util';
+import { CLIENT_TYPE } from 'src/const';
 import FormUtil from 'service/helper/form_util';
 import { urls } from 'component/auth/config';
 
@@ -12,15 +12,14 @@ export default function LoginForm({ onChange, children }) {
     const { notification } = App.useApp();
     const [form] = Form.useForm();
     const initialValues = {
-        username: '',
-        password: ''
+        email: '',
+        pwd: ''
     };
 
-    const checkAuthUrl = (tenantUid) => {
-        FormUtil.submit(`${urls.loginCheck}${tenantUid}`, {}, 'get')
-            .then(() => {
-                StorageUtil.setStorage('tenantUid', tenantUid);
-                onChange(tenantUid);
+    const handleLogin = (payload) => {
+        FormUtil.submit(urls.login, {...payload, client_type: CLIENT_TYPE}, 'post')
+            .then((result) => {
+                onChange(result);
             })
             .catch(FormUtil.setFormErrors(form, notification));
     };
@@ -31,20 +30,18 @@ export default function LoginForm({ onChange, children }) {
             labelCol={{ span: 8 }}
             wrapperCol={{ span: 16 }}
             initialValues={{ ...initialValues }}
-            onFinish={(payload) => {
-                checkAuthUrl(payload.tenantUid);
-            }}
+            onFinish={handleLogin}
         >
             <Form.Item
-                name="username"
-                label={t`Username`}
+                name="email"
+                label={t`Email`}
                 rules={[FormUtil.ruleRequired()]}
             >
                 <Input autoFocus />
             </Form.Item>
 
             <Form.Item
-                name="password"
+                name="pwd"
                 label={t`Password`}
                 rules={[FormUtil.ruleRequired()]}
             >

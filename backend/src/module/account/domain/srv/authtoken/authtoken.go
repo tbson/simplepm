@@ -46,7 +46,7 @@ func (r srv) VerifyAccessToken(token string) (uint, error) {
 		})
 		return 0, errutil.New("", []string{msg})
 	}
-	userID := uint(claims["sub"].(float64))
+	userID := numberutil.StrToUint(claims["sub"].(string), 0)
 	return userID, nil
 }
 
@@ -64,7 +64,7 @@ func (r srv) VerifyRefreshToken(token string) (uint, error) {
 		})
 		return 0, errutil.New("", []string{msg})
 	}
-	userID := uint(claims["sub"].(float64))
+	userID := numberutil.StrToUint(claims["sub"].(string), 0)
 	return userID, nil
 }
 

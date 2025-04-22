@@ -5,21 +5,23 @@ import (
 	"src/module/config"
 	"src/module/config/schema"
 	"src/util/restlistutil"
+
+	"github.com/google/uuid"
 )
 
 type outputListItem struct {
-	ID            uint   `json:"id"`
-	Key           string `json:"key"`
-	Value         string `json:"value"`
-	Description   string `json:"description"`
-	DataTypeLabel string `json:"data_type"`
+	ID            uuid.UUID `json:"id"`
+	Key           string    `json:"key"`
+	Value         string    `json:"value"`
+	Description   string    `json:"description"`
+	DataTypeLabel string    `json:"data_type"`
 }
 type outputItem struct {
-	ID          uint   `json:"id"`
-	Key         string `json:"key"`
-	Value       string `json:"value"`
-	Description string `json:"description"`
-	DataType    string `json:"data_type"`
+	ID          uuid.UUID `json:"id"`
+	Key         string    `json:"key"`
+	Value       string    `json:"value"`
+	Description string    `json:"description"`
+	DataType    string    `json:"data_type"`
 }
 
 type PageResult restlistutil.ListRestfulResult[outputListItem]

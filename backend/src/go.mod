@@ -25,7 +25,6 @@ require (
 	github.com/swaggo/swag v1.16.4
 	github.com/wneessen/go-mail v0.6.2
 	golang.org/x/crypto v0.37.0
-	golang.org/x/exp v0.0.0-20250408133849-7e4ce0ab07d0
 	golang.org/x/net v0.39.0
 	golang.org/x/text v0.24.0
 	gorm.io/datatypes v1.2.5

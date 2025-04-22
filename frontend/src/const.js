@@ -8,9 +8,10 @@ export const CENTRIFUGO_SOCKET_ENDPOINT = ENV.VITE_CENTRIFUGO_SOCKET_ENDPOINT;
 
 //export const PROTOCOL = window.location.protocol + '//';
 export const PROTOCOL = 'https://';
-// export const DOMAIN = window.location.host;
-export const DOMAIN = "simplepm.test";
+export const DOMAIN = window.location.host;
+// export const DOMAIN = "simplepm.test";
 export const API_PREFIX = '/api/v1/';
+export const CLIENT_TYPE = 'web';
 
 export const LOCAL_STORAGE_PREFIX = APP_NAMESPACE;
 

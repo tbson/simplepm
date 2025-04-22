@@ -25,7 +25,7 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr := routeutil.RegisterRoute(g, pemMap)
 
 	rr.Public(
-		"POST", "/login", login.WireCtrl().Handler,
+		"POST", "/login/", login.WireCtrl().Handler,
 	)
 	rr.Public(
 		"PUT", "/change-pwd", changepwd.WireCtrl().Handler,
