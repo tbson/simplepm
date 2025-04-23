@@ -3,6 +3,7 @@ package ctrl
 import (
 	"net/http"
 
+	"src/util/errutil"
 	"src/util/vldtutil"
 
 	"src/module/config/pres"
@@ -34,7 +35,7 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 	result, err := ctrl.srv.Delete(id)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, pres.DeletePres(result))

@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"src/common/ctype"
 	"src/module/account/domain/srv/authtoken"
 	"src/module/account/repo/tenant"
@@ -18,7 +17,6 @@ import (
 	"src/common/setting"
 
 	"github.com/labstack/echo/v4"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 func BlankMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
@@ -29,16 +27,13 @@ func BlankMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 func TenantMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		localizer := localeutil.Get()
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.MissingTenantID,
-		})
+		errObj := errutil.New(localeutil.MissingTenantID)
+		errMsg := errObj.Localize()
 
 		requestDomain := c.Request().Host
 		domainParts := strings.Split(requestDomain, ".")
 		if len(domainParts) < 2 {
-			fmt.Println("case 1....")
-			return c.JSON(400, errutil.New("", []string{msg}))
+			return c.JSON(400, errMsg)
 		}
 		tenantUID := domainParts[0]
 		tenantRepo := tenant.New(dbutil.Db(nil))
@@ -46,8 +41,7 @@ func TenantMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			Filters: ctype.Dict{"Uid": tenantUID},
 		})
 		if err != nil {
-			fmt.Println("case 2....")
-			return c.JSON(400, errutil.New("", []string{msg}))
+			return c.JSON(400, errMsg)
 		}
 		c.Set("TenantID", tenant.ID)
 		c.Set("TenantUid", tenant.Uid)
@@ -70,10 +64,9 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 		return func(c echo.Context) error {
 			tokenSettings := setting.AUTH_TOKEN_SETTINGS()
 
-			localizer := localeutil.Get()
-			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-				DefaultMessage: localeutil.Unauthorized,
-			})
+			errObj := errutil.New(localeutil.Unauthorized)
+			errMsg := errObj.Localize()
+
 			// check access_token cookie
 			userRepo := user.New(dbutil.Db(nil))
 			authTokenSrv := authtoken.New(
@@ -86,7 +79,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			accessToken := cookieutil.GetValue(c, "access_token")
 
 			if accessToken == "" {
-				return c.JSON(401, errutil.New("", []string{msg}))
+				return c.JSON(401, errMsg)
 			}
 			userID, err := authTokenSrv.VerifyAccessToken(accessToken)
 			if err != nil {
@@ -99,14 +92,12 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 				Preloads: []string{"Roles.Pems", "Tenant"},
 			})
 			if err != nil {
-				return c.JSON(401, errutil.New("", []string{msg}))
+				return c.JSON(401, errMsg)
 			}
 
 			if user.LockedAt != nil {
-				msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-					DefaultMessage: localeutil.LockedAccount,
-				})
-				return c.JSON(401, errutil.New("", []string{msg}))
+				errObj := errutil.New(localeutil.LockedAccount)
+				return c.JSON(401, errObj.Localize())
 			}
 
 			// check cross tenant query
@@ -119,7 +110,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			if specificTenantIDStr != "" {
 				specificTenantID := numberutil.StrToUint(specificTenantIDStr, 0)
 				if user.Admin == false && specificTenantID != tenantID {
-					return c.JSON(401, errutil.New("", []string{msg}))
+					return c.JSON(401, errMsg)
 				}
 				tenantID = specificTenantID
 			}
@@ -152,7 +143,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			}
 
 			// return next(c)
-			return c.JSON(401, errutil.New("", []string{msg}))
+			return c.JSON(401, errMsg)
 		}
 	}
 }

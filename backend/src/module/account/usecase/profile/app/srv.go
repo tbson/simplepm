@@ -9,8 +9,6 @@ import (
 	"src/module/account/domain/srv/pwdpolicy"
 
 	"src/util/pwdutil"
-
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 type Service struct {
@@ -40,21 +38,14 @@ func (srv Service) UpdateProfile(userID uint, data ctype.Dict) (*schema.User, er
 func (srv Service) ChangePwd(userID uint, data ctype.Dict) (ctype.Dict, error) {
 	pwdPolicy := pwdpolicy.New()
 	result := ctype.Dict{}
-	localizer := localeutil.Get()
 	if data["Pwd"].(string) != data["PwdConfirm"].(string) {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.PasswordsNotMatch,
-		})
-		return result, errutil.New("", []string{msg})
+		return result, errutil.New(localeutil.PasswordsNotMatch)
 	}
 	pwd := data["Pwd"].(string)
 
 	err := pwdPolicy.CheckOnCreation(pwd, []string{})
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.PasswordPolicyError,
-		})
-		return result, errutil.New("", []string{msg})
+		return result, errutil.New(localeutil.PasswordPolicyError)
 	}
 
 	user, err := srv.userRepo.Retrieve(ctype.QueryOpts{
@@ -66,10 +57,7 @@ func (srv Service) ChangePwd(userID uint, data ctype.Dict) (ctype.Dict, error) {
 
 	pwdHash := pwdutil.MakePwd(pwd)
 	if pwdHash == "" {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.PasswordHashError,
-		})
-		return result, errutil.New("", []string{msg})
+		return result, errutil.New(localeutil.PasswordHashError)
 	}
 
 	queryOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": user.ID}}

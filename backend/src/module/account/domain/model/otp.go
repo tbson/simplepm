@@ -7,7 +7,7 @@ import (
 
 	"src/util/localeutil"
 
-	"src/util/errutilnew"
+	"src/util/errutil"
 )
 
 type OTP struct {
@@ -28,7 +28,7 @@ func NewOTP(length int, lifeMinutes int) OTP {
 
 func ParseOTP(code string, expiredAt time.Time, length int) (OTP, error) {
 	if len(code) != length {
-		err := errutilnew.NewSimpleWithArgs(
+		err := errutil.NewWithArgs(
 			localeutil.OTPLengthConditionFail,
 			ctype.Dict{
 				"Value": length,
@@ -39,7 +39,7 @@ func ParseOTP(code string, expiredAt time.Time, length int) (OTP, error) {
 
 	now := time.Now()
 	if now.After(expiredAt) {
-		err := errutilnew.NewSimple(localeutil.OTPExpired)
+		err := errutil.New(localeutil.OTPExpired)
 		return OTP{}, err
 	}
 

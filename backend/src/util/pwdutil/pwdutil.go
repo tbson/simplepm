@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"src/common/ctype"
-	"src/util/errutilnew"
+	"src/util/errutil"
 	"src/util/localeutil"
 	"strings"
 
@@ -67,12 +67,12 @@ func CheckPwd(pwd, encodedHash string) error {
 	// Extract the parameters, salt, and derived key from the encoded hash
 	parts := strings.Split(encodedHash, "$")
 	if len(parts) != 6 {
-		return errutilnew.NewSimple(localeutil.InvalidHashFormat)
+		return errutil.New(localeutil.InvalidHashFormat)
 	}
 
 	// Check the algorithm
 	if parts[1] != "argon2id" {
-		return errutilnew.NewSimpleWithArgs(
+		return errutil.NewWithArgs(
 			localeutil.UnsupportedAlgorithm,
 			ctype.Dict{
 				"Value": parts[1],
@@ -121,5 +121,5 @@ func CheckPwd(pwd, encodedHash string) error {
 		return nil
 	}
 
-	return errutilnew.NewSimple(localeutil.InvalidUsernameOrPwd)
+	return errutil.New(localeutil.InvalidUsernameOrPwd)
 }

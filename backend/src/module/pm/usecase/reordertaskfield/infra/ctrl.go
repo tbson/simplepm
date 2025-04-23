@@ -17,13 +17,13 @@ func Reorder(c echo.Context) error {
 	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
-		msg := errutil.New("", []string{tx.Error.Error()})
+		msg := errutil.NewRaw(tx.Error.Error())
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
 	data, err := vldtutil.ValidatePayload(c, app.InputData{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	repo := taskfield.New(tx)
@@ -32,10 +32,10 @@ func Reorder(c echo.Context) error {
 	result, err := srv.Reorder(data)
 	if err != nil {
 		tx.Rollback()
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	if err := tx.Commit().Error; err != nil {
-		msg := errutil.New("", []string{err.Error()})
+		msg := errutil.NewRaw(err.Error())
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 

@@ -79,7 +79,7 @@ func Db(ctx *context.Context) *gorm.DB {
 func WithTx(db *gorm.DB, fn func(*gorm.DB) error) error {
 	tx := db.Begin()
 	if tx.Error != nil {
-		return errutil.New("", []string{tx.Error.Error()})
+		return errutil.NewRaw(tx.Error.Error())
 	}
 
 	// Ensure rollback on panic
@@ -92,12 +92,12 @@ func WithTx(db *gorm.DB, fn func(*gorm.DB) error) error {
 	// Ensure rollback on error
 	if err := fn(tx); err != nil {
 		tx.Rollback()
-		return errutil.New("", []string{err.Error()})
+		return errutil.NewRaw(err.Error())
 	}
 
 	// Return the error from the commit operation
 	if commitErr := tx.Commit().Error; commitErr != nil {
-		return errutil.New("", []string{commitErr.Error()})
+		return errutil.NewRaw(commitErr.Error())
 	}
 	return nil
 }
@@ -106,7 +106,7 @@ func WithTxWithValue[T any](db *gorm.DB, fn func(*gorm.DB) (T, error)) (T, error
 	var result T
 	tx := db.Begin()
 	if tx.Error != nil {
-		return result, errutil.New("", []string{tx.Error.Error()})
+		return result, errutil.NewRaw(tx.Error.Error())
 	}
 
 	// Ensure rollback on panic
@@ -121,12 +121,12 @@ func WithTxWithValue[T any](db *gorm.DB, fn func(*gorm.DB) (T, error)) (T, error
 	result, err = fn(tx)
 	if err != nil {
 		tx.Rollback()
-		return result, errutil.New("", []string{err.Error()})
+		return result, errutil.NewRaw(err.Error())
 	}
 
 	// Return the error from the commit operation
 	if commitErr := tx.Commit().Error; commitErr != nil {
-		return result, errutil.New("", []string{commitErr.Error()})
+		return result, errutil.NewRaw(commitErr.Error())
 	}
 
 	return result, nil

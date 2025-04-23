@@ -7,8 +7,6 @@ import (
 	"src/util/errutil"
 	"src/util/localeutil"
 
-	"src/util/errutilnew"
-
 	"gorm.io/gorm"
 )
 
@@ -77,11 +75,11 @@ func (r *repo) Retrieve(opts ctype.QueryOpts) (*Schema, error) {
 	}
 
 	if len(items) == 0 {
-		return &item, errutilnew.NewSimple(localeutil.NoRecordFound)
+		return &item, errutil.New(localeutil.NoRecordFound)
 	}
 
 	if len(items) > 1 {
-		return &item, errutilnew.NewSimple(localeutil.MultipleRecordsFound)
+		return &item, errutil.New(localeutil.MultipleRecordsFound)
 	}
 
 	item = items[0]

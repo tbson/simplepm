@@ -6,6 +6,8 @@ import (
 	"src/common/ctype"
 	"src/util/vldtutil"
 
+	"src/util/errutil"
+
 	"github.com/labstack/echo/v4"
 
 	"src/module/config/schema"
@@ -47,14 +49,14 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, input{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": id}}
 	result, err := ctrl.srv.Update(updateOpts, data)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, pres.DetailPres(*result))

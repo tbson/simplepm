@@ -1,7 +1,7 @@
 package page
 
 import (
-	"src/util/errutilnew"
+	"src/util/errutil"
 	"src/util/restlistutil"
 
 	"gorm.io/gorm"
@@ -68,7 +68,7 @@ func (r repo[S]) Paging(
 	schemaItems := []S{}
 	result := query.Find(&schemaItems)
 	if result.Error != nil {
-		return emptyResult, errutilnew.NewRaw(result.Error.Error())
+		return emptyResult, errutil.NewRaw(result.Error.Error())
 	}
 	return restlistutil.ListRestfulResult[S]{
 		Items:      schemaItems,
@@ -119,7 +119,7 @@ func (r repo[S]) List(
 	schemaItems := []S{}
 	result := query.Find(&schemaItems)
 	if result.Error != nil {
-		return emptyResult, errutilnew.NewRaw(result.Error.Error())
+		return emptyResult, errutil.NewRaw(result.Error.Error())
 	}
 	return schemaItems, nil
 }

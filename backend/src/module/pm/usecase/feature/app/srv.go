@@ -4,8 +4,6 @@ import (
 	"src/common/ctype"
 	"src/util/errutil"
 	"src/util/localeutil"
-
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 type Service struct {
@@ -19,7 +17,6 @@ func New(featureRepo FeatureRepo, taskRepo TaskRepo) Service {
 
 func (srv Service) Delete(id uint) ([]uint, error) {
 	emptyResult := []uint{}
-	localizer := localeutil.Get()
 	taskQueryOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{"FeatureID": id},
 	}
@@ -28,10 +25,7 @@ func (srv Service) Delete(id uint) ([]uint, error) {
 		return nil, err
 	}
 	if len(tasks) > 0 {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FeatureInUse,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.FeatureInUse)
 	}
 	return srv.featureRepo.Delete(id)
 }

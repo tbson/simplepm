@@ -5,7 +5,7 @@ import (
 
 	"src/util/vldtutil"
 
-	"src/util/errutilnew"
+	"src/util/errutil"
 
 	"src/module/account/domain/model"
 
@@ -45,12 +45,12 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 	tenantID := c.Get("TenantID").(uint)
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	loginResult, err := ctrl.appSrv.Login(structData.Email, structData.Pwd, tenantID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutilnew.CustomError).Localize())
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	if structData.ClientType == "web" {

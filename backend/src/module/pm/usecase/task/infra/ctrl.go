@@ -52,7 +52,7 @@ func Option(c echo.Context) error {
 	}
 	project, err := projectRepo.Retrieve(projectQueryOpts)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	featureQueryOpts := ctype.QueryOpts{
@@ -61,7 +61,7 @@ func Option(c echo.Context) error {
 	}
 	features, err := featureRepo.List(featureQueryOpts)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	featureOpts := []ctype.SelectOption[uint]{}
@@ -82,7 +82,7 @@ func Option(c echo.Context) error {
 	}
 	status, err := taskfieldoptionRepo.List(statusOpts)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	statusOptions := []ctype.SelectOption[uint]{}
 	for _, s := range status {
@@ -100,7 +100,7 @@ func Option(c echo.Context) error {
 	}
 	taskFields, err := taskfieldRepo.List(taskFieldQueryOption)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	taskFieldOpts := []TaskFieldOption{}
 	for _, taskField := range taskFields {
@@ -128,7 +128,7 @@ func Option(c echo.Context) error {
 	}
 	users, err := userRepo.List(userQueryOption)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	userOpts := []ctype.SelectOption[uint]{}
 	for _, u := range users {
@@ -166,7 +166,7 @@ func List(c echo.Context) error {
 	options.Order = restlistutil.QueryOrder{Field: "order", Direction: "ASC"}
 	listResult, err := pager.List(options, searchableFields)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, listResult)
@@ -202,7 +202,7 @@ func Create(c echo.Context) error {
 	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
-		msg := errutil.New("", []string{tx.Error.Error()})
+		msg := errutil.NewRaw(tx.Error.Error())
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
@@ -222,17 +222,17 @@ func Create(c echo.Context) error {
 
 	structData, err := vldtutil.ValidatePayload(c, app.InputData{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	result, err := srv.Create(structData)
 	if err != nil {
 		tx.Rollback()
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		msg := errutil.New("", []string{err.Error()})
+		msg := errutil.NewRaw(err.Error())
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
@@ -262,7 +262,7 @@ func Update(c echo.Context) error {
 	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
-		msg := errutil.New("", []string{tx.Error.Error()})
+		msg := errutil.NewRaw(tx.Error.Error())
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 	taskRepo := task.New(tx)
@@ -283,7 +283,7 @@ func Update(c echo.Context) error {
 		c, app.InputData{ProjectID: projectID},
 	)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
@@ -293,11 +293,11 @@ func Update(c echo.Context) error {
 
 	if err != nil {
 		tx.Rollback()
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		msg := errutil.New("", []string{err.Error()})
+		msg := errutil.NewRaw(err.Error())
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
@@ -327,13 +327,13 @@ func Delete(c echo.Context) error {
 
 	result, err := repo.Retrieve(ctype.QueryOpts{Filters: ctype.Dict{"id": id}})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	ids, err := repo.Delete(id)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	// Publish to queue

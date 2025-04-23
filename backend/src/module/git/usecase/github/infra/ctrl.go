@@ -7,6 +7,7 @@ import (
 	"src/client/scyllaclient"
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/errutil"
 	"src/util/numberutil"
 	"src/util/vldtutil"
 
@@ -63,7 +64,7 @@ func Callback(c echo.Context) error {
 	if setupAction == app.GITHUB_CALLBACK_ACTION_INSTALL {
 		_, err := srv.HandleInstallCallback(installationID, tenantUid)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
+			return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 		}
 		return c.Redirect(http.StatusFound, "/account/tenant/setting")
 	}
@@ -75,7 +76,7 @@ func WebhookTest(c echo.Context) error {
 	bodyBytes, err := io.ReadAll(c.Request().Body)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	fmt.Println(string(bodyBytes))
 	return c.JSON(http.StatusOK, ctype.Dict{})
@@ -106,7 +107,7 @@ func Webhook(c echo.Context) error {
 	if err != nil {
 		fmt.Println("error")
 		fmt.Println(err)
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	uid := numberutil.UintToStr(data.Installation.ID)
@@ -117,14 +118,14 @@ func Webhook(c echo.Context) error {
 	if data.Action == app.GITHUB_WEBHOOK_ACTION_CREATED {
 		_, err = srv.HandleInstallWebhook(uid, title, avatar, repos)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
+			return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 		}
 	}
 
 	if data.Action == app.GITHUB_WEBHOOK_ACTION_DELETED {
 		err = srv.HandleUninstallWebhook(uid)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
+			return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 		}
 	}
 
@@ -140,7 +141,7 @@ func Webhook(c echo.Context) error {
 			commits,
 		)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
+			return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 		}
 	}
 
@@ -155,7 +156,7 @@ func Webhook(c echo.Context) error {
 			data.Action,
 		)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, err)
+			return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 		}
 	}
 

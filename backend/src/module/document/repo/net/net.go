@@ -6,7 +6,6 @@ import (
 	"src/util/errutil"
 	"src/util/localeutil"
 
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/net/html"
 )
 
@@ -28,22 +27,19 @@ func New(client *http.Client) Repo {
 }
 
 func (r Repo) GetHTMLMeta(link string) (HTMLMeta, error) {
-	localizer := localeutil.Get()
 	result := HTMLMeta{}
 	resp, err := r.client.Get(link)
 
-	msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: localeutil.CanNotParseLinkMetaData,
-	})
+	errObj := errutil.New(localeutil.CanNotParseLinkMetaData)
 	if err != nil || resp.StatusCode != http.StatusOK {
-		return result, errutil.New("", []string{msg})
+		return result, errObj
 	}
 	defer resp.Body.Close()
 
 	result = extract(resp.Body)
 
 	if result.Title == "" {
-		return result, errutil.New("", []string{msg})
+		return result, errObj
 	}
 
 	return result, nil

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"src/util/dbutil"
 	"src/util/dictutil"
+	"src/util/errutil"
 	"src/util/numberutil"
 	"src/util/vldtutil"
 
@@ -31,10 +32,10 @@ func Create(c echo.Context) error {
 
 	files, err := vldtutil.UploadAndGetMetadata(c, folder)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	if len(files) == 0 {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	file := files[0]
 	structData.FileName = file.FileName
@@ -45,7 +46,7 @@ func Create(c echo.Context) error {
 	data := dictutil.StructToDict(structData)
 	result, err := repo.Create(data)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusCreated, result)

@@ -20,35 +20,24 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 func BytesToStruct[T any](data []byte, target T) (T, error) {
-	localizer := localeutil.Get()
 	if err := json.Unmarshal(data, &target); err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CannotReadRequestBody,
-		})
-		return target, errutil.New("", []string{msg})
+		return target, errutil.New(localeutil.CannotReadRequestBody)
 	}
 	return target, nil
 }
 
 func ValidatePayload[T any](c echo.Context, target T) (T, error) {
-	// result := ctype.Dict{}
 	result := target
-	localizer := localeutil.Get()
-	// bind the payload to the target struct
 	if err := c.Bind(&target); err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CannotReadRequestBody,
-		})
-		return result, errutil.New("", []string{msg})
+		return result, errutil.New(localeutil.CannotReadRequestBody)
 	}
 	// Validate the struct
 	if err := c.Validate(target); err != nil {
 		// Map to collect messages per field
-		error := errutil.CustomError{}
+		errObj := errutil.NewEmpty()
 		if ve, ok := err.(validator.ValidationErrors); ok {
 			for _, fe := range ve {
 				// Map struct field name to JSON field name
@@ -59,34 +48,22 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 					fieldName = strings.Split(jsonTag, ",")[0]
 				}
 
-				// Customize the error message based on the validation tag
-				var msg string
 				switch fe.Tag() {
 				case "required":
-					msg = localizer.MustLocalize(&i18n.LocalizeConfig{
-						DefaultMessage: localeutil.FieldRequired,
-					})
+					errObj.Update(fieldName, localeutil.FieldRequired)
 				case "oneof":
-					msg = localizer.MustLocalize(&i18n.LocalizeConfig{
-						DefaultMessage: localeutil.MustBeOneOf,
-						TemplateData: ctype.Dict{
-							"Values": fe.Param(),
-						},
+					errObj.UpdateWithArgs(fieldName, localeutil.MustBeOneOf, ctype.Dict{
+						"Values": fe.Param(),
 					})
 				default:
-					msg = localizer.MustLocalize(&i18n.LocalizeConfig{
-						DefaultMessage: localeutil.InvalidValue,
-					})
+					errObj.Update(fieldName, localeutil.InvalidValue)
 				}
-
-				// Append the error message to the field's error list
-				error.Add(fieldName, []string{msg})
 			}
 		} else {
 			// For other errors, return a general message
-			return result, errutil.New("", []string{err.Error()})
+			return result, errutil.NewRaw(err.Error())
 		}
-		return result, &error
+		return result, errObj
 	}
 
 	// return dictutil.StructToDict(target), nil
@@ -96,7 +73,6 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 func ValidateUpdatePayload[T any](c echo.Context, target T) (T, []string, error) {
 	defaultFields := []string{}
 	structResult := target
-	localizer := localeutil.Get()
 
 	fields, err := getFields(c)
 	if err != nil {
@@ -104,10 +80,7 @@ func ValidateUpdatePayload[T any](c echo.Context, target T) (T, []string, error)
 	}
 
 	if err := c.Bind(&target); err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CannotReadRequestBody,
-		})
-		return structResult, defaultFields, errutil.New("", []string{msg})
+		return structResult, defaultFields, errutil.New(localeutil.CannotReadRequestBody)
 	}
 
 	return target, fields, nil
@@ -190,13 +163,9 @@ func getFiles(c echo.Context) (map[string][]*multipart.FileHeader, error) {
 	}
 
 	result := map[string][]*multipart.FileHeader{}
-	localizer := localeutil.Get()
 	form, err := c.MultipartForm()
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CannotReadRequestBody,
-		})
-		return result, errutil.New("", []string{msg})
+		return result, errutil.New(localeutil.CannotReadRequestBody)
 	}
 
 	// Add form data to keys map
@@ -259,13 +228,9 @@ func getFields(c echo.Context) ([]string, error) {
 
 func getJsonFields(c echo.Context) ([]string, error) {
 	result := []string{}
-	localizer := localeutil.Get()
 	bodyBytes, err := io.ReadAll(c.Request().Body)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CannotReadRequestBody,
-		})
-		return result, errutil.New("", []string{msg})
+		return result, errutil.New(localeutil.CannotReadRequestBody)
 	}
 
 	// Reset the body so it can be read again if needed
@@ -274,11 +239,7 @@ func getJsonFields(c echo.Context) ([]string, error) {
 	// Unmarshal into a map to get the keys present in the payload
 	var payloadMap ctype.Dict
 	if err := json.Unmarshal(bodyBytes, &payloadMap); err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.InvalidJSONPayload,
-		})
-
-		return result, errutil.New("", []string{msg})
+		return result, errutil.New(localeutil.InvalidJSONPayload)
 	}
 
 	// Extract only the keys
@@ -292,15 +253,11 @@ func getJsonFields(c echo.Context) ([]string, error) {
 
 func getFormFields(c echo.Context) ([]string, error) {
 	result := []string{}
-	localizer := localeutil.Get()
 	var keyList []string
 	keys := make(map[string]interface{})
 	form, err := c.FormParams()
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CannotReadRequestBody,
-		})
-		return result, errutil.New("", []string{msg})
+		return result, errutil.New(localeutil.CannotReadRequestBody)
 	}
 
 	// Add form data to keys map
@@ -317,15 +274,13 @@ func getFormFields(c echo.Context) ([]string, error) {
 }
 
 func CheckRequiredFilter(c echo.Context, param string) error {
-	localizer := localeutil.Get()
 	if c.QueryParam(param) == "" {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.MissingQueryParam,
-			TemplateData: ctype.Dict{
+		return errutil.NewWithArgs(
+			localeutil.MissingQueryParam,
+			ctype.Dict{
 				"Value": param,
 			},
-		})
-		return errutil.New("", []string{msg})
+		)
 	}
 	return nil
 }

@@ -5,6 +5,7 @@ import (
 	"src/common/ctype"
 	"src/module/account/usecase/auth/login/repo"
 	"src/util/dbutil"
+	"src/util/errutil"
 
 	"src/module/account/domain/model"
 	"src/util/tokenutil"
@@ -23,7 +24,7 @@ func LoginPres(c echo.Context, loginResult model.LoginResult, next string) error
 	pemModulesActionsMap, err := authRepo.GetPemModulesActionsMap(userInfo.ID)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	authInfo := ctype.Dict{

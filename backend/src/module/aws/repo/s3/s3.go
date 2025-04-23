@@ -12,7 +12,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 type Repo struct {
@@ -40,17 +39,14 @@ func (u *Repo) Upload(
 	fileHeader *multipart.FileHeader,
 ) (FileInfo, error) {
 	emptyResult := FileInfo{}
-	localizer := localeutil.Get()
 	file, err := fileHeader.Open()
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToOpenFile,
-			TemplateData: ctype.Dict{
+		return emptyResult, errutil.NewWithArgs(
+			localeutil.FailedToOpenFile,
+			ctype.Dict{
 				"Filename": fileHeader.Filename,
 			},
-		})
-		return emptyResult, errutil.New("", []string{msg})
-
+		)
 	}
 	defer file.Close()
 
@@ -64,10 +60,7 @@ func (u *Repo) Upload(
 	})
 	if err != nil {
 		fmt.Println(err)
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToUploadFileToS3,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.FailedToUploadFileToS3)
 	}
 
 	// Generate the S3 URL
@@ -111,7 +104,7 @@ func (u *Repo) Uploads(
 	for i := 0; i < len(files); i++ {
 		select {
 		case err := <-errChan:
-			return nil, err
+			return nil, errutil.NewRaw(err.Error())
 		case <-doneChan:
 		}
 	}

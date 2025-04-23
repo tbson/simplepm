@@ -7,8 +7,6 @@ import (
 	"src/util/localeutil"
 	"src/util/numberutil"
 	"src/util/tokenutil"
-
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 type srv struct {
@@ -33,7 +31,6 @@ func New(
 }
 
 func (r srv) VerifyAccessToken(token string) (uint, error) {
-	localizer := localeutil.Get()
 	tokenSecret := r.accessTokenSecret
 	claims, err := tokenutil.VerifyToken(token, tokenSecret)
 	if err != nil {
@@ -41,17 +38,13 @@ func (r srv) VerifyAccessToken(token string) (uint, error) {
 	}
 	typ := claims["typ"].(string)
 	if typ != "access" {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.InvalidAccessToken,
-		})
-		return 0, errutil.New("", []string{msg})
+		return 0, errutil.New(localeutil.InvalidAccessToken)
 	}
 	userID := numberutil.StrToUint(claims["sub"].(string), 0)
 	return userID, nil
 }
 
 func (r srv) VerifyRefreshToken(token string) (uint, error) {
-	localizer := localeutil.Get()
 	tokenSecret := r.refreshTokenSecret
 	claims, err := tokenutil.VerifyToken(token, tokenSecret)
 	if err != nil {
@@ -59,10 +52,7 @@ func (r srv) VerifyRefreshToken(token string) (uint, error) {
 	}
 	typ := claims["typ"].(string)
 	if typ != "refresh" {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.InvalidRefreshToken,
-		})
-		return 0, errutil.New("", []string{msg})
+		return 0, errutil.New(localeutil.InvalidRefreshToken)
 	}
 	userID := numberutil.StrToUint(claims["sub"].(string), 0)
 	return userID, nil

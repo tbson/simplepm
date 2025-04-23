@@ -61,10 +61,7 @@ func (r Repo) GetTaskUser(gitRepo string, gitBranch string) (app.TaskUser, error
 	}
 	/*
 		if result.TaskID == nil || result.UserID == nil {
-			msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-				DefaultMessage: localeutil.TaskUserNotFound,
-			})
-			return result, errutil.New("", []string{msg})
+			return result, errutil.New(localeutil.TaskUserNotFound)
 		}
 	*/
 	return result, nil

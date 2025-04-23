@@ -3,7 +3,7 @@ package ctrl
 import (
 	"net/http"
 
-	"src/util/errutilnew"
+	"src/util/errutil"
 	"src/util/restlistutil"
 
 	"src/module/config/schema"
@@ -50,7 +50,7 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 
 	result, err := ctrl.srv.Paging(pagingOptions, searchableFields)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutilnew.CustomError).Localize())
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, pres.PagePres(result))

@@ -5,6 +5,7 @@ import (
 
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/errutil"
 	"src/util/routeutil"
 	"src/util/vldtutil"
 
@@ -61,7 +62,7 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 	pemMap := routeutil.GetPemMap()
 	data, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	// for tenant
@@ -90,7 +91,7 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 	})
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ctype.Dict{})

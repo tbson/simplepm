@@ -5,6 +5,7 @@ import (
 	"src/common/ctype"
 	"src/util/dbutil"
 	"src/util/dictutil"
+	"src/util/errutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
@@ -34,7 +35,7 @@ func Option(c echo.Context) error {
 	}
 	items, err := roleRepo.List(opts)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	roleOpts := []ctype.SelectOption[uint]{}
 	for _, item := range items {
@@ -58,7 +59,7 @@ func List(c echo.Context) error {
 	options.Preloads = []string{"Roles"}
 	listResult, err := pager.Paging(options, searchableFields)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, listResult)
@@ -87,13 +88,13 @@ func Create(c echo.Context) error {
 	repo := NewRepo(dbutil.Db(nil))
 	structData, err := vldtutil.ValidatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	data := dictutil.StructToDict(structData)
 
 	result, err := repo.Create(data)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusCreated, MutatePres(*result))
@@ -109,7 +110,7 @@ func Update(c echo.Context) error {
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
@@ -118,7 +119,7 @@ func Update(c echo.Context) error {
 	result, err := srv.Update(updateOpts, data)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, MutatePres(result))
@@ -131,7 +132,7 @@ func Delete(c echo.Context) error {
 	ids, err := repo.Delete(id)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ids)
@@ -144,7 +145,7 @@ func DeleteList(c echo.Context) error {
 	ids, err := repo.DeleteList(ids)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ids)

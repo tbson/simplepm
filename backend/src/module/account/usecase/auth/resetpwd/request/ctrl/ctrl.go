@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"src/common/ctype"
+	"src/util/errutil"
 	"src/util/vldtutil"
 
 	"github.com/labstack/echo/v4"
@@ -25,12 +26,12 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 	tenantID := c.Get("TenantID").(uint)
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	err = ctrl.Srv.ResetPwdRequest(structData.Email, tenantID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ctype.Dict{})

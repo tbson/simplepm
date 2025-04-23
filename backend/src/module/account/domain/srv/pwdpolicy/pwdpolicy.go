@@ -2,7 +2,7 @@ package pwdpolicy
 
 import (
 	"src/common/ctype"
-	"src/util/errutilnew"
+	"src/util/errutil"
 	"src/util/localeutil"
 	"time"
 
@@ -25,12 +25,12 @@ func (s srv) CheckOnCreation(pwd string, pwdHistory pwdHistory) error {
 	complexityErr := checkPwdComplexityPolicy(pwd)
 	uniquenessErr := checkPwdUniquenessPolicy(pwd, pwdHistory)
 
-	err := errutilnew.NewEmpty()
+	err := errutil.NewEmpty()
 	if complexityErr != nil {
-		err.Merge(complexityErr.(*errutilnew.CustomError))
+		err.Merge(complexityErr.(*errutil.CustomError))
 	}
 	if uniquenessErr != nil {
-		err.Merge(uniquenessErr.(*errutilnew.CustomError))
+		err.Merge(uniquenessErr.(*errutil.CustomError))
 	}
 
 	if len(err.Errors) > 0 {
@@ -43,12 +43,12 @@ func (s srv) CheckOnValidation(pwd string, lastResetPwd time.Time, failedAttempt
 	rotationErr := checkPwdRotationPolicy(lastResetPwd)
 	failedAttempsErr := checkFailedAttemptsPolicy(pwd, failedAttempts)
 
-	err := errutilnew.NewEmpty()
+	err := errutil.NewEmpty()
 	if rotationErr != nil {
-		err.Merge(rotationErr.(*errutilnew.CustomError))
+		err.Merge(rotationErr.(*errutil.CustomError))
 	}
 	if failedAttempsErr != nil {
-		err.Merge(failedAttempsErr.(*errutilnew.CustomError))
+		err.Merge(failedAttempsErr.(*errutil.CustomError))
 	}
 	if len(err.Errors) > 0 {
 		return err
@@ -71,7 +71,7 @@ func checkPwdRotationPolicy(lastResetPwd time.Time) error {
 		return nil
 	}
 
-	return errutilnew.NewSimpleWithArgs(
+	return errutil.NewWithArgs(
 		localeutil.RotatePwdPolicyFail,
 		ctype.Dict{
 			"Value": maxResetPwdPeriodDays,

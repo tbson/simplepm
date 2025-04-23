@@ -5,6 +5,7 @@ import (
 	"src/common/ctype"
 	"src/util/dbutil"
 	"src/util/dictutil"
+	"src/util/errutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
@@ -37,7 +38,7 @@ func Option(c echo.Context) error {
 	}
 	items, err := pemRepo.List(opts)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	pemOptions := []ctype.SelectOption[uint]{}
 	for _, item := range items {
@@ -61,7 +62,7 @@ func List(c echo.Context) error {
 	options.Filters["tenant_id"] = tenantId
 	listResult, err := pager.Paging(options, searchableFields)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, listResult)
@@ -94,13 +95,13 @@ func Create(c echo.Context) error {
 
 	structData, err := vldtutil.ValidatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	data := dictutil.StructToDict(structData)
 
 	result, err := srv.Create(data)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusCreated, result)
@@ -117,14 +118,14 @@ func Update(c echo.Context) error {
 	id := vldtutil.ValidateId(c.Param("id"))
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{TenantID: tenantId})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": id}}
 	result, err := srv.Update(updateOpts, data)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -137,7 +138,7 @@ func Delete(c echo.Context) error {
 	ids, err := repo.Delete(id)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ids)
@@ -150,7 +151,7 @@ func DeleteList(c echo.Context) error {
 	ids, err := repo.DeleteList(ids)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ids)

@@ -5,6 +5,7 @@ import (
 
 	"src/common/ctype"
 	"src/module/account/domain/model"
+	"src/util/errutil"
 	"src/util/vldtutil"
 
 	"github.com/labstack/echo/v4"
@@ -25,12 +26,12 @@ type input struct {
 func (ctrl ctrl) Handler(c echo.Context) error {
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	_, err = ctrl.Srv.RefreshToken(structData.RefreshToken)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ctype.Dict{})

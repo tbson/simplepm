@@ -38,7 +38,7 @@ func List(c echo.Context) error {
 	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
 	listResult, err := pager.Paging(options, searchableFields)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, listResult)
@@ -70,7 +70,7 @@ func Create(c echo.Context) error {
 	db := dbutil.Db(nil)
 	tx := db.Begin()
 	if tx.Error != nil {
-		msg := errutil.New("", []string{tx.Error.Error()})
+		msg := errutil.NewRaw(tx.Error.Error())
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
@@ -81,24 +81,24 @@ func Create(c echo.Context) error {
 
 	structData, err := vldtutil.ValidatePayload(c, InputData{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	data := dictutil.StructToDict(structData)
 	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	result, err := srv.Create(data)
 
 	if err != nil {
 		tx.Rollback()
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	if err := tx.Commit().Error; err != nil {
-		msg := errutil.New("", []string{err.Error()})
+		msg := errutil.NewRaw(err.Error())
 		return c.JSON(http.StatusBadRequest, msg)
 	}
 
@@ -111,13 +111,13 @@ func Update(c echo.Context) error {
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	data, err = vldtutil.UploadAndUPdatePayload(c, folder, data)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	id := vldtutil.ValidateId(c.Param("id"))
@@ -125,7 +125,7 @@ func Update(c echo.Context) error {
 	result, err := repo.Update(updateOpts, data)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -138,7 +138,7 @@ func Delete(c echo.Context) error {
 	ids, err := repo.Delete(id)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ids)
@@ -151,7 +151,7 @@ func DeleteList(c echo.Context) error {
 	ids, err := repo.DeleteList(ids)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ids)

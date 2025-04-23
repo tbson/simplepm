@@ -13,6 +13,7 @@ import (
 	"src/module/pm/repo/feature"
 	"src/module/pm/repo/task"
 	"src/module/pm/schema"
+	"src/util/errutil"
 
 	"github.com/labstack/echo/v4"
 
@@ -35,7 +36,7 @@ func List(c echo.Context) error {
 	options.Filters["project_id"] = projectID
 	listResult, err := pager.List(options, searchableFields)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, listResult)
@@ -65,13 +66,13 @@ func Create(c echo.Context) error {
 
 	structData, err := vldtutil.ValidatePayload(c, InputData{ProjectID: projectID})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	data := dictutil.StructToDict(structData)
 
 	result, err := repo.Create(data)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusCreated, result)
@@ -84,7 +85,7 @@ func Update(c echo.Context) error {
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, InputData{ProjectID: projectID})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
@@ -93,7 +94,7 @@ func Update(c echo.Context) error {
 	result, err := repo.Update(updateOpts, data)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -109,7 +110,7 @@ func Delete(c echo.Context) error {
 	ids, err := srv.Delete(id)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ids)

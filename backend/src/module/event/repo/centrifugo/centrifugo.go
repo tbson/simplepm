@@ -8,8 +8,6 @@ import (
 	"src/common/setting"
 	"src/util/errutil"
 	"src/util/localeutil"
-
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 type Repo struct{}
@@ -19,16 +17,12 @@ func New() Repo {
 }
 
 func (r Repo) Publish(data interface{}) error {
-	localizer := localeutil.Get()
 	apiKey := setting.CENTRIFUGO_API_KEY()
 	url := fmt.Sprintf("%s/publish", setting.CENTRIFUGO_API_ENDPOINT())
 
 	jsonData, err := json.Marshal(data)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CannotReadRequestBody,
-		})
-		return errutil.New("", []string{msg})
+		return errutil.New(localeutil.CannotReadRequestBody)
 	}
 
 	reqBody := bytes.NewBuffer(jsonData)
@@ -36,10 +30,7 @@ func (r Repo) Publish(data interface{}) error {
 	// Create the HTTP request
 	req, err := http.NewRequest("POST", url, reqBody)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotCreateRequest,
-		})
-		return errutil.New("", []string{msg})
+		return errutil.New(localeutil.CanNotCreateRequest)
 	}
 
 	// Set headers
@@ -50,19 +41,13 @@ func (r Repo) Publish(data interface{}) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotSendRequest,
-		})
-		return errutil.New("", []string{msg})
+		return errutil.New(localeutil.CanNotSendRequest)
 	}
 	defer resp.Body.Close()
 
 	// Check the response status
 	if resp.StatusCode != http.StatusOK {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.BadRequest,
-		})
-		return errutil.New("", []string{msg})
+		return errutil.New(localeutil.BadRequest)
 	}
 	return nil
 }

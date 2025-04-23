@@ -3,7 +3,7 @@ package srv
 import (
 	"src/common/ctype"
 	"src/module/account/schema"
-	"src/util/errutilnew"
+	"src/util/errutil"
 	"src/util/localeutil"
 	"src/util/pwdutil"
 	"time"
@@ -62,7 +62,7 @@ func (srv srv) Login(email string, pwd string, tenantID uint) (model.LoginResult
 
 	// Check user is locked
 	if user.LockedAt != nil {
-		return result, errutilnew.NewSimple(localeutil.LockedAccount)
+		return result, errutil.New(localeutil.LockedAccount)
 	}
 
 	// Check pwd

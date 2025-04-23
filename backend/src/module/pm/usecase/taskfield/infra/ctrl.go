@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"src/common/ctype"
 	"src/util/dbutil"
+	"src/util/errutil"
 	"src/util/restlistutil"
 	"src/util/vldtutil"
 
@@ -27,7 +28,7 @@ var orderableFields = []string{"id", "title", "order"}
 
 func List(c echo.Context) error {
 	if err := vldtutil.CheckRequiredFilter(c, "project_id"); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	pager := paging.New[Schema, ListOutput](dbutil.Db(nil), ListPres)
@@ -37,7 +38,7 @@ func List(c echo.Context) error {
 
 	listResult, err := pager.List(options, searchableFields)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, listResult)
@@ -68,12 +69,12 @@ func Create(c echo.Context) error {
 
 	structData, err := vldtutil.ValidatePayload(c, app.InputData{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	result, err := srv.Create(structData)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusCreated, result)
@@ -87,7 +88,7 @@ func Update(c echo.Context) error {
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, app.InputData{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
@@ -100,7 +101,7 @@ func Update(c echo.Context) error {
 	result, err := srv.Update(updateOpts, data, options)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, result)
@@ -113,7 +114,7 @@ func Delete(c echo.Context) error {
 	ids, err := repo.Delete(id)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ids)
@@ -126,7 +127,7 @@ func DeleteList(c echo.Context) error {
 	ids, err := repo.DeleteList(ids)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, ids)

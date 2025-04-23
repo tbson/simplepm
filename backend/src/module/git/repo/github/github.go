@@ -17,7 +17,6 @@ import (
 
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwt"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 type Repo struct{}
@@ -45,27 +44,19 @@ func (r Repo) GetInstallUrl(tenantUid string) string {
 }
 
 func (r Repo) generateJWT() (string, error) {
-	localizer := localeutil.Get()
-
 	clientID := setting.GITHUB_CLIENT_ID()
 	privateKeyPath := setting.GITHUB_PRIVATE_KEY_PATH()
 
 	// Read your private key file.
 	keyBytes, err := os.ReadFile(privateKeyPath)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToReadPrivateKey,
-		})
-		return "", errutil.New("", []string{msg})
+		return "", errutil.New(localeutil.FailedToReadPrivateKey)
 	}
 
 	// Parse the RSA private key.
 	privateKey, err := parseRSAPrivateKeyFromPEM(keyBytes)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToReadPrivateKey,
-		})
-		return "", errutil.New("", []string{msg})
+		return "", errutil.New(localeutil.FailedToReadPrivateKey)
 	}
 
 	// Create a new token with claims.
@@ -75,27 +66,19 @@ func (r Repo) generateJWT() (string, error) {
 		Claim(jwt.IssuerKey, clientID).
 		Build()
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToBuildToken,
-		})
-		return "", errutil.New("", []string{msg})
+		return "", errutil.New(localeutil.FailedToBuildToken)
 	}
 
 	// Sign the token using RS256.
 	signed, err := jwt.Sign(tok, jwt.WithKey(jwa.RS256, privateKey))
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.FailedToSignToken,
-		})
-		return "", errutil.New("", []string{msg})
+		return "", errutil.New(localeutil.FailedToSignToken)
 	}
 
 	return string(signed), nil
 }
 
 func (r Repo) retInstallationToken(installationID string) (string, error) {
-	localizer := localeutil.Get()
-
 	emptyResult := ""
 	jwt, err := r.generateJWT()
 	if err != nil {
@@ -108,10 +91,7 @@ func (r Repo) retInstallationToken(installationID string) (string, error) {
 
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotCreateRequest,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.CanNotCreateRequest)
 	}
 
 	// Set required headers.
@@ -123,37 +103,26 @@ func (r Repo) retInstallationToken(installationID string) (string, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotSendRequest,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.CanNotSendRequest)
 	}
 	defer resp.Body.Close()
 
 	// Read and print the response body.
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotReadResponse,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.CanNotReadResponse)
 	}
 	// body is a JSON object, so we can unmarshal it into a struct.
 	result := TokenResult{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotReadResponse,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.CanNotReadResponse)
 	}
 
 	return result.Token, nil
 }
 
 func (r Repo) getRepoListOfInstallation(installationID string) (GitbRepoResult, error) {
-	localizer := localeutil.Get()
-
 	emptyResult := GitbRepoResult{}
 	jwt, err := r.retInstallationToken(installationID)
 	if err != nil {
@@ -164,10 +133,7 @@ func (r Repo) getRepoListOfInstallation(installationID string) (GitbRepoResult, 
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotCreateRequest,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.CanNotCreateRequest)
 	}
 
 	// Set required headers.
@@ -179,29 +145,20 @@ func (r Repo) getRepoListOfInstallation(installationID string) (GitbRepoResult, 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotSendRequest,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.CanNotSendRequest)
 	}
 	defer resp.Body.Close()
 
 	// Read and print the response body.
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotReadResponse,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.CanNotReadResponse)
 	}
 	// body is a JSON object, so we can unmarshal it into a struct.
 	result := GitbRepoResult{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		msg := localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: localeutil.CanNotReadResponse,
-		})
-		return emptyResult, errutil.New("", []string{msg})
+		return emptyResult, errutil.New(localeutil.CanNotReadResponse)
 	}
 
 	return result, nil
