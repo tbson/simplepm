@@ -19,7 +19,6 @@ func New(client *gorm.DB) Repo {
 }
 
 func (r Repo) GetTaskUser(gitRepo string, gitBranch string) (app.TaskUser, error) {
-	// localizer := localeutil.Get()
 	result := app.TaskUser{}
 	gitHost := pm.PROJECT_REPO_TYPE_GITHUB
 	sql := `
