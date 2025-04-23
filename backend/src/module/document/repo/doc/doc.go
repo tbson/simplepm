@@ -5,7 +5,7 @@ import (
 	"src/module/document/schema"
 	"src/util/dictutil"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 
 	"gorm.io/gorm"
 )
@@ -69,10 +69,10 @@ func (r *repo) Retrieve(opts ctype.QueryOpts) (*Schema, error) {
 	query := db.Where(map[string]interface{}(filters))
 	query.Model(&Schema{}).Count(&count)
 	if count == 0 {
-		return &item, errutil.New(localeutil.NoRecordFound)
+		return &item, errutil.New(i18nmsg.NoRecordFound)
 	}
 	if count > 1 {
-		return &item, errutil.New(localeutil.MultipleRecordsFound)
+		return &item, errutil.New(i18nmsg.MultipleRecordsFound)
 	}
 
 	result := query.First(&item)

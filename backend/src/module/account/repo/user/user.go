@@ -5,7 +5,7 @@ import (
 	"src/module/account/schema"
 	"src/util/dictutil"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 
 	"gorm.io/gorm"
 )
@@ -75,11 +75,11 @@ func (r *repo) Retrieve(opts ctype.QueryOpts) (*Schema, error) {
 	}
 
 	if len(items) == 0 {
-		return &item, errutil.New(localeutil.NoRecordFound)
+		return &item, errutil.New(i18nmsg.NoRecordFound)
 	}
 
 	if len(items) > 1 {
-		return &item, errutil.New(localeutil.MultipleRecordsFound)
+		return &item, errutil.New(i18nmsg.MultipleRecordsFound)
 	}
 
 	item = items[0]

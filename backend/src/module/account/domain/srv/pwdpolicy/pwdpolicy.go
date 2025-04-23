@@ -3,7 +3,7 @@ package pwdpolicy
 import (
 	"src/common/ctype"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"time"
 
 	"src/common/setting"
@@ -72,7 +72,7 @@ func checkPwdRotationPolicy(lastResetPwd time.Time) error {
 	}
 
 	return errutil.NewWithArgs(
-		localeutil.RotatePwdPolicyFail,
+		i18nmsg.RotatePwdPolicyFail,
 		ctype.Dict{
 			"Value": maxResetPwdPeriodDays,
 		},

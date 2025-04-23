@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/http"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 
 	"golang.org/x/net/html"
 )
@@ -30,7 +30,7 @@ func (r Repo) GetHTMLMeta(link string) (HTMLMeta, error) {
 	result := HTMLMeta{}
 	resp, err := r.client.Get(link)
 
-	errObj := errutil.New(localeutil.CanNotParseLinkMetaData)
+	errObj := errutil.New(i18nmsg.CanNotParseLinkMetaData)
 	if err != nil || resp.StatusCode != http.StatusOK {
 		return result, errObj
 	}

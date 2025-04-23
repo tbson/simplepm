@@ -3,7 +3,7 @@ package app
 import (
 	"src/common/ctype"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 )
 
 type Service struct {
@@ -25,7 +25,7 @@ func (srv Service) Delete(id uint) ([]uint, error) {
 		return nil, err
 	}
 	if len(tasks) > 0 {
-		return emptyResult, errutil.New(localeutil.FeatureInUse)
+		return emptyResult, errutil.New(i18nmsg.FeatureInUse)
 	}
 	return srv.featureRepo.Delete(id)
 }

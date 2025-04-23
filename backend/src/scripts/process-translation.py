@@ -3,7 +3,7 @@ import json
 import shutil
 
 # Define the folder path where the JSON files are stored
-folder_path = "util/localeutil/locales"
+folder_path = "util/i18nmsg/locales"
 
 
 # 1. Remove all 'hash' keys in translate.*.json files

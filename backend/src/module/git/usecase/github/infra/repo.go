@@ -60,7 +60,7 @@ func (r Repo) GetTaskUser(gitRepo string, gitBranch string) (app.TaskUser, error
 	}
 	/*
 		if result.TaskID == nil || result.UserID == nil {
-			return result, errutil.New(localeutil.TaskUserNotFound)
+			return result, errutil.New(i18nmsg.TaskUserNotFound)
 		}
 	*/
 	return result, nil

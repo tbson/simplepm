@@ -50,6 +50,7 @@
   "InvalidUsernameOrPwd": "invalid username or password",
   "InvalidValue": "invalid value",
   "LockedAccount": "account is locked",
+  "MissingQueryParam": "missing query param: {{.Value}}",
   "MissingSubject": "missing subject",
   "MissingTenantID": "missing tenant ID",
   "MultipleRecordsFound": "multiple records found",

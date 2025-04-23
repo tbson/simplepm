@@ -7,7 +7,7 @@ import (
 	"src/common/ctype"
 	"src/common/setting"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -42,7 +42,7 @@ func (u *Repo) Upload(
 	file, err := fileHeader.Open()
 	if err != nil {
 		return emptyResult, errutil.NewWithArgs(
-			localeutil.FailedToOpenFile,
+			i18nmsg.FailedToOpenFile,
 			ctype.Dict{
 				"Filename": fileHeader.Filename,
 			},
@@ -60,7 +60,7 @@ func (u *Repo) Upload(
 	})
 	if err != nil {
 		fmt.Println(err)
-		return emptyResult, errutil.New(localeutil.FailedToUploadFileToS3)
+		return emptyResult, errutil.New(i18nmsg.FailedToUploadFileToS3)
 	}
 
 	// Generate the S3 URL

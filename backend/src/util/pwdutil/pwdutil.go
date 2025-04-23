@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"src/common/ctype"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"strings"
 
 	"golang.org/x/crypto/argon2"
@@ -67,13 +67,13 @@ func CheckPwd(pwd, encodedHash string) error {
 	// Extract the parameters, salt, and derived key from the encoded hash
 	parts := strings.Split(encodedHash, "$")
 	if len(parts) != 6 {
-		return errutil.New(localeutil.InvalidHashFormat)
+		return errutil.New(i18nmsg.InvalidHashFormat)
 	}
 
 	// Check the algorithm
 	if parts[1] != "argon2id" {
 		return errutil.NewWithArgs(
-			localeutil.UnsupportedAlgorithm,
+			i18nmsg.UnsupportedAlgorithm,
 			ctype.Dict{
 				"Value": parts[1],
 			},
@@ -121,5 +121,5 @@ func CheckPwd(pwd, encodedHash string) error {
 		return nil
 	}
 
-	return errutil.New(localeutil.InvalidUsernameOrPwd)
+	return errutil.New(i18nmsg.InvalidUsernameOrPwd)
 }

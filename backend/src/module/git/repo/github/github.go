@@ -13,7 +13,7 @@ import (
 
 	"src/common/setting"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 
 	"github.com/lestrrat-go/jwx/v2/jwa"
 	"github.com/lestrrat-go/jwx/v2/jwt"
@@ -50,13 +50,13 @@ func (r Repo) generateJWT() (string, error) {
 	// Read your private key file.
 	keyBytes, err := os.ReadFile(privateKeyPath)
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToReadPrivateKey)
+		return "", errutil.New(i18nmsg.FailedToReadPrivateKey)
 	}
 
 	// Parse the RSA private key.
 	privateKey, err := parseRSAPrivateKeyFromPEM(keyBytes)
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToReadPrivateKey)
+		return "", errutil.New(i18nmsg.FailedToReadPrivateKey)
 	}
 
 	// Create a new token with claims.
@@ -66,13 +66,13 @@ func (r Repo) generateJWT() (string, error) {
 		Claim(jwt.IssuerKey, clientID).
 		Build()
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToBuildToken)
+		return "", errutil.New(i18nmsg.FailedToBuildToken)
 	}
 
 	// Sign the token using RS256.
 	signed, err := jwt.Sign(tok, jwt.WithKey(jwa.RS256, privateKey))
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToSignToken)
+		return "", errutil.New(i18nmsg.FailedToSignToken)
 	}
 
 	return string(signed), nil
@@ -91,7 +91,7 @@ func (r Repo) retInstallationToken(installationID string) (string, error) {
 
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
-		return emptyResult, errutil.New(localeutil.CanNotCreateRequest)
+		return emptyResult, errutil.New(i18nmsg.CanNotCreateRequest)
 	}
 
 	// Set required headers.
@@ -103,20 +103,20 @@ func (r Repo) retInstallationToken(installationID string) (string, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return emptyResult, errutil.New(localeutil.CanNotSendRequest)
+		return emptyResult, errutil.New(i18nmsg.CanNotSendRequest)
 	}
 	defer resp.Body.Close()
 
 	// Read and print the response body.
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return emptyResult, errutil.New(localeutil.CanNotReadResponse)
+		return emptyResult, errutil.New(i18nmsg.CanNotReadResponse)
 	}
 	// body is a JSON object, so we can unmarshal it into a struct.
 	result := TokenResult{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return emptyResult, errutil.New(localeutil.CanNotReadResponse)
+		return emptyResult, errutil.New(i18nmsg.CanNotReadResponse)
 	}
 
 	return result.Token, nil
@@ -133,7 +133,7 @@ func (r Repo) getRepoListOfInstallation(installationID string) (GitbRepoResult, 
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return emptyResult, errutil.New(localeutil.CanNotCreateRequest)
+		return emptyResult, errutil.New(i18nmsg.CanNotCreateRequest)
 	}
 
 	// Set required headers.
@@ -145,20 +145,20 @@ func (r Repo) getRepoListOfInstallation(installationID string) (GitbRepoResult, 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return emptyResult, errutil.New(localeutil.CanNotSendRequest)
+		return emptyResult, errutil.New(i18nmsg.CanNotSendRequest)
 	}
 	defer resp.Body.Close()
 
 	// Read and print the response body.
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return emptyResult, errutil.New(localeutil.CanNotReadResponse)
+		return emptyResult, errutil.New(i18nmsg.CanNotReadResponse)
 	}
 	// body is a JSON object, so we can unmarshal it into a struct.
 	result := GitbRepoResult{}
 	err = json.Unmarshal(body, &result)
 	if err != nil {
-		return emptyResult, errutil.New(localeutil.CanNotReadResponse)
+		return emptyResult, errutil.New(i18nmsg.CanNotReadResponse)
 	}
 
 	return result, nil

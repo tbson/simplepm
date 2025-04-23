@@ -83,13 +83,13 @@ fi
 if [ "$FIRST_ARG" == "backend" ] || [ "$FIRST_ARG" == "db" ] || [ "$FIRST_ARG" == "frontend" ]; then
     docker compose exec "$NAME"_"$FIRST_ARG" $ARGS
 elif [ "$FIRST_ARG" == "makemessages" ]; then
-    docker compose exec "$NAME"_backend goi18n extract -outdir util/localeutil/locales -format json
-    docker compose exec "$NAME"_backend bash -c 'goi18n merge -outdir util/localeutil/locales -format json util/localeutil/locales/active.*.json'
+    docker compose exec "$NAME"_backend goi18n extract -outdir util/i18nmsg/locales -format json
+    docker compose exec "$NAME"_backend bash -c 'goi18n merge -outdir util/i18nmsg/locales -format json util/i18nmsg/locales/active.*.json'
     docker compose exec "$NAME"_backend bash -c 'python3 scripts/process-translation.py'
 elif [ "$FIRST_ARG" == "dumpmessages" ]; then
-    docker compose exec "$NAME"_backend bash -c 'echo {} > util/localeutil/locales/translate.en.json'
-    docker compose exec "$NAME"_backend bash -c 'goi18n merge -outdir util/localeutil/locales -format json util/localeutil/locales/active.*.json util/localeutil/locales/translate.*.json'
-    docker compose exec "$NAME"_backend bash -c 'echo {} > util/localeutil/locales/translate.vi.json'
+    docker compose exec "$NAME"_backend bash -c 'echo {} > util/i18nmsg/locales/translate.en.json'
+    docker compose exec "$NAME"_backend bash -c 'goi18n merge -outdir util/i18nmsg/locales -format json util/i18nmsg/locales/active.*.json util/i18nmsg/locales/translate.*.json'
+    docker compose exec "$NAME"_backend bash -c 'echo {} > util/i18nmsg/locales/translate.vi.json'
 elif [ "$FIRST_ARG" == "goi18n" ]; then
     docker compose exec "$NAME"_backend goi18n $ARGS
 elif [ "$FIRST_ARG" == "bun" ]; then

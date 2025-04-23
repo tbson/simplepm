@@ -4,7 +4,7 @@ import (
 	"src/common/ctype"
 	"src/module/account/schema"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 
 	"src/module/account/domain/srv/pwdpolicy"
 
@@ -39,13 +39,13 @@ func (srv Service) ChangePwd(userID uint, data ctype.Dict) (ctype.Dict, error) {
 	pwdPolicy := pwdpolicy.New()
 	result := ctype.Dict{}
 	if data["Pwd"].(string) != data["PwdConfirm"].(string) {
-		return result, errutil.New(localeutil.PasswordsNotMatch)
+		return result, errutil.New(i18nmsg.PasswordsNotMatch)
 	}
 	pwd := data["Pwd"].(string)
 
 	err := pwdPolicy.CheckOnCreation(pwd, []string{})
 	if err != nil {
-		return result, errutil.New(localeutil.PasswordPolicyError)
+		return result, errutil.New(i18nmsg.PasswordPolicyError)
 	}
 
 	user, err := srv.userRepo.Retrieve(ctype.QueryOpts{
@@ -57,7 +57,7 @@ func (srv Service) ChangePwd(userID uint, data ctype.Dict) (ctype.Dict, error) {
 
 	pwdHash := pwdutil.MakePwd(pwd)
 	if pwdHash == "" {
-		return result, errutil.New(localeutil.PasswordHashError)
+		return result, errutil.New(i18nmsg.PasswordHashError)
 	}
 
 	queryOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": user.ID}}

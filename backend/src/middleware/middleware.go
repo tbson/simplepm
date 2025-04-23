@@ -10,6 +10,7 @@ import (
 	"src/util/cookieutil"
 	"src/util/dbutil"
 	"src/util/errutil"
+	"src/util/i18nmsg"
 	"src/util/localeutil"
 	"src/util/numberutil"
 	"strings"
@@ -27,7 +28,7 @@ func BlankMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 func TenantMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		errObj := errutil.New(localeutil.MissingTenantID)
+		errObj := errutil.New(i18nmsg.MissingTenantID)
 		errMsg := errObj.Localize()
 
 		requestDomain := c.Request().Host
@@ -64,7 +65,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 		return func(c echo.Context) error {
 			tokenSettings := setting.AUTH_TOKEN_SETTINGS()
 
-			errObj := errutil.New(localeutil.Unauthorized)
+			errObj := errutil.New(i18nmsg.Unauthorized)
 			errMsg := errObj.Localize()
 
 			// check access_token cookie
@@ -96,7 +97,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			}
 
 			if user.LockedAt != nil {
-				errObj := errutil.New(localeutil.LockedAccount)
+				errObj := errutil.New(i18nmsg.LockedAccount)
 				return c.JSON(401, errObj.Localize())
 			}
 

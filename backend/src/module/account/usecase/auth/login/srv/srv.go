@@ -4,7 +4,7 @@ import (
 	"src/common/ctype"
 	"src/module/account/schema"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"src/util/pwdutil"
 	"time"
 
@@ -62,7 +62,7 @@ func (srv srv) Login(email string, pwd string, tenantID uint) (model.LoginResult
 
 	// Check user is locked
 	if user.LockedAt != nil {
-		return result, errutil.New(localeutil.LockedAccount)
+		return result, errutil.New(i18nmsg.LockedAccount)
 	}
 
 	// Check pwd

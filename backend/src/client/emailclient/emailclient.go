@@ -7,7 +7,7 @@ import (
 	"src/common/ctype"
 	"src/common/setting"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"src/util/templateutil"
 
 	"github.com/wneessen/go-mail"
@@ -28,7 +28,7 @@ func NewClient() (Client, error) {
 		mail.WithTimeout(30*time.Second),                 // Connection timeout
 	)
 	if err != nil {
-		return Client{}, errutil.New(localeutil.FailedToCreateEmailClient)
+		return Client{}, errutil.New(i18nmsg.FailedToCreateEmailClient)
 	}
 
 	return Client{
@@ -41,7 +41,7 @@ func (c Client) SendEmail(to string, subject string, body ctype.EmailBody) error
 
 	if err := message.From(setting.DEFAULT_EMAIL_FROM()); err != nil {
 		return errutil.NewWithArgs(
-			localeutil.FailedToSetFromAddress,
+			i18nmsg.FailedToSetFromAddress,
 			ctype.Dict{
 				"Value": setting.DEFAULT_EMAIL_FROM(),
 			},
@@ -50,7 +50,7 @@ func (c Client) SendEmail(to string, subject string, body ctype.EmailBody) error
 
 	if err := message.To(to); err != nil {
 		return errutil.NewWithArgs(
-			localeutil.FailedToSetToAddress,
+			i18nmsg.FailedToSetToAddress,
 			ctype.Dict{
 				"Value": to,
 			},
@@ -67,7 +67,7 @@ func (c Client) SendEmail(to string, subject string, body ctype.EmailBody) error
 	message.SetBodyString(mail.TypeTextHTML, htmlBody)
 
 	if err := c.client.DialAndSend(message); err != nil {
-		return errutil.New(localeutil.FailedToDeliverEmail)
+		return errutil.New(i18nmsg.FailedToDeliverEmail)
 	}
 
 	return nil

@@ -2,7 +2,7 @@ package dateutil
 
 import (
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"time"
 )
 
@@ -16,7 +16,7 @@ func Today() time.Time {
 
 func StrToDate(dateStr string) (time.Time, error) {
 	emptyTime := time.Time{}
-	errObj := errutil.New(localeutil.CanNotParseDateStr)
+	errObj := errutil.New(i18nmsg.CanNotParseDateStr)
 	if dateStr == "" {
 		return emptyTime, errObj
 	}

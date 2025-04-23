@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"src/common/ctype"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"text/template"
 )
 
@@ -14,7 +14,7 @@ func GetHtmlString(templatePath string, data ctype.Dict) (string, error) {
 	tmpl, err := template.ParseFiles(path)
 	if err != nil {
 		return "", errutil.NewWithArgs(
-			localeutil.FailedToParseTemplate,
+			i18nmsg.FailedToParseTemplate,
 			ctype.Dict{
 				"Value": templatePath,
 			},
@@ -24,7 +24,7 @@ func GetHtmlString(templatePath string, data ctype.Dict) (string, error) {
 	var templateBody bytes.Buffer
 	if err := tmpl.Execute(&templateBody, data); err != nil {
 		return "", errutil.NewWithArgs(
-			localeutil.FailedToExecuteTemplate,
+			i18nmsg.FailedToExecuteTemplate,
 			ctype.Dict{
 				"Value": templatePath,
 			},

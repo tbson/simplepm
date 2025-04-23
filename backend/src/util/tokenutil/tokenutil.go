@@ -4,7 +4,7 @@ import (
 	"context"
 	"src/common/ctype"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"src/util/numberutil"
 	"time"
 
@@ -30,7 +30,7 @@ func GenerateToken(
 	if subject != "" {
 		builder = builder.Subject(subject)
 	} else {
-		return "", errutil.New(localeutil.MissingSubject)
+		return "", errutil.New(i18nmsg.MissingSubject)
 	}
 	// Add all claims from the map (skip "sub" since we handle it separately)
 	for key, value := range claims {
@@ -46,12 +46,12 @@ func GenerateToken(
 	// Build the token
 	token, err := builder.Build()
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToBuildToken)
+		return "", errutil.New(i18nmsg.FailedToBuildToken)
 	}
 	// Sign the token using the provided secret
 	signed, err := jwt.Sign(token, jwt.WithKey(jwa.HS256, []byte(secret)))
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToSignToken)
+		return "", errutil.New(i18nmsg.FailedToSignToken)
 	}
 	return string(signed), nil
 }
@@ -62,16 +62,16 @@ func VerifyToken(tokenStr string, secret string) (ctype.Dict, error) {
 		jwt.WithKey(jwa.HS256, []byte(secret)),
 	)
 	if err != nil {
-		return nil, errutil.New(localeutil.FailedToParseToken)
+		return nil, errutil.New(i18nmsg.FailedToParseToken)
 	}
 
 	if err := jwt.Validate(token); err != nil {
-		return nil, errutil.New(localeutil.FailedToVerifyToken)
+		return nil, errutil.New(i18nmsg.FailedToVerifyToken)
 	}
 
 	subject := token.Subject()
 	if subject == "" {
-		return nil, errutil.New(localeutil.MissingSubject)
+		return nil, errutil.New(i18nmsg.MissingSubject)
 	}
 
 	// Extract all claims as a map
@@ -99,12 +99,12 @@ func GenerateSimpleJWT(
 		Expiration(time.Now().Add(time.Duration(expSeconds) * time.Second)).
 		Build()
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToBuildToken)
+		return "", errutil.New(i18nmsg.FailedToBuildToken)
 	}
 
 	signed, err := jwt.Sign(token, jwt.WithKey(jwa.HS256, []byte(clientSecret)))
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToSignToken)
+		return "", errutil.New(i18nmsg.FailedToSignToken)
 	}
 
 	return string(signed), nil
@@ -121,13 +121,13 @@ func GenerateSubscriptionJWT(
 		Claim("channel", channel).
 		Build()
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToBuildToken)
+		return "", errutil.New(i18nmsg.FailedToBuildToken)
 	}
 
 	// Sign the token using HS256 with "secret" as the key.
 	signed, err := jwt.Sign(token, jwt.WithKey(jwa.HS256, []byte(clientSecret)))
 	if err != nil {
-		return "", errutil.New(localeutil.FailedToSignToken)
+		return "", errutil.New(i18nmsg.FailedToSignToken)
 	}
 
 	return string(signed), nil

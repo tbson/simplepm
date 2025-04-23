@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"src/common/ctype"
+	"src/util/i18nmsg"
 	"src/util/localeutil"
 
 	"github.com/jackc/pgx/v5/pgconn"
@@ -129,7 +130,7 @@ func (e *CustomError) Merge(err *CustomError) *CustomError {
 func NewStandard(field string, msgCode *i18n.Message, args ctype.Dict) *CustomError {
 	err := &CustomError{}
 	if msgCode == nil {
-		msgCode = localeutil.UnknownError
+		msgCode = i18nmsg.UnknownError
 	}
 	errMsg := ErrMsg{
 		MsgCode: msgCode,
@@ -147,7 +148,7 @@ func New(msgCode *i18n.Message) *CustomError {
 }
 
 func NewRaw(msg string) *CustomError {
-	return NewWithArgs(localeutil.RawMsg, ctype.Dict{"Msg": msg})
+	return NewWithArgs(i18nmsg.RawMsg, ctype.Dict{"Msg": msg})
 }
 
 func NewWithArgs(msgCode *i18n.Message, args ctype.Dict) *CustomError {
@@ -200,7 +201,7 @@ func NewGormError(err error) *CustomError {
 		switch pgErr.Code {
 		case "23505":
 			msg := ErrMsg{
-				MsgCode: localeutil.GormDuplicateKey,
+				MsgCode: i18nmsg.GormDuplicateKey,
 				Args:    ctype.Dict{},
 			}
 
@@ -218,7 +219,7 @@ func NewGormError(err error) *CustomError {
 		Errors: []errorItem{
 			{
 				Field:    "detail",
-				Messages: []ErrMsg{{localeutil.RawMsg, ctype.Dict{"Msg": err.Error()}}},
+				Messages: []ErrMsg{{i18nmsg.RawMsg, ctype.Dict{"Msg": err.Error()}}},
 			},
 		},
 	}

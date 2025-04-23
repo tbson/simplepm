@@ -13,7 +13,7 @@ import (
 	"src/module/aws/repo/s3"
 	"src/util/dictutil"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"src/util/stringutil"
 	"strconv"
 	"strings"
@@ -24,7 +24,7 @@ import (
 
 func BytesToStruct[T any](data []byte, target T) (T, error) {
 	if err := json.Unmarshal(data, &target); err != nil {
-		return target, errutil.New(localeutil.CannotReadRequestBody)
+		return target, errutil.New(i18nmsg.CannotReadRequestBody)
 	}
 	return target, nil
 }
@@ -32,7 +32,7 @@ func BytesToStruct[T any](data []byte, target T) (T, error) {
 func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 	result := target
 	if err := c.Bind(&target); err != nil {
-		return result, errutil.New(localeutil.CannotReadRequestBody)
+		return result, errutil.New(i18nmsg.CannotReadRequestBody)
 	}
 	// Validate the struct
 	if err := c.Validate(target); err != nil {
@@ -50,13 +50,13 @@ func ValidatePayload[T any](c echo.Context, target T) (T, error) {
 
 				switch fe.Tag() {
 				case "required":
-					errObj.Update(fieldName, localeutil.FieldRequired)
+					errObj.Update(fieldName, i18nmsg.FieldRequired)
 				case "oneof":
-					errObj.UpdateWithArgs(fieldName, localeutil.MustBeOneOf, ctype.Dict{
+					errObj.UpdateWithArgs(fieldName, i18nmsg.MustBeOneOf, ctype.Dict{
 						"Values": fe.Param(),
 					})
 				default:
-					errObj.Update(fieldName, localeutil.InvalidValue)
+					errObj.Update(fieldName, i18nmsg.InvalidValue)
 				}
 			}
 		} else {
@@ -80,7 +80,7 @@ func ValidateUpdatePayload[T any](c echo.Context, target T) (T, []string, error)
 	}
 
 	if err := c.Bind(&target); err != nil {
-		return structResult, defaultFields, errutil.New(localeutil.CannotReadRequestBody)
+		return structResult, defaultFields, errutil.New(i18nmsg.CannotReadRequestBody)
 	}
 
 	return target, fields, nil
@@ -165,7 +165,7 @@ func getFiles(c echo.Context) (map[string][]*multipart.FileHeader, error) {
 	result := map[string][]*multipart.FileHeader{}
 	form, err := c.MultipartForm()
 	if err != nil {
-		return result, errutil.New(localeutil.CannotReadRequestBody)
+		return result, errutil.New(i18nmsg.CannotReadRequestBody)
 	}
 
 	// Add form data to keys map
@@ -230,7 +230,7 @@ func getJsonFields(c echo.Context) ([]string, error) {
 	result := []string{}
 	bodyBytes, err := io.ReadAll(c.Request().Body)
 	if err != nil {
-		return result, errutil.New(localeutil.CannotReadRequestBody)
+		return result, errutil.New(i18nmsg.CannotReadRequestBody)
 	}
 
 	// Reset the body so it can be read again if needed
@@ -239,7 +239,7 @@ func getJsonFields(c echo.Context) ([]string, error) {
 	// Unmarshal into a map to get the keys present in the payload
 	var payloadMap ctype.Dict
 	if err := json.Unmarshal(bodyBytes, &payloadMap); err != nil {
-		return result, errutil.New(localeutil.InvalidJSONPayload)
+		return result, errutil.New(i18nmsg.InvalidJSONPayload)
 	}
 
 	// Extract only the keys
@@ -257,7 +257,7 @@ func getFormFields(c echo.Context) ([]string, error) {
 	keys := make(map[string]interface{})
 	form, err := c.FormParams()
 	if err != nil {
-		return result, errutil.New(localeutil.CannotReadRequestBody)
+		return result, errutil.New(i18nmsg.CannotReadRequestBody)
 	}
 
 	// Add form data to keys map
@@ -276,7 +276,7 @@ func getFormFields(c echo.Context) ([]string, error) {
 func CheckRequiredFilter(c echo.Context, param string) error {
 	if c.QueryParam(param) == "" {
 		return errutil.NewWithArgs(
-			localeutil.MissingQueryParam,
+			i18nmsg.MissingQueryParam,
 			ctype.Dict{
 				"Value": param,
 			},

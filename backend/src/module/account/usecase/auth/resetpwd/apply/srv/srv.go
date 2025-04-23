@@ -5,7 +5,7 @@ import (
 	"src/module/account/schema"
 	"src/util/dateutil"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"src/util/pwdutil"
 )
 
@@ -34,7 +34,7 @@ func (srv srv) ResetPwd(email string, code string, pwd string, tenantID uint) er
 
 	// Check reset pwd code
 	if user.PwdResetToken != code {
-		return errutil.New(localeutil.InvalidResetPwdCode)
+		return errutil.New(i18nmsg.InvalidResetPwdCode)
 	}
 
 	// Update user pwd

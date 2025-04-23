@@ -4,7 +4,7 @@ import (
 	"src/module/account/domain/model"
 
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 	"src/util/numberutil"
 	"src/util/tokenutil"
 )
@@ -38,7 +38,7 @@ func (r srv) VerifyAccessToken(token string) (uint, error) {
 	}
 	typ := claims["typ"].(string)
 	if typ != "access" {
-		return 0, errutil.New(localeutil.InvalidAccessToken)
+		return 0, errutil.New(i18nmsg.InvalidAccessToken)
 	}
 	userID := numberutil.StrToUint(claims["sub"].(string), 0)
 	return userID, nil
@@ -52,7 +52,7 @@ func (r srv) VerifyRefreshToken(token string) (uint, error) {
 	}
 	typ := claims["typ"].(string)
 	if typ != "refresh" {
-		return 0, errutil.New(localeutil.InvalidRefreshToken)
+		return 0, errutil.New(i18nmsg.InvalidRefreshToken)
 	}
 	userID := numberutil.StrToUint(claims["sub"].(string), 0)
 	return userID, nil

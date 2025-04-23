@@ -5,7 +5,7 @@ import (
 	"src/module/account/domain/model"
 	"src/module/account/schema"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 )
 
 type authTokenProvider interface {
@@ -41,7 +41,7 @@ func (srv srv) RefreshToken(refreshToken string) (model.TokenPair, error) {
 	}
 
 	if user.LockedAt != nil {
-		return model.TokenPair{}, errutil.New(localeutil.LockedAccount)
+		return model.TokenPair{}, errutil.New(i18nmsg.LockedAccount)
 	}
 
 	return srv.authTokenSrv.GenerateTokenPair(userID)

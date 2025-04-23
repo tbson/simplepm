@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"src/common/setting"
 	"src/util/errutil"
-	"src/util/localeutil"
+	"src/util/i18nmsg"
 )
 
 type Repo struct{}
@@ -22,7 +22,7 @@ func (r Repo) Publish(data interface{}) error {
 
 	jsonData, err := json.Marshal(data)
 	if err != nil {
-		return errutil.New(localeutil.CannotReadRequestBody)
+		return errutil.New(i18nmsg.CannotReadRequestBody)
 	}
 
 	reqBody := bytes.NewBuffer(jsonData)
@@ -30,7 +30,7 @@ func (r Repo) Publish(data interface{}) error {
 	// Create the HTTP request
 	req, err := http.NewRequest("POST", url, reqBody)
 	if err != nil {
-		return errutil.New(localeutil.CanNotCreateRequest)
+		return errutil.New(i18nmsg.CanNotCreateRequest)
 	}
 
 	// Set headers
@@ -41,13 +41,13 @@ func (r Repo) Publish(data interface{}) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return errutil.New(localeutil.CanNotSendRequest)
+		return errutil.New(i18nmsg.CanNotSendRequest)
 	}
 	defer resp.Body.Close()
 
 	// Check the response status
 	if resp.StatusCode != http.StatusOK {
-		return errutil.New(localeutil.BadRequest)
+		return errutil.New(i18nmsg.BadRequest)
 	}
 	return nil
 }
