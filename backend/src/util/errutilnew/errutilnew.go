@@ -130,6 +130,10 @@ func NewEmpty() *CustomError {
 	return &CustomError{}
 }
 
+func NewRaw(msg string) *CustomError {
+	return NewSimpleWithArgs(localeutil.RawMsg, ctype.Dict{"Msg": msg})
+}
+
 func NewSimple(msgCode *i18n.Message) *CustomError {
 	return New(DEFAULT_FIELD, msgCode, ctype.Dict{})
 }

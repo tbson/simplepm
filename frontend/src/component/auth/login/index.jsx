@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { t } from 'ttag';
 import { Row, Col, Card, Button, Divider } from 'antd';
 import StorageUtil from 'service/helper/storage_util';
@@ -15,7 +15,6 @@ const styles = {
 };
 export default function Login() {
     const navigate = useNavigate();
-    const [searchParams] = useSearchParams();
     const navigateTo = NavUtil.navigateTo(navigate);
 
     useEffect(() => {
@@ -24,11 +23,7 @@ export default function Login() {
 
     const handleLogin = ({auth, next}) => {
         StorageUtil.setStorage('auth', auth);
-        if (next) {
-            navigateTo(next);
-        } else {
-            navigateTo('/');
-        }
+        navigateTo(next || '/');
     };
 
     const handleOpenResetPwd = useCallback(() => {

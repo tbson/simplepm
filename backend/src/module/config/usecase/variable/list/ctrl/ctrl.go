@@ -3,6 +3,7 @@ package ctrl
 import (
 	"net/http"
 
+	"src/util/errutilnew"
 	"src/util/restlistutil"
 
 	"src/module/config/schema"
@@ -45,11 +46,11 @@ var orderableFields = []string{"id", "key"}
 // @Failure 400 {object} ctype.Dict
 // @Router /config/variable [get]
 func (ctrl ctrl) Handler(c echo.Context) error {
-	options := restlistutil.GetOptions(c, filterableFields, orderableFields)
+	pagingOptions := restlistutil.GetOptions(c, filterableFields, orderableFields)
 
-	result, err := ctrl.srv.Paging(options, searchableFields)
+	result, err := ctrl.srv.Paging(pagingOptions, searchableFields)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, err.(*errutilnew.CustomError).Localize())
 	}
 
 	return c.JSON(http.StatusOK, pres.PagePres(result))

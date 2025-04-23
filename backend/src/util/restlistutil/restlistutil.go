@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"src/util/dictutil"
+	"src/util/errutilnew"
 	"src/util/numberutil"
 
 	"github.com/labstack/echo/v4"
@@ -179,7 +180,7 @@ func ApplyPaging(query *gorm.DB, page int, total int64) ApplyPagingResult {
 func GetTotalRecords(query *gorm.DB) (int64, error) {
 	var totalRecords int64
 	if err := query.Count(&totalRecords).Error; err != nil {
-		return 0, err
+		return 0, errutilnew.NewRaw(err.Error())
 	}
 	return totalRecords, nil
 }

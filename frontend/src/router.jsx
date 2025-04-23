@@ -1,12 +1,10 @@
 import { createBrowserRouter } from 'react-router';
-import StorageUtil from 'service/helper/storage_util';
 import PrivateRoute from 'component/common/route/private_route.jsx';
 
 const App = (await import('src/app')).default;
 const BlankLayout = (await import('component/common/layout/blank')).default;
-const AdminLayout = (await import('component/common/layout/admin')).default;
-const UserLayout = (await import('component/common/layout/user')).default;
 const TenantLayout = (await import('component/common/layout/tenant')).default;
+const MainLayout = (await import('component/common/layout/main')).default;
 
 const NotMatch = (await import('component/common/route/not_match')).default;
 const AuthError = (await import('component/common/result/auth_error')).default;
@@ -26,8 +24,6 @@ const Task = (await import('component/pm/task')).default;
 const Message = (await import('component/event/message')).default;
 const Doc = (await import('component/document/doc')).default;
 
-const userInfor = StorageUtil.getUserInfo();
-const MainLayout = userInfor?.admin ? AdminLayout : UserLayout;
 
 const router = createBrowserRouter([
     {
