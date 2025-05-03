@@ -1,10 +1,10 @@
-package apply
+package refreshtoken
 
 import (
-	"src/module/account/usecase/auth/refreshtoken/apply/ctrl"
+	"src/module/account/usecase/auth/refreshtoken/ctrl"
 
 	"src/module/account/repo/user"
-	"src/module/account/usecase/auth/refreshtoken/apply/srv"
+	"src/module/account/usecase/auth/refreshtoken/srv"
 
 	"src/common/setting"
 	"src/module/account/domain/srv/authtoken"

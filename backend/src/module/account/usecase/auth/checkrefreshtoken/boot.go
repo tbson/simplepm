@@ -1,7 +1,7 @@
-package refreshtokencheck
+package checkrefreshtoken
 
 import (
-	"src/module/account/usecase/auth/refreshtoken/check/ctrl"
+	"src/module/account/usecase/auth/checkrefreshtoken/ctrl"
 	"src/util/fwutil"
 )
 

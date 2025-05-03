@@ -49,12 +49,3 @@ func LoginPres(c echo.Context, loginResult model.LoginResult, next string) error
 	// return c.Render(http.StatusOK, "post-login.html", data)
 	return c.JSON(http.StatusOK, data)
 }
-
-func RefreshTokenPres(c echo.Context, accessToken string, refreshToken string) error {
-	accessTokenCookie := cookieutil.NewAccessTokenCookie(accessToken)
-	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(refreshToken)
-	c.SetCookie(accessTokenCookie)
-	c.SetCookie(refreshTokenCookie)
-
-	return c.JSON(http.StatusOK, ctype.Dict{})
-}

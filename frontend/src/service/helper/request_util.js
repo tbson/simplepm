@@ -15,10 +15,13 @@ export class RefreshTokenUtil {
         if (this.refreshPromise) {
             return this.refreshPromise;
         }
-        const url = 'account/auth/sso/refresh-token';
-        this.refreshPromise = RequestUtil.request(url).finally(() => {
-            this.refreshPromise = null;
-        });
+        const url = 'account/auth/refresh-token';
+        const client_type = RequestUtil.getClientType();
+        this.refreshPromise = RequestUtil.request(url, { client_type }, 'post').finally(
+            () => {
+                this.refreshPromise = null;
+            }
+        );
         return this.refreshPromise;
     }
 
@@ -26,7 +29,7 @@ export class RefreshTokenUtil {
         if (this.checkPromise) {
             return this.checkPromise;
         }
-        const url = 'account/auth/sso/refresh-token-check';
+        const url = 'account/auth/refresh-token/check';
         this.checkPromise = RequestUtil.request(url).finally(() => {
             this.checkPromise = null;
         });
@@ -35,6 +38,10 @@ export class RefreshTokenUtil {
 }
 
 export default class RequestUtil {
+    static getClientType() {
+        return 'web';
+    }
+
     /**
      * Prepare JSON payload for HTTP request
      * @param {Object} data

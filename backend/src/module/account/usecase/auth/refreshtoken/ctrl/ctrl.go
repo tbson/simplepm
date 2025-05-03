@@ -1,10 +1,13 @@
 package ctrl
 
 import (
+	"fmt"
 	"net/http"
 
-	"src/common/ctype"
 	"src/module/account/domain/model"
+	"src/module/account/usecase/auth/refreshtoken/pres/cookie"
+	"src/module/account/usecase/auth/refreshtoken/pres/json"
+	"src/util/cookieutil"
 	"src/util/errutil"
 	"src/util/vldtutil"
 
@@ -20,7 +23,8 @@ type ctrl struct {
 }
 
 type input struct {
-	RefreshToken string `json:"refresh_token" validate:"required"`
+	// RefreshToken string `json:"refresh_token" validate:"required"`
+	ClientType string `json:"client_type" validate:"required,oneof=web app"`
 }
 
 func (ctrl ctrl) Handler(c echo.Context) error {
@@ -28,13 +32,18 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
-
-	_, err = ctrl.Srv.RefreshToken(structData.RefreshToken)
+	refreshToken := cookieutil.GetValue(c, "refresh_token")
+	fmt.Println("refreshToken", refreshToken)
+	tokenPair, err := ctrl.Srv.RefreshToken(refreshToken)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
-	return c.JSON(http.StatusOK, ctype.Dict{})
+	if structData.ClientType == "web" {
+		return cookie.RefreshTokenPres(c, tokenPair)
+	}
+
+	return json.RefreshTokenPres(c, tokenPair)
 }
 
 func New(srv SrvProvider) ctrl {

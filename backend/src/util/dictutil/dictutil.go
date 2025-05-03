@@ -3,11 +3,13 @@ package dictutil
 import (
 	"fmt"
 	"reflect"
+	"slices"
 	"src/common/ctype"
 	"src/util/stringutil"
+	"strings"
 )
 
-func StructToDict(obj interface{}) ctype.Dict {
+func StructToDict(obj any) ctype.Dict {
 	result := make(ctype.Dict)
 	if obj == nil {
 		return result
@@ -27,7 +29,7 @@ func StructToDict(obj interface{}) ctype.Dict {
 
 	typ := val.Type()
 	// Iterate through the struct fields
-	for i := 0; i < typ.NumField(); i++ {
+	for i := range typ.NumField() {
 		field := typ.Field(i)
 		if field.PkgPath != "" {
 			continue
@@ -77,4 +79,61 @@ func StrDictToSelectOptions(data ctype.StrDict) []ctype.SelectOption[string] {
 		})
 	}
 	return result
+}
+
+func parseStructByFields[T any](target T, fields []string, fieldModifier []string) ctype.Dict {
+	// fieldModifer can be included fields or excluded fields, the excluded fields are the fields that prefix with "-"
+	// if the fieldModifier item is prefixed with "-", the field will be excluded
+	// if the fieldModifier item not prefixed with "-", the field will be included if it is not present in the fields variable
+	// if the fieldModifier is empty, fields variable will be used
+
+	newFields := []string{}
+
+	includeFields := []string{}
+	excludeFields := []string{}
+
+	for _, field := range fieldModifier {
+		if strings.HasPrefix(field, "-") {
+			excludeFields = append(excludeFields, strings.TrimPrefix(field, "-"))
+		} else {
+			includeFields = append(includeFields, field)
+		}
+	}
+
+	for _, field := range fields {
+		if !slices.Contains(excludeFields, field) {
+			newFields = append(newFields, field)
+		}
+	}
+
+	for _, field := range includeFields {
+		if !slices.Contains(newFields, field) {
+			newFields = append(newFields, field)
+		}
+	}
+
+	data := StructToDict(target)
+
+	// remove the fields that are not present in the payload, check json tags
+	for k := range data {
+		structField, _ := reflect.TypeOf(target).FieldByName(k)
+		jsonTag := structField.Tag.Get("json")
+		if jsonTag != "" {
+			fieldName := strings.Split(jsonTag, ",")[0]
+			if !slices.Contains(newFields, fieldName) {
+				delete(data, k)
+			}
+		}
+	}
+
+	return data
+}
+
+func StructDictByFields[T any](target T, fields []string) ctype.Dict {
+	fieldModifier := []string{}
+	return parseStructByFields(target, fields, fieldModifier)
+}
+
+func StructDictByModifier[T any](target T, fields []string, fieldModifier []string) ctype.Dict {
+	return parseStructByFields(target, fields, fieldModifier)
 }

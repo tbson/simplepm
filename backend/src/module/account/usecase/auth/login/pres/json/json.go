@@ -43,12 +43,3 @@ func LoginPres(c echo.Context, loginResult model.LoginResult, next string) error
 	// return c.Render(http.StatusOK, "post-login.html", data)
 	return c.JSON(http.StatusOK, data)
 }
-
-func RefreshTokenPres(c echo.Context, accessToken string, refreshToken string) error {
-	data := map[string]interface{}{
-		"access_token":  accessToken,
-		"refresh_token": refreshToken,
-	}
-
-	return c.JSON(http.StatusOK, data)
-}

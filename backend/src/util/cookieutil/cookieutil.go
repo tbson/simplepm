@@ -25,7 +25,7 @@ func NewAccessTokenCookie(value string) *http.Cookie {
 }
 
 func NewRefreshTokenCookie(value string) *http.Cookie {
-	return newCookie("refresh_token", value, "/api/v1/account/auth/sso/refresh-token")
+	return newCookie("refresh_token", value, "/api/v1/account/auth/refresh-token")
 }
 
 func NewIDTokenCookie(value string) *http.Cookie {

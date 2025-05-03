@@ -1,9 +1,9 @@
-package apply
+package resetpwd
 
 import (
 	"src/module/account/repo/user"
-	"src/module/account/usecase/auth/resetpwd/apply/ctrl"
-	"src/module/account/usecase/auth/resetpwd/apply/srv"
+	"src/module/account/usecase/auth/resetpwd/ctrl"
+	"src/module/account/usecase/auth/resetpwd/srv"
 	"src/util/dbutil"
 	"src/util/fwutil"
 )

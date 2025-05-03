@@ -1,11 +1,11 @@
-package request
+package requestresetpwd
 
 import (
 	"src/client/emailclient"
 	"src/module/account/repo/email"
 	"src/module/account/repo/user"
-	"src/module/account/usecase/auth/resetpwd/request/ctrl"
-	"src/module/account/usecase/auth/resetpwd/request/srv"
+	"src/module/account/usecase/auth/requestresetpwd/ctrl"
+	"src/module/account/usecase/auth/requestresetpwd/srv"
 	"src/util/dbutil"
 	"src/util/fwutil"
 )
