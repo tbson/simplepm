@@ -9,7 +9,11 @@ type UserInfo struct {
 	Avatar   string `json:"avatar"`
 }
 
-func NewUserInfo(id, tenantID uint, admin bool, firstName, lastName, avatar string) UserInfo {
+func NewUserInfo(
+	id, tenantID uint,
+	admin bool,
+	firstName, lastName, avatar string,
+) UserInfo {
 	return UserInfo{
 		ID:       id,
 		TenantID: tenantID,
@@ -25,7 +29,10 @@ type TokenPair struct {
 	RefreshToken string
 }
 
-type LoginResult struct {
+type AuthResult struct {
 	TokenPair TokenPair
 	UserInfo  UserInfo
 }
+
+const CLIENT_TYPE_WEB = "web"
+const CLIENT_TYPE_APP = "app"

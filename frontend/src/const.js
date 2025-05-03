@@ -11,7 +11,6 @@ export const PROTOCOL = 'https://';
 export const DOMAIN = window.location.host;
 // export const DOMAIN = "simplepm.test";
 export const API_PREFIX = '/api/v1/';
-export const CLIENT_TYPE = 'web';
 
 export const LOCAL_STORAGE_PREFIX = APP_NAMESPACE;
 

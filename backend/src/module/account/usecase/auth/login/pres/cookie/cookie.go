@@ -15,7 +15,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func LoginPres(c echo.Context, loginResult model.LoginResult, next string) error {
+func LoginPres(c echo.Context, loginResult model.AuthResult, next string) error {
 	authRepo := repo.New(dbutil.Db(nil))
 
 	accessToken := loginResult.TokenPair.AccessToken

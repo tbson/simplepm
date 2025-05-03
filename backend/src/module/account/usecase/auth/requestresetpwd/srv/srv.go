@@ -2,7 +2,7 @@ package srv
 
 import (
 	"src/common/ctype"
-	"src/module/account"
+	"src/common/setting"
 	"src/module/account/schema"
 	"src/util/stringutil"
 )
@@ -36,7 +36,7 @@ func (srv srv) ResetPwdRequest(email string, tenantID uint) error {
 	}
 
 	// Generate reset pwd token
-	code := stringutil.GetRandomString(account.OTP_LENGTH)
+	code := stringutil.GetRandomString(setting.OTP_LENGTH())
 
 	// update user reset pwd token
 	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": user.ID}}

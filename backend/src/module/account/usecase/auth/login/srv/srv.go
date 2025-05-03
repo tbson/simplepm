@@ -37,8 +37,8 @@ func New(
 	return srv{userRepo, authTokenSrv, pwdPolicySrv}
 }
 
-func (srv srv) Login(email string, pwd string, tenantID uint) (model.LoginResult, error) {
-	result := model.LoginResult{}
+func (srv srv) Login(email string, pwd string, tenantID uint) (model.AuthResult, error) {
+	result := model.AuthResult{}
 	// Check user exists
 	userOpts := ctype.QueryOpts{
 		Filters: ctype.Dict{"Email": email, "TenantID": tenantID},

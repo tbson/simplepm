@@ -2,7 +2,7 @@ import React from 'react';
 import { t } from 'ttag';
 import { App, Button, Row, Col, Form, Input } from 'antd';
 import { ArrowRightOutlined } from '@ant-design/icons';
-import { CLIENT_TYPE } from 'src/const';
+import PlatformUtil from 'service/helper/platform_util';
 import FormUtil from 'service/helper/form_util';
 import { urls } from 'component/auth/config';
 
@@ -17,7 +17,8 @@ export default function LoginForm({ onChange, children }) {
     };
 
     const handleLogin = (payload) => {
-        FormUtil.submit(urls.login, {...payload, client_type: CLIENT_TYPE}, 'post')
+        const client_type = PlatformUtil.getClientType();
+        FormUtil.submit(urls.login, { ...payload, client_type }, 'post')
             .then((result) => {
                 onChange(result);
             })
@@ -32,19 +33,11 @@ export default function LoginForm({ onChange, children }) {
             initialValues={{ ...initialValues }}
             onFinish={handleLogin}
         >
-            <Form.Item
-                name="email"
-                label={t`Email`}
-                rules={[FormUtil.ruleRequired()]}
-            >
+            <Form.Item name="email" label={t`Email`} rules={[FormUtil.ruleRequired()]}>
                 <Input autoFocus />
             </Form.Item>
 
-            <Form.Item
-                name="pwd"
-                label={t`Password`}
-                rules={[FormUtil.ruleRequired()]}
-            >
+            <Form.Item name="pwd" label={t`Password`} rules={[FormUtil.ruleRequired()]}>
                 <Input type="password" />
             </Form.Item>
 

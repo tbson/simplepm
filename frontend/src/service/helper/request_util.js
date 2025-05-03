@@ -3,6 +3,7 @@ import Util from 'service/helper/util';
 import NavUtil from 'service/helper/nav_util';
 import StorageUtil from 'service/helper/storage_util';
 import DateUtil from 'service/helper/date_util';
+import PlatformUtil from 'service/helper/platform_util';
 import { PROTOCOL, DOMAIN, API_PREFIX } from 'src/const';
 
 export class RefreshTokenUtil {
@@ -16,7 +17,7 @@ export class RefreshTokenUtil {
             return this.refreshPromise;
         }
         const url = 'account/auth/refresh-token';
-        const client_type = RequestUtil.getClientType();
+        const client_type = PlatformUtil.getClientType();
         this.refreshPromise = RequestUtil.request(url, { client_type }, 'post').finally(
             () => {
                 this.refreshPromise = null;
@@ -38,10 +39,6 @@ export class RefreshTokenUtil {
 }
 
 export default class RequestUtil {
-    static getClientType() {
-        return 'web';
-    }
-
     /**
      * Prepare JSON payload for HTTP request
      * @param {Object} data

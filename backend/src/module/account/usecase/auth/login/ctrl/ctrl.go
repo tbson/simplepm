@@ -16,7 +16,7 @@ import (
 )
 
 type SrvProvider interface {
-	Login(email string, pwd string, tenantID uint) (model.LoginResult, error)
+	Login(email string, pwd string, tenantID uint) (model.AuthResult, error)
 }
 
 type ctrl struct {
@@ -53,7 +53,7 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 
-	if structData.ClientType == "web" {
+	if structData.ClientType == model.CLIENT_TYPE_WEB {
 		return cookie.LoginPres(c, loginResult, next)
 	}
 
