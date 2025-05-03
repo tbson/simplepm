@@ -2,7 +2,7 @@ package requestresetpwd
 
 import (
 	"src/client/emailclient"
-	"src/module/account/repo/email"
+	"src/module/account/extsrv/email"
 	"src/module/account/repo/user"
 	"src/module/account/usecase/auth/requestresetpwd/ctrl"
 	"src/module/account/usecase/auth/requestresetpwd/srv"
@@ -23,11 +23,11 @@ func WireCtrl() fwutil.CtrlHandler {
 		panic(err)
 	}
 
-	userRepo := user.New(dbClient)
-	emailRepo := email.New(emailClient)
-
-	ctrlHandler = ctrl.New(
-		srv.New(userRepo, emailRepo),
+	ctrlSrv := srv.New(
+		user.New(dbClient),
+		email.New(emailClient),
 	)
+
+	ctrlHandler = ctrl.New(ctrlSrv)
 	return ctrlHandler
 }

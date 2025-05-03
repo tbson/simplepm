@@ -17,12 +17,12 @@ type emailProvider interface {
 }
 
 type srv struct {
-	userRepo  userProvider
-	emailRepo emailProvider
+	userRepo userProvider
+	emailSrv emailProvider
 }
 
-func New(userRepo userProvider, emailRepo emailProvider) srv {
-	return srv{userRepo, emailRepo}
+func New(userRepo userProvider, emailSrv emailProvider) srv {
+	return srv{userRepo, emailSrv}
 }
 
 func (srv srv) ResetPwdRequest(email string, tenantID uint) error {
@@ -58,6 +58,6 @@ func (srv srv) ResetPwdRequest(email string, tenantID uint) error {
 			"Code": code,
 		},
 	}
-	srv.emailRepo.SendEmailAsync(to, subject, body)
+	srv.emailSrv.SendEmailAsync(to, subject, body)
 	return nil
 }

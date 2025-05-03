@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"src/client/emailclient"
 	"src/common/ctype"
-	"src/module/account/repo/email"
+	"src/module/account/extsrv/email"
 )
 
 func main() {
