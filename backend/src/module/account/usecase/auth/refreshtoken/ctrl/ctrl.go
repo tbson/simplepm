@@ -1,7 +1,6 @@
 package ctrl
 
 import (
-	"fmt"
 	"net/http"
 
 	"src/module/account/domain/model"
@@ -33,7 +32,6 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
 	refreshToken := cookieutil.GetValue(c, "refresh_token")
-	fmt.Println("refreshToken", refreshToken)
 	tokenPair, err := ctrl.Srv.RefreshToken(refreshToken)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
