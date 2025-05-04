@@ -1,13 +1,13 @@
 package main
 
 import (
-	"src/client/queueclient"
+	queueadapter "src/adapter/queue"
 	"src/common/ctype"
 	"src/queue"
 )
 
 func main() {
-	client := queueclient.NewClient()
+	client := queueadapter.New()
 
 	testPayload := ctype.Dict{
 		"user_id": 1,

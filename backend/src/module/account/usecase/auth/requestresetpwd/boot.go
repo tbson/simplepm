@@ -1,8 +1,7 @@
 package requestresetpwd
 
 import (
-	"src/client/emailclient"
-	"src/module/account/extsrv/email"
+	"src/adapter/email"
 	"src/module/account/repo/user"
 	"src/module/account/usecase/auth/requestresetpwd/ctrl"
 	"src/module/account/usecase/auth/requestresetpwd/srv"
@@ -18,14 +17,12 @@ func WireCtrl() fwutil.CtrlHandler {
 	}
 
 	dbClient := dbutil.Db(nil)
-	emailClient, err := emailclient.NewClient()
-	if err != nil {
-		panic(err)
-	}
+	userRepo := user.New(dbClient)
+	emailAdapter := email.New()
 
 	ctrlSrv := srv.New(
-		user.New(dbClient),
-		email.New(emailClient),
+		userRepo,
+		emailAdapter,
 	)
 
 	ctrlHandler = ctrl.New(ctrlSrv)

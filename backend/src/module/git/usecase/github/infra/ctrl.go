@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"src/client/scyllaclient"
+	"src/client/scylla"
 	"src/common/ctype"
 	"src/util/dbutil"
 	"src/util/errutil"
@@ -42,7 +42,7 @@ func Callback(c echo.Context) error {
 	gitRepoRepo := gitrepo.New(dbutil.Db(nil))
 	gitPushRepo := gitpush.New(dbutil.Db(nil))
 	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
-	messageRepo := message.New(scyllaclient.NewClient())
+	messageRepo := message.New(scylla.New())
 	centrifugoRepo := centrifugo.New()
 	gitRepo := New(dbutil.Db(nil))
 
@@ -88,7 +88,7 @@ func Webhook(c echo.Context) error {
 	gitRepoRepo := gitrepo.New(dbutil.Db(nil))
 	gitPushRepo := gitpush.New(dbutil.Db(nil))
 	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
-	messageRepo := message.New(scyllaclient.NewClient())
+	messageRepo := message.New(scylla.New())
 	centrifugoRepo := centrifugo.New()
 	gitRepo := New(dbutil.Db(nil))
 

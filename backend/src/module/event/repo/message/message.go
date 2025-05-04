@@ -2,12 +2,12 @@ package message
 
 import (
 	"fmt"
-	"src/client/scyllaclient"
 	"src/util/dateutil"
 	"src/util/errutil"
 	"strings"
 	"time"
 
+	"src/client/scylla"
 	"src/common/ctype"
 	"src/common/setting"
 	"src/module/event/schema"
@@ -15,20 +15,19 @@ import (
 	"github.com/gocql/gocql"
 )
 
-type Repo struct {
-	client *scyllaclient.Client
+type repo struct {
+	client scylla.ScyllaProvider
 }
 
-func New(client *scyllaclient.Client) Repo {
-	return Repo{client: client}
+func New(client scylla.ScyllaProvider) repo {
+	return repo{client: client}
 }
 
-func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, error) {
+func (r repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, error) {
 	pageSize := setting.MSG_PAGE_SIZE()
-	client := scyllaclient.NewClient()
 
 	// Use QueryWithPaging to build the query
-	q := client.QueryWithPaging(
+	q := r.client.QueryWithPaging(
 		"SELECT * FROM event.messages WHERE task_id = ? ORDER BY id DESC",
 		pageSize,
 		pageState,
@@ -86,11 +85,10 @@ func (r Repo) List(taskID uint, pageState []byte) ([]schema.Message, []byte, err
 	return messages, nextPageState, nil
 }
 
-func (r Repo) Create(data ctype.Dict) (schema.Message, error) {
+func (r repo) Create(data ctype.Dict) (schema.Message, error) {
 	defaultResult := schema.Message{}
-	client := scyllaclient.NewClient()
 	// defer client.Close()
-	id := scyllaclient.GenerateID()
+	id := r.client.GenerateID()
 	taskID := data["task_id"].(uint)
 	data["id"] = id
 
@@ -125,7 +123,7 @@ func (r Repo) Create(data ctype.Dict) (schema.Message, error) {
 		strings.Join(fields, ", "),
 		strings.Join(values, ", "),
 	)
-	err := client.Exec(queryStr, params...)
+	err := r.client.Exec(queryStr, params...)
 	if err != nil {
 		return defaultResult, errutil.NewGormError(err)
 	}
@@ -137,10 +135,9 @@ func (r Repo) Create(data ctype.Dict) (schema.Message, error) {
 	return message, nil
 }
 
-func (r Repo) Retrieve(id string, taskID uint) (schema.Message, error) {
-	client := scyllaclient.NewClient()
+func (r repo) Retrieve(id string, taskID uint) (schema.Message, error) {
 	// defer client.Close()
-	row, err := client.Query(
+	row, err := r.client.Query(
 		"SELECT * FROM event.messages WHERE id = ? AND task_id = ?",
 		id, taskID,
 	)
@@ -172,11 +169,10 @@ func (r Repo) Retrieve(id string, taskID uint) (schema.Message, error) {
 	return result, nil
 }
 
-func (r Repo) Update(id string, taskId uint, message schema.Message) (schema.Message, error) {
+func (r repo) Update(id string, taskId uint, message schema.Message) (schema.Message, error) {
 	defaultResult := schema.Message{}
-	client := scyllaclient.NewClient()
 	// defer client.Close()
-	err := client.Exec(
+	err := r.client.Exec(
 		`UPDATE
 			event.messages
 		SET
@@ -198,17 +194,16 @@ func (r Repo) Update(id string, taskId uint, message schema.Message) (schema.Mes
 	return result, nil
 }
 
-func (r Repo) Delete(id string, task_id uint) error {
-	client := scyllaclient.NewClient()
+func (r repo) Delete(id string, task_id uint) error {
 	// defer client.Close()
-	err := client.Exec("DELETE FROM event.messages WHERE id = ? AND task_id = ?", id, task_id)
+	err := r.client.Exec("DELETE FROM event.messages WHERE id = ? AND task_id = ?", id, task_id)
 	if err != nil {
 		return errutil.NewGormError(err)
 	}
 	return nil
 }
 
-func (r Repo) CreateAttachment(
+func (r repo) CreateAttachment(
 	messageID string,
 	fileName string,
 	fileType string,
@@ -216,10 +211,9 @@ func (r Repo) CreateAttachment(
 	fileSize int,
 ) (schema.Attachment, error) {
 	emptyResult := schema.Attachment{}
-	client := scyllaclient.NewClient()
 	// defer client.Close()
-	id := scyllaclient.GenerateID()
-	err := client.Exec(
+	id := r.client.GenerateID()
+	err := r.client.Exec(
 		`INSERT INTO event.attachments (
 			id,
 			message_id,
@@ -248,16 +242,15 @@ func (r Repo) CreateAttachment(
 	return result, nil
 }
 
-func (r Repo) GetAttachmentMap(
+func (r repo) GetAttachmentMap(
 	messages []schema.Message,
 ) (map[string][]schema.Attachment, error) {
-	client := scyllaclient.NewClient()
 	// defer client.Close()
 	messageIDs := make([]string, 0)
 	for _, message := range messages {
 		messageIDs = append(messageIDs, message.ID)
 	}
-	rows, err := client.Query(
+	rows, err := r.client.Query(
 		"SELECT * FROM event.attachments WHERE message_id IN ?",
 		messageIDs,
 	)

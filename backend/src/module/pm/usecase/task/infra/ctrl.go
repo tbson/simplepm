@@ -24,7 +24,7 @@ import (
 	"src/module/pm/schema"
 	"src/module/pm/usecase/task/app"
 
-	"src/client/queueclient"
+	queueadapter "src/adapter/queue"
 	"src/queue"
 
 	"github.com/labstack/echo/v4"
@@ -237,7 +237,7 @@ func Create(c echo.Context) error {
 	}
 
 	// Publish to queue
-	client := queueclient.NewClient()
+	client := queueadapter.New()
 	client.Publish(queue.LOG_CREATE_TASK, ctype.Dict{
 		"tenant_id":      tenantID,
 		"project_id":     result.ProjectID,
@@ -302,7 +302,7 @@ func Update(c echo.Context) error {
 	}
 
 	// Publish to queue
-	client := queueclient.NewClient()
+	client := queueadapter.New()
 	client.Publish(queue.LOG_EDIT_TASK, ctype.Dict{
 		"tenant_id":      tenantID,
 		"project_id":     result.ProjectID,
@@ -337,7 +337,7 @@ func Delete(c echo.Context) error {
 	}
 
 	// Publish to queue
-	client := queueclient.NewClient()
+	client := queueadapter.New()
 	client.Publish(queue.LOG_DELETE_TASK, ctype.Dict{
 		"tenant_id":      tenantID,
 		"project_id":     result.ProjectID,

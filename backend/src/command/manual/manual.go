@@ -2,19 +2,12 @@ package main
 
 import (
 	"fmt"
-	"src/client/emailclient"
+	"src/adapter/email"
 	"src/common/ctype"
-	"src/module/account/extsrv/email"
 )
 
 func main() {
-	client, err := emailclient.NewClient()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	emailRepo := email.New(client)
+	emailAdapter := email.New()
 
 	to := "tbson87@gmail.com"
 	subject := "Test email for new client"
@@ -25,7 +18,7 @@ func main() {
 		},
 	}
 
-	emailRepo.SendEmailAsync(to, subject, body)
+	emailAdapter.SendEmailAsync(to, subject, body)
 
 	fmt.Println("Press Enter to exit...")
 	fmt.Scanln()

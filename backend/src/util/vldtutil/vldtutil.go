@@ -8,9 +8,8 @@ import (
 	"mime/multipart"
 	"reflect"
 	"slices"
-	"src/client/s3client"
+	"src/adapter/storage"
 	"src/common/ctype"
-	"src/module/aws/repo/s3"
 	"src/util/dictutil"
 	"src/util/errutil"
 	"src/util/i18nmsg"
@@ -184,13 +183,13 @@ func UploadAndUPdatePayload(
 	if c.Request().Header.Get("Content-Type") == "application/json" {
 		return result, nil
 	}
-	s3Repo := s3.New(s3client.NewClient())
+	storageAdapter := storage.New()
 	files, err := getFiles(c)
 	if err != nil {
 		return result, err
 	}
 
-	s3Result, err := s3Repo.Uploads(c.Request().Context(), folder, files)
+	s3Result, err := storageAdapter.Uploads(c.Request().Context(), files, folder)
 	for k, v := range s3Result {
 		result[k] = v.FileURL
 		fmt.Println(k, v.FileURL)
@@ -201,18 +200,18 @@ func UploadAndUPdatePayload(
 func UploadAndGetMetadata(
 	c echo.Context,
 	folder string,
-) ([]s3.FileInfo, error) {
-	resultFiles := []s3.FileInfo{}
+) ([]storage.FileInfo, error) {
+	resultFiles := []storage.FileInfo{}
 	if c.Request().Header.Get("Content-Type") == "application/json" {
 		return resultFiles, nil
 	}
-	s3Repo := s3.New(s3client.NewClient())
+	storageAdapter := storage.New()
 	files, err := getFiles(c)
 	if err != nil {
 		return resultFiles, err
 	}
 
-	s3Result, err := s3Repo.Uploads(c.Request().Context(), folder, files)
+	s3Result, err := storageAdapter.Uploads(c.Request().Context(), files, folder)
 	for _, v := range s3Result {
 		resultFiles = append(resultFiles, v)
 	}

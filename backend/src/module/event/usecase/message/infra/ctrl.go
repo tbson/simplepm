@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
-	"src/client/scyllaclient"
+	"src/client/scylla"
 	"src/common/ctype"
 	"src/util/errutil"
 	"src/util/numberutil"
@@ -24,9 +24,9 @@ func List(c echo.Context) error {
 	user := c.Get("User").(*schema.User)
 	taskID := numberutil.StrToUint(c.QueryParam("task_id"), 0)
 
-	client := scyllaclient.NewClient()
+	scylaAdapter := scylla.New()
 	centrifugoRepo := centrifugo.New()
-	messageRepo := message.New(client)
+	messageRepo := message.New(scylaAdapter)
 	srv := app.New(centrifugoRepo, messageRepo)
 
 	pageStateParam := c.QueryParam("page_state")
@@ -50,7 +50,7 @@ func List(c echo.Context) error {
 }
 
 func Create(c echo.Context) error {
-	client := scyllaclient.NewClient()
+	client := scylla.New()
 	centrifugoRepo := centrifugo.New()
 	messageRepo := message.New(client)
 
@@ -84,7 +84,7 @@ func Create(c echo.Context) error {
 }
 
 func Update(c echo.Context) error {
-	client := scyllaclient.NewClient()
+	client := scylla.New()
 	centrifugoRepo := centrifugo.New()
 	messageRepo := message.New(client)
 
@@ -107,7 +107,7 @@ func Update(c echo.Context) error {
 }
 
 func Delete(c echo.Context) error {
-	client := scyllaclient.NewClient()
+	client := scylla.New()
 	centrifugoRepo := centrifugo.New()
 	messageRepo := message.New(client)
 

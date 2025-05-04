@@ -1,8 +1,8 @@
 package app
 
 import (
+	"src/adapter/storage"
 	"src/common/ctype"
-	"src/module/aws/repo/s3"
 	"src/module/event"
 	"src/module/event/schema"
 )
@@ -29,7 +29,7 @@ func (srv Service) List(
 
 func (srv Service) Create(
 	data InputData,
-	files []s3.FileInfo,
+	files []storage.FileInfo,
 	socketUser SocketUser,
 	channel string,
 ) (string, error) {
