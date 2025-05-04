@@ -46,6 +46,6 @@ type MessageRepo interface {
 	Create(message ctype.Dict) (event.Message, error)
 }
 
-type CentrifugoRepo interface {
+type SocketProvider interface {
 	Publish(data interface{}) error
 }

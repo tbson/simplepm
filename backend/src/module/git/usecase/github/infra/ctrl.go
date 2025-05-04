@@ -11,13 +11,12 @@ import (
 	"src/util/numberutil"
 	"src/util/vldtutil"
 
-	"src/module/git/repo/github"
-
+	"src/adapter/socket"
 	"src/module/account/repo/gitaccount"
 	"src/module/account/repo/gitrepo"
 	"src/module/account/repo/tenant"
-	"src/module/event/repo/centrifugo"
 	"src/module/event/repo/message"
+	"src/module/git/repo/github"
 	"src/module/pm/repo/gitcommit"
 	"src/module/pm/repo/gitpush"
 
@@ -43,7 +42,7 @@ func Callback(c echo.Context) error {
 	gitPushRepo := gitpush.New(dbutil.Db(nil))
 	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
 	messageRepo := message.New(scylla.New())
-	centrifugoRepo := centrifugo.New()
+	socketAdapter := socket.New()
 	gitRepo := New(dbutil.Db(nil))
 
 	srv := app.New(
@@ -54,7 +53,7 @@ func Callback(c echo.Context) error {
 		gitCommitRepo,
 		gitRepo,
 		messageRepo,
-		centrifugoRepo,
+		socketAdapter,
 	)
 
 	setupAction := c.QueryParam("setup_action")
@@ -89,7 +88,7 @@ func Webhook(c echo.Context) error {
 	gitPushRepo := gitpush.New(dbutil.Db(nil))
 	gitCommitRepo := gitcommit.New(dbutil.Db(nil))
 	messageRepo := message.New(scylla.New())
-	centrifugoRepo := centrifugo.New()
+	socketAdapter := socket.New()
 	gitRepo := New(dbutil.Db(nil))
 
 	srv := app.New(
@@ -100,7 +99,7 @@ func Webhook(c echo.Context) error {
 		gitCommitRepo,
 		gitRepo,
 		messageRepo,
-		centrifugoRepo,
+		socketAdapter,
 	)
 
 	data, err := vldtutil.ValidatePayload(c, app.GithubWebhook{})

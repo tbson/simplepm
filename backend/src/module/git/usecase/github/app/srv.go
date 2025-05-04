@@ -19,7 +19,7 @@ type Service struct {
 	gitCommitRepo  GitCommitRepo
 	gitRepo        GitRepo
 	messageRepo    MessageRepo
-	centrifugoRepo CentrifugoRepo
+	socketAdapter  SocketProvider
 }
 
 func New(
@@ -30,7 +30,7 @@ func New(
 	gitCommitRepo GitCommitRepo,
 	gitRepo GitRepo,
 	messageRepo MessageRepo,
-	centrifugoRepo CentrifugoRepo,
+	socketAdapter SocketProvider,
 ) Service {
 	return Service{
 		tenantRepo,
@@ -40,7 +40,7 @@ func New(
 		gitCommitRepo,
 		gitRepo,
 		messageRepo,
-		centrifugoRepo,
+		socketAdapter,
 	}
 }
 
@@ -250,7 +250,7 @@ func (srv Service) HandlePushWebhook(
 				GitData:   dictutil.StructToDict(message.GitPush),
 			},
 		}
-		err = srv.centrifugoRepo.Publish(socketMessage)
+		err = srv.socketAdapter.Publish(socketMessage)
 		if err != nil {
 			return nil, err
 		}
@@ -332,9 +332,9 @@ func (srv Service) HandlePrWebhook(
 			GitData:   dictutil.StructToDict(message.GitPR),
 		},
 	}
-	err = srv.centrifugoRepo.Publish(socketMessage)
+	err = srv.socketAdapter.Publish(socketMessage)
 	if err != nil {
-		fmt.Println("srv.centrifugoRepo.Publish")
+		fmt.Println("srv.socketAdapter.Publish")
 		fmt.Println(err)
 		return nil, err
 	}

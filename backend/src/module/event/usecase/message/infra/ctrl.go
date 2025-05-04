@@ -12,8 +12,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"src/adapter/socket"
 	"src/module/account/schema"
-	"src/module/event/repo/centrifugo"
 	"src/module/event/repo/message"
 	"src/module/event/usecase/message/app"
 )
@@ -25,9 +25,9 @@ func List(c echo.Context) error {
 	taskID := numberutil.StrToUint(c.QueryParam("task_id"), 0)
 
 	scylaAdapter := scylla.New()
-	centrifugoRepo := centrifugo.New()
+	socketAdapter := socket.New()
 	messageRepo := message.New(scylaAdapter)
-	srv := app.New(centrifugoRepo, messageRepo)
+	srv := app.New(socketAdapter, messageRepo)
 
 	pageStateParam := c.QueryParam("page_state")
 	var pageState []byte
@@ -51,10 +51,10 @@ func List(c echo.Context) error {
 
 func Create(c echo.Context) error {
 	client := scylla.New()
-	centrifugoRepo := centrifugo.New()
+	socketAdapter := socket.New()
 	messageRepo := message.New(client)
 
-	srv := app.New(centrifugoRepo, messageRepo)
+	srv := app.New(socketAdapter, messageRepo)
 
 	user := c.Get("User").(*schema.User)
 
@@ -85,10 +85,10 @@ func Create(c echo.Context) error {
 
 func Update(c echo.Context) error {
 	client := scylla.New()
-	centrifugoRepo := centrifugo.New()
+	socketAdapter := socket.New()
 	messageRepo := message.New(client)
 
-	srv := app.New(centrifugoRepo, messageRepo)
+	srv := app.New(socketAdapter, messageRepo)
 
 	id := c.Param("id")
 	taskID := vldtutil.ValidateId(c.Param("task_id"))
@@ -108,10 +108,10 @@ func Update(c echo.Context) error {
 
 func Delete(c echo.Context) error {
 	client := scylla.New()
-	centrifugoRepo := centrifugo.New()
+	socketAdapter := socket.New()
 	messageRepo := message.New(client)
 
-	srv := app.New(centrifugoRepo, messageRepo)
+	srv := app.New(socketAdapter, messageRepo)
 
 	id := c.Param("id")
 	taskID := vldtutil.ValidateId(c.Param("task_id"))

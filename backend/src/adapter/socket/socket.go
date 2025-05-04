@@ -1,4 +1,4 @@
-package centrifugo
+package socket
 
 import (
 	"bytes"
@@ -10,16 +10,21 @@ import (
 	"src/util/i18nmsg"
 )
 
-type Repo struct{}
-
-func New() Repo {
-	return Repo{}
+type adapter struct {
+	apiKey string
+	url    string
 }
 
-func (r Repo) Publish(data interface{}) error {
+func New() adapter {
 	apiKey := setting.CENTRIFUGO_API_KEY()
 	url := fmt.Sprintf("%s/publish", setting.CENTRIFUGO_API_ENDPOINT())
+	return adapter{
+		apiKey: apiKey,
+		url:    url,
+	}
+}
 
+func (r adapter) Publish(data interface{}) error {
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return errutil.New(i18nmsg.CannotReadRequestBody)
@@ -28,13 +33,13 @@ func (r Repo) Publish(data interface{}) error {
 	reqBody := bytes.NewBuffer(jsonData)
 
 	// Create the HTTP request
-	req, err := http.NewRequest("POST", url, reqBody)
+	req, err := http.NewRequest("POST", r.url, reqBody)
 	if err != nil {
 		return errutil.New(i18nmsg.CanNotCreateRequest)
 	}
 
 	// Set headers
-	req.Header.Set("X-API-Key", apiKey)
+	req.Header.Set("X-API-Key", r.apiKey)
 	req.Header.Set("Content-Type", "application/json")
 
 	// Send the request

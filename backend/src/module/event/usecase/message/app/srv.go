@@ -8,12 +8,12 @@ import (
 )
 
 type Service struct {
-	centrifugoRepo CentrifugoRepo
-	messageRepo    MessageRepo
+	socketAdapter SocketProvider
+	messageRepo   MessageRepo
 }
 
-func New(centrifugoRepo CentrifugoRepo, messageRepo MessageRepo) Service {
-	return Service{centrifugoRepo, messageRepo}
+func New(socketAdapter SocketProvider, messageRepo MessageRepo) Service {
+	return Service{socketAdapter, messageRepo}
 }
 
 func (srv Service) List(
@@ -82,7 +82,7 @@ func (srv Service) Create(
 			Attachments: socketAttachments,
 		},
 	}
-	err = srv.centrifugoRepo.Publish(socketMessage)
+	err = srv.socketAdapter.Publish(socketMessage)
 	if err != nil {
 		return "", err
 	}
@@ -112,7 +112,7 @@ func (srv Service) Update(
 			Content: data.Content,
 		},
 	}
-	err = srv.centrifugoRepo.Publish(socketMessage)
+	err = srv.socketAdapter.Publish(socketMessage)
 	if err != nil {
 		return "", err
 	}
@@ -134,7 +134,7 @@ func (srv Service) Delete(id string, taskID uint, data InputData) error {
 			Type: messageType,
 		},
 	}
-	err = srv.centrifugoRepo.Publish(socketMessage)
+	err = srv.socketAdapter.Publish(socketMessage)
 	if err != nil {
 		return err
 	}

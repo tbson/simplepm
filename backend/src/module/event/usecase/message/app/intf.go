@@ -41,7 +41,7 @@ type SocketMessage struct {
 	Data    SocketData `json:"data" form:"data"`
 }
 
-type CentrifugoRepo interface {
+type SocketProvider interface {
 	Publish(data interface{}) error
 }
 
