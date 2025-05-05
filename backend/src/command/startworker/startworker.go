@@ -3,14 +3,14 @@ package main
 import (
 	"log"
 
-	queueadapter "src/adapter/queue"
-	"src/queue"
+	"src/adapter/queue"
 	"src/util/dbutil"
+	"src/worker/queueworker"
 )
 
 func main() {
 	log.Println("[+] Waiting for messages...")
 	dbutil.InitDb()
-	client := queueadapter.New()
-	client.Consumes(queue.Handlers)
+	client := queue.New()
+	client.Consumes(queueworker.Handlers)
 }

@@ -3,7 +3,7 @@ package main
 import (
 	queueadapter "src/adapter/queue"
 	"src/common/ctype"
-	"src/queue"
+	"src/worker/queueworker"
 )
 
 func main() {
@@ -14,5 +14,5 @@ func main() {
 		"action":  "ACTION_1",
 	}
 
-	client.Publish(queue.TEST_MESSAGE, testPayload)
+	client.Publish(queueworker.TEST_MESSAGE, testPayload)
 }

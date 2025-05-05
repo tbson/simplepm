@@ -21,16 +21,16 @@ import (
 	"src/module/pm/repo/taskfieldoption"
 	"src/module/pm/repo/taskfieldvalue"
 	"src/module/pm/repo/taskuser"
-	"src/module/pm/schema"
+	pm "src/module/pm/schema"
 	"src/module/pm/usecase/task/app"
 
-	queueadapter "src/adapter/queue"
-	"src/queue"
+	"src/adapter/queue"
+	"src/worker/queueworker"
 
 	"github.com/labstack/echo/v4"
 )
 
-type Schema = schema.Task
+type Schema = pm.Task
 
 var NewRepo = task.New
 var folder = "task/avatar"
@@ -78,7 +78,7 @@ func Option(c echo.Context) error {
 			"TaskField.ProjectID": projectID,
 			"TaskField.IsStatus":  true,
 		},
-		Order: fmt.Sprintf("%s.order ASC", schema.TaskFieldOption{}.TableName()),
+		Order: fmt.Sprintf("%s.order ASC", pm.TaskFieldOption{}.TableName()),
 	}
 	status, err := taskfieldoptionRepo.List(statusOpts)
 	if err != nil {
@@ -237,8 +237,8 @@ func Create(c echo.Context) error {
 	}
 
 	// Publish to queue
-	client := queueadapter.New()
-	client.Publish(queue.LOG_CREATE_TASK, ctype.Dict{
+	client := queue.New()
+	client.Publish(queueworker.LOG_CREATE_TASK, ctype.Dict{
 		"tenant_id":      tenantID,
 		"project_id":     result.ProjectID,
 		"task_id":        result.ID,
@@ -302,8 +302,8 @@ func Update(c echo.Context) error {
 	}
 
 	// Publish to queue
-	client := queueadapter.New()
-	client.Publish(queue.LOG_EDIT_TASK, ctype.Dict{
+	client := queue.New()
+	client.Publish(queueworker.LOG_EDIT_TASK, ctype.Dict{
 		"tenant_id":      tenantID,
 		"project_id":     result.ProjectID,
 		"task_id":        result.ID,
@@ -337,8 +337,8 @@ func Delete(c echo.Context) error {
 	}
 
 	// Publish to queue
-	client := queueadapter.New()
-	client.Publish(queue.LOG_DELETE_TASK, ctype.Dict{
+	client := queue.New()
+	client.Publish(queueworker.LOG_DELETE_TASK, ctype.Dict{
 		"tenant_id":      tenantID,
 		"project_id":     result.ProjectID,
 		"task_id":        result.ID,
