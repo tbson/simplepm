@@ -30,13 +30,13 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 	rr.Public(
 		"PUT", "/change-pwd", changepwd.WireCtrl().Handler,
 	)
-	rr.Public(
+	rr.Private(
 		"POST", "/reset-pwd/request", requestresetpwd.WireCtrl().Handler,
 	)
 	rr.Public(
 		"POST", "/reset-pwd/apply", resetpwd.WireCtrl().Handler,
 	)
-	rr.Public(
+	rr.Private(
 		"GET", "/refresh-token/check", checkrefreshtoken.WireCtrl().Handler,
 	)
 	rr.Public(
