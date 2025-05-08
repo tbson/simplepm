@@ -84,7 +84,7 @@ func AuthMiddleware(module string, action string, isRbac bool) echo.MiddlewareFu
 			}
 			userID, err := authTokenSrv.VerifyAccessToken(accessToken)
 			if err != nil {
-				return c.JSON(401, err)
+				return c.JSON(401, err.(*errutil.CustomError).Localize())
 			}
 
 			// preload roles and pems which pem
