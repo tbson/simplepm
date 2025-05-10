@@ -1,7 +1,7 @@
 package ctrl
 
 import (
-	"net/http"
+	"src/util/resputil"
 
 	"src/common/ctype"
 	"src/util/vldtutil"
@@ -32,6 +32,7 @@ type ctrl struct {
 // @Failure 400 {object} ctype.Dict
 // @Router /config/variable/{id} [get]
 func (ctrl ctrl) Handler(c echo.Context) error {
+	resp := resputil.New(c)
 
 	id := vldtutil.ValidateId(c.Param("id"))
 	opts := ctype.QueryOpts{
@@ -39,10 +40,10 @@ func (ctrl ctrl) Handler(c echo.Context) error {
 	}
 	result, err := ctrl.srv.Retrieve(opts)
 	if err != nil {
-		return c.JSON(http.StatusNotFound, err)
+		return resp.Err404(err)
 	}
 
-	return c.JSON(http.StatusOK, pres.DetailPres(*result))
+	return resp.Ok(pres.DetailPres(*result))
 }
 
 func New(srv srvProvider) ctrl {

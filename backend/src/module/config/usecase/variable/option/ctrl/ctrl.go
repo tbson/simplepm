@@ -1,7 +1,7 @@
 package ctrl
 
 import (
-	"net/http"
+	"src/util/resputil"
 
 	"src/module/config"
 
@@ -21,8 +21,10 @@ type ctrl struct{}
 // @Success 200 {object} pres.OptionResult
 // @Router /config/variable/option/ [get]
 func (ctrl ctrl) Handler(c echo.Context) error {
+	resp := resputil.New(c)
+
 	result := pres.OptionPres(config.VariableDataTypeOptions)
-	return c.JSON(http.StatusOK, result)
+	return resp.Ok(result)
 }
 
 func New() ctrl {

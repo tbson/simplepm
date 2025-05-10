@@ -1,9 +1,8 @@
 package ctrl
 
 import (
-	"net/http"
+	"src/util/resputil"
 
-	"src/util/errutil"
 	"src/util/vldtutil"
 
 	"src/module/config/pres"
@@ -30,15 +29,17 @@ type ctrl struct {
 // @Failure 400 {object} ctype.Dict
 // @Router /config/variable [delete]
 func (ctrl ctrl) Handler(c echo.Context) error {
+	resp := resputil.New(c)
+
 	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
 
 	result, err := ctrl.srv.DeleteList(ids)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
 
-	return c.JSON(http.StatusOK, pres.DeletePres(result))
+	return resp.Ok(pres.DeletePres(result))
 }
 
 func New(srv srvProvider) ctrl {

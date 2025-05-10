@@ -1,12 +1,10 @@
 package ctrl
 
 import (
-	"net/http"
+	"src/util/resputil"
 
 	"src/common/ctype"
 	"src/util/vldtutil"
-
-	"src/util/errutil"
 
 	"github.com/labstack/echo/v4"
 
@@ -45,21 +43,22 @@ type ctrl struct {
 // @Failure 400 {object} ctype.Dict
 // @Router /config/variable/{id} [put]
 func (ctrl ctrl) Handler(c echo.Context) error {
+	resp := resputil.New(c)
 	id := vldtutil.ValidateId(c.Param("id"))
 
 	structData, fields, err := vldtutil.ValidateUpdatePayload(c, input{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
 	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": id}}
 	result, err := ctrl.srv.Update(updateOpts, data)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
 
-	return c.JSON(http.StatusOK, pres.DetailPres(*result))
+	return resp.Ok(pres.DetailPres(*result))
 }
 
 func New(srv srvProvider) ctrl {
