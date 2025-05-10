@@ -35,7 +35,7 @@ export default function UpdateProfile({ onChange }) {
         <Modal
             keyboard={false}
             maskClosable={false}
-            destroyOnClose
+            destroyOnHidden
             open={open}
             okButtonProps={{ form: Form.formName, key: 'submit', htmlType: 'submit' }}
             okText={t`Update profile`}

@@ -63,7 +63,7 @@ export default function RoleDialog({ onChange }) {
         <Modal
             keyboard={false}
             maskClosable={false}
-            destroyOnClose
+            destroyOnHidden
             open={open}
             okButtonProps={{ form: Form.formName, key: 'submit', htmlType: 'submit' }}
             okText={t`Save`}

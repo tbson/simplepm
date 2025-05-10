@@ -69,7 +69,7 @@ export default function TaskDialog({ projectId, onChange }) {
         <Modal
             keyboard={false}
             maskClosable={false}
-            destroyOnClose
+            destroyOnHidden
             open={open}
             okButtonProps={{
                 form: TaskForm.formName,
