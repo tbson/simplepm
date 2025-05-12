@@ -24,6 +24,14 @@ func (r resp) Ok(result interface{}) error {
 	return r.c.JSON(http.StatusOK, result)
 }
 
+func (r resp) Ok201(result interface{}) error {
+	return r.c.JSON(http.StatusCreated, result)
+}
+
+func (r resp) Ok204(result interface{}) error {
+	return r.c.JSON(http.StatusNoContent, result)
+}
+
 func (r resp) Err(err error) error {
 	return errResp(r.c, err, http.StatusBadRequest)
 }
