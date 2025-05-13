@@ -1,13 +1,12 @@
 package ctrl
 
 import (
-	"net/http"
+	"src/util/presutil"
 
 	"src/module/account/domain/model"
+	"src/module/account/usecase/auth/refreshtoken/pres"
 	"src/module/account/usecase/auth/refreshtoken/pres/cookie"
-	"src/module/account/usecase/auth/refreshtoken/pres/json"
 	"src/util/cookieutil"
-	"src/util/errutil"
 	"src/util/vldtutil"
 
 	"github.com/labstack/echo/v4"
@@ -27,21 +26,22 @@ type input struct {
 }
 
 func (ctrl ctrl) Handler(c echo.Context) error {
+	resp := presutil.New(c)
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
 	refreshToken := cookieutil.GetValue(c, "refresh_token")
 	tokenPair, err := ctrl.Srv.RefreshToken(refreshToken)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
 
 	if structData.ClientType == model.CLIENT_TYPE_WEB {
 		return cookie.RefreshTokenPres(c, tokenPair)
 	}
 
-	return json.RefreshTokenPres(c, tokenPair)
+	return pres.RefreshToken(c, tokenPair, structData.ClientType)
 }
 
 func New(srv SrvProvider) ctrl {

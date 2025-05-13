@@ -1,7 +1,7 @@
 package ctrl
 
 import (
-	"src/util/resputil"
+	"src/util/presutil"
 
 	"src/util/vldtutil"
 
@@ -29,7 +29,7 @@ type ctrl struct {
 // @Failure 400 {object} ctype.Dict
 // @Router /config/variable/{id} [delete]
 func (ctrl ctrl) Handler(c echo.Context) error {
-	resp := resputil.New(c)
+	resp := presutil.New(c)
 
 	id := vldtutil.ValidateId(c.Param("id"))
 

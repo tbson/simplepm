@@ -6,7 +6,7 @@ import (
 	"src/common/ctype"
 	"src/util/dictutil"
 	"src/util/errutil"
-	"src/util/resputil"
+	"src/util/presutil"
 	"src/util/vldtutil"
 
 	"github.com/labstack/echo/v4"
@@ -45,7 +45,7 @@ type ctrl struct {
 // @Failure 400 {object} ctype.Dict
 // @Router /config/variable [post]
 func (ctrl ctrl) Handler(c echo.Context) error {
-	resp := resputil.New(c)
+	resp := presutil.New(c)
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())

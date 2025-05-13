@@ -1,16 +1,13 @@
 package ctrl
 
 import (
-	"net/http"
+	"src/util/presutil"
 
 	"src/util/vldtutil"
 
-	"src/util/errutil"
-
 	"src/module/account/domain/model"
 
-	"src/module/account/usecase/auth/login/pres/cookie"
-	"src/module/account/usecase/auth/login/pres/json"
+	"src/module/account/usecase/auth/login/pres"
 
 	"github.com/labstack/echo/v4"
 )
@@ -41,23 +38,19 @@ type input struct {
 // @Failure 400 {object} ctype.Dict
 // @Router /account/auth/login [post]
 func (ctrl ctrl) Handler(c echo.Context) error {
+	resp := presutil.New(c)
 	next := c.QueryParam("next")
 	tenantID := c.Get("TenantID").(uint)
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
 
 	loginResult, err := ctrl.appSrv.Login(structData.Email, structData.Pwd, tenantID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
-
-	if structData.ClientType == model.CLIENT_TYPE_WEB {
-		return cookie.LoginPres(c, loginResult, next)
-	}
-
-	return json.LoginPres(c, loginResult, next)
+	return pres.Login(c, loginResult, next, structData.ClientType)
 }
 
 func New(srv SrvProvider) ctrl {

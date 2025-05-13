@@ -1,7 +1,7 @@
 package ctrl
 
 import (
-	"src/util/resputil"
+	"src/util/presutil"
 	"src/util/restlistutil"
 
 	"src/module/config/schema"
@@ -44,7 +44,7 @@ var orderableFields = []string{"id", "key"}
 // @Failure 400 {object} ctype.Dict
 // @Router /config/variable [get]
 func (ctrl ctrl) Handler(c echo.Context) error {
-	resp := resputil.New(c)
+	resp := presutil.New(c)
 	pagingOptions := restlistutil.GetOptions(c, filterableFields, orderableFields)
 
 	result, err := ctrl.srv.Paging(pagingOptions, searchableFields)

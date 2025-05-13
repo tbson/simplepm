@@ -1,7 +1,7 @@
 package ctrl
 
 import (
-	"src/util/resputil"
+	"src/util/presutil"
 
 	"src/module/config"
 
@@ -21,7 +21,7 @@ type ctrl struct{}
 // @Success 200 {object} pres.OptionResult
 // @Router /config/variable/option/ [get]
 func (ctrl ctrl) Handler(c echo.Context) error {
-	resp := resputil.New(c)
+	resp := presutil.New(c)
 
 	result := pres.OptionPres(config.VariableDataTypeOptions)
 	return resp.Ok(result)
