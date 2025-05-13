@@ -23,9 +23,9 @@ func LoginPres(c echo.Context, loginResult model.AuthResult, next string) error 
 	userInfo := loginResult.UserInfo
 	sessionID := tokenutil.GenerateUUID()
 
-	accessTokenCookie := cookieutil.NewAccessTokenCookie(accessToken)
-	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(refreshToken)
-	sessionIDCookie := cookieutil.NewSessionIDCookie(sessionID)
+	accessTokenCookie := cookieutil.SetAccessTokenCookie(accessToken)
+	refreshTokenCookie := cookieutil.SetRefreshTokenCookie(refreshToken)
+	sessionIDCookie := cookieutil.SetSessionIDCookie(sessionID)
 	c.SetCookie(accessTokenCookie)
 	c.SetCookie(refreshTokenCookie)
 	c.SetCookie(sessionIDCookie)

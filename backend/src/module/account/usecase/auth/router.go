@@ -11,6 +11,7 @@ import (
 	"src/module/account/usecase/auth/changepwd"
 	"src/module/account/usecase/auth/checkrefreshtoken"
 	"src/module/account/usecase/auth/login"
+	"src/module/account/usecase/auth/logout"
 	"src/module/account/usecase/auth/refreshtoken"
 	"src/module/account/usecase/auth/requestresetpwd"
 	"src/module/account/usecase/auth/resetpwd"
@@ -26,6 +27,9 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 
 	rr.Public(
 		"POST", "/login/", login.WireCtrl().Handler,
+	)
+	rr.Public(
+		"POST", "/logout/", logout.WireCtrl().Handler,
 	)
 	rr.Public(
 		"PUT", "/change-pwd", changepwd.WireCtrl().Handler,

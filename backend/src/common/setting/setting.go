@@ -36,6 +36,10 @@ func APP_NAME() string {
 	return appName
 }
 
+func COOKIE_LIFE_TIME_MINS() int {
+	return fwutil.IntEnv("COOKIE_LIFE_TIME_MINS", 60)
+}
+
 var accessTokenLifetime int = fwutil.IntEnv("ACCESS_TOKEN_LIFETIME", 15)
 
 func ACCESS_TOKEN_LIFETIME() int {

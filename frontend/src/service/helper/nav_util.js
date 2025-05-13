@@ -1,3 +1,4 @@
+import Util from 'service/helper/util';
 import StorageUtil from 'service/helper/storage_util';
 import RequestUtil from 'service/helper/request_util';
 
@@ -22,12 +23,19 @@ export default class NavUtil {
      *
      * @param {Navigate} navigate
      */
-    static logout() {
+    static logout(navigate) {
         return () => {
             const baseUrl = RequestUtil.getApiBaseUrl();
-            const tenantUid = StorageUtil.getTenantUid();
-            const logoutUrl = `${baseUrl}account/auth/sso/logout/${tenantUid}`;
-            window.location.href = logoutUrl;
+            const logoutUrl = `${baseUrl}account/auth/logout/`;
+            Util.toggleGlobalLoading();
+            RequestUtil.apiCall(logoutUrl, {}, 'post').then(() => {
+                NavUtil.cleanAndMoveToLoginPage(navigate);
+            }).catch((err) => {
+                console.error('Logout failed:', err);
+            }).finally(() => {
+                NavUtil.cleanAndMoveToLoginPage(navigate);
+                Util.toggleGlobalLoading(false);
+            });
         };
     }
 

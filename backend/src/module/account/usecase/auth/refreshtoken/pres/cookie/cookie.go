@@ -13,8 +13,8 @@ import (
 func RefreshTokenPres(c echo.Context, tokenPair model.TokenPair) error {
 	accessToken := tokenPair.AccessToken
 	refreshToken := tokenPair.RefreshToken
-	accessTokenCookie := cookieutil.NewAccessTokenCookie(accessToken)
-	refreshTokenCookie := cookieutil.NewRefreshTokenCookie(refreshToken)
+	accessTokenCookie := cookieutil.SetAccessTokenCookie(accessToken)
+	refreshTokenCookie := cookieutil.SetRefreshTokenCookie(refreshToken)
 	c.SetCookie(accessTokenCookie)
 	c.SetCookie(refreshTokenCookie)
 

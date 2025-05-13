@@ -9,10 +9,8 @@ import {
     LogoutOutlined,
     SettingFilled,
     AuditOutlined,
-    LockOutlined
 } from '@ant-design/icons';
 import { LOGO_TEXT, DOMAIN } from 'src/const';
-import Util from 'service/helper/util';
 import StorageUtil from 'service/helper/storage_util';
 import PemUtil from 'service/helper/pem_util';
 import NavUtil from 'service/helper/nav_util';
@@ -150,7 +148,6 @@ export default function AdminLayout() {
                                 <Button
                                     icon={<LogoutOutlined />}
                                     onClick={() => {
-                                        Util.toggleGlobalLoading();
                                         logout();
                                     }}
                                     danger

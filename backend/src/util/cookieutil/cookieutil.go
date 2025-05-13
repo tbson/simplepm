@@ -4,36 +4,54 @@ import (
 	"net/http"
 	"src/common/setting"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
-func newCookie(name string, value string, path string) *http.Cookie {
+func newCookie(name string, value string, path string, expiredMins int) *http.Cookie {
 	cookie := new(http.Cookie)
 	cookie.Name = name
 	cookie.Value = value
-	cookie.Domain = setting.DOMAIN()       // Set the Domain attribute
-	cookie.Path = path                     // Set the Path attribute
-	cookie.Secure = true                   // Set the Secure attribute
-	cookie.HttpOnly = true                 // Prevents JavaScript access (optional)
-	cookie.SameSite = http.SameSiteLaxMode // Set the SameSite attribute
+	cookie.Domain = setting.DOMAIN()
+	cookie.Path = path
+	cookie.Secure = true
+	cookie.HttpOnly = true
+	cookie.SameSite = http.SameSiteLaxMode
+
+	if expiredMins > 0 {
+		expiration := time.Now().Add(time.Duration(expiredMins) * time.Minute)
+		cookie.Expires = expiration
+	} else if expiredMins == 0 {
+		cookie.MaxAge = -1
+		cookie.Expires = time.Now().AddDate(0, 0, -1)
+		cookie.Value = ""
+	}
 	return cookie
 }
 
-func NewAccessTokenCookie(value string) *http.Cookie {
-	return newCookie("access_token", value, "/api/v1/")
+func SetAccessTokenCookie(value string) *http.Cookie {
+	ttl := setting.COOKIE_LIFE_TIME_MINS()
+	if value == "" {
+		ttl = 0
+	}
+	return newCookie("access_token", value, "/api/v1/", ttl)
 }
 
-func NewRefreshTokenCookie(value string) *http.Cookie {
-	return newCookie("refresh_token", value, "/api/v1/account/auth/refresh-token")
+func SetRefreshTokenCookie(value string) *http.Cookie {
+	ttl := setting.COOKIE_LIFE_TIME_MINS()
+	if value == "" {
+		ttl = 0
+	}
+	return newCookie("refresh_token", value, "/api/v1/account/auth/refresh-token", ttl)
 }
 
-func NewIDTokenCookie(value string) *http.Cookie {
-	return newCookie("id_token", value, "/api/v1/account/auth/sso/logout/")
-}
-
-func NewSessionIDCookie(sessionID string) *http.Cookie {
-	return newCookie("session_id", sessionID, "/api/v1/socket/jwt/subscription/")
+func SetSessionIDCookie(value string) *http.Cookie {
+	ttl := setting.COOKIE_LIFE_TIME_MINS()
+	if value == "" {
+		ttl = 0
+	}
+	return newCookie("session_id", value, "/api/v1/socket/jwt/subscription/", ttl)
 }
 
 func GetValue(c echo.Context, name string) string {
