@@ -1,10 +1,9 @@
 package ctrl
 
 import (
-	"net/http"
+	"src/util/presutil"
 
 	"src/common/ctype"
-	"src/util/errutil"
 	"src/util/vldtutil"
 
 	"github.com/labstack/echo/v4"
@@ -23,18 +22,19 @@ type input struct {
 }
 
 func (ctrl ctrl) Handler(c echo.Context) error {
+	resp := presutil.New(c)
 	userID := c.Get("UserID").(uint)
 	structData, err := vldtutil.ValidatePayload(c, input{})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
 
 	err = ctrl.Srv.ChangePwd(userID, structData.Pwd)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
 
-	return c.JSON(http.StatusOK, ctype.Dict{})
+	return resp.Ok(ctype.Dict{})
 }
 
 func New(srv SrvProvider) ctrl {
