@@ -1,9 +1,8 @@
-package list
+package delete
 
 import (
-	"src/module/abstract/repo/page"
-	"src/module/config/schema"
-	"src/module/config/usecase/variable/list/ctrl"
+	"src/module/config/repo/variable"
+	"src/module/config/usecase/variable/delete/ctrl"
 	"src/util/dbutil"
 	"src/util/fwutil"
 )
@@ -17,9 +16,9 @@ func WireCtrl() fwutil.CtrlHandler {
 
 	dbClient := dbutil.Db(nil)
 
-	pageRepo := page.New[schema.Variable](dbClient)
+	variableRepo := variable.New(dbClient)
 
-	ctrlHandler = ctrl.New(pageRepo)
+	ctrlHandler = ctrl.New(variableRepo)
 
 	return ctrlHandler
 }

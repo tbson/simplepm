@@ -231,9 +231,19 @@ var (
 		Other: "no record found",
 	}
 
+	NoRecordFoundDetail = &i18n.Message{
+		ID:    "NoRecordFoundDetail",
+		Other: "no {{.Value}} found",
+	}
+
 	MultipleRecordsFound = &i18n.Message{
 		ID:    "MultipleRecordsFound",
 		Other: "multiple records found",
+	}
+
+	MultipleRecordsFoundDetail = &i18n.Message{
+		ID:    "MultipleRecordsFoundDetail",
+		Other: "multiple {{.Value}} found",
 	}
 
 	CanNotParseDateStr = &i18n.Message{

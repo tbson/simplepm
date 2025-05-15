@@ -21,8 +21,8 @@ var TypeDict = iterutil.FieldEnum{
 var TypeOptions = iterutil.GetFieldOptions(TypeDict)
 
 type Variable struct {
-	ID          uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v1mc()" json:"id"`
-	Key         string    `gorm:"type:text;not null;unique" json:"key"`
+	ID          uuid.UUID `gorm:"type:uuid;primaryUid;default:uuid_generate_v1mc()" json:"id"`
+	Uid         string    `gorm:"type:text;not null;unique" json:"uid"`
 	Value       string    `gorm:"type:text;not null;default:''" json:"value"`
 	Description string    `gorm:"type:text;not null;default:''" json:"description"`
 	DataType    string    `gorm:"type:text;not null;default:'STRING';check:data_type IN ('STRING', 'INTEGER', 'FLOAT', 'BOOLEAN', 'DATE', 'DATETIME')" json:"data_type"`
@@ -32,7 +32,7 @@ type Variable struct {
 
 func NewVariable(data ctype.Dict) *Variable {
 	return &Variable{
-		Key:         dictutil.GetValue[string](data, "Key"),
+		Uid:         dictutil.GetValue[string](data, "Uid"),
 		Value:       dictutil.GetValue[string](data, "Value"),
 		Description: dictutil.GetValue[string](data, "Description"),
 		DataType:    dictutil.GetValue[string](data, "DataType"),

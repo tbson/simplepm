@@ -11,14 +11,14 @@ import (
 
 type outputListItem struct {
 	ID            uuid.UUID `json:"id"`
-	Key           string    `json:"key"`
+	Uid           string    `json:"uid"`
 	Value         string    `json:"value"`
 	Description   string    `json:"description"`
 	DataTypeLabel string    `json:"data_type"`
 }
 type outputItem struct {
 	ID          uuid.UUID `json:"id"`
-	Key         string    `json:"key"`
+	Uid         string    `json:"uid"`
 	Value       string    `json:"value"`
 	Description string    `json:"description"`
 	DataType    string    `json:"data_type"`
@@ -43,7 +43,7 @@ func ListPres(items []schema.Variable) ListResult {
 	for _, item := range items {
 		result = append(result, outputListItem{
 			ID:            item.ID,
-			Key:           item.Key,
+			Uid:           item.Uid,
 			Value:         item.Value,
 			Description:   item.Description,
 			DataTypeLabel: config.VariableDataTypeDict.Get(item.DataType),
@@ -57,7 +57,7 @@ type DetailResult outputItem
 func DetailPres(item schema.Variable) DetailResult {
 	return DetailResult{
 		ID:          item.ID,
-		Key:         item.Key,
+		Uid:         item.Uid,
 		Value:       item.Value,
 		Description: item.Description,
 		DataType:    item.DataType,
@@ -65,10 +65,10 @@ func DetailPres(item schema.Variable) DetailResult {
 }
 
 type DeleteResult struct {
-	IDs []uint `json:"ids"`
+	IDs []string `json:"ids"`
 }
 
-func DeletePres(ids []uint) DeleteResult {
+func DeletePres(ids []string) DeleteResult {
 	return DeleteResult{IDs: ids}
 }
 

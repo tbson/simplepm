@@ -156,6 +156,15 @@ func ValidateIds(ids string) []uint {
 	return idList
 }
 
+func ValidateStrIds(ids string) []string {
+	var idList []string
+	if ids == "" {
+		return idList
+	}
+	result := strings.Trim(ids, "[]")
+	return strings.Split(result, ",")
+}
+
 func getFiles(c echo.Context) (map[string][]*multipart.FileHeader, error) {
 	if !strings.Contains(c.Request().Header.Get("Content-Type"), "multipart/form-data") {
 		return map[string][]*multipart.FileHeader{}, nil

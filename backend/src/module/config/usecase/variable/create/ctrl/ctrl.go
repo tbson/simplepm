@@ -3,8 +3,6 @@ package ctrl
 import (
 	"net/http"
 
-	"src/common/ctype"
-	"src/util/dictutil"
 	"src/util/errutil"
 	"src/util/presutil"
 	"src/util/vldtutil"
@@ -14,17 +12,11 @@ import (
 	"src/module/config/schema"
 
 	"src/module/config/pres"
+	"src/module/config/vltd"
 )
 
-type input struct {
-	Key         string `json:"key" form:"key" validate:"required"`
-	Value       string `json:"value" form:"value"`
-	Description string `json:"description" form:"description"`
-	DataType    string `json:"data_type" form:"data_type" validate:"required,oneof=STRING INTEGER FLOAT BOOLEAN DATE DATETIME"`
-}
-
 type srvProvider interface {
-	Create(data ctype.Dict) (*schema.Variable, error)
+	Create(structData vltd.CreateVariableInput) (*schema.Variable, error)
 }
 
 type ctrl struct {
@@ -46,13 +38,12 @@ type ctrl struct {
 // @Router /config/variable [post]
 func (ctrl ctrl) Handler(c echo.Context) error {
 	resp := presutil.New(c)
-	structData, err := vldtutil.ValidatePayload(c, input{})
+	structData, err := vldtutil.ValidatePayload(c, vltd.CreateVariableInput{})
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
 	}
-	data := dictutil.StructToDict(structData)
 
-	result, err := ctrl.srv.Create(data)
+	result, err := ctrl.srv.Create(structData)
 	if err != nil {
 		return resp.Err(err)
 	}

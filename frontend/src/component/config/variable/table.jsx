@@ -46,7 +46,9 @@ export default function VariableTable() {
         RequestUtil.apiCall(urls.crud, queryParam)
             .then((resp) => {
                 setPages(resp.data.pages);
-                setList(Util.appendKeys(resp.data.items));
+                const list = Util.appendKeys(resp.data.items);
+                console.log(list);
+                setList(list);
             })
             .catch(RequestUtil.displayError(notification))
             .finally(() => {
@@ -112,7 +114,6 @@ export default function VariableTable() {
                 setList([{ ...Util.appendKey(data) }, ...list]);
             } else {
                 const index = list.findIndex((item) => item.id === id);
-                data.key = data.id;
                 list[index] = data;
                 setList([...list]);
             }
@@ -195,7 +196,9 @@ export default function VariableTable() {
     ];
 
     const rowSelection = {
+        type: 'checkbox',
         onChange: (ids) => {
+            console.log(ids);
             setIds(ids);
         }
     };
@@ -204,7 +207,7 @@ export default function VariableTable() {
         <div>
             <Row>
                 <Col span={12}>
-                    <PemCheck pem_group={PEM_GROUP} pem="delete_list">
+                    <PemCheck pem_group={PEM_GROUP} pem="deletelist">
                         <RemoveSelectedBtn value={ids} onClick={handleBulkDelete} />
                     </PemCheck>
                 </Col>
@@ -218,10 +221,7 @@ export default function VariableTable() {
             <SearchInput onChange={handleSearch} />
 
             <Table
-                rowSelection={{
-                    type: 'checkbox',
-                    ...rowSelection
-                }}
+                rowSelection={rowSelection}
                 onChange={handleSortFilter}
                 loading={init}
                 columns={columns}

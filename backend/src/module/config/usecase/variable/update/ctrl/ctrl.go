@@ -11,17 +11,15 @@ import (
 	"src/module/config/schema"
 
 	"src/module/config/pres"
+	"src/module/config/vltd"
 )
 
-type input struct {
-	Key         string `json:"key" form:"key" validate:"required"`
-	Value       string `json:"value" form:"value"`
-	Description string `json:"description" form:"description"`
-	DataType    string `json:"data_type" form:"data_type" validate:"required,oneof=STRING INTEGER FLOAT BOOLEAN DATE DATETIME"`
-}
-
 type srvProvider interface {
-	Update(opts ctype.QueryOpts, data ctype.Dict) (*schema.Variable, error)
+	Update(
+		opts ctype.QueryOpts,
+		structData vltd.UpdateVariableInput,
+		fields []string,
+	) (*schema.Variable, error)
 }
 
 type ctrl struct {
@@ -44,15 +42,14 @@ type ctrl struct {
 // @Router /config/variable/{id} [put]
 func (ctrl ctrl) Handler(c echo.Context) error {
 	resp := presutil.New(c)
-	id := vldtutil.ValidateId(c.Param("id"))
+	id := c.Param("id")
 
-	structData, fields, err := vldtutil.ValidateUpdatePayload(c, input{})
+	structData, fields, err := vldtutil.ValidateUpdatePayload(c, vltd.UpdateVariableInput{})
 	if err != nil {
 		return resp.Err(err)
 	}
-	data := vldtutil.GetDictByFields(structData, fields, []string{})
 	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": id}}
-	result, err := ctrl.srv.Update(updateOpts, data)
+	result, err := ctrl.srv.Update(updateOpts, structData, fields)
 
 	if err != nil {
 		return resp.Err(err)

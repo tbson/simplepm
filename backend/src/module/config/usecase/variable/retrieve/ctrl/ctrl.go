@@ -4,7 +4,6 @@ import (
 	"src/util/presutil"
 
 	"src/common/ctype"
-	"src/util/vldtutil"
 
 	"src/module/config/schema"
 
@@ -34,7 +33,7 @@ type ctrl struct {
 func (ctrl ctrl) Handler(c echo.Context) error {
 	resp := presutil.New(c)
 
-	id := vldtutil.ValidateId(c.Param("id"))
+	id := c.Param("id")
 	opts := ctype.QueryOpts{
 		Filters: ctype.Dict{"id": id},
 	}

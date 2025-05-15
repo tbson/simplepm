@@ -10,10 +10,10 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"src/module/config/usecase/variable/create"
+	"src/module/config/usecase/variable/delete"
+	"src/module/config/usecase/variable/deletelist"
 	"src/module/config/usecase/variable/list"
 	"src/module/config/usecase/variable/option"
-	"src/module/config/usecase/variable/remove"
-	"src/module/config/usecase/variable/removelist"
 	"src/module/config/usecase/variable/retrieve"
 	"src/module/config/usecase/variable/update"
 )
@@ -50,12 +50,12 @@ func RegisterUrls(e *echo.Group, pemMap ctype.PemMap) (*echo.Group, ctype.PemMap
 		fmt.Sprintf("Update %s", featureSetName),
 	)
 	rr.RbacNew(
-		"DELETE", "/:id", remove.WireCtrl,
+		"DELETE", "/:id", delete.WireCtrl,
 		[]string{profiletype.ADMIN},
 		fmt.Sprintf("Delete %s", featureSetName),
 	)
 	rr.RbacNew(
-		"DELETE", "/", removelist.WireCtrl,
+		"DELETE", "/", deletelist.WireCtrl,
 		[]string{profiletype.ADMIN},
 		fmt.Sprintf("Delete list %s", featureSetName),
 	)

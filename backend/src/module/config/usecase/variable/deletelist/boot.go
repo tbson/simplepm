@@ -1,8 +1,8 @@
-package remove
+package deletelist
 
 import (
 	"src/module/config/repo/variable"
-	"src/module/config/usecase/variable/remove/ctrl"
+	"src/module/config/usecase/variable/deletelist/ctrl"
 	"src/util/dbutil"
 	"src/util/fwutil"
 )

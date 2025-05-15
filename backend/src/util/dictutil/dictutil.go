@@ -81,7 +81,7 @@ func StrDictToSelectOptions(data ctype.StrDict) []ctype.SelectOption[string] {
 	return result
 }
 
-func parseStructByFields[T any](target T, fields []string, fieldModifier []string) ctype.Dict {
+func ParseStructWithFilters[T any](target T, fields []string, fieldModifier []string) ctype.Dict {
 	// fieldModifer can be included fields or excluded fields, the excluded fields are the fields that prefix with "-"
 	// if the fieldModifier item is prefixed with "-", the field will be excluded
 	// if the fieldModifier item not prefixed with "-", the field will be included if it is not present in the fields variable
@@ -129,11 +129,7 @@ func parseStructByFields[T any](target T, fields []string, fieldModifier []strin
 	return data
 }
 
-func StructDictByFields[T any](target T, fields []string) ctype.Dict {
+func ParseStructWithFields[T any](target T, fields []string) ctype.Dict {
 	fieldModifier := []string{}
-	return parseStructByFields(target, fields, fieldModifier)
-}
-
-func StructDictByModifier[T any](target T, fields []string, fieldModifier []string) ctype.Dict {
-	return parseStructByFields(target, fields, fieldModifier)
+	return ParseStructWithFilters(target, fields, fieldModifier)
 }

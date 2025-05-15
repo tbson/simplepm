@@ -1,9 +1,8 @@
 package ctrl
 
 import (
-	"net/http"
+	"src/util/presutil"
 
-	"src/util/errutil"
 	"src/util/vldtutil"
 
 	"src/module/config/pres"
@@ -12,7 +11,7 @@ import (
 )
 
 type srvProvider interface {
-	DeleteList(ids []uint) ([]uint, error)
+	DeleteList(ids []string) ([]string, error)
 }
 
 type ctrl struct {
@@ -30,15 +29,17 @@ type ctrl struct {
 // @Failure 400 {object} ctype.Dict
 // @Router /config/variable [delete]
 func (ctrl ctrl) Handler(c echo.Context) error {
-	ids := vldtutil.ValidateIds(c.QueryParam("ids"))
+	resp := presutil.New(c)
+
+	ids := vldtutil.ValidateStrIds(c.QueryParam("ids"))
 
 	result, err := ctrl.srv.DeleteList(ids)
 
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err.(*errutil.CustomError).Localize())
+		return resp.Err(err)
 	}
 
-	return c.JSON(http.StatusOK, pres.DeletePres(result))
+	return resp.Ok(pres.DeletePres(result))
 }
 
 func New(srv srvProvider) ctrl {

@@ -7,12 +7,15 @@ import (
 	"src/util/errutil"
 	"src/util/i18nmsg"
 
+	"src/module/config/vltd"
+
 	"gorm.io/gorm"
 )
 
 type Schema = schema.Variable
 
 var newSchema = schema.NewVariable
+var schemaName = "variable"
 
 type repo struct {
 	client *gorm.DB
@@ -69,10 +72,16 @@ func (r *repo) Retrieve(opts ctype.QueryOpts) (*Schema, error) {
 	query := db.Where(map[string]interface{}(filters))
 	query.Model(&Schema{}).Count(&count)
 	if count == 0 {
-		return &item, errutil.New(i18nmsg.NoRecordFound)
+		return &item, errutil.NewWithArgs(
+			i18nmsg.NoRecordFoundDetail,
+			ctype.Dict{"Value": schemaName},
+		)
 	}
 	if count > 1 {
-		return &item, errutil.New(i18nmsg.MultipleRecordsFound)
+		return &item, errutil.NewWithArgs(
+			i18nmsg.MultipleRecordsFoundDetail,
+			ctype.Dict{"Value": schemaName},
+		)
 	}
 
 	result := query.First(&item)
@@ -83,8 +92,9 @@ func (r *repo) Retrieve(opts ctype.QueryOpts) (*Schema, error) {
 	return &item, err
 }
 
-func (r *repo) Create(data ctype.Dict) (*Schema, error) {
+func (r *repo) Create(structData vltd.CreateVariableInput) (*Schema, error) {
 	db := r.client
+	data := dictutil.StructToDict(structData)
 	item := newSchema(data)
 	result := db.Create(item)
 	err := result.Error
@@ -94,16 +104,24 @@ func (r *repo) Create(data ctype.Dict) (*Schema, error) {
 	return item, err
 }
 
-func (r *repo) GetOrCreate(opts ctype.QueryOpts, data ctype.Dict) (*Schema, error) {
+func (r *repo) GetOrCreate(
+	opts ctype.QueryOpts,
+	structData vltd.CreateVariableInput,
+) (*Schema, error) {
 	existItem, err := r.Retrieve(opts)
 	if err != nil {
-		return r.Create(data)
+		return r.Create(structData)
 	}
 	return existItem, nil
 }
 
-func (r *repo) Update(opts ctype.QueryOpts, data ctype.Dict) (*Schema, error) {
+func (r *repo) Update(
+	opts ctype.QueryOpts,
+	structData vltd.UpdateVariableInput,
+	fields []string,
+) (*Schema, error) {
 	db := r.client
+	data := dictutil.ParseStructWithFields(structData, fields)
 	item, err := r.Retrieve(opts)
 	if err != nil {
 		return nil, err
@@ -118,19 +136,20 @@ func (r *repo) Update(opts ctype.QueryOpts, data ctype.Dict) (*Schema, error) {
 
 func (r *repo) UpdateOrCreate(
 	opts ctype.QueryOpts,
-	data ctype.Dict,
+	structData vltd.CreateVariableInput,
+	fields []string,
 ) (*Schema, error) {
 	existItem, err := r.Retrieve(opts)
 	if err != nil {
-		return r.Create(data)
+		return r.Create(structData)
 	}
 	updateOpts := ctype.QueryOpts{Filters: ctype.Dict{"ID": existItem.ID}}
-	return r.Update(updateOpts, data)
+	return r.Update(updateOpts, structData.ToUpdate(), fields)
 }
 
-func (r *repo) Delete(id uint) ([]uint, error) {
+func (r *repo) Delete(id string) ([]string, error) {
 	db := r.client
-	ids := []uint{id}
+	ids := []string{id}
 	_, err := r.Retrieve(ctype.QueryOpts{Filters: ctype.Dict{"id": id}})
 	if err != nil {
 		return ids, err
@@ -143,7 +162,7 @@ func (r *repo) Delete(id uint) ([]uint, error) {
 	return ids, err
 }
 
-func (r *repo) DeleteList(ids []uint) ([]uint, error) {
+func (r *repo) DeleteList(ids []string) ([]string, error) {
 	db := r.client
 	result := db.Where("id IN (?)", ids).Delete(&Schema{})
 	err := result.Error
